@@ -12,13 +12,13 @@ export default tseslint.config(
     languageOptions: {
       globals: globals.node,
       parserOptions: {
-        projectService: true,
+        projectService: {
+          allowDefaultProject: ["*.js"],
+        },
       },
     },
     rules: {
-      "@typescript-eslint/explicit-module-boundary-types": "warn",
       "@typescript-eslint/no-unused-vars": "warn",
-      "no-console": "warn",
     },
   },
   eslintConfigPrettier

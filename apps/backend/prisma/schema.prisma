@@ -13,4 +13,13 @@ model User {
   email     String @unique @db.VarChar(100)
   firstName String @db.VarChar(20)
   lastName  String @db.VarChar(30)
+  hash      String
+  salt      String
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt DateTime
 }

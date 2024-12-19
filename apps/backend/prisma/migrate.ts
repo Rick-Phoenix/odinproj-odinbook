@@ -2,10 +2,12 @@ import { input, confirm } from "@inquirer/prompts";
 import { execSync } from "child_process";
 
 try {
-  const migrationName = await input({
+  let migrationName = await input({
     message: "Enter migration name: ",
     required: true,
   });
+
+  migrationName = migrationName.replace(/ /g, "-");
 
   const confirmation = await confirm({
     message: "Confirm? ",
