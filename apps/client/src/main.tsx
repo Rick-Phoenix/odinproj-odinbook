@@ -5,6 +5,8 @@ import App from "./App.tsx";
 import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallback from "./ErrorFallback.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router";
+import SignUp from "./SignUp.tsx";
+import Login from "./Login.1.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -14,8 +16,14 @@ const queryClient = new QueryClient({
   },
 });
 
-const routes = [{ path: "/", element: <App /> }];
-const router = createBrowserRouter(routes);
+const router = createBrowserRouter([
+  { path: "/", element: <App /> },
+  {
+    path: "/signup",
+    element: <SignUp />,
+  },
+  { path: "/login", element: <Login /> },
+]);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

@@ -1,7 +1,7 @@
 import { isEmailAvailable, isUsernameAvailable } from "prisma/queries.js";
 import { z } from "zod";
 
-const userSchema = z.object({
+export const userSchema = z.object({
   username: z
     .string()
     .trim()

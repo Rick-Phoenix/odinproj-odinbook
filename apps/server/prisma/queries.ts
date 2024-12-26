@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { genPassword } from "express (deprecated)/authConfig/passwordUtils.js";
 
 const prisma = new PrismaClient();
 
@@ -69,4 +70,25 @@ export async function isEmailAvailable(email: string) {
   const result = (await findUserByEmail(email)) === null;
 
   return result;
+}
+
+export async function createUser(user: {
+  username: string;
+  password: string;
+  email: string;
+}) {
+  const { username, email, password } = user;
+  const { hash, salt } = genPassword(password);
+  const query = async () => {
+    return await prisma.user.create({
+      data: {
+        username,
+        email,
+        hash,
+        salt,
+      },
+    });
+  };
+
+  return await queryDB(query);
 }
