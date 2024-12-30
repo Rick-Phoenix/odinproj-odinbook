@@ -1,35 +1,26 @@
-import { useActionState } from "react";
-import { apiUrl } from "./utils/utils";
+import { authClient } from "./lib/auth-client"; //import the auth client
 
 export default function Login() {
-  const [error, submitForm, isPending] = useActionState<
-    string | null,
-    FormData
-  >(async (previousState, formData) => {
-    const formObj = Object.fromEntries(formData);
-    const response = await fetch(`${apiUrl}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formObj),
+  async function handleSignin() {
+    const { data, error } = await authClient.signUp.email({
+      email: "test@eaxampale.com",
+      password: "password1234",
+      name: "testaa",
+      image: "https://example.com/image.png",
     });
 
-    if (!response.ok) return response.json() as Promise<string>;
-    return null;
-  }, null);
+    console.log(data, error);
+  }
+
+  const { data, isPending, error } = authClient.useSession();
+
+  console.log(data, isPending, error);
   return (
     <>
-      <form action={submitForm}>
-        <fieldset disabled={isPending}>
-          <label htmlFor="email">Email:</label>
-          <input type="email" name="email" required />
-          <label htmlFor="password">Password:</label>
-          <input type="password" name="password" required />
-          <button type="submit">Submit</button>
-        </fieldset>
-      </form>
-      {error && <h3>{error}</h3>}
+      {/* eslint-disable-next-line @typescript-eslint/no-misused-promises */}
+      <button type="button" onClick={handleSignin}>
+        Submit
+      </button>
     </>
   );
 }

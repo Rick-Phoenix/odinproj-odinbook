@@ -6,7 +6,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import ErrorFallback from "./ErrorFallback.tsx";
 import { createBrowserRouter, RouterProvider } from "react-router";
 import SignUp from "./SignUp.tsx";
-import Login from "./Login.1.tsx";
+import Login from "./Login.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {

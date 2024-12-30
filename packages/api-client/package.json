@@ -1,0 +1,17 @@
+{
+  "name": "@nexus/api-client",
+  "type": "module",
+  "private": true,
+  "main": "./dist/index.js",
+  "scripts": {
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "hono": "catalog:",
+    "@nexus/hono-api": "workspace:*"
+  },
+  "devDependencies": {
+    "@nexus/eslint-config": "workspace:*",
+    "typescript": "catalog:"
+  }
+}

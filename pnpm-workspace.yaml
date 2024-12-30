@@ -1,2 +1,7 @@
 packages:
   - "apps/*"
+  - "packages/*"
+
+catalog:
+  hono: ^4.6.15
+  typescript: ^5.7.2
