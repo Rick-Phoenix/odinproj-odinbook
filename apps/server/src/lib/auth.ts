@@ -1,29 +1,21 @@
-import { betterAuth } from "better-auth";
-import { drizzleAdapter } from "better-auth/adapters/drizzle";
-import db from "@/db";
-import env from "@/env";
-import { openAPI } from "better-auth/plugins";
+import { CookieStore, sessionMiddleware } from "hono-sessions";
+import type { AppOpenAPI } from "../types/app-bindings";
+import env from "../types/env";
 
-export const auth = betterAuth({
-  database: drizzleAdapter(db, {
-    provider: "pg",
-  }),
-  plugins: [openAPI()],
-  session: {
-    cookieCache: {
-      enabled: true,
-      maxAge: 15 * 60,
-    },
-  },
-  basePath: "/auth",
-  emailAndPassword: {
-    enabled: true,
-  },
-  socialProviders: {
-    github: {
-      clientId: env.GITHUB_CLIENT_ID,
-      clientSecret: env.GITHUB_CLIENT_SECRET,
-    },
-  },
-  trustedOrigins: ["http://localhost:5173"],
-});
+const store = new CookieStore();
+
+export const sessionConfig = (app: AppOpenAPI) => {
+  app.use(
+    "*",
+    sessionMiddleware({
+      store,
+      encryptionKey: env.SESSION_ENCRYPTION_KEY,
+      expireAfterSeconds: 900,
+      cookieOptions: {
+        sameSite: "Lax",
+        path: "/",
+        httpOnly: true,
+      },
+    })
+  );
+};

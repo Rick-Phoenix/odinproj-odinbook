@@ -11,9 +11,8 @@ const EnvSchema = z.object({
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
+  SESSION_ENCRYPTION_KEY: z.string(),
 });
-
-export type env = z.infer<typeof EnvSchema>;
 
 let env: env;
 
@@ -27,3 +26,4 @@ try {
 }
 
 export default env;
+export type env = z.infer<typeof EnvSchema>;

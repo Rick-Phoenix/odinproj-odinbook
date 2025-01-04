@@ -1,12 +1,26 @@
-import { auth } from "@/lib/auth";
+import { sessionConfig } from "./lib/auth.js";
 import configureOpenApiReference from "./lib/configure-open-api-reference.js";
-import createApp from "./lib/create-app.js";
-import { fullRouterConfig } from "./routes/index.js";
+import createApp, { createRouter } from "./lib/create-app.js";
+import { apiRoutes, registerApiRoutes } from "./routes/routeConfig";
+import { serveStatic } from "@hono/node-server/serve-static";
+import env from "./types/env.js";
 
-const app = fullRouterConfig(createApp());
+const app = createApp();
 
-app.on(["POST", "GET"], "/auth/**", (c) => auth.handler(c.req.raw));
-
+sessionConfig(app);
 configureOpenApiReference(app);
+
+// const api = createRouter();
+// const apiRoutes = registerApiRoutes(api);
+
+app.route("/api", apiRoutes);
+
+if (env.NODE_ENV === "development") {
+  app.get("*", serveStatic({ path: "./src/index.html" }));
+}
+if (env.NODE_ENV === "production") {
+  app.get("*", serveStatic({ root: "./public" }));
+  app.get("*", serveStatic({ path: "./public/index.html" }));
+}
 
 export default app;

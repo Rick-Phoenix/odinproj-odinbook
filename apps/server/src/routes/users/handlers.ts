@@ -1,12 +1,11 @@
 import db from "@/db/index.js";
 import { user } from "@/db/schema.js";
-import { lowercase } from "@/db/utils.js";
-import { genPassword } from "@/lib/passwordUtils.js";
+import { lowercase } from "../../utils/db-methods.js";
 import { httpCodes } from "@/lib/constants.js";
-import type { AppRouteHandler } from "@/lib/types.js";
+import type { AppRouteHandler } from "@/types/app-bindings.js";
 import type {
   UserGetRoute,
-  UsersCreateRoute,
+  // UsersCreateRoute,
   UsersListRoute,
 } from "./routes.js";
 
@@ -15,13 +14,13 @@ export const usersListHandler: AppRouteHandler<UsersListRoute> = async (c) => {
   return c.json(user, httpCodes.OK);
 };
 
-export const usersCreateHandler: AppRouteHandler<UsersCreateRoute> = async (
-  c
-) => {
-  const { name, email } = c.req.valid("json");
-  const [entry] = await db.insert(user).values({ name, email }).returning();
-  return c.json(entry, httpCodes.OK);
-};
+// export const usersCreateHandler: AppRouteHandler<UsersCreateRoute> = async (
+//   c
+// ) => {
+//   const { name } = c.req.valid("json");
+//   const [entry] = await db.insert(user).values({ name, email }).returning();
+//   return c.json(entry, httpCodes.OK);
+// };
 
 export const getUserHandler: AppRouteHandler<UserGetRoute> = async (c) => {
   const { name } = c.req.valid("param");

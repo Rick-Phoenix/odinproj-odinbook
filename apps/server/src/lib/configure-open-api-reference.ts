@@ -1,5 +1,4 @@
-import type { AppOpenAPI } from "./types.js";
-
+import type { AppOpenAPI } from "../types/app-bindings.js";
 import packageJSON from "../../package.json" assert { type: "json" };
 import { apiReference } from "@scalar/hono-api-reference";
 

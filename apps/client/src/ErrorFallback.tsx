@@ -1,4 +1,4 @@
-import { FallbackProps } from "react-error-boundary";
+import type { FallbackProps } from "react-error-boundary";
 
 export default function ErrorFallback({
   error,
@@ -7,7 +7,7 @@ export default function ErrorFallback({
   return (
     <div role="alert">
       <p>Something went wrong:</p>
-      <pre>{error.message}</pre>
+      {/* <pre>{error.message}</pre> */}
       <button onClick={resetErrorBoundary}>Try again</button>
     </div>
   );

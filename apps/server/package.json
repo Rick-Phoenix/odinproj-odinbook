@@ -4,25 +4,25 @@
   "type": "module",
   "version": "1.0.0",
   "exports": {
-    "./routes": "./src/routes/index.ts",
+    "./routes": "./src/routes/routeConfig.ts",
     "./schemas": "./src/db/validationSchemas.ts"
   },
   "scripts": {
     "build": "npx tsc",
     "start": "tsx dist/index.js",
     "dev": "tsx watch src/index.ts",
-    "debug": "tsx watch --inspect  src/index.ts",
+    "debug": "tsx watch --inspect src/index.ts",
     "lintconfig": "eslint-config-inspector",
     "dpush": "drizzle-kit push",
     "dstudio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@better-auth/cli": "^1.1.4",
     "@hono/node-server": "^1.13.7",
     "@hono/zod-openapi": "^0.18.3",
+    "@oslojs/oauth2": "^0.5.0",
     "@scalar/hono-api-reference": "^0.5.165",
     "@types/dotenv": "^6.1.1",
-    "better-auth": "^1.1.4",
+    "arctic": "^2.3.3",
     "cloudinary": "^2.5.1",
     "dotenv": "^16.4.7",
     "dotenv-expand": "^12.0.1",
@@ -33,6 +33,7 @@
     "generate": "^0.14.0",
     "hono": "catalog:",
     "hono-pino": "^0.7.0",
+    "hono-sessions": "^0.7.0",
     "pg": "^8.13.1",
     "pino": "^9.5.0",
     "pino-pretty": "^13.0.0",

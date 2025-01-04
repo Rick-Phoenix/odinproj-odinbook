@@ -3,15 +3,17 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "rootDir": "./",
+    // "rootDir": "./"
     "paths": {
       "@/*": ["./src/*"]
     },
     "resolveJsonModule": true,
-    "noEmit": true
+    "noEmit": true,
+    // "sourceMap": true,
+    "inlineSourceMap": true,
     // "emitDeclarationOnly": true,
     // "composite": true,
-    // "sourceMap": true,
-    // "allowImportingTsExtensions": true
-  }
+    "allowImportingTsExtensions": true
+  },
+  "include": ["src"]
 }

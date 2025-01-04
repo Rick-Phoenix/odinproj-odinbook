@@ -1,14 +1,12 @@
 import {
   boolean,
-  integer,
   pgTable,
   text,
   timestamp,
   uniqueIndex,
   varchar,
 } from "drizzle-orm/pg-core";
-import { lowercase } from "./utils";
-import { sql } from "drizzle-orm";
+import { lowercase } from "../utils/db-methods";
 
 export const user = pgTable(
   "user",

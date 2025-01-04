@@ -7,11 +7,6 @@
     "paths": {
       "@/*": ["../../apps/server/src/*"]
     }
-    // "typeRoots": ["./node_modules/@types"],
-    // "types": ["node"]
   },
   "files": ["./index.ts"]
-  // "watchOptions": {
-  //   "excludeDirectories": ["node_modules", "../../apps/server/*"]
-  // }
 }

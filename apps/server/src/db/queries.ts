@@ -1,5 +1,5 @@
 import db from ".";
-import { lowercase } from "./utils";
+import { lowercase } from "../utils/db-methods";
 
 export async function isEmailAvailable(email: string): Promise<boolean> {
   const result = await db.query.user.findFirst({

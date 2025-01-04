@@ -10,12 +10,21 @@ export default defineConfig({
       "@": path.resolve(import.meta.dirname, "./src"),
     },
   },
+  build: {
+    outDir: "../server/public",
+    emptyOutDir: true,
+    manifest: true,
+    modulePreload: { polyfill: true },
+    rollupOptions: {
+      input: "./src/main.tsx",
+    },
+  },
   server: {
+    origin: "http://localhost:3000",
     proxy: {
       "/api": {
         target: "http://localhost:3000",
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ""),
       },
     },
   },

@@ -1,12 +1,21 @@
 import { z } from "@hono/zod-openapi";
-import { isUsernameAvailable, isEmailAvailable } from "./queries";
+import { isUsernameAvailable, isEmailAvailable } from "../db/queries";
+import { user } from "../db/schema";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { user } from "./schema";
+
+export const sessionSchema = z
+  .object({
+    _data: z.any(),
+    _expire: z.string().nullable(),
+    _delete: z.boolean(),
+    _accessed: z.string().nullable(),
+  })
+  .openapi({ required: ["_data", "_expire", "_delete", "_accessed"] });
 
 export const insertUserSchema = createInsertSchema(user)
   .pick({ name: true, email: true })
   .extend({
-    username: z
+    name: z
       .string()
       .trim()
       .min(3, "Username must be at least 3 characters long.")
@@ -28,18 +37,18 @@ export const insertUserSchema = createInsertSchema(user)
       .refine((email) => {
         return isEmailAvailable(email);
       }, "This email is already connected to a user."),
-    password: z
-      .string()
-      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
-      .regex(/[a-z]/, "Password must contain at least one lowercase letter")
-      .regex(/[0-9]/, "Password must contain at least one number")
-      .regex(
-        /[#?!@$%^&*-.]/,
-        "Password must contain at least one special character"
-      )
-      .min(8, "Password must be at least 8 characters long")
-      .max(64, "Password cannot be longer than 64 characters."),
+    // password: z
+    //   .string()
+    //   .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+    //   .regex(/[a-z]/, "Password must contain at least one lowercase letter")
+    //   .regex(/[0-9]/, "Password must contain at least one number")
+    //   .regex(
+    //     /[#?!@$%^&*-.]/,
+    //     "Password must contain at least one special character"
+    //   )
+    //   .min(8, "Password must be at least 8 characters long")
+    //   .max(64, "Password cannot be longer than 64 characters."),
   })
   .required();
 
-export const selectUsersSchema = createSelectSchema(user).strict();
+export const selectUsersSchema = createSelectSchema(user).pick({ name: true });
