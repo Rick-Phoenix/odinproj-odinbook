@@ -28,6 +28,8 @@ export const login = createRoute({
 
 export const loginHandler: AppRouteHandler<typeof login> = (c) => {
   const session = c.get("session");
-  console.log(session);
-  return c.json(session);
+  session.set("user", "2");
+  console.log(c.req.header("Cookie"));
+  const sessionData = session as unknown as SessionData;
+  return c.json(sessionData);
 };

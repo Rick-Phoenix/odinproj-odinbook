@@ -1,19 +1,16 @@
-import db from ".";
-import { lowercase } from "../utils/db-methods";
+import db from "./dbConfig";
 
-export async function isEmailAvailable(email: string): Promise<boolean> {
-  const result = await db.query.user.findFirst({
-    where: (users, { eq }) =>
-      eq(lowercase(users.email), email.toLocaleLowerCase()),
+export async function emailIsAvailable(email: string): Promise<boolean> {
+  const result = await db.query.userTable.findFirst({
+    where: (existingUser, { eq }) => eq(existingUser.email, email),
   });
 
   return result === undefined;
 }
 
-export async function isUsernameAvailable(username: string): Promise<boolean> {
-  const result = await db.query.user.findFirst({
-    where: (user, { eq }) =>
-      eq(lowercase(user.name), username.toLocaleLowerCase()),
+export async function usernameIsAvailable(username: string): Promise<boolean> {
+  const result = await db.query.userTable.findFirst({
+    where: (existingUser, { eq }) => eq(existingUser.username, username),
   });
 
   return result === undefined;

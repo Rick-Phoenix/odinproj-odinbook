@@ -1,5 +1,5 @@
-import db from "@/db/index.js";
-import { user } from "@/db/schema.js";
+import db from "@/db/dbConfig.js";
+import { userTable } from "@/db/schema.js";
 import { lowercase } from "../../utils/db-methods.js";
 import { httpCodes } from "@/lib/constants.js";
 import type { AppRouteHandler } from "@/types/app-bindings.js";

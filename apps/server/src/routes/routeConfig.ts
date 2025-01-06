@@ -1,6 +1,6 @@
 import { createRouter } from "../lib/create-app";
 import type { AppOpenAPI } from "../types/app-bindings";
-import { authRouter } from "./auth";
+import { authRouter } from "./auth/authRouter";
 import { usersRouter } from "./users/index";
 
 const app = createRouter();

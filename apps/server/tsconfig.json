@@ -15,5 +15,5 @@
     // "composite": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["src"]
+  "include": ["src", "drizzle.config.ts", "scripts"]
 }
