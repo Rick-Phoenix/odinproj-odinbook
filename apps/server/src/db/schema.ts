@@ -14,17 +14,17 @@ export const userTable = pgTable(
   "user",
   {
     id: text("id").primaryKey(),
-    username: varchar("name", { length: 31 }).notNull(),
+    username: varchar("username", { length: 31 }).notNull(),
     email: varchar("email", { length: 63 }).notNull(),
     hash: text("hash").notNull(),
   },
   (table) => [
     uniqueIndex("emailUniqueIndex").on(lowercase(trim(table.email))),
-    uniqueIndex("usernameUniqueIndex").on(lowercase(trim(table.name))),
+    uniqueIndex("usernameUniqueIndex").on(lowercase(trim(table.username))),
   ]
 );
 
-export const session = pgTable("session", {
+export const sessionTable = pgTable("session", {
   id: text("id").primaryKey(),
   userId: text("userId")
     .notNull()

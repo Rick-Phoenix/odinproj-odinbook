@@ -1,17 +1,12 @@
 import { serveStatic } from "@hono/node-server/serve-static";
-import { sessionConfig } from "./lib/auth.js";
 import configureOpenApiReference from "./lib/configure-open-api-reference.js";
 import createApp from "./lib/create-app.js";
-import { apiRoutes } from "./routes/routeConfig";
+import { apiRoutes } from "./routes/routingConfig.js";
 import env from "./types/env.js";
 
 const app = createApp();
 
-sessionConfig(app);
 configureOpenApiReference(app);
-
-// const api = createRouter();
-// const apiRoutes = registerApiRoutes(api);
 
 app.route("/api", apiRoutes);
 

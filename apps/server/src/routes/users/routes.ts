@@ -1,7 +1,7 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
-import { insertUserSchema, selectUsersSchema } from "@/types/zod-schemas";
+import { signupUserSchema, selectUsersSchema } from "@/types/zod-schemas";
 import { httpCodes, notFoundSchema } from "@/lib/constants";
 
 const tags = ["users"];
