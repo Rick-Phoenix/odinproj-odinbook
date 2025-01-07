@@ -8,7 +8,8 @@ import { userTable } from "../../db/schema";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import { signupUserSchema } from "../../types/zod-schemas";
 import { hashPassword } from "../../utils/password";
-import { createSession } from "../../utils/crypto";
+import { createSession } from "../../utils/session";
+import { setCookie } from "hono/cookie";
 
 const tags = ["auth"];
 
@@ -41,6 +42,6 @@ export const signupHandler: AppRouteHandler<typeof signup> = async (c) => {
     ...rest,
   };
   await db.insert(userTable).values(hashedUser);
-  const session = await createSession(userId);
+  await createSession(c, userId);
   return c.json("success.", OK);
 };

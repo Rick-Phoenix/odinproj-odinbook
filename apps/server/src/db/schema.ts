@@ -8,7 +8,7 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { lowercase, trim } from "../utils/db-methods";
-import { sql } from "drizzle-orm";
+import { sql, type InferSelectModel } from "drizzle-orm";
 
 export const userTable = pgTable(
   "user",
@@ -34,3 +34,6 @@ export const sessionTable = pgTable("session", {
     mode: "date",
   }).notNull(),
 });
+
+export type Session = InferSelectModel<typeof sessionTable>;
+export type User = InferSelectModel<typeof userTable>;

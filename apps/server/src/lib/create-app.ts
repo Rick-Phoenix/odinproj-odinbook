@@ -7,7 +7,12 @@ import type { AppBindings } from "../types/app-bindings";
 export function createRouter() {
   return new OpenAPIHono<AppBindings>({
     strict: false,
-    defaultHook,
+    // defaultHook,
+    defaultHook: (result, c) => {
+      if (!result.success && result.error.issues[0].code === "custom") {
+        result.error.issues[0].params;
+      }
+    },
   });
 }
 

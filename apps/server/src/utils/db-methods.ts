@@ -8,3 +8,7 @@ export function lowercase(column: AnyPgColumn | SQL): SQL {
 export function trim(column: AnyPgColumn): SQL {
   return sql`trim(${column})`;
 }
+
+export function entryExists(entry: unknown[]) {
+  return entry.length > 0;
+}
