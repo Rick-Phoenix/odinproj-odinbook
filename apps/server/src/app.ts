@@ -4,13 +4,13 @@ import createApp from "./lib/create-app.js";
 import { apiRoutes } from "./routes/routingConfig.js";
 import env from "./types/env.js";
 import { csrf } from "hono/csrf";
-import { validateSession } from "./utils/session.js";
+import { registerSession } from "./utils/session.js";
 
 const app = createApp();
 
 app.use(csrf());
 
-app.use(validateSession);
+app.use(registerSession);
 
 // app.use(async (c, next) => {
 //   console.log(c.var.user);

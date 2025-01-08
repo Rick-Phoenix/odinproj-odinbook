@@ -1,6 +1,5 @@
+import { type InferSelectModel } from "drizzle-orm";
 import {
-  boolean,
-  integer,
   pgTable,
   text,
   timestamp,
@@ -8,7 +7,6 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 import { lowercase, trim } from "../utils/db-methods";
-import { sql, type InferSelectModel } from "drizzle-orm";
 
 export const userTable = pgTable(
   "user",
@@ -28,7 +26,7 @@ export const sessionTable = pgTable("session", {
   id: text("id").primaryKey(),
   userId: text("userId")
     .notNull()
-    .references(() => userTable.id),
+    .references(() => userTable.id, { onDelete: "cascade" }),
   expiresAt: timestamp("expires_at", {
     withTimezone: true,
     mode: "date",

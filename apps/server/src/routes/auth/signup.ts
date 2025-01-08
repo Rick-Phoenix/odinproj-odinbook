@@ -2,8 +2,8 @@ import { createRoute, z } from "@hono/zod-openapi";
 import { webcrypto } from "crypto";
 import { createInsertSchema } from "drizzle-zod";
 import {
-  BAD_REQUEST,
-  OK,
+  CONFLICT,
+  CREATED,
   UNPROCESSABLE_ENTITY,
 } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
@@ -11,6 +11,7 @@ import db from "../../db/dbConfig";
 import { emailIsNotAvailable, usernameIsNotAvailable } from "../../db/queries";
 import { userTable } from "../../db/schema";
 import type { AppRouteHandler } from "../../types/app-bindings";
+import { selectUserSchema } from "../../types/zod-schemas";
 import { customError } from "../../utils/customError";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
 import { hashPassword } from "../../utils/password";
@@ -54,14 +55,14 @@ const errors = {
       message: "This username is already taken.",
       path: ["username"],
     },
-    BAD_REQUEST
+    CONFLICT
   ),
   emailIsTaken: customError(
     {
       message: "This email is already connected to another user.",
       path: ["email"],
     },
-    BAD_REQUEST
+    CONFLICT
   ),
 };
 
@@ -76,8 +77,8 @@ export const signup = createRoute({
     ),
   },
   responses: {
-    [OK]: jsonContent(z.string(), "Success message."),
-    [BAD_REQUEST]: errors.usernameIsTaken.template,
+    [CREATED]: jsonContent(selectUserSchema, "Success message."),
+    [CONFLICT]: errors.usernameIsTaken.template,
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(signupUserSchema),
   },
 });
@@ -85,11 +86,11 @@ export const signup = createRoute({
 export const signupHandler: AppRouteHandler<typeof signup> = async (c) => {
   const user = c.req.valid("json");
   if (await usernameIsNotAvailable(user.username)) {
-    return c.json(errors.usernameIsTaken.content, BAD_REQUEST);
+    return c.json(errors.usernameIsTaken.content, CONFLICT);
   }
 
   if (await emailIsNotAvailable(user.email)) {
-    return c.json(errors.emailIsTaken.content, BAD_REQUEST);
+    return c.json(errors.emailIsTaken.content, CONFLICT);
   }
 
   const { password, ...rest } = user;
@@ -100,7 +101,10 @@ export const signupHandler: AppRouteHandler<typeof signup> = async (c) => {
     ...rest,
   };
 
-  await db.insert(userTable).values(hashedUser);
+  const [registeredUser] = await db
+    .insert(userTable)
+    .values(hashedUser)
+    .returning();
   await createSession(c, userId);
-  return c.json("success.", OK);
+  return c.json(registeredUser, CREATED);
 };

@@ -1,8 +1,8 @@
-import { select, Separator, input } from "@inquirer/prompts";
-import fs, { constants } from "node:fs/promises";
-import { existsSync } from "node:fs";
-import path from "node:path";
+import { input, select } from "@inquirer/prompts";
 import chalk from "chalk";
+import { existsSync } from "node:fs";
+import fs from "node:fs/promises";
+import path from "node:path";
 
 const routesFolderPath = path.resolve(process.cwd(), "src/routes");
 
@@ -49,8 +49,8 @@ if (existsSync(newFilePath)) {
 
 const routeBoilerplate = `
 import { createRoute, z } from "@hono/zod-openapi";
-import { httpCodes, notFoundSchema } from "@/lib/constants";
-import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
+import { OK } from "stoker/http-status-codes";
+import { jsonContent } from "stoker/openapi/helpers";
 import type { AppRouteHandler } from "../../types/app-bindings";
 
 const tags = ["${routeCategory}"]`;

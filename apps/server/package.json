@@ -14,7 +14,8 @@
     "debug": "tsx watch --inspect src/index.ts",
     "lintconfig": "eslint-config-inspector",
     "dpush": "drizzle-kit push",
-    "dstudio": "drizzle-kit studio"
+    "dstudio": "drizzle-kit studio",
+    "newroute": "tsx ./scripts/newRoute.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",

@@ -1,11 +1,12 @@
 import { createRouter } from "../lib/create-app";
 import type { AppOpenAPI } from "../types/app-bindings";
 import { authRouter } from "./auth/authRouter";
+import { protectedRouter } from "./protected/protectedRouter";
 
 const app = createRouter();
 
 export function registerApiRoutes(app: AppOpenAPI) {
-  return app.route("/auth", authRouter);
+  return app.route("/auth", authRouter).route("/protected", protectedRouter);
 }
 
 export const apiRoutes = registerApiRoutes(app);

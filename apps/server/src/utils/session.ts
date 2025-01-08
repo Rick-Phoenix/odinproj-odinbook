@@ -2,13 +2,14 @@ import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { webcrypto } from "crypto";
 import { eq } from "drizzle-orm";
-import type { Context, Next } from "hono";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
+import { UNAUTHORIZED } from "stoker/http-status-codes";
 import db from "../db/dbConfig";
 import { sessionTable, userTable } from "../db/schema";
-import type { AppMiddleware } from "../types/app-bindings";
+import type { AppContext, AppMiddleware } from "../types/app-bindings";
+import { entryExists } from "./db-methods";
 
-export async function createSession(c: Context, userId: string) {
+export async function createSession(c: AppContext, userId: string) {
   const sessionToken = webcrypto.randomUUID();
   const sessionId = encodeHexLowerCase(
     sha256(new TextEncoder().encode(sessionToken))
@@ -28,7 +29,7 @@ export async function createSession(c: Context, userId: string) {
   });
 }
 
-export const validateSession: AppMiddleware = async (c, next) => {
+export const registerSession: AppMiddleware = async (c, next) => {
   let user = null;
   let session = null;
 
@@ -45,7 +46,7 @@ export const validateSession: AppMiddleware = async (c, next) => {
       .innerJoin(userTable, eq(sessionTable.userId, userTable.id))
       .where(eq(sessionTable.id, sessionId));
 
-    if (result.length === 0) {
+    if (entryExists(result)) {
       user = result[0].user;
       session = result[0].session;
 
@@ -74,7 +75,17 @@ export const validateSession: AppMiddleware = async (c, next) => {
   await next();
 };
 
-async function invalidateSession(c: Context, sessionId: string) {
+export async function invalidateSession(c: AppContext, sessionId: string) {
   await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
   deleteCookie(c, "session");
 }
+
+export const protectRoute: AppMiddleware = async (c, next) => {
+  const user = c.get("user");
+  if (!user) return c.json("Access denied.", UNAUTHORIZED);
+  await next();
+};
+
+export const userIsAuthenticated = (c: AppContext) => {
+  return !!c.var.user && !!c.var.session;
+};

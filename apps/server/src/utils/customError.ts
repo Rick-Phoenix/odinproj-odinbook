@@ -1,12 +1,12 @@
 import { z } from "@hono/zod-openapi";
 import { httpCodesMap } from "../lib/constants";
 
-export type ZodCustomError = {
+export type CustomError = {
   message: string;
-  path: string[] | number[];
+  path?: string[] | number[];
 };
 
-export function customError(error: ZodCustomError, code: number) {
+export function customError(error: CustomError, code: number) {
   const httpStatusName = httpCodesMap.get(code)!;
 
   const errorSchema = z.object({
@@ -14,13 +14,13 @@ export function customError(error: ZodCustomError, code: number) {
       z
         .object({
           code: z.string(),
-          path: z.array(z.union([z.string(), z.number()])),
+          path: z.array(z.union([z.string(), z.number()])).optional(),
           message: z.string(),
         })
         .openapi({
           example: {
             code: httpStatusName,
-            path: error.path,
+            ...(error.path && { path: error.path }),
             message: error.message,
           },
         })
@@ -32,7 +32,7 @@ export function customError(error: ZodCustomError, code: number) {
     issues: [
       {
         code: httpStatusName,
-        path: error.path,
+        ...(error.path && { path: error.path }),
         message: error.message,
       },
     ],
