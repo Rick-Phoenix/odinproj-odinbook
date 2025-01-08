@@ -4,7 +4,7 @@
   "type": "module",
   "version": "1.0.0",
   "exports": {
-    "./routes": "./src/routes/routeConfig.ts",
+    "./routes": "./src/routes/routingConfig.ts",
     "./schemas": "./src/db/validationSchemas.ts"
   },
   "scripts": {
