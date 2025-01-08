@@ -1,12 +1,11 @@
 import { createRouter } from "../lib/create-app";
 import type { AppOpenAPI } from "../types/app-bindings";
 import { authRouter } from "./auth/authRouter";
-import { usersRouter } from "./users/index";
 
 const app = createRouter();
 
 export function registerApiRoutes(app: AppOpenAPI) {
-  return app.route("/auth", authRouter).route("/users", usersRouter);
+  return app.route("/auth", authRouter);
 }
 
 export const apiRoutes = registerApiRoutes(app);

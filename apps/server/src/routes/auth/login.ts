@@ -12,8 +12,14 @@ import { hashPassword } from "../../utils/password";
 import db from "../../db/dbConfig";
 import { lowercase } from "../../utils/db-methods";
 import { createSession } from "../../utils/session";
+import { inputErrorResponse } from "../../utils/inputErrorResponse";
 
 const tags = ["auth"];
+
+export const loginValidationSchema = z.object({
+  username: z.string().trim().toLowerCase(),
+  password: z.string(),
+});
 
 const errors = {
   userNotFound: customError(
@@ -30,12 +36,8 @@ const errors = {
     },
     BAD_REQUEST
   ),
+  default: inputErrorResponse(loginValidationSchema),
 };
-
-export const loginValidationSchema = z.object({
-  username: z.string().trim().toLowerCase().max(3),
-  password: z.string(),
-});
 
 export const login = createRoute({
   path: "/login",
@@ -48,6 +50,7 @@ export const login = createRoute({
     [OK]: jsonContent(z.string(), "The session data."),
     [NOT_FOUND]: errors.userNotFound.template,
     [BAD_REQUEST]: errors.wrongPassword.template,
+    [UNPROCESSABLE_ENTITY]: errors.default,
   },
 });
 
@@ -62,13 +65,13 @@ export const loginHandler: AppRouteHandler<typeof login> = async (c) => {
   });
 
   if (!user) {
-    return c.json(errors.userNotFound.content, 404);
+    return c.json(errors.userNotFound.content, NOT_FOUND);
   }
 
   if (user.hash !== hash) {
-    return c.json(errors.wrongPassword.content, 400);
+    return c.json(errors.wrongPassword.content, BAD_REQUEST);
   }
 
   await createSession(c, user.id);
-  return c.json("Success.", 200);
+  return c.json("Success.", OK);
 };

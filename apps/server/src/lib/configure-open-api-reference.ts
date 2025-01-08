@@ -1,6 +1,7 @@
 import type { AppOpenAPI } from "../types/app-bindings.js";
 import packageJSON from "../../package.json" assert { type: "json" };
 import { apiReference } from "@scalar/hono-api-reference";
+import { swaggerUI } from "@hono/swagger-ui";
 
 export default function configureOpenApiReference(app: AppOpenAPI) {
   app.doc31("/doc", {
@@ -10,6 +11,8 @@ export default function configureOpenApiReference(app: AppOpenAPI) {
       title: "Nexus API",
     },
   });
+
+  app.get("/ui", swaggerUI({ url: "/doc" }));
 
   app.get(
     "/reference",

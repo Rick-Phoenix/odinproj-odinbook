@@ -8,20 +8,6 @@ export function createRouter() {
   return new OpenAPIHono<AppBindings>({
     strict: false,
     defaultHook,
-    // defaultHook: (result, c) => {
-    //   if (!result.success && result.error.issues[0].code === "custom") {
-    //     const { params, ...error } = result.error.issues[0];
-    //     console.log(params?.statusCode);
-    //     return c.json(
-    //       {
-    //         success: result.success,
-    //         error: error,
-    //       },
-
-    //       params?.statusCode ?? 400
-    //     );
-    //   }
-    // },
   });
 }
 
