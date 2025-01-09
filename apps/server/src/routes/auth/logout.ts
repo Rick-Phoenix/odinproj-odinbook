@@ -2,7 +2,7 @@ import { createRoute, z } from "@hono/zod-openapi";
 import { OK, UNAUTHORIZED } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import type { AppRouteHandler } from "../../types/app-bindings";
-import { customError } from "../../utils/customError";
+import { customError } from "../../utils/customErrors";
 import { invalidateSession, userIsAuthenticated } from "../../utils/session";
 
 const tags = ["auth"];

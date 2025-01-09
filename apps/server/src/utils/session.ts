@@ -3,11 +3,12 @@ import { encodeHexLowerCase } from "@oslojs/encoding";
 import { webcrypto } from "crypto";
 import { eq } from "drizzle-orm";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
-import { UNAUTHORIZED } from "stoker/http-status-codes";
+import { CONFLICT, UNAUTHORIZED } from "stoker/http-status-codes";
 import db from "../db/dbConfig";
 import { sessionTable, userTable } from "../db/schema";
 import type { AppContext, AppMiddleware } from "../types/app-bindings";
 import { entryExists } from "./db-methods";
+import { accessDeniedError, alreadyLoggedError } from "./customErrors";
 
 export async function createSession(c: AppContext, userId: string) {
   const sessionToken = webcrypto.randomUUID();
@@ -81,11 +82,18 @@ export async function invalidateSession(c: AppContext, sessionId: string) {
 }
 
 export const protectRoute: AppMiddleware = async (c, next) => {
-  const user = c.get("user");
-  if (!user) return c.json("Access denied.", UNAUTHORIZED);
+  if (!userIsAuthenticated(c))
+    return c.json(accessDeniedError.content, UNAUTHORIZED);
   await next();
 };
 
 export const userIsAuthenticated = (c: AppContext) => {
   return !!c.var.user && !!c.var.session;
+};
+
+export const rejectIfAlreadyLogged: AppMiddleware = async (c, next) => {
+  if (c.req.path === "/api/auth/logout") return await next();
+  if (userIsAuthenticated(c))
+    return c.json(alreadyLoggedError.content, CONFLICT);
+  await next();
 };

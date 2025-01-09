@@ -12,10 +12,11 @@ import { emailIsNotAvailable, usernameIsNotAvailable } from "../../db/queries";
 import { userTable } from "../../db/schema";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import { selectUserSchema } from "../../types/zod-schemas";
-import { customError } from "../../utils/customError";
+import { customError } from "../../utils/customErrors";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
 import { hashPassword } from "../../utils/password";
-import { createSession } from "../../utils/session";
+import { createSession, userIsAuthenticated } from "../../utils/session";
+import { alreadyLoggedError } from "@/utils/customErrors";
 
 const tags = ["auth"];
 
@@ -64,6 +65,7 @@ const errors = {
     },
     CONFLICT
   ),
+  userIsLoggedIn: alreadyLoggedError,
 };
 
 export const signup = createRoute({

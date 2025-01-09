@@ -1,6 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { OK } from "stoker/http-status-codes";
-import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
+import { jsonContent } from "stoker/openapi/helpers";
 import type { AppRouteHandler } from "../../types/app-bindings";
 
 const tags = ["protected"];

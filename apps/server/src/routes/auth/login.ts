@@ -1,4 +1,5 @@
 import { createRoute, z } from "@hono/zod-openapi";
+import { verifySync } from "@node-rs/argon2";
 import {
   BAD_REQUEST,
   CONFLICT,
@@ -7,15 +8,14 @@ import {
   UNPROCESSABLE_ENTITY,
 } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import type { AppRouteHandler } from "../../types/app-bindings";
-import { customError } from "../../utils/customError";
-import { hashPassword } from "../../utils/password";
 import db from "../../db/dbConfig";
-import { lowercase } from "../../utils/db-methods";
-import { createSession, userIsAuthenticated } from "../../utils/session";
-import { inputErrorResponse } from "../../utils/inputErrorResponse";
-import { verifySync } from "@node-rs/argon2";
+import type { AppRouteHandler } from "../../types/app-bindings";
 import { selectUserSchema } from "../../types/zod-schemas";
+import { customError } from "../../utils/customErrors";
+import { lowercase } from "../../utils/db-methods";
+import { inputErrorResponse } from "../../utils/inputErrorResponse";
+import { createSession } from "../../utils/session";
+import { alreadyLoggedError } from "@/utils/customErrors";
 
 const tags = ["auth"];
 
@@ -40,10 +40,7 @@ const errors = {
     BAD_REQUEST
   ),
   default: inputErrorResponse(loginValidationSchema),
-  userAlreadyLoggedIn: customError(
-    { message: "User is already logged in." },
-    CONFLICT
-  ),
+  userAlreadyLoggedIn: alreadyLoggedError,
 };
 
 export const login = createRoute({
@@ -63,9 +60,6 @@ export const login = createRoute({
 });
 
 export const loginHandler: AppRouteHandler<typeof login> = async (c) => {
-  if (userIsAuthenticated(c))
-    return c.json(errors.userAlreadyLoggedIn.content, CONFLICT);
-
   const { username, password } = c.req.valid("json");
   const user = await db.query.userTable.findFirst({
     where(existingUser, { eq }) {

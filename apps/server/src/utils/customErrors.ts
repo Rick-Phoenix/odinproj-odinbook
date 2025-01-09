@@ -1,5 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { httpCodesMap } from "../lib/constants";
+import { BAD_REQUEST, CONFLICT, UNAUTHORIZED } from "stoker/http-status-codes";
 
 export type CustomError = {
   message: string;
@@ -51,3 +52,18 @@ export function customError(error: CustomError, code: number) {
     content,
   };
 }
+export const alreadyLoggedError = customError(
+  { message: "User is already logged in." },
+  CONFLICT
+);
+export const accessDeniedError = customError(
+  { message: "Access denied." },
+  UNAUTHORIZED
+);
+
+export const invalidRequestError = customError(
+  {
+    message: "Invalid request.",
+  },
+  BAD_REQUEST
+);
