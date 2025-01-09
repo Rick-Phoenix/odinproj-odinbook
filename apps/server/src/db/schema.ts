@@ -1,5 +1,6 @@
 import { type InferSelectModel } from "drizzle-orm";
 import {
+  integer,
   pgTable,
   text,
   timestamp,
@@ -13,8 +14,11 @@ export const userTable = pgTable(
   {
     id: text("id").primaryKey(),
     username: varchar("username", { length: 31 }).notNull(),
-    email: varchar("email", { length: 63 }).notNull(),
-    hash: text("hash").notNull(),
+    email: varchar("email", { length: 63 }),
+    hash: text("hash"),
+    avatarUrl: text("avatarUrl"),
+    oauthProvider: text("oauthProvider"),
+    oauthId: integer("oauthId"),
   },
   (table) => [
     uniqueIndex("emailUniqueIndex").on(lowercase(trim(table.email))),

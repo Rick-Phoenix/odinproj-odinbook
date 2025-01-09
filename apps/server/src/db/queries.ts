@@ -19,3 +19,27 @@ export async function usernameIsNotAvailable(
 
   return result !== undefined;
 }
+
+export async function findUserByUsername(username: string) {
+  return await db.query.userTable.findFirst({
+    where(user, { eq }) {
+      return eq(lowercase(user.username), username.toLocaleLowerCase());
+    },
+  });
+}
+
+export async function findUserByEmail(email: string) {
+  return await db.query.userTable.findFirst({
+    where(user, { eq }) {
+      return eq(user.email, email.toLocaleLowerCase());
+    },
+  });
+}
+
+export async function findUserByOauthCredentials(provider: string, id: number) {
+  return await db.query.userTable.findFirst({
+    where(user, { eq, and }) {
+      return and(eq(user.oauthProvider, provider), eq(user.oauthId, id));
+    },
+  });
+}
