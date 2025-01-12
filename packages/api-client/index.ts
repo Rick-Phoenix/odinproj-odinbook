@@ -9,7 +9,8 @@ export type {
   InferRequestType,
   InferResponseType,
 } from "hono/client";
-
+export { zodSchemas } from "@nexus/hono-api/types";
+import type { dbtypes } from "@nexus/hono-api/types";
 const client = hc<ApiRoutes>("");
 
 export type Client = typeof client;

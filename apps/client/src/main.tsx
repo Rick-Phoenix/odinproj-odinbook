@@ -27,7 +27,19 @@ const queryClient = new QueryClient({
   },
 });
 
-const router = createRouter({ routeTree });
+const router = createRouter({
+  routeTree,
+  context: {
+    queryClient,
+    foo: 1,
+  },
+  defaultPreload: "intent",
+  // Since we're using React Query, we don't want loader calls to ever be stale
+  // This will ensure that the loader is always called when the route is preloaded or visited
+  defaultPreloadStaleTime: 0,
+  // defaultErrorComponent: DefaultCatchBoundary,
+  //     defaultNotFoundComponent: () => <NotFound />,
+});
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {

@@ -20,7 +20,7 @@ import { alreadyLoggedError } from "@/utils/customErrors";
 
 const tags = ["auth"];
 
-export const signupUserSchema = createInsertSchema(userTable)
+export const insertUserSchema = createInsertSchema(userTable)
   .pick({ username: true, email: true })
   .extend({
     username: z
@@ -75,14 +75,14 @@ export const signup = createRoute({
   tags,
   request: {
     body: jsonContentRequired(
-      signupUserSchema,
+      insertUserSchema,
       "The credentials for signing up."
     ),
   },
   responses: {
     [CREATED]: jsonContent(selectUserSchema, "Success message."),
     [CONFLICT]: errors.usernameIsTaken.template,
-    [UNPROCESSABLE_ENTITY]: inputErrorResponse(signupUserSchema),
+    [UNPROCESSABLE_ENTITY]: inputErrorResponse(insertUserSchema),
   },
 });
 

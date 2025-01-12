@@ -78,6 +78,9 @@ importers:
       '@tanstack/eslint-plugin-query':
         specifier: ^5.62.16
         version: 5.62.16(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2)
+      '@tanstack/eslint-plugin-router':
+        specifier: ^1.92.7
+        version: 1.92.7(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2)
       '@tanstack/router-devtools':
         specifier: ^1.95.3
         version: 1.95.3(@tanstack/react-router@1.95.3(react-dom@19.0.0(react@19.0.0))(react@19.0.0))(csstype@3.1.3)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1701,6 +1704,11 @@ packages:
 
   '@tanstack/eslint-plugin-query@5.62.16':
     resolution: {integrity: sha512-VhnHSQ/hc62olLzGhlLJ4BJGWynwjs3cDMsByasKJ3zjW1YZ+6raxOv0gHHISm+VEnAY42pkMowmSWrXfL4NTw==}
+    peerDependencies:
+      eslint: ^8.57.0 || ^9.0.0
+
+  '@tanstack/eslint-plugin-router@1.92.7':
+    resolution: {integrity: sha512-6TuGhfP2Uy9xWkUo5/BF210Bdev8ChtKyHwrJkCUO2Hvp/qnmHB+36KmPm2uV4PzxiVx6/fFKjGqGQDE7IoEmw==}
     peerDependencies:
       eslint: ^8.57.0 || ^9.0.0
 
@@ -7384,6 +7392,14 @@ snapshots:
       '@unhead/schema': 1.11.14
 
   '@tanstack/eslint-plugin-query@5.62.16(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2)':
+    dependencies:
+      '@typescript-eslint/utils': 8.18.2(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2)
+      eslint: 9.17.0(jiti@2.4.2)
+    transitivePeerDependencies:
+      - supports-color
+      - typescript
+
+  '@tanstack/eslint-plugin-router@1.92.7(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2)':
     dependencies:
       '@typescript-eslint/utils': 8.18.2(eslint@9.17.0(jiti@2.4.2))(typescript@5.7.2)
       eslint: 9.17.0(jiti@2.4.2)
