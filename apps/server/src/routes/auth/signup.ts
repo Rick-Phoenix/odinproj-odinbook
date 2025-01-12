@@ -39,7 +39,8 @@ export const signupUserSchema = createInsertSchema(userTable)
       .email("Invalid email format.")
       .min(5, "Email must be at least 5 characters long.")
       .max(63, "Email cannot be longer than 63 characters.")
-      .regex(/[^<>"']/, "Email contains invalid characters."),
+      .regex(/[^<>"']/, "Email contains invalid characters.")
+      .regex(/^.+@.+\..+$/, "Invalid email format."),
     password: z
       .string()
       .regex(

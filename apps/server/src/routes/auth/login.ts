@@ -71,7 +71,7 @@ export const loginHandler: AppRouteHandler<typeof login> = async (c) => {
     return c.json(errors.userNotFound.content, NOT_FOUND);
   }
 
-  if (!verifySync(user.hash, password)) {
+  if (!user.hash || !verifySync(user.hash, password)) {
     return c.json(errors.wrongPassword.content, BAD_REQUEST);
   }
 

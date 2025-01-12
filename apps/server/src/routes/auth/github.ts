@@ -28,7 +28,6 @@ export const github = createRoute({
   path: "/github",
   method: "get",
   tags,
-  request: {},
   responses: {
     [MOVED_TEMPORARILY]: { description: "Redirecting to Github's OAUTH page." },
   },
