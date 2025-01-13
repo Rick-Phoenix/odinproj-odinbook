@@ -1,6 +1,6 @@
-import { createRoute, z } from "@hono/zod-openapi";
+import { alreadyLoggedError } from "@/utils/customErrors";
+import { createRoute } from "@hono/zod-openapi";
 import { webcrypto } from "crypto";
-import { createInsertSchema } from "drizzle-zod";
 import {
   CONFLICT,
   CREATED,
@@ -11,45 +11,13 @@ import db from "../../db/dbConfig";
 import { emailIsNotAvailable, usernameIsNotAvailable } from "../../db/queries";
 import { userTable } from "../../db/schema";
 import type { AppRouteHandler } from "../../types/app-bindings";
-import { selectUserSchema } from "../../types/zod-schemas";
+import { insertUserSchema, userSchema } from "../../types/zod-schemas";
 import { customError } from "../../utils/customErrors";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
 import { hashPassword } from "../../utils/password";
-import { createSession, userIsAuthenticated } from "../../utils/session";
-import { alreadyLoggedError } from "@/utils/customErrors";
+import { createSession } from "../../utils/session";
 
 const tags = ["auth"];
-
-export const insertUserSchema = createInsertSchema(userTable)
-  .pick({ username: true, email: true })
-  .extend({
-    username: z
-      .string()
-      .trim()
-      .min(3, "Username must be at least 3 characters long.")
-      .max(31, "Username cannot be longer than 31 characters.")
-      .regex(
-        /^[a-zA-Z0-9_-]+$/,
-        "Username can only contain alphanumeric characters, dashes and underscores."
-      ),
-    email: z
-      .string()
-      .trim()
-      .toLowerCase()
-      .email("Invalid email format.")
-      .min(5, "Email must be at least 5 characters long.")
-      .max(63, "Email cannot be longer than 63 characters.")
-      .regex(/[^<>"']/, "Email contains invalid characters.")
-      .regex(/^.+@.+\..+$/, "Invalid email format."),
-    password: z
-      .string()
-      .regex(
-        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ .%^&*-]).{8,}$/,
-        "Password must contain at least one uppercase letter, one lowercase letter, a number and a special character."
-      )
-      .min(8, "Password must be at least 8 characters long")
-      .max(255, "Password cannot be longer than 255 characters."),
-  });
 
 const errors = {
   usernameIsTaken: customError(
@@ -80,7 +48,7 @@ export const signup = createRoute({
     ),
   },
   responses: {
-    [CREATED]: jsonContent(selectUserSchema, "Success message."),
+    [CREATED]: jsonContent(userSchema, "Success message."),
     [CONFLICT]: errors.usernameIsTaken.template,
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(insertUserSchema),
   },

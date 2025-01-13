@@ -1,13 +1,3 @@
-import RPC from "@nexus/api-client";
-import type {
-  ClientRequest,
-  Client,
-  ClientRequestOptions,
-  ClientResponse,
-  InferRequestType,
-  InferResponseType,
-  Fetch,
-  Schema,
-} from "@nexus/api-client";
+import RPC from "@nexus/shared-schemas";
 
 export const api = RPC("/api");

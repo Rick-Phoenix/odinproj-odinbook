@@ -1,4 +1,4 @@
-import { createRoute, z } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
 import { verifySync } from "@node-rs/argon2";
 import {
   BAD_REQUEST,
@@ -10,7 +10,7 @@ import {
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import db from "../../db/dbConfig";
 import type { AppRouteHandler } from "../../types/app-bindings";
-import { selectUserSchema } from "../../types/zod-schemas";
+import { loginValidationSchema, userSchema } from "../../types/zod-schemas";
 import { customError } from "../../utils/customErrors";
 import { lowercase } from "../../utils/db-methods";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
@@ -18,11 +18,6 @@ import { createSession } from "../../utils/session";
 import { alreadyLoggedError } from "@/utils/customErrors";
 
 const tags = ["auth"];
-
-export const loginValidationSchema = z.object({
-  username: z.string().trim().toLowerCase(),
-  password: z.string(),
-});
 
 const errors = {
   userNotFound: customError(
@@ -51,7 +46,7 @@ export const login = createRoute({
     body: jsonContentRequired(loginValidationSchema, "The user's credentials."),
   },
   responses: {
-    [OK]: jsonContent(selectUserSchema, "The user object."),
+    [OK]: jsonContent(userSchema, "The user object."),
     [NOT_FOUND]: errors.userNotFound.template,
     [BAD_REQUEST]: errors.wrongPassword.template,
     [UNPROCESSABLE_ENTITY]: errors.default,

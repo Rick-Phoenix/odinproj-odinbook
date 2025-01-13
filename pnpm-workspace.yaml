@@ -5,3 +5,4 @@ packages:
 catalog:
   hono: ^4.6.15
   typescript: ^5.7.2
+  drizzle-zod: 0.5.1

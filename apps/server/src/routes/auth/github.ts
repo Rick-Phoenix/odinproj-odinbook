@@ -19,7 +19,7 @@ import type {
   githubTokenResponse,
   githubUserData,
 } from "../../types/oauth-responses";
-import { selectUserSchema } from "../../types/zod-schemas";
+import { userSchema } from "../../types/zod-schemas";
 import { createSession } from "../../utils/session";
 
 const tags = ["auth"];
@@ -63,8 +63,8 @@ export const githubCallback = createRoute({
   },
   responses: {
     [BAD_REQUEST]: invalidRequestError.template,
-    [OK]: jsonContent(selectUserSchema, "The user's data."),
-    [CREATED]: jsonContent(selectUserSchema, "The user's data."),
+    [OK]: jsonContent(userSchema, "The user's data."),
+    [CREATED]: jsonContent(userSchema, "The user's data."),
   },
 });
 

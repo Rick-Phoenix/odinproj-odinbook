@@ -1,16 +1,16 @@
+import type { User } from "@nexus/shared-schemas";
+import type { QueryClient } from "@tanstack/react-query";
 import {
-  createRootRoute,
   createRootRouteWithContext,
   Link,
   Outlet,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Button } from "../components/ui/button";
-import type { QueryClient } from "@tanstack/react-query";
 
 export interface RouterAppContext {
   queryClient: QueryClient;
-  foo: number;
+  user: User;
 }
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
