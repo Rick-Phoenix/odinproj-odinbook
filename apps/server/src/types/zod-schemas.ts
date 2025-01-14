@@ -12,7 +12,7 @@ export const loginValidationSchema = z.object({
   password: z.string(),
 });
 
-export const insertUserSchema = createInsertSchema(userTable)
+export const signupValidationSchema = createInsertSchema(userTable)
   .pick({ username: true, email: true })
   .extend({
     username: z

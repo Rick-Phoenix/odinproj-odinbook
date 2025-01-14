@@ -12,18 +12,32 @@ export const Route = createFileRoute("/login")({
 
 function LoginPage() {
   const form = useForm({
+    defaultValues: {
+      username: "",
+      password: "",
+    },
     validators: {
-      onChange: zodSchemas.loginValidationSchema,
+      onChange: zodSchemas.signupValidationSchema.pick({
+        username: true,
+        password: true,
+      }),
     },
   });
   return (
     <LoginForm>
-      <form>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
         <div className="flex flex-col gap-6">
           <div className="grid gap-2">
             <form.Field
               name="username"
               children={(field) => {
+                console.log(field.state);
                 return (
                   <>
                     <Label htmlFor={field.name}>Username</Label>
@@ -33,8 +47,14 @@ function LoginPage() {
                       value={field.state.value}
                       placeholder="Username"
                       onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
                       required
                     />
+                    {field.state.meta.isTouched &&
+                    field.state.meta.errors.length ? (
+                      <em>{field.state.meta.errors.join(", ")}</em>
+                    ) : null}
+                    {field.state.meta.isValidating ? "Validating..." : null}
                   </>
                 );
               }}
@@ -53,8 +73,14 @@ function LoginPage() {
                       value={field.state.value}
                       placeholder="Password"
                       onBlur={field.handleBlur}
+                      onChange={(e) => field.handleChange(e.target.value)}
                       required
                     />
+                    {field.state.meta.isTouched &&
+                    field.state.meta.errors.length ? (
+                      <em>{field.state.meta.errors.join(", ")}</em>
+                    ) : null}
+                    {field.state.meta.isValidating ? "Validating..." : null}
                   </>
                 );
               }}

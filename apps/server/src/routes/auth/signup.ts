@@ -11,7 +11,7 @@ import db from "../../db/dbConfig";
 import { emailIsNotAvailable, usernameIsNotAvailable } from "../../db/queries";
 import { userTable } from "../../db/schema";
 import type { AppRouteHandler } from "../../types/app-bindings";
-import { insertUserSchema, userSchema } from "../../types/zod-schemas";
+import { signupValidationSchema, userSchema } from "../../types/zod-schemas";
 import { customError } from "../../utils/customErrors";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
 import { hashPassword } from "../../utils/password";
@@ -43,14 +43,14 @@ export const signup = createRoute({
   tags,
   request: {
     body: jsonContentRequired(
-      insertUserSchema,
+      signupValidationSchema,
       "The credentials for signing up."
     ),
   },
   responses: {
     [CREATED]: jsonContent(userSchema, "Success message."),
     [CONFLICT]: errors.usernameIsTaken.template,
-    [UNPROCESSABLE_ENTITY]: inputErrorResponse(insertUserSchema),
+    [UNPROCESSABLE_ENTITY]: inputErrorResponse(signupValidationSchema),
   },
 });
 
