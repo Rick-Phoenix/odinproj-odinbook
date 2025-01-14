@@ -14,10 +14,10 @@ export interface RouterAppContext {
 }
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
-  component: App,
+  component: Root,
 });
 
-function App() {
+function Root() {
   return (
     <>
       <div className="p-2 flex gap-2">

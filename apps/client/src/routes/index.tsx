@@ -1,8 +1,4 @@
-import {
-  createFileRoute,
-  useRouteContext,
-  useRouter,
-} from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useFetchUser } from "../hooks/auth";
 
 export const Route = createFileRoute("/")({
@@ -11,7 +7,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   const user = useFetchUser();
-  console.log("🚀 ~ Index ~ user:", user);
+
   return user === null ? (
     <div>Logged out</div>
   ) : (

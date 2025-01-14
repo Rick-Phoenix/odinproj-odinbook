@@ -7,10 +7,10 @@ import "./styles/index.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { StrictMode, use } from "react";
+import { StrictMode, Suspense } from "react";
 import ReactDOM from "react-dom/client";
+import { useFetchUser } from "./hooks/auth";
 import { routeTree } from "./routeTree.gen";
-import { useFetchUser, UserContext, UserProvider } from "./hooks/auth";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -34,24 +34,8 @@ const router = createRouter({
   //     defaultNotFoundComponent: () => <NotFound />,
 });
 
-// function App() {
-//   const user = useFetchUser();
-//   console.log("🚀 ~ App ~ user:", user);
-//   return <RouterProvider router={router} context={{ user }} />;
-// }
-
 function App() {
   const user = useFetchUser();
-  console.log("🚀 ~ App ~ user:", user);
-  return (
-    <UserProvider>
-      <InnerApp />
-    </UserProvider>
-  );
-}
-
-function InnerApp() {
-  const user = use(UserContext);
   console.log("🚀 ~ App ~ user:", user);
   return <RouterProvider router={router} context={{ user }} />;
 }
@@ -62,7 +46,9 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <App />
+        <Suspense>
+          <App />
+        </Suspense>
       </QueryClientProvider>
     </StrictMode>
   );

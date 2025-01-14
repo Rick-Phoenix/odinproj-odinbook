@@ -1,5 +1,4 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import { useFetchUser } from "../hooks/auth";
 
 export const Route = createFileRoute("/_auth")({
   component: RouteComponent,
@@ -8,11 +7,8 @@ export const Route = createFileRoute("/_auth")({
     if (!user) {
       // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw redirect({
-        to: "/",
+        to: "/login",
         search: {
-          // Use the current location to power a redirect after login
-          // (Do not use `router.state.resolvedLocation` as it can
-          // potentially lag behind the actual current location)
           redirect: location.href,
         },
       });
@@ -21,10 +17,5 @@ export const Route = createFileRoute("/_auth")({
 });
 
 function RouteComponent() {
-  return (
-    <div>
-      <div>Hello auth</div>
-      <Outlet />
-    </div>
-  );
+  return <Outlet />;
 }

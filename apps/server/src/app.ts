@@ -15,7 +15,7 @@ app.use(csrf());
 app.use(registerSession);
 
 // Route Specific Middleware
-app.use("/api/protected/*", protectRoute);
+app.use("/api/*", protectRoute);
 app.use("/api/auth/*", rejectIfAlreadyLogged);
 
 // app.use(async (c, next) => {
