@@ -3,15 +3,14 @@
 // @ts-expect-error
 import "vite/modulepreload-polyfill";
 
-import "./index.css";
+import "./styles/index.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { StrictMode, Suspense } from "react";
-import { ErrorBoundary } from "react-error-boundary";
-import ErrorFallback from "./ErrorFallback.tsx";
-import { routeTree } from "./routeTree.gen";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { StrictMode, use } from "react";
 import ReactDOM from "react-dom/client";
+import { routeTree } from "./routeTree.gen";
+import { useFetchUser, UserContext, UserProvider } from "./hooks/auth";
 
 declare module "@tanstack/react-router" {
   interface Register {
@@ -20,26 +19,42 @@ declare module "@tanstack/react-router" {
 }
 
 const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: false,
-    },
-  },
+  defaultOptions: { queries: {} },
 });
 
 const router = createRouter({
   routeTree,
   context: {
     queryClient,
-    foo: 1,
+    user: undefined!,
   },
   defaultPreload: "intent",
-  // Since we're using React Query, we don't want loader calls to ever be stale
-  // This will ensure that the loader is always called when the route is preloaded or visited
   defaultPreloadStaleTime: 0,
   // defaultErrorComponent: DefaultCatchBoundary,
   //     defaultNotFoundComponent: () => <NotFound />,
 });
+
+// function App() {
+//   const user = useFetchUser();
+//   console.log("🚀 ~ App ~ user:", user);
+//   return <RouterProvider router={router} context={{ user }} />;
+// }
+
+function App() {
+  const user = useFetchUser();
+  console.log("🚀 ~ App ~ user:", user);
+  return (
+    <UserProvider>
+      <InnerApp />
+    </UserProvider>
+  );
+}
+
+function InnerApp() {
+  const user = use(UserContext);
+  console.log("🚀 ~ App ~ user:", user);
+  return <RouterProvider router={router} context={{ user }} />;
+}
 
 const rootElement = document.getElementById("root")!;
 if (!rootElement.innerHTML) {
@@ -47,11 +62,7 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
-        <ErrorBoundary fallbackRender={ErrorFallback}>
-          <Suspense fallback={<div>Loading...</div>}>
-            <RouterProvider router={router} />
-          </Suspense>
-        </ErrorBoundary>
+        <App />
       </QueryClientProvider>
     </StrictMode>
   );

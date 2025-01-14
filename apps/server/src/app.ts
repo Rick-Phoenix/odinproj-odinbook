@@ -4,11 +4,9 @@ import createApp from "./lib/create-app.js";
 import { apiRoutes } from "./routes/routingConfig.js";
 import env from "./types/env.js";
 import { csrf } from "hono/csrf";
-import {
-  protectRoute,
-  registerSession,
-  rejectIfAlreadyLogged,
-} from "./utils/session.js";
+import { registerSession } from "./utils/session.js";
+import { rejectIfAlreadyLogged } from "./middlewares/auth-middleware.js";
+import { protectRoute } from "./middlewares/auth-middleware.js";
 
 const app = createApp();
 

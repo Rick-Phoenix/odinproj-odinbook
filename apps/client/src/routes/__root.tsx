@@ -10,7 +10,7 @@ import { Button } from "../components/ui/button";
 
 export interface RouterAppContext {
   queryClient: QueryClient;
-  user: User;
+  user: User | null | undefined;
 }
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
@@ -21,14 +21,24 @@ function App() {
   return (
     <>
       <div className="p-2 flex gap-2">
-        <Button>
+        <Button asChild>
           <Link to="/" className="[&.active]:font-bold">
             Home
-          </Link>{" "}
+          </Link>
         </Button>
-        <Button>
+        <Button asChild>
           <Link to="/about" className="[&.active]:font-bold">
             About
+          </Link>
+        </Button>
+        <Button asChild>
+          <Link to="/third" className="[&.active]:font-bold">
+            third
+          </Link>
+        </Button>
+        <Button asChild>
+          <Link to="/dash" className="[&.active]:font-bold">
+            dash
           </Link>
         </Button>
       </div>
