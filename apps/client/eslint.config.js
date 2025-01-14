@@ -49,6 +49,17 @@ export default tseslint.config(
           },
         },
       ],
+      "@typescript-eslint/only-throw-error": [
+        "error",
+        {
+          allow: [
+            {
+              from: "@tanstack/react-router",
+              name: ["redirect"],
+            },
+          ],
+        },
+      ],
     },
   },
   ...pluginQuery.configs["flat/recommended"],

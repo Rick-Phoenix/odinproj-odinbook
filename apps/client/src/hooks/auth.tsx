@@ -1,6 +1,5 @@
-import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "../lib/api-client";
-import type { AppRouter } from "../main";
 
 export const userQueryOptions = {
   queryKey: ["user"],
@@ -25,9 +24,9 @@ export function useUser() {
   return user;
 }
 
-export async function handleLogout(router: AppRouter) {
+export async function handleLogout() {
   await api.auth.logout.$post();
-  await router.navigate({ to: "/" });
+  location.href = "/";
 }
 
 // Context based auth: not necessary at the moment

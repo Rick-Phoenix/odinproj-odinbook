@@ -41,13 +41,7 @@ function Root() {
             </Link>
           </Button>
         ) : (
-          <Button
-            onClick={async () => {
-              await handleLogout(router);
-            }}
-          >
-            Log Out
-          </Button>
+          <Button onClick={handleLogout}>Log Out</Button>
         )}
       </div>
       <hr />

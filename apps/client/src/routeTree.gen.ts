@@ -11,19 +11,12 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as ThirdImport } from './routes/third'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthDashImport } from './routes/_auth/dash'
 
 // Create/Update Routes
-
-const ThirdRoute = ThirdImport.update({
-  id: '/third',
-  path: '/third',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const LoginRoute = LoginImport.update({
   id: '/login',
@@ -73,13 +66,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginImport
       parentRoute: typeof rootRoute
     }
-    '/third': {
-      id: '/third'
-      path: '/third'
-      fullPath: '/third'
-      preLoaderRoute: typeof ThirdImport
-      parentRoute: typeof rootRoute
-    }
     '/_auth/dash': {
       id: '/_auth/dash'
       path: '/dash'
@@ -106,7 +92,6 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
-  '/third': typeof ThirdRoute
   '/dash': typeof AuthDashRoute
 }
 
@@ -114,7 +99,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
-  '/third': typeof ThirdRoute
   '/dash': typeof AuthDashRoute
 }
 
@@ -123,16 +107,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
-  '/third': typeof ThirdRoute
   '/_auth/dash': typeof AuthDashRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/login' | '/third' | '/dash'
+  fullPaths: '/' | '' | '/login' | '/dash'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/login' | '/third' | '/dash'
-  id: '__root__' | '/' | '/_auth' | '/login' | '/third' | '/_auth/dash'
+  to: '/' | '' | '/login' | '/dash'
+  id: '__root__' | '/' | '/_auth' | '/login' | '/_auth/dash'
   fileRoutesById: FileRoutesById
 }
 
@@ -140,14 +123,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthRoute: typeof AuthRouteWithChildren
   LoginRoute: typeof LoginRoute
-  ThirdRoute: typeof ThirdRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthRoute: AuthRouteWithChildren,
   LoginRoute: LoginRoute,
-  ThirdRoute: ThirdRoute,
 }
 
 export const routeTree = rootRoute
@@ -162,8 +143,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/_auth",
-        "/login",
-        "/third"
+        "/login"
       ]
     },
     "/": {
@@ -177,9 +157,6 @@ export const routeTree = rootRoute
     },
     "/login": {
       "filePath": "login.tsx"
-    },
-    "/third": {
-      "filePath": "third.tsx"
     },
     "/_auth/dash": {
       "filePath": "_auth/dash.tsx",

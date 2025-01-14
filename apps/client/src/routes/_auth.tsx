@@ -5,7 +5,6 @@ export const Route = createFileRoute("/_auth")({
   beforeLoad: ({ context }) => {
     const user = context.queryClient.getQueryData(["user"]);
     if (!user) {
-      // eslint-disable-next-line @typescript-eslint/only-throw-error
       throw redirect({
         to: "/login",
         search: {
