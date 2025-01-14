@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, redirect, useRouter } from "@tanstack/react-router";
 import { Button } from "../components/ui/button";
-import { useFetchUser } from "../hooks/auth";
+import { useUser } from "../hooks/auth";
 
 export const Route = createFileRoute("/third")({
   component: RouteComponent,
@@ -28,14 +28,14 @@ function RouteComponent() {
   const context = Route.useRouteContext({});
   console.log("🚀 ~ RouteComponent ~ context.user:", context.user);
   const queryClient = useQueryClient();
-  const user = useFetchUser();
+  const user = useUser();
   const router = useRouter();
   async function logout() {
     queryClient.setQueryData(["user"], (old) => {
       return null;
     });
-    await router.invalidate();
-    console.log("🚀 ~ logout ~ user:", user);
+    await router.navigate({ to: "/" });
+    // await router.invalidate();
   }
 
   async function login() {

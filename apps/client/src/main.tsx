@@ -9,12 +9,13 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode, Suspense } from "react";
 import ReactDOM from "react-dom/client";
-import { useFetchUser } from "./hooks/auth";
+import { useUser } from "./hooks/auth";
 import { routeTree } from "./routeTree.gen";
 
+export type AppRouter = typeof router;
 declare module "@tanstack/react-router" {
   interface Register {
-    router: typeof router;
+    router: AppRouter;
   }
 }
 
@@ -35,7 +36,7 @@ const router = createRouter({
 });
 
 function App() {
-  const user = useFetchUser();
+  const user = useUser();
   console.log("🚀 ~ App ~ user:", user);
   return <RouterProvider router={router} context={{ user }} />;
 }

@@ -8,8 +8,6 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-import { createFileRoute } from '@tanstack/react-router'
-
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
@@ -19,17 +17,7 @@ import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
 import { Route as AuthDashImport } from './routes/_auth/dash'
 
-// Create Virtual Routes
-
-const AboutLazyImport = createFileRoute('/about')()
-
 // Create/Update Routes
-
-const AboutLazyRoute = AboutLazyImport.update({
-  id: '/about',
-  path: '/about',
-  getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/about.lazy').then((d) => d.Route))
 
 const ThirdRoute = ThirdImport.update({
   id: '/third',
@@ -92,13 +80,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ThirdImport
       parentRoute: typeof rootRoute
     }
-    '/about': {
-      id: '/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AboutLazyImport
-      parentRoute: typeof rootRoute
-    }
     '/_auth/dash': {
       id: '/_auth/dash'
       path: '/dash'
@@ -126,7 +107,6 @@ export interface FileRoutesByFullPath {
   '': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/third': typeof ThirdRoute
-  '/about': typeof AboutLazyRoute
   '/dash': typeof AuthDashRoute
 }
 
@@ -135,7 +115,6 @@ export interface FileRoutesByTo {
   '': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/third': typeof ThirdRoute
-  '/about': typeof AboutLazyRoute
   '/dash': typeof AuthDashRoute
 }
 
@@ -145,23 +124,15 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/third': typeof ThirdRoute
-  '/about': typeof AboutLazyRoute
   '/_auth/dash': typeof AuthDashRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/login' | '/third' | '/about' | '/dash'
+  fullPaths: '/' | '' | '/login' | '/third' | '/dash'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/login' | '/third' | '/about' | '/dash'
-  id:
-    | '__root__'
-    | '/'
-    | '/_auth'
-    | '/login'
-    | '/third'
-    | '/about'
-    | '/_auth/dash'
+  to: '/' | '' | '/login' | '/third' | '/dash'
+  id: '__root__' | '/' | '/_auth' | '/login' | '/third' | '/_auth/dash'
   fileRoutesById: FileRoutesById
 }
 
@@ -170,7 +141,6 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   LoginRoute: typeof LoginRoute
   ThirdRoute: typeof ThirdRoute
-  AboutLazyRoute: typeof AboutLazyRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -178,7 +148,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   LoginRoute: LoginRoute,
   ThirdRoute: ThirdRoute,
-  AboutLazyRoute: AboutLazyRoute,
 }
 
 export const routeTree = rootRoute
@@ -194,8 +163,7 @@ export const routeTree = rootRoute
         "/",
         "/_auth",
         "/login",
-        "/third",
-        "/about"
+        "/third"
       ]
     },
     "/": {
@@ -212,9 +180,6 @@ export const routeTree = rootRoute
     },
     "/third": {
       "filePath": "third.tsx"
-    },
-    "/about": {
-      "filePath": "about.lazy.tsx"
     },
     "/_auth/dash": {
       "filePath": "_auth/dash.tsx",

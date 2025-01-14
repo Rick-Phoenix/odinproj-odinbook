@@ -4,9 +4,11 @@ import {
   createRootRouteWithContext,
   Link,
   Outlet,
+  useRouter,
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { Button } from "../components/ui/button";
+import { handleLogout, useUser } from "../hooks/auth";
 
 export interface RouterAppContext {
   queryClient: QueryClient;
@@ -18,29 +20,35 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 });
 
 function Root() {
+  const user = useUser();
+  const isAuthenticated = !!user;
+  const router = useRouter();
   return (
     <>
+      <h3>
+        {isAuthenticated ? "Welcome, " + user.username : "Welcome to Nexus!"}
+      </h3>
       <div className="p-2 flex gap-2">
         <Button asChild>
           <Link to="/" className="[&.active]:font-bold">
             Home
           </Link>
         </Button>
-        <Button asChild>
-          <Link to="/about" className="[&.active]:font-bold">
-            About
-          </Link>
-        </Button>
-        <Button asChild>
-          <Link to="/third" className="[&.active]:font-bold">
-            third
-          </Link>
-        </Button>
-        <Button asChild>
-          <Link to="/dash" className="[&.active]:font-bold">
-            dash
-          </Link>
-        </Button>
+        {!isAuthenticated ? (
+          <Button asChild>
+            <Link to="/login" className="[&.active]:font-bold">
+              Log In
+            </Link>
+          </Button>
+        ) : (
+          <Button
+            onClick={async () => {
+              await handleLogout(router);
+            }}
+          >
+            Log Out
+          </Button>
+        )}
       </div>
       <hr />
       <Outlet />
