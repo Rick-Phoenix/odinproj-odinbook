@@ -1,13 +1,23 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
-import { pinoLogger } from "../middlewares/pino-logger";
+import { UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { notFound, onError } from "stoker/middlewares";
-import { defaultHook } from "stoker/openapi";
+import { pinoLogger } from "../middlewares/pino-logger";
 import type { AppBindings } from "../types/app-bindings";
 
 export function createRouter() {
   return new OpenAPIHono<AppBindings>({
     strict: false,
-    defaultHook,
+    defaultHook: (result, c) => {
+      if (!result.success) {
+        return c.json(
+          {
+            issues: result.error.issues,
+            name: result.error.name,
+          },
+          UNPROCESSABLE_ENTITY
+        );
+      }
+    },
   });
 }
 

@@ -1,17 +1,20 @@
 import { zodSchemas } from "@nexus/shared-schemas";
 import { Label } from "@radix-ui/react-label";
 import { useForm } from "@tanstack/react-form";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { LoginForm } from "../components/login-form";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { formatFormErrors, formErrorsSchema } from "../utils/form-utils";
+import { useMutation } from "@tanstack/react-query";
+import { api } from "../lib/api-client";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
 function LoginPage() {
+  const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
       username: "",
@@ -21,7 +24,29 @@ function LoginPage() {
       onChange: zodSchemas.loginValidationSchema,
     },
     validatorAdapter: formErrorsSchema,
+    onSubmit({ value }) {
+      handleLogin.mutate(value);
+    },
   });
+
+  const handleLogin = useMutation({
+    mutationKey: ["user"],
+    mutationFn: async (value: { username: string; password: string }) => {
+      const res = await api.auth.login.$post({ json: value });
+      const resData = await res.json();
+      if ("issues" in resData) {
+        throw new Error(resData.issues[0].message);
+      }
+      return resData;
+    },
+    onSuccess(data, variables, context) {
+      console.log(data);
+    },
+    onError(error, variables, context) {
+      console.log(error);
+    },
+  });
+
   return (
     <LoginForm>
       <form
@@ -29,7 +54,6 @@ function LoginPage() {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
-          form.reset();
         }}
       >
         <div className="flex flex-col gap-6">
@@ -80,13 +104,17 @@ function LoginPage() {
             ></form.Field>
           </div>
           <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => (
+            selector={(state) => [
+              state.canSubmit,
+              state.isSubmitting,
+              state.isTouched,
+            ]}
+            children={([canSubmit, isSubmitting, isTouched]) => (
               <>
                 <Button
                   type="submit"
-                  aria-disabled={!canSubmit}
-                  disabled={!canSubmit}
+                  aria-disabled={!canSubmit || !isTouched}
+                  disabled={!canSubmit || !isTouched}
                   className="w-full"
                 >
                   Login
