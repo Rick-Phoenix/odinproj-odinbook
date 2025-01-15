@@ -1,10 +1,11 @@
+import { zodSchemas } from "@nexus/shared-schemas";
+import { Label } from "@radix-ui/react-label";
+import { useForm } from "@tanstack/react-form";
 import { createFileRoute } from "@tanstack/react-router";
 import { LoginForm } from "../components/login-form";
-import { Label } from "@radix-ui/react-label";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { useForm } from "@tanstack/react-form";
-import { zodSchemas } from "@nexus/shared-schemas";
+import { formatFormErrors, formErrorsSchema } from "../utils/form-utils";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -17,11 +18,9 @@ function LoginPage() {
       password: "",
     },
     validators: {
-      onChange: zodSchemas.signupValidationSchema.pick({
-        username: true,
-        password: true,
-      }),
+      onChange: zodSchemas.loginValidationSchema,
     },
+    validatorAdapter: formErrorsSchema,
   });
   return (
     <LoginForm>
@@ -30,6 +29,7 @@ function LoginPage() {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
+          form.reset();
         }}
       >
         <div className="flex flex-col gap-6">
@@ -37,7 +37,6 @@ function LoginPage() {
             <form.Field
               name="username"
               children={(field) => {
-                console.log(field.state);
                 return (
                   <>
                     <Label htmlFor={field.name}>Username</Label>
@@ -51,10 +50,7 @@ function LoginPage() {
                       required
                     />
                     {field.state.meta.isTouched &&
-                    field.state.meta.errors.length ? (
-                      <em>{field.state.meta.errors.join(", ")}</em>
-                    ) : null}
-                    {field.state.meta.isValidating ? "Validating..." : null}
+                      formatFormErrors(field.state.meta.errors)}
                   </>
                 );
               }}
@@ -77,21 +73,35 @@ function LoginPage() {
                       required
                     />
                     {field.state.meta.isTouched &&
-                    field.state.meta.errors.length ? (
-                      <em>{field.state.meta.errors.join(", ")}</em>
-                    ) : null}
-                    {field.state.meta.isValidating ? "Validating..." : null}
+                      formatFormErrors(field.state.meta.errors)}
                   </>
                 );
               }}
             ></form.Field>
           </div>
-          <Button type="submit" className="w-full">
-            Login
-          </Button>
-          <Button variant="outline" className="w-full">
-            Login with Google
-          </Button>
+          <form.Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting]}
+            children={([canSubmit, isSubmitting]) => (
+              <>
+                <Button
+                  type="submit"
+                  aria-disabled={!canSubmit}
+                  disabled={!canSubmit}
+                  className="w-full"
+                >
+                  Login
+                </Button>
+                <Button
+                  variant="outline"
+                  className="w-full"
+                  aria-disabled={isSubmitting}
+                  disabled={isSubmitting}
+                >
+                  Login with Google
+                </Button>
+              </>
+            )}
+          />
         </div>
         <div className="mt-4 text-center text-sm">
           Don&apos;t have an account?{" "}

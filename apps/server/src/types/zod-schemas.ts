@@ -7,10 +7,6 @@ export const userSchema = createSelectSchema(userTable);
 export const sessionSchema = createSelectSchema(sessionTable);
 
 // Input Validation Schemas
-export const loginValidationSchema = z.object({
-  username: z.string().trim().toLowerCase(),
-  password: z.string(),
-});
 
 export const signupValidationSchema = createInsertSchema(userTable)
   .pick({ username: true, email: true })
@@ -35,10 +31,15 @@ export const signupValidationSchema = createInsertSchema(userTable)
       .regex(/^.+@.+\..+$/, "Invalid email format."),
     password: z
       .string()
+      .min(8, "Password must be at least 8 characters long.")
       .regex(
         /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ .%^&*-]).{8,}$/,
         "Password must contain at least one uppercase letter, one lowercase letter, a number and a special character."
       )
-      .min(8, "Password must be at least 8 characters long")
       .max(255, "Password cannot be longer than 255 characters."),
   });
+
+export const loginValidationSchema = signupValidationSchema.pick({
+  username: true,
+  password: true,
+});

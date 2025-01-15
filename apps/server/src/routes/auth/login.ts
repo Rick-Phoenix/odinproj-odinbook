@@ -58,7 +58,7 @@ export const loginHandler: AppRouteHandler<typeof login> = async (c) => {
   const { username, password } = c.req.valid("json");
   const user = await db.query.userTable.findFirst({
     where(existingUser, { eq }) {
-      return eq(lowercase(existingUser.username), username);
+      return eq(lowercase(existingUser.username), username.toLocaleLowerCase());
     },
   });
 
