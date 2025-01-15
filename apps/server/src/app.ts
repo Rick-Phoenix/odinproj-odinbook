@@ -18,11 +18,6 @@ app.use(registerSession);
 app.use("/api/*", protectRoute);
 app.use("/api/auth/*", rejectIfAlreadyLogged);
 
-// app.use(async (c, next) => {
-//   console.log(c.var.user);
-//   await next();
-// });
-
 // OpenAPI Endpoints
 configureOpenApiReference(app);
 

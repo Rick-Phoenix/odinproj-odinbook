@@ -1,5 +1,5 @@
 import type { ApiRoutes } from "@nexus/hono-api/routes";
-import * as schemas from "@nexus/hono-api/schemas";
+import * as zodSchemas from "@nexus/hono-api/schemas";
 import { hc } from "hono/client";
 import { z } from "zod";
 export type {
@@ -14,7 +14,7 @@ export type {
 // Shared Types
 export type User = z.infer<typeof schemas.userSchema>;
 export type Session = z.infer<typeof schemas.sessionSchema>;
-export const zodSchemas = schemas;
+export const schemas = zodSchemas;
 
 // Api Client
 const client = hc<ApiRoutes>("");
