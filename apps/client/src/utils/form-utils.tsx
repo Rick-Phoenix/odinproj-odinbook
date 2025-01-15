@@ -8,7 +8,8 @@ export function formatFormErrors(errors: ValidationError[]) {
     return <em>{errors[0]}</em>;
   } else return null;
 }
-export const formErrorsSchema = standardSchemaValidator({
+
+export const singleErrorsAdapter = standardSchemaValidator({
   transformErrors: (errors) => {
     if (!errors.length) return;
     return errors?.[0]?.message;

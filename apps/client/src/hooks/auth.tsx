@@ -29,6 +29,10 @@ export async function handleLogout() {
   location.href = "/";
 }
 
+export function handleGithubLogin() {
+  location.href = "/api/auth/github";
+}
+
 // Context based auth: not necessary at the moment
 
 // export const UserContext = createContext<User | null | undefined>(null);

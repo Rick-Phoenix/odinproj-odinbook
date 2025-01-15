@@ -3,13 +3,7 @@ import { createRoute, z } from "@hono/zod-openapi";
 import { encodeBase64 } from "@oslojs/encoding";
 import { webcrypto } from "crypto";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
-import {
-  BAD_REQUEST,
-  CREATED,
-  MOVED_TEMPORARILY,
-  OK,
-} from "stoker/http-status-codes";
-import { jsonContent } from "stoker/openapi/helpers";
+import { BAD_REQUEST, MOVED_TEMPORARILY } from "stoker/http-status-codes";
 import db from "../../db/dbConfig";
 import { findUserByOauthCredentials } from "../../db/queries";
 import { userTable } from "../../db/schema";
@@ -19,7 +13,6 @@ import type {
   githubTokenResponse,
   githubUserData,
 } from "../../types/oauth-responses";
-import { userSchema } from "../../types/zod-schemas";
 import { createSession } from "../../utils/session";
 
 const tags = ["auth"];
@@ -63,8 +56,9 @@ export const githubCallback = createRoute({
   },
   responses: {
     [BAD_REQUEST]: invalidRequestError.template,
-    [OK]: jsonContent(userSchema, "The user's data."),
-    [CREATED]: jsonContent(userSchema, "The user's data."),
+    [MOVED_TEMPORARILY]: {
+      description: "Redirecting to the client's main page.",
+    },
   },
 });
 
@@ -128,7 +122,6 @@ export const githubCallbackHandler: AppRouteHandler<
   } = userInfoResponse;
 
   let user = await findUserByOauthCredentials("github", githubUserId);
-  let userIsNew = false;
 
   if (!user) {
     const userDetails = {
@@ -149,9 +142,8 @@ export const githubCallbackHandler: AppRouteHandler<
       .returning();
 
     user = newUser;
-    userIsNew = true;
   }
 
   await createSession(c, user.id);
-  return c.json(user, userIsNew ? CREATED : OK);
+  return c.redirect("/");
 };

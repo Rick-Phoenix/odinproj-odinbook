@@ -1,14 +1,15 @@
 import { schemas } from "@nexus/shared-schemas";
 import { Label } from "@radix-ui/react-label";
 import { useForm } from "@tanstack/react-form";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
 import { LoginForm } from "../components/login-form";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
-import { formatFormErrors, formErrorsSchema } from "../utils/form-utils";
-import { useMutation } from "@tanstack/react-query";
+import { handleGithubLogin } from "../hooks/auth";
 import { api } from "../lib/api-client";
 import { errorTypeGuard } from "../utils/error-type-guard";
+import { formatFormErrors, singleErrorsAdapter } from "../utils/form-utils";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
@@ -24,17 +25,16 @@ function LoginPage() {
       onChange: schemas.loginValidationSchema,
       onSubmitAsync: async ({ value }) => {
         try {
-          const formSubmit = await handleLogin.mutateAsync(value);
+          await handleLogin.mutateAsync(value);
           return null;
         } catch (error) {
           if (errorTypeGuard(error)) return error.message;
         }
       },
     },
-    validatorAdapter: formErrorsSchema,
-    onSubmit({ value }) {
+    validatorAdapter: singleErrorsAdapter,
+    onSubmit() {
       location.href = "/";
-      console.log(1);
     },
   });
 
@@ -48,12 +48,6 @@ function LoginPage() {
       }
       return resData;
     },
-    // onSuccess(data, variables, context) {
-    //   location.href = "/";
-    // },
-    // onError(error, variables, context) {
-    //   console.log(error);
-    // },
   });
 
   return (
@@ -115,25 +109,28 @@ function LoginPage() {
               state.canSubmit,
               state.isSubmitting,
               state.isTouched,
+              state.isSubmitted,
             ]}
-            children={([canSubmit, isSubmitting, isTouched]) => {
+            children={([canSubmit, isSubmitting, isTouched, isSubmitted]) => {
               return (
                 <>
                   <Button
                     type="submit"
                     aria-disabled={!canSubmit || !isTouched}
-                    disabled={!canSubmit}
+                    disabled={!canSubmit || !isTouched}
                     className="w-full"
                   >
                     Login
                   </Button>
                   <Button
+                    type="button"
                     variant="outline"
                     className="w-full"
-                    aria-disabled={isSubmitting}
-                    disabled={isSubmitting}
+                    aria-disabled={isSubmitting || isSubmitted}
+                    disabled={isSubmitting || isSubmitted}
+                    onClick={handleGithubLogin}
                   >
-                    Login with Google
+                    Login with Github
                   </Button>
                 </>
               );
