@@ -3,7 +3,7 @@ import { Label } from "@radix-ui/react-label";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { LoginForm } from "../components/login-form";
+import { SignupForm } from "../components/signup-form";
 import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { handleGithubLogin } from "../hooks/auth";
@@ -11,21 +11,22 @@ import { api } from "../lib/api-client";
 import { errorTypeGuard } from "../utils/error-type-guard";
 import { formatFormErrors, singleErrorsAdapter } from "../utils/form-utils";
 
-export const Route = createFileRoute("/login")({
-  component: LoginPage,
+export const Route = createFileRoute("/signup")({
+  component: RouteComponent,
 });
 
-function LoginPage() {
+function RouteComponent() {
   const form = useForm({
     defaultValues: {
       username: "",
       password: "",
+      email: "",
     },
     validators: {
-      onChange: schemas.loginValidationSchema,
+      onChange: schemas.signupValidationSchema,
       onSubmitAsync: async ({ value }) => {
         try {
-          await handleLogin.mutateAsync(value);
+          await handleSignup.mutateAsync(value);
           return null;
         } catch (error) {
           if (errorTypeGuard(error)) return error.message;
@@ -38,10 +39,14 @@ function LoginPage() {
     },
   });
 
-  const handleLogin = useMutation({
+  const handleSignup = useMutation({
     mutationKey: ["user"],
-    mutationFn: async (value: { username: string; password: string }) => {
-      const res = await api.auth.login.$post({ json: value });
+    mutationFn: async (value: {
+      username: string;
+      password: string;
+      email: string;
+    }) => {
+      const res = await api.auth.signup.$post({ json: value });
       const resData = await res.json();
       if ("issues" in resData) {
         throw new Error(resData.issues[0].message);
@@ -51,7 +56,7 @@ function LoginPage() {
   });
 
   return (
-    <LoginForm>
+    <SignupForm>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -72,6 +77,28 @@ function LoginPage() {
                       type="text"
                       value={field.state.value}
                       placeholder="Username"
+                      onChange={(e) => field.handleChange(e.target.value)}
+                      required
+                    />
+                    {field.state.meta.isTouched &&
+                      formatFormErrors(field.state.meta.errors)}
+                  </>
+                );
+              }}
+            ></form.Field>
+          </div>
+          <div className="grid gap-2">
+            <form.Field
+              name="email"
+              children={(field) => {
+                return (
+                  <>
+                    <Label htmlFor={field.name}>Email</Label>
+                    <Input
+                      name={field.name}
+                      type="email"
+                      value={field.state.value}
+                      placeholder="Email"
                       onChange={(e) => field.handleChange(e.target.value)}
                       required
                     />
@@ -120,7 +147,7 @@ function LoginPage() {
                     disabled={!canSubmit || !isTouched}
                     className="w-full"
                   >
-                    Login
+                    Sign Up
                   </Button>
                   <Button
                     type="button"
@@ -130,7 +157,7 @@ function LoginPage() {
                     disabled={isSubmitting || isSubmitted}
                     onClick={handleGithubLogin}
                   >
-                    Login with Github
+                    Sign Up with Github
                   </Button>
                 </>
               );
@@ -148,12 +175,12 @@ function LoginPage() {
           />
         </div>
         <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link to="/signup" className="underline underline-offset-4">
-            Sign Up
+          Already have an account?{"   "}
+          <Link to="/login" className="underline underline-offset-4">
+            Log In
           </Link>
         </div>
       </form>
-    </LoginForm>
+    </SignupForm>
   );
 }

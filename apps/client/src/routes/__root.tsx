@@ -35,11 +35,18 @@ function Root() {
           </Link>
         </Button>
         {!isAuthenticated ? (
-          <Button asChild>
-            <Link to="/login" className="[&.active]:font-bold">
-              Log In
-            </Link>
-          </Button>
+          <>
+            <Button asChild>
+              <Link to="/login" className="[&.active]:font-bold">
+                Log In
+              </Link>
+            </Button>
+            <Button asChild>
+              <Link to="/signup" className="[&.active]:font-bold">
+                Sign Up
+              </Link>
+            </Button>
+          </>
         ) : (
           <Button onClick={handleLogout}>Log Out</Button>
         )}
