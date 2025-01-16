@@ -1,14 +1,10 @@
 import type { User } from "@nexus/shared-schemas";
 import type { QueryClient } from "@tanstack/react-query";
-import {
-  createRootRouteWithContext,
-  Link,
-  Outlet,
-  useRouter,
-} from "@tanstack/react-router";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
-import { Button } from "../components/ui/button";
-import { handleLogout, useUser } from "../hooks/auth";
+import { TbSpaces } from "react-icons/tb";
+import NavMenu from "../components/navMenu";
+import { useUser } from "../hooks/auth";
 
 export interface RouterAppContext {
   queryClient: QueryClient;
@@ -22,35 +18,14 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 function Root() {
   const user = useUser();
   const isAuthenticated = !!user;
-  const router = useRouter();
+  const root = window.document.documentElement;
+  root.classList.add("dark");
   return (
     <>
-      <h3>
-        {isAuthenticated ? "Welcome, " + user.username : "Welcome to Nexus!"}
-      </h3>
-      <div className="p-2 flex gap-2">
-        <Button asChild>
-          <Link to="/" className="[&.active]:font-bold">
-            Home
-          </Link>
-        </Button>
-        {!isAuthenticated ? (
-          <>
-            <Button asChild>
-              <Link to="/login" className="[&.active]:font-bold">
-                Log In
-              </Link>
-            </Button>
-            <Button asChild>
-              <Link to="/signup" className="[&.active]:font-bold">
-                Sign Up
-              </Link>
-            </Button>
-          </>
-        ) : (
-          <Button onClick={handleLogout}>Log Out</Button>
-        )}
-      </div>
+      <header className="sticky h-[var(--header-height)] p-6 font-semibold justify-between bg-background  flex text-4xl items-center">
+        <TbSpaces /> Nexus
+        <NavMenu />
+      </header>
       <hr />
       <Outlet />
       <TanStackRouterDevtools />

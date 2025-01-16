@@ -11,6 +11,7 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as TestImport } from './routes/test'
 import { Route as SignupImport } from './routes/signup'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthImport } from './routes/_auth'
@@ -18,6 +19,12 @@ import { Route as IndexImport } from './routes/index'
 import { Route as AuthDashImport } from './routes/_auth/dash'
 
 // Create/Update Routes
+
+const TestRoute = TestImport.update({
+  id: '/test',
+  path: '/test',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const SignupRoute = SignupImport.update({
   id: '/signup',
@@ -80,6 +87,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
+    '/test': {
+      id: '/test'
+      path: '/test'
+      fullPath: '/test'
+      preLoaderRoute: typeof TestImport
+      parentRoute: typeof rootRoute
+    }
     '/_auth/dash': {
       id: '/_auth/dash'
       path: '/dash'
@@ -107,6 +121,7 @@ export interface FileRoutesByFullPath {
   '': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/test': typeof TestRoute
   '/dash': typeof AuthDashRoute
 }
 
@@ -115,6 +130,7 @@ export interface FileRoutesByTo {
   '': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/test': typeof TestRoute
   '/dash': typeof AuthDashRoute
 }
 
@@ -124,15 +140,23 @@ export interface FileRoutesById {
   '/_auth': typeof AuthRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/test': typeof TestRoute
   '/_auth/dash': typeof AuthDashRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/login' | '/signup' | '/dash'
+  fullPaths: '/' | '' | '/login' | '/signup' | '/test' | '/dash'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/login' | '/signup' | '/dash'
-  id: '__root__' | '/' | '/_auth' | '/login' | '/signup' | '/_auth/dash'
+  to: '/' | '' | '/login' | '/signup' | '/test' | '/dash'
+  id:
+    | '__root__'
+    | '/'
+    | '/_auth'
+    | '/login'
+    | '/signup'
+    | '/test'
+    | '/_auth/dash'
   fileRoutesById: FileRoutesById
 }
 
@@ -141,6 +165,7 @@ export interface RootRouteChildren {
   AuthRoute: typeof AuthRouteWithChildren
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
+  TestRoute: typeof TestRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -148,6 +173,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRoute: AuthRouteWithChildren,
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
+  TestRoute: TestRoute,
 }
 
 export const routeTree = rootRoute
@@ -163,7 +189,8 @@ export const routeTree = rootRoute
         "/",
         "/_auth",
         "/login",
-        "/signup"
+        "/signup",
+        "/test"
       ]
     },
     "/": {
@@ -180,6 +207,9 @@ export const routeTree = rootRoute
     },
     "/signup": {
       "filePath": "signup.tsx"
+    },
+    "/test": {
+      "filePath": "test.tsx"
     },
     "/_auth/dash": {
       "filePath": "_auth/dash.tsx",

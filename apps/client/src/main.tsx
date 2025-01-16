@@ -37,7 +37,6 @@ const router = createRouter({
 
 function App() {
   const user = useUser();
-  console.log("🚀 ~ App ~ user:", user);
   return <RouterProvider router={router} context={{ user }} />;
 }
 
@@ -47,9 +46,11 @@ if (!rootElement.innerHTML) {
   root.render(
     <StrictMode>
       <QueryClientProvider client={queryClient}>
+        {/* <ThemeProvider> */}
         <Suspense>
           <App />
         </Suspense>
+        {/* </ThemeProvider> */}
       </QueryClientProvider>
     </StrictMode>
   );
