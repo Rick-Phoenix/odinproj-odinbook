@@ -17,7 +17,7 @@ export default function NavMenu() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <Skeleton>
+          <Skeleton queryKey={["user"]}>
             <NavigationMenuLink
               className={navigationMenuTriggerStyle()}
               asChild

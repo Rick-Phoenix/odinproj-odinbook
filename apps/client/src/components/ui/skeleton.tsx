@@ -1,12 +1,12 @@
 import { cn } from "@/utils/shadcn-helper";
 import { useIsFetching } from "@tanstack/react-query";
 
-function Skeleton({
-  className,
-  children,
-  ...props
-}: React.HTMLAttributes<HTMLDivElement>) {
-  const isFetching = useIsFetching({ queryKey: ["user"] });
+interface SkeletonProps extends React.HTMLAttributes<HTMLDivElement> {
+  queryKey?: unknown[];
+}
+
+function Skeleton({ className, children, queryKey, ...props }: SkeletonProps) {
+  const isFetching = useIsFetching({ queryKey });
   if (!isFetching) return children;
   return (
     <div className="relative inline-block">

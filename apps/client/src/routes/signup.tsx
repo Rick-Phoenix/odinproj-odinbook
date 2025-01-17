@@ -8,8 +8,8 @@ import { Button } from "../components/ui/button";
 import { Input } from "../components/ui/input";
 import { handleGithubLogin } from "../hooks/auth";
 import { api } from "../lib/api-client";
-import { errorTypeGuard } from "../utils/error-type-guard";
 import { formatFormErrors, singleErrorsAdapter } from "../utils/form-utils";
+import { errorTypeGuard } from "../utils/type-guards";
 
 export const Route = createFileRoute("/signup")({
   component: RouteComponent,

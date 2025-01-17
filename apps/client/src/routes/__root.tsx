@@ -15,8 +15,6 @@ export const Route = createRootRouteWithContext<RouterAppContext>()({
 });
 
 function Root() {
-  // const user = useUser();
-  // const isAuthenticated = !!user;
   const root = window.document.documentElement;
   root.classList.add("dark");
   return (
