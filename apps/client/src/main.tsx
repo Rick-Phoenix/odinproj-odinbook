@@ -7,7 +7,7 @@ import "./styles/index.css";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
-import { StrictMode, Suspense } from "react";
+import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { useUser } from "./hooks/auth";
 import { routeTree } from "./routeTree.gen";
@@ -47,9 +47,7 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         {/* <ThemeProvider> */}
-        <Suspense>
-          <App />
-        </Suspense>
+        <App />
         {/* </ThemeProvider> */}
       </QueryClientProvider>
     </StrictMode>

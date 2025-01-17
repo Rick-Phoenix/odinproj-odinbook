@@ -8,6 +8,7 @@ import {
 import { Link } from "@tanstack/react-router";
 import { handleLogout, useUser } from "../hooks/auth";
 import { Button } from "./ui/button";
+import { Skeleton } from "./ui/skeleton";
 
 export default function NavMenu() {
   const user = useUser();
@@ -16,9 +17,14 @@ export default function NavMenu() {
     <NavigationMenu>
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuLink className={navigationMenuTriggerStyle()} asChild>
-            <Link to="/">Home</Link>
-          </NavigationMenuLink>
+          <Skeleton>
+            <NavigationMenuLink
+              className={navigationMenuTriggerStyle()}
+              asChild
+            >
+              <Link to="/">Home</Link>
+            </NavigationMenuLink>
+          </Skeleton>
         </NavigationMenuItem>
         {!isAuthenticated ? (
           <>
