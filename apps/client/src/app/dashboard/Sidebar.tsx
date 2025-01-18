@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/sidebar";
 import type { ReactNode } from "@tanstack/react-router";
 
-export default function Sidebar({ children }: { children: ReactNode }) {
+export default function SidebarWrapper({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />

@@ -1,8 +1,11 @@
 import type { User } from "@nexus/shared-schemas";
 import type { QueryClient } from "@tanstack/react-query";
-import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
+import {
+  createRootRouteWithContext,
+  Link,
+  Outlet,
+} from "@tanstack/react-router";
 import { TbSpaces } from "react-icons/tb";
-import Sidebar from "../app/dashboard/Sidebar";
 import NavMenu from "../components/navMenu";
 
 export interface RouterAppContext {
@@ -19,14 +22,15 @@ function Root() {
   root.classList.add("dark");
   return (
     <>
-      <header className="sticky h-[var(--header-height)] justify-between p-6 font-light  bg-background  flex text-3xl items-center">
-        <TbSpaces /> Nexus
+      <header className="sticky h-[var(--header-height)] justify-between p-6 font-light  bg-background text-center flex text-3xl items-center">
+        <Link to={"/"}>
+          <TbSpaces />
+        </Link>
+        <span>Nexus</span>
         <NavMenu />
       </header>
       <hr />
-      <Sidebar>
-        <Outlet />
-      </Sidebar>
+      <Outlet />
       {/* <TanStackRouterDevtools /> */}
     </>
   );

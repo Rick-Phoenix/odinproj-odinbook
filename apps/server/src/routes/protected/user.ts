@@ -19,10 +19,10 @@ export const home = createRoute({
 
 export const homeHandler: AppRouteHandler<typeof home> = async (c) => {
   const user = c.var.user!;
-  await new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve();
-    }, 2000);
-  });
+  // await new Promise<void>((resolve) => {
+  //   setTimeout(() => {
+  //     resolve();
+  //   }, 2000);
+  // });
   return c.json(user, OK);
 };

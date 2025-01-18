@@ -26,6 +26,7 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 import type { User } from "@nexus/shared-schemas";
+import { handleLogout } from "../hooks/auth";
 
 export function NavUser({ user }: { user: User | undefined | null }) {
   const { isMobile } = useSidebar();
@@ -105,7 +106,7 @@ export function NavUser({ user }: { user: User | undefined | null }) {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
               Log out
             </DropdownMenuItem>
