@@ -22,11 +22,10 @@ function Root() {
   root.classList.add("dark");
   return (
     <>
-      <header className="sticky h-[var(--header-height)] justify-between p-6 font-light  bg-background text-center flex text-3xl items-center">
+      <header className="sticky h-[var(--header-height)] justify-center p-6 font-light  bg-background text-center flex text-3xl items-center">
         <Link to={"/"}>
           <TbSpaces />
         </Link>
-        <span>Nexus</span>
         <NavMenu />
       </header>
       <hr />

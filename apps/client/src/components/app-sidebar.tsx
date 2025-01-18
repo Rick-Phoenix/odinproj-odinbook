@@ -1,14 +1,15 @@
 import {
-  BookOpen,
-  Bot,
-  Command,
+  Book,
   Frame,
+  Image,
   LifeBuoy,
+  LucideWaypoints,
   Map,
+  MessagesSquare,
   PieChart,
   Send,
   Settings2,
-  SquareTerminal,
+  Store,
 } from "lucide-react";
 import * as React from "react";
 
@@ -19,10 +20,8 @@ import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { useUser } from "../hooks/auth";
@@ -31,9 +30,9 @@ import { Skeleton } from "./ui/skeleton";
 const data = {
   navMain: [
     {
-      title: "Playground",
+      title: "MetaNexus",
       url: "#",
-      icon: SquareTerminal,
+      icon: LucideWaypoints,
       isActive: true,
       items: [
         {
@@ -51,9 +50,9 @@ const data = {
       ],
     },
     {
-      title: "Models",
+      title: "Chats",
       url: "#",
-      icon: Bot,
+      icon: MessagesSquare,
       items: [
         {
           title: "Genesis",
@@ -70,9 +69,55 @@ const data = {
       ],
     },
     {
-      title: "Documentation",
+      title: "Marketplace",
       url: "#",
-      icon: BookOpen,
+      icon: Store,
+      items: [
+        {
+          title: "Introduction",
+          url: "#",
+        },
+        {
+          title: "Get Started",
+          url: "#",
+        },
+        {
+          title: "Tutorials",
+          url: "#",
+        },
+        {
+          title: "Changelog",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Images",
+      url: "#",
+      icon: Image,
+      items: [
+        {
+          title: "Introduction",
+          url: "#",
+        },
+        {
+          title: "Get Started",
+          url: "#",
+        },
+        {
+          title: "Tutorials",
+          url: "#",
+        },
+        {
+          title: "Changelog",
+          url: "#",
+        },
+      ],
+    },
+    {
+      title: "Library",
+      url: "#",
+      icon: Book,
       items: [
         {
           title: "Introduction",
@@ -155,25 +200,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton size="lg" asChild>
-                <a href="#">
-                  <Skeleton queryKey={["user"]}>
-                    <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                      <Command className="size-4" />
-                    </div>
-                  </Skeleton>
-                  <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">
-                      <Skeleton queryKey={["user"]}>
-                        {user?.username || "Logged out"}
-                      </Skeleton>
-                    </span>
-                    <span className="truncate text-xs">
-                      <Skeleton queryKey={["user"]}>Enterprise</Skeleton>
-                    </span>
-                  </div>
-                </a>
-              </SidebarMenuButton>
+              <NavUser user={user} />
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>
@@ -182,9 +209,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <NavProjects projects={data.projects} />
           <NavSecondary items={data.navSecondary} className="mt-auto" />
         </SidebarContent>
-        <SidebarFooter>
-          <NavUser user={user} />
-        </SidebarFooter>
       </Skeleton>
     </Sidebar>
   );

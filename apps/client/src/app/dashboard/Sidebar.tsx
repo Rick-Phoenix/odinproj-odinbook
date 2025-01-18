@@ -1,4 +1,3 @@
-import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -14,6 +13,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import type { ReactNode } from "@tanstack/react-router";
+import { AppSidebar } from "../../components/app-sidebar";
+import { SidebarRight } from "../../components/sidebar-right";
 
 export default function SidebarWrapper({ children }: { children: ReactNode }) {
   return (
@@ -41,6 +42,7 @@ export default function SidebarWrapper({ children }: { children: ReactNode }) {
         </header>
         {children}
       </SidebarInset>
+      <SidebarRight />
     </SidebarProvider>
   );
 }
