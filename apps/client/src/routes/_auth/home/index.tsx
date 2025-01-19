@@ -68,6 +68,37 @@ function RouteComponent() {
             </Button>
           </div>
         </div>
+        <div className="flex min-h-[100vh] flex-1 flex-col justify-between rounded-xl bg-muted/50 md:min-h-min">
+          <CardHeader className="p-10">
+            <CardTitle className="text-2xl">Post title</CardTitle>
+            <CardDescription>r/Something</CardDescription>
+          </CardHeader>
+          <CardContent className="pb-10">
+            Lorem Ipsum is simply dummy text of the printing and typesetting
+            industry. Lorem Ipsum has been the industry's standard dummy text
+            ever since the 1500s, when an unknown printer took a galley of type
+            and scrambled it to make a type specimen book. It has survived not
+            only five centuries, but also the leap into electronic typesetting,
+            remaining essentially unchanged. It was popularised in the 1960s
+            with the release of Letraset sheets containing Lorem Ipsum passages,
+            and more recently with desktop publishing software like Aldus
+            PageMaker including versions of Lorem Ipsum.
+          </CardContent>
+          <div className="flex p-3">
+            <Button variant={"ghost"} className="flex-1 p-6">
+              <ThumbsUp />
+              Like
+            </Button>
+            <Button variant={"ghost"} className="flex-1 p-6">
+              <MessageCircleMore />
+              Comment
+            </Button>
+            <Button variant={"ghost"} className="flex-1 p-6">
+              <Share />
+              Share
+            </Button>
+          </div>
+        </div>
       </main>
     </ScrollArea>
   );
@@ -108,10 +139,21 @@ function TrendingCarousel() {
                     to={"/post"}
                     className="flex aspect-video flex-col justify-end rounded-xl bg-muted/50"
                   >
-                    <CardContent>Blah</CardContent>
                     <CardHeader>
-                      <CardTitle>Post 1</CardTitle>
-                      <CardDescription>Post description</CardDescription>
+                      <CardTitle className="p-0">Post 1</CardTitle>
+                      <CardDescription className="card-trending p-0">
+                        Lorem Ipsum is simply dummy text of the printing and
+                        typesetting industry. Lorem Ipsum has been the
+                        industry's standard dummy text ever since the 1500s,
+                        when an unknown printer took a galley of type and
+                        scrambled it to make a type specimen book. It has
+                        survived not only five centuries, but also the leap into
+                        electronic typesetting, remaining essentially unchanged.
+                        It was popularised in the 1960s with the release of
+                        Letraset sheets containing Lorem Ipsum passages, and
+                        more recently with desktop publishing software like
+                        Aldus PageMaker including versions of Lorem Ipsum.
+                      </CardDescription>
                     </CardHeader>
                   </Link>
                 </CarouselItem>
