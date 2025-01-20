@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { Heart, MessageCircleMore, Share, ThumbsUp } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import * as motion from "motion/react-client";
@@ -31,6 +31,8 @@ export const Route = createFileRoute("/_auth/home/")({
 });
 
 function RouteComponent() {
+  const location = useLocation();
+  console.log(location);
   return (
     <ScrollArea
       type="always"
