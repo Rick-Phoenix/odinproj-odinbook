@@ -6,7 +6,7 @@ import {
   navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu";
 import { Link } from "@tanstack/react-router";
-import { useUser } from "../hooks/auth";
+import { useUser } from "../../hooks/auth";
 
 export default function NavMenu() {
   const user = useUser();

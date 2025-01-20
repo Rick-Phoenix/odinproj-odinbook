@@ -13,9 +13,9 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import type { ReactNode } from "@tanstack/react-router";
-import { useActivePage } from "../../../hooks/useActivePage";
-import { AppSidebar } from "../../app-sidebar";
-import { SidebarRight } from "../../sidebar-right";
+import { useActivePage } from "../../hooks/useActivePage";
+import { AppSidebar } from "../app-sidebar";
+import { SidebarRight } from "../sidebar-right";
 
 export default function SidebarWrapper({ children }: { children: ReactNode }) {
   return (
