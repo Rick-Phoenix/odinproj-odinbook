@@ -132,7 +132,10 @@ function TrendingCarousel() {
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
           >
-            <Carousel opts={{ loop: true }}>
+            <Carousel
+              opts={{ loop: true, align: "start" }}
+              className="max-w-full"
+            >
               <CarouselContent>
                 <CarouselPlaceholder />
                 <CarouselPlaceholder />
@@ -153,19 +156,21 @@ function TrendingCarousel() {
 
 function CarouselPlaceholder() {
   return (
-    <CarouselItem className="basis-full md:basis-1/2 2xl:basis-1/3">
-      <Link
-        to={"/post"}
-        className="flex aspect-video flex-col rounded-xl bg-muted/50 p-4 pr-0"
-      >
-        <div className="flex w-[calc(100%-1rem)] flex-1 flex-col justify-between">
-          <span className="flex items-center justify-end gap-2">
-            42
-            <Heart />
-          </span>{" "}
+    <CarouselItem className="flex aspect-video md:basis-1/2 2xl:basis-1/3">
+      <Link to={"/post"} className="w-full rounded-xl bg-muted/50 p-4">
+        <div className="flex h-full flex-1 flex-col justify-between">
+          <div className="flex items-center justify-end gap-2 self-end">
+            <div className="max-w-[10ch] truncate">42</div>
+            <Heart className="min-w-fit" />
+          </div>
           <div>
             <CardTitle className="flex items-center justify-between">
-              Title
+              <span className="line-clamp-4 max-w-full">
+                Enim aliquip laborum Lorem officia esse labore sint ad non velit
+                minim. Minim dolor pariatur sit veniam do deserunt proident
+                culpa labore mollit labore mollit enim. Do anim dolore dolore
+                ipsum ipsum cupidatat proident.
+              </span>
             </CardTitle>
             <CardDescription>r/Something</CardDescription>
             <CardDescription>Description</CardDescription>
