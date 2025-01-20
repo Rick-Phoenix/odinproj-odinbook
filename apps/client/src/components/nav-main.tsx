@@ -18,6 +18,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { useActivePage } from "../hooks/useActivePage";
 
 export function NavMain({
   items,
@@ -33,6 +34,7 @@ export function NavMain({
     }[];
   }[];
 }) {
+  const activePage = useActivePage();
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -42,7 +44,7 @@ export function NavMain({
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                isActive={item.isActive}
+                isActive={activePage === item.title}
                 tooltip={item.title}
               >
                 <a href={item.url}>

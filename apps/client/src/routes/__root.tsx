@@ -6,7 +6,6 @@ import {
   Outlet,
 } from "@tanstack/react-router";
 import { TbSpaces } from "react-icons/tb";
-import NavMenu from "../components/navMenu";
 
 export interface RouterAppContext {
   queryClient: QueryClient;
@@ -22,11 +21,10 @@ function Root() {
   root.classList.add("dark");
   return (
     <>
-      <header className="sticky h-[var(--header-height)] justify-center p-6 font-light  bg-background text-center flex text-3xl items-center">
+      <header className="sticky flex h-[var(--header-height)] items-center justify-center bg-background p-6 text-center text-3xl font-light">
         <Link to={"/"}>
           <TbSpaces />
         </Link>
-        <NavMenu />
       </header>
       <hr />
       <Outlet />

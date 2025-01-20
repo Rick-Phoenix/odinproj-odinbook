@@ -16,8 +16,7 @@ import { Route as PostImport } from './routes/post'
 import { Route as LoginImport } from './routes/login'
 import { Route as AuthImport } from './routes/_auth'
 import { Route as IndexImport } from './routes/index'
-import { Route as AuthHomeImport } from './routes/_auth/home'
-import { Route as AuthHomeIndexImport } from './routes/_auth/home/index'
+import { Route as RoomsIndexImport } from './routes/rooms/index'
 
 // Create/Update Routes
 
@@ -50,16 +49,10 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthHomeRoute = AuthHomeImport.update({
-  id: '/home',
-  path: '/home',
-  getParentRoute: () => AuthRoute,
-} as any)
-
-const AuthHomeIndexRoute = AuthHomeIndexImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AuthHomeRoute,
+const RoomsIndexRoute = RoomsIndexImport.update({
+  id: '/rooms/',
+  path: '/rooms/',
+  getParentRoute: () => rootRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -101,108 +94,71 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
-    '/_auth/home': {
-      id: '/_auth/home'
-      path: '/home'
-      fullPath: '/home'
-      preLoaderRoute: typeof AuthHomeImport
-      parentRoute: typeof AuthImport
-    }
-    '/_auth/home/': {
-      id: '/_auth/home/'
-      path: '/'
-      fullPath: '/home/'
-      preLoaderRoute: typeof AuthHomeIndexImport
-      parentRoute: typeof AuthHomeImport
+    '/rooms/': {
+      id: '/rooms/'
+      path: '/rooms'
+      fullPath: '/rooms'
+      preLoaderRoute: typeof RoomsIndexImport
+      parentRoute: typeof rootRoute
     }
   }
 }
 
 // Create and export the route tree
 
-interface AuthHomeRouteChildren {
-  AuthHomeIndexRoute: typeof AuthHomeIndexRoute
-}
-
-const AuthHomeRouteChildren: AuthHomeRouteChildren = {
-  AuthHomeIndexRoute: AuthHomeIndexRoute,
-}
-
-const AuthHomeRouteWithChildren = AuthHomeRoute._addFileChildren(
-  AuthHomeRouteChildren,
-)
-
-interface AuthRouteChildren {
-  AuthHomeRoute: typeof AuthHomeRouteWithChildren
-}
-
-const AuthRouteChildren: AuthRouteChildren = {
-  AuthHomeRoute: AuthHomeRouteWithChildren,
-}
-
-const AuthRouteWithChildren = AuthRoute._addFileChildren(AuthRouteChildren)
-
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof AuthRouteWithChildren
+  '': typeof AuthRoute
   '/login': typeof LoginRoute
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
-  '/home': typeof AuthHomeRouteWithChildren
-  '/home/': typeof AuthHomeIndexRoute
+  '/rooms': typeof RoomsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof AuthRouteWithChildren
+  '': typeof AuthRoute
   '/login': typeof LoginRoute
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
-  '/home': typeof AuthHomeIndexRoute
+  '/rooms': typeof RoomsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/_auth': typeof AuthRouteWithChildren
+  '/_auth': typeof AuthRoute
   '/login': typeof LoginRoute
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
-  '/_auth/home': typeof AuthHomeRouteWithChildren
-  '/_auth/home/': typeof AuthHomeIndexRoute
+  '/rooms/': typeof RoomsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/login' | '/post' | '/signup' | '/home' | '/home/'
+  fullPaths: '/' | '' | '/login' | '/post' | '/signup' | '/rooms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/login' | '/post' | '/signup' | '/home'
-  id:
-    | '__root__'
-    | '/'
-    | '/_auth'
-    | '/login'
-    | '/post'
-    | '/signup'
-    | '/_auth/home'
-    | '/_auth/home/'
+  to: '/' | '' | '/login' | '/post' | '/signup' | '/rooms'
+  id: '__root__' | '/' | '/_auth' | '/login' | '/post' | '/signup' | '/rooms/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRouteWithChildren
+  AuthRoute: typeof AuthRoute
   LoginRoute: typeof LoginRoute
   PostRoute: typeof PostRoute
   SignupRoute: typeof SignupRoute
+  RoomsIndexRoute: typeof RoomsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRouteWithChildren,
+  AuthRoute: AuthRoute,
   LoginRoute: LoginRoute,
   PostRoute: PostRoute,
   SignupRoute: SignupRoute,
+  RoomsIndexRoute: RoomsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -219,17 +175,15 @@ export const routeTree = rootRoute
         "/_auth",
         "/login",
         "/post",
-        "/signup"
+        "/signup",
+        "/rooms/"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
     "/_auth": {
-      "filePath": "_auth.tsx",
-      "children": [
-        "/_auth/home"
-      ]
+      "filePath": "_auth.tsx"
     },
     "/login": {
       "filePath": "login.tsx"
@@ -240,16 +194,8 @@ export const routeTree = rootRoute
     "/signup": {
       "filePath": "signup.tsx"
     },
-    "/_auth/home": {
-      "filePath": "_auth/home.tsx",
-      "parent": "/_auth",
-      "children": [
-        "/_auth/home/"
-      ]
-    },
-    "/_auth/home/": {
-      "filePath": "_auth/home/index.tsx",
-      "parent": "/_auth/home"
+    "/rooms/": {
+      "filePath": "rooms/index.tsx"
     }
   }
 }

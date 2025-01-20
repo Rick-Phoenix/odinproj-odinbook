@@ -11,28 +11,22 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { createFileRoute, Link, useLocation } from "@tanstack/react-router";
 import { Heart, MessageCircleMore, Share, ThumbsUp } from "lucide-react";
-import { AnimatePresence } from "motion/react";
-import * as motion from "motion/react-client";
+import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { Button } from "../../../components/ui/button";
+
+import { Link } from "@tanstack/react-router";
+import { Button } from "../components/ui/button";
 import {
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "../../../components/ui/card";
-import { ScrollArea } from "../../../components/ui/scroll-area";
-import { Separator } from "../../../components/ui/separator";
+} from "../components/ui/card";
+import { ScrollArea } from "../components/ui/scroll-area";
+import { Separator } from "../components/ui/separator";
 
-export const Route = createFileRoute("/_auth/home/")({
-  component: RouteComponent,
-});
-
-function RouteComponent() {
-  const location = useLocation();
-  console.log(location);
+export default function MetaNexusMain() {
   return (
     <ScrollArea
       type="always"
@@ -40,15 +34,15 @@ function RouteComponent() {
     >
       <div className="flex flex-1 flex-col gap-4 p-16 pb-6 pt-2">
         <TrendingCarousel />
-        <PostPlaceholder />
-        <PostPlaceholder />
-        <PostPlaceholder />
+        <PostPreview />
+        <PostPreview />
+        <PostPreview />
       </div>
     </ScrollArea>
   );
 }
 
-function PostPlaceholder() {
+function PostPreview() {
   return (
     <div className="flex max-h-[50%] flex-col justify-between rounded-xl bg-muted/50 md:min-h-min">
       <CardHeader className="pb-3">
@@ -140,12 +134,12 @@ function TrendingCarousel() {
               className="max-w-full"
             >
               <CarouselContent>
-                <CarouselPlaceholder />
-                <CarouselPlaceholder />
-                <CarouselPlaceholder />
-                <CarouselPlaceholder />
-                <CarouselPlaceholder />
-                <CarouselPlaceholder />
+                <TrendingCard />
+                <TrendingCard />
+                <TrendingCard />
+                <TrendingCard />
+                <TrendingCard />
+                <TrendingCard />
               </CarouselContent>
               <CarouselPrevious />
               <CarouselNext />
@@ -157,7 +151,7 @@ function TrendingCarousel() {
   );
 }
 
-function CarouselPlaceholder() {
+function TrendingCard() {
   return (
     <CarouselItem className="flex aspect-video md:basis-1/2 2xl:basis-1/3">
       <Link to={"/post"} className="w-full rounded-xl bg-muted/50 p-4">

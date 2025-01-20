@@ -1,9 +1,9 @@
 import {
   Book,
+  Box,
   Frame,
   Image,
   LifeBuoy,
-  LucideWaypoints,
   Map,
   MessagesSquare,
   PieChart,
@@ -30,9 +30,9 @@ import { Skeleton } from "./ui/skeleton";
 const data = {
   navMain: [
     {
-      title: "MetaNexus",
+      title: "Rooms",
       url: "#",
-      icon: LucideWaypoints,
+      icon: Box,
       isActive: true,
       items: [
         {
