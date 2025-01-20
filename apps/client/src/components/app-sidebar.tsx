@@ -31,7 +31,7 @@ const data = {
   navMain: [
     {
       title: "Rooms",
-      url: "#",
+      url: "/rooms",
       icon: Box,
       isActive: true,
       items: [
@@ -47,7 +47,7 @@ const data = {
     },
     {
       title: "Chats",
-      url: "#",
+      url: "/chats",
       icon: MessagesSquare,
       items: [
         {

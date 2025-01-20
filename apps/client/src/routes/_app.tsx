@@ -1,7 +1,8 @@
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
+import SidebarWrapper from "../components/ui/custom/SidebarWrapper";
 import { userQueryOptions } from "../hooks/auth";
 
-export const Route = createFileRoute("/_auth")({
+export const Route = createFileRoute("/_app")({
   component: RouteComponent,
   beforeLoad: async ({ context, location }) => {
     const user = await context.queryClient.ensureQueryData(userQueryOptions);
@@ -17,5 +18,9 @@ export const Route = createFileRoute("/_auth")({
 });
 
 function RouteComponent() {
-  return <Outlet />;
+  return (
+    <SidebarWrapper>
+      <Outlet />
+    </SidebarWrapper>
+  );
 }

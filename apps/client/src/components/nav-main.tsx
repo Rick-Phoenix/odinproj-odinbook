@@ -18,6 +18,7 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { Link } from "@tanstack/react-router";
 import { useActivePage } from "../hooks/useActivePage";
 
 export function NavMain({
@@ -47,10 +48,10 @@ export function NavMain({
                 isActive={activePage === item.title}
                 tooltip={item.title}
               >
-                <a href={item.url}>
+                <Link to={item.url}>
                   <item.icon />
                   <span>{item.title}</span>
-                </a>
+                </Link>
               </SidebarMenuButton>
               {item.items?.length ? (
                 <>

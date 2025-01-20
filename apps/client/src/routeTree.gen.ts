@@ -14,9 +14,10 @@ import { Route as rootRoute } from './routes/__root'
 import { Route as SignupImport } from './routes/signup'
 import { Route as PostImport } from './routes/post'
 import { Route as LoginImport } from './routes/login'
-import { Route as AuthImport } from './routes/_auth'
+import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
-import { Route as RoomsIndexImport } from './routes/rooms/index'
+import { Route as AppRoomsIndexImport } from './routes/_app/rooms/index'
+import { Route as AppChatsIndexImport } from './routes/_app/chats/index'
 
 // Create/Update Routes
 
@@ -38,8 +39,8 @@ const LoginRoute = LoginImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const AuthRoute = AuthImport.update({
-  id: '/_auth',
+const AppRoute = AppImport.update({
+  id: '/_app',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -49,10 +50,16 @@ const IndexRoute = IndexImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const RoomsIndexRoute = RoomsIndexImport.update({
+const AppRoomsIndexRoute = AppRoomsIndexImport.update({
   id: '/rooms/',
   path: '/rooms/',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppChatsIndexRoute = AppChatsIndexImport.update({
+  id: '/chats/',
+  path: '/chats/',
+  getParentRoute: () => AppRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -66,11 +73,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/_auth': {
-      id: '/_auth'
+    '/_app': {
+      id: '/_app'
       path: ''
       fullPath: ''
-      preLoaderRoute: typeof AuthImport
+      preLoaderRoute: typeof AppImport
       parentRoute: typeof rootRoute
     }
     '/login': {
@@ -94,71 +101,99 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
-    '/rooms/': {
-      id: '/rooms/'
+    '/_app/chats/': {
+      id: '/_app/chats/'
+      path: '/chats'
+      fullPath: '/chats'
+      preLoaderRoute: typeof AppChatsIndexImport
+      parentRoute: typeof AppImport
+    }
+    '/_app/rooms/': {
+      id: '/_app/rooms/'
       path: '/rooms'
       fullPath: '/rooms'
-      preLoaderRoute: typeof RoomsIndexImport
-      parentRoute: typeof rootRoute
+      preLoaderRoute: typeof AppRoomsIndexImport
+      parentRoute: typeof AppImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface AppRouteChildren {
+  AppChatsIndexRoute: typeof AppChatsIndexRoute
+  AppRoomsIndexRoute: typeof AppRoomsIndexRoute
+}
+
+const AppRouteChildren: AppRouteChildren = {
+  AppChatsIndexRoute: AppChatsIndexRoute,
+  AppRoomsIndexRoute: AppRoomsIndexRoute,
+}
+
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '': typeof AuthRoute
+  '': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
-  '/rooms': typeof RoomsIndexRoute
+  '/chats': typeof AppChatsIndexRoute
+  '/rooms': typeof AppRoomsIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '': typeof AuthRoute
+  '': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
-  '/rooms': typeof RoomsIndexRoute
+  '/chats': typeof AppChatsIndexRoute
+  '/rooms': typeof AppRoomsIndexRoute
 }
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
-  '/_auth': typeof AuthRoute
+  '/_app': typeof AppRouteWithChildren
   '/login': typeof LoginRoute
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
-  '/rooms/': typeof RoomsIndexRoute
+  '/_app/chats/': typeof AppChatsIndexRoute
+  '/_app/rooms/': typeof AppRoomsIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '' | '/login' | '/post' | '/signup' | '/rooms'
+  fullPaths: '/' | '' | '/login' | '/post' | '/signup' | '/chats' | '/rooms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '' | '/login' | '/post' | '/signup' | '/rooms'
-  id: '__root__' | '/' | '/_auth' | '/login' | '/post' | '/signup' | '/rooms/'
+  to: '/' | '' | '/login' | '/post' | '/signup' | '/chats' | '/rooms'
+  id:
+    | '__root__'
+    | '/'
+    | '/_app'
+    | '/login'
+    | '/post'
+    | '/signup'
+    | '/_app/chats/'
+    | '/_app/rooms/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AuthRoute: typeof AuthRoute
+  AppRoute: typeof AppRouteWithChildren
   LoginRoute: typeof LoginRoute
   PostRoute: typeof PostRoute
   SignupRoute: typeof SignupRoute
-  RoomsIndexRoute: typeof RoomsIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AuthRoute: AuthRoute,
+  AppRoute: AppRouteWithChildren,
   LoginRoute: LoginRoute,
   PostRoute: PostRoute,
   SignupRoute: SignupRoute,
-  RoomsIndexRoute: RoomsIndexRoute,
 }
 
 export const routeTree = rootRoute
@@ -172,18 +207,21 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/_auth",
+        "/_app",
         "/login",
         "/post",
-        "/signup",
-        "/rooms/"
+        "/signup"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
-    "/_auth": {
-      "filePath": "_auth.tsx"
+    "/_app": {
+      "filePath": "_app.tsx",
+      "children": [
+        "/_app/chats/",
+        "/_app/rooms/"
+      ]
     },
     "/login": {
       "filePath": "login.tsx"
@@ -194,8 +232,13 @@ export const routeTree = rootRoute
     "/signup": {
       "filePath": "signup.tsx"
     },
-    "/rooms/": {
-      "filePath": "rooms/index.tsx"
+    "/_app/chats/": {
+      "filePath": "_app/chats/index.tsx",
+      "parent": "/_app"
+    },
+    "/_app/rooms/": {
+      "filePath": "_app/rooms/index.tsx",
+      "parent": "/_app"
     }
   }
 }
