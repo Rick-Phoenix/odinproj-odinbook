@@ -165,15 +165,34 @@ function CarouselPlaceholder() {
           </div>
           <div>
             <CardTitle className="flex items-center justify-between">
-              <span className="line-clamp-4 max-w-full">
+              <span className="line-clamp-[6] max-w-full">
                 Enim aliquip laborum Lorem officia esse labore sint ad non velit
                 minim. Minim dolor pariatur sit veniam do deserunt proident
                 culpa labore mollit labore mollit enim. Do anim dolore dolore
-                ipsum ipsum cupidatat proident.
+                ipsum ipsum cupidatat proident.Minim mollit adipisicing enim
+                excepteur incididunt qui officia incididunt ex excepteur
+                consectetur mollit ad. Dolor non dolor laborum laborum eu nulla
+                reprehenderit laboris mollit sit excepteur et. Magna fugiat elit
+                minim duis sit proident nostrud Lorem commodo ad aliquip tempor.
+                Eiusmod duis ex laboris pariatur elit non aliqua nisi irure
+                proident tempor et labore eiusmod. Sit esse laborum do ullamco
+                adipisicing nisi aute proident irure proident. Commodo dolore id
+                minim fugiat commodo fugiat ex. Nostrud culpa pariatur velit
+                tempor irure dolor sunt ad irure exercitation enim. Anim cillum
+                officia id incididunt Lorem aliquip ipsum nulla laboris mollit
+                anim. Non sunt eu adipisicing enim ut ea dolor occaecat ullamco
+                sint esse qui sunt ex. Dolor non consequat pariatur consectetur
+                dolor minim non. Proident ipsum consectetur aliqua exercitation
+                ullamco esse. Excepteur velit enim nisi mollit consectetur duis
+                Lorem fugiat veniam. Aliqua aliquip laboris duis amet
+                exercitation velit velit aliqua ut deserunt. Et amet aliquip
+                elit esse officia. Eiusmod irure commodo laboris do occaecat
+                consequat eiusmod fugiat dolor esse non amet.
               </span>
             </CardTitle>
-            <CardDescription>r/Something</CardDescription>
-            <CardDescription>Description</CardDescription>
+            <CardDescription className="line-clamp-1">
+              r/Something
+            </CardDescription>
           </div>
         </div>
       </Link>

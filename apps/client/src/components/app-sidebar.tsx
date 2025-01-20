@@ -36,15 +36,11 @@ const data = {
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "Popular",
           url: "#",
         },
         {
           title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
           url: "#",
         },
       ],
@@ -55,15 +51,15 @@ const data = {
       icon: MessagesSquare,
       items: [
         {
-          title: "Genesis",
+          title: "Chat1",
           url: "#",
         },
         {
-          title: "Explorer",
+          title: "Chat2",
           url: "#",
         },
         {
-          title: "Quantum",
+          title: "Chat3",
           url: "#",
         },
       ],
