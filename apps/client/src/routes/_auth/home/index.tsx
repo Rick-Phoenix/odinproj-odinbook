@@ -153,22 +153,24 @@ function TrendingCarousel() {
 
 function CarouselPlaceholder() {
   return (
-    <CarouselItem className="basis-full md:basis-1/2 lg:basis-1/3">
+    <CarouselItem className="basis-full md:basis-1/2 2xl:basis-1/3">
       <Link
         to={"/post"}
-        className="flex aspect-video flex-col justify-end rounded-xl bg-muted/50"
+        className="flex aspect-video flex-col rounded-xl bg-muted/50 p-4 pr-0"
       >
-        <CardHeader>
-          <CardTitle className="flex items-center justify-between p-0">
-            Title
-            <span className="flex items-center justify-between gap-2">
-              42
-              <Heart />
-            </span>{" "}
-          </CardTitle>
-          <CardDescription>r/Something</CardDescription>
-          <CardDescription className="p-0">Description</CardDescription>
-        </CardHeader>
+        <div className="flex w-[calc(100%-1rem)] flex-1 flex-col justify-between">
+          <span className="flex items-center justify-end gap-2">
+            42
+            <Heart />
+          </span>{" "}
+          <div>
+            <CardTitle className="flex items-center justify-between">
+              Title
+            </CardTitle>
+            <CardDescription>r/Something</CardDescription>
+            <CardDescription>Description</CardDescription>
+          </div>
+        </div>
       </Link>
     </CarouselItem>
   );
