@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { MessageCircleMore, Share, ThumbsUp } from "lucide-react";
+import { Heart, MessageCircleMore, Share, ThumbsUp } from "lucide-react";
 import { AnimatePresence } from "motion/react";
 import * as motion from "motion/react-client";
 import { useState } from "react";
@@ -134,44 +134,12 @@ function TrendingCarousel() {
           >
             <Carousel opts={{ loop: true }}>
               <CarouselContent>
-                <CarouselItem className="basis-full md:basis-1/2 lg:basis-1/3">
-                  <Link
-                    to={"/post"}
-                    className="flex aspect-video flex-col justify-end rounded-xl bg-muted/50"
-                  >
-                    <CardHeader>
-                      <CardTitle className="p-0">Post 1</CardTitle>
-                      <CardDescription className="card-trending p-0">
-                        Lorem Ipsum is simply dummy text of the printing and
-                        typesetting industry. Lorem Ipsum has been the
-                        industry's standard dummy text ever since the 1500s,
-                        when an unknown printer took a galley of type and
-                        scrambled it to make a type specimen book. It has
-                        survived not only five centuries, but also the leap into
-                        electronic typesetting, remaining essentially unchanged.
-                        It was popularised in the 1960s with the release of
-                        Letraset sheets containing Lorem Ipsum passages, and
-                        more recently with desktop publishing software like
-                        Aldus PageMaker including versions of Lorem Ipsum.
-                      </CardDescription>
-                    </CardHeader>
-                  </Link>
-                </CarouselItem>
-                <CarouselItem className="basis-full md:basis-1/2 lg:basis-1/3">
-                  <div className="aspect-video rounded-xl bg-muted/50"></div>
-                </CarouselItem>
-                <CarouselItem className="basis-full md:basis-1/2 lg:basis-1/3">
-                  <div className="aspect-video rounded-xl bg-muted/50"></div>
-                </CarouselItem>
-                <CarouselItem className="basis-full md:basis-1/2 lg:basis-1/3">
-                  <div className="aspect-video rounded-xl bg-muted/50"></div>
-                </CarouselItem>
-                <CarouselItem className="basis-full md:basis-1/2 lg:basis-1/3">
-                  <div className="aspect-video rounded-xl bg-muted/50"></div>
-                </CarouselItem>
-                <CarouselItem className="basis-full md:basis-1/2 lg:basis-1/3">
-                  <div className="aspect-video rounded-xl bg-muted/50" />
-                </CarouselItem>
+                <CarouselPlaceholder />
+                <CarouselPlaceholder />
+                <CarouselPlaceholder />
+                <CarouselPlaceholder />
+                <CarouselPlaceholder />
+                <CarouselPlaceholder />
               </CarouselContent>
               <CarouselPrevious />
               <CarouselNext />
@@ -180,5 +148,28 @@ function TrendingCarousel() {
         ) : null}
       </AnimatePresence>
     </>
+  );
+}
+
+function CarouselPlaceholder() {
+  return (
+    <CarouselItem className="basis-full md:basis-1/2 lg:basis-1/3">
+      <Link
+        to={"/post"}
+        className="flex aspect-video flex-col justify-end rounded-xl bg-muted/50"
+      >
+        <CardHeader>
+          <CardTitle className="flex items-center justify-between p-0">
+            Title
+            <span className="flex items-center justify-between gap-2">
+              42
+              <Heart />
+            </span>{" "}
+          </CardTitle>
+          <CardDescription>r/Something</CardDescription>
+          <CardDescription className="p-0">Description</CardDescription>
+        </CardHeader>
+      </Link>
+    </CarouselItem>
   );
 }
