@@ -32,36 +32,41 @@ function renderComments(
     const row = startingRow + i;
     const children = c?.sub;
     return (
-      <div
-        className={`col-start-${startingColumn} row-start-${row} grid grid-cols-[auto_1fr] items-center pt-4`}
-      >
+      <>
         <div
-          className={`relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground`}
+          className={`col-start-${startingColumn} row-start-${row} grid grid-cols-[auto_1fr] items-center ${startingColumn !== 1 || row !== 1 ? "pt-8" : " "} ${startingColumn === 1 ? "col-end-3" : " "}`}
         >
-          <span className="absolute -left-5 top-2 h-3 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent hover:border-b-white hover:border-l-white" />
-        </div>
-        <div className="col-start-2 row-start-1 flex flex-col pl-4">
-          <div className="flex gap-4">
-            <div>Nickname</div>
-            <div>Sent At</div>
+          <div
+            className={`relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground`}
+          >
+            {startingColumn > 1 && (
+              <span className="absolute -left-5 top-2 h-3 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent hover:border-b-white hover:border-l-white" />
+            )}
           </div>
-          <div>Role</div>
-        </div>
-
-        <Separator
-          orientation="vertical"
-          className="col-start-1 row-start-2 h-full justify-self-center"
-        />
-
-        <div className="col-start-2 row-start-2 flex flex-col gap-2 pl-4 pt-4">
-          <div>Comment text</div>
-          <div className="flex items-center gap-2">
-            <PiThumbsUpBold /> <MessageCircleMore />
+          <div className="col-start-2 row-start-1 flex flex-col pl-4">
+            <div className="flex gap-4">
+              <div>Nickname</div>
+              <div>Sent At</div>
+            </div>
+            <div>Role</div>
           </div>
-        </div>
 
-        {children && renderComments(children, 3, 2)}
-      </div>
+          <div className="col-start-2 row-start-2 flex flex-col gap-2 pl-4 pt-4">
+            <div>Comment text</div>
+            <div className="flex items-center gap-2">
+              <PiThumbsUpBold /> <MessageCircleMore />
+            </div>
+          </div>
+
+          {children && renderComments(children, 3, 2)}
+        </div>
+        {startingColumn === 1 && row > 0 && (
+          <Separator
+            orientation="vertical"
+            className={`col-start-1 row-start-${row} h-${comments.length === 1 && !children ? "0" : i === comments.length - 1 ? "5" : "full"} justify-self-center`}
+          />
+        )}
+      </>
     );
   });
 }
