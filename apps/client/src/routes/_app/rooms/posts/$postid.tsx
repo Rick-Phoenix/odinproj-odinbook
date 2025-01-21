@@ -23,45 +23,45 @@ interface Comment {
 
 type Comments = Comment[];
 
-function renderChildrenComments(comments: Comments, row: number) {
-  return comments.map((comment, i) => {
-    const currentCommentChildren = comments[i]?.sub;
+function renderComments(
+  comments: Comments,
+  startingRow: number,
+  startingColumn: number,
+) {
+  return comments.map((c, i) => {
+    const row = startingRow + i;
+    const children = c?.sub;
     return (
-      <>
+      <div
+        className={`col-start-${startingColumn} row-start-${row} grid grid-cols-[auto_max-content] items-center pt-4`}
+      >
+        <div
+          className={`relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground`}
+        >
+          <span className="absolute -left-5 top-2 h-3 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent hover:border-b-white hover:border-l-white" />
+        </div>
+        <div className="col-start-2 row-start-1 flex flex-col pl-4">
+          <div className="flex gap-4">
+            <div>Nickname</div>
+            <div>Sent At</div>
+          </div>
+          <div>Role</div>
+        </div>
+
         <Separator
           orientation="vertical"
-          className={`row-start-${row + i + 1} justify-self-center`}
+          className="col-start-1 row-start-2 h-full justify-self-center"
         />
 
-        <div
-          className={`col-start-2 row-start-${row + i + 1} grid grid-cols-[auto_1fr] items-center pt-4`}
-        >
-          <div className="relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground">
-            <span className="absolute -left-5 top-2 h-3 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent hover:border-b-white hover:border-l-white" />
-          </div>
-          <div className="col-start-2 row-start-1 flex flex-col pl-4">
-            <div className="flex gap-4">
-              <div>Nickname</div>
-              <div>Sent At</div>
-            </div>
-            <div>Role</div>
-          </div>
-
-          {currentCommentChildren && (
-            <Separator
-              orientation="vertical"
-              className="col-start-1 row-start-2 h-full justify-self-center"
-            />
-          )}
-
-          <div className="col-start-2 row-start-2 flex flex-col gap-2 pl-4 pt-4">
-            <div>Comment text</div>
-            <div className="flex items-center gap-2">
-              <PiThumbsUpBold /> <MessageCircleMore />
-            </div>
+        <div className="col-start-2 row-start-2 flex flex-col gap-2 pl-4 pt-4">
+          <div>Comment text</div>
+          <div className="flex items-center gap-2">
+            <PiThumbsUpBold /> <MessageCircleMore />
           </div>
         </div>
-      </>
+
+        {children && renderComments(children, 3, 1)}
+      </div>
     );
   });
 }
@@ -135,120 +135,7 @@ function RouteComponent() {
       <div className="p-6">
         <div className="py-6">Comments</div>
         <div className="grid grid-cols-[2.5rem_1fr] items-center">
-          <div className="col-start-1 row-start-1 grid grid-cols-[auto_1fr] items-center pt-4">
-            <div className="relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground">
-              <span className="absolute -left-5 top-2 h-3 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent hover:border-b-white hover:border-l-white" />
-            </div>
-            <div className="col-start-2 row-start-1 flex flex-col pl-4">
-              <div className="flex gap-4">
-                <div>Nickname</div>
-                <div>Sent At</div>
-              </div>
-              <div>Role</div>
-            </div>
-
-            <Separator
-              orientation="vertical"
-              className="col-start-1 row-start-2 h-full justify-self-center"
-            />
-
-            <div className="col-start-2 row-start-2 flex flex-col gap-2 pl-4 pt-4">
-              <div>Comment text</div>
-              <div className="flex items-center gap-2">
-                <PiThumbsUpBold /> <MessageCircleMore />
-              </div>
-            </div>
-
-            <Separator
-              orientation="vertical"
-              className="col-start-1 row-start-3 justify-self-center"
-            />
-
-            <div className="col-start-2 row-start-3 grid grid-cols-[auto_max-content] items-center pt-4">
-              <div className="relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground">
-                <span className="absolute -left-5 top-2 h-3 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent hover:border-b-white hover:border-l-white" />
-              </div>
-              <div className="col-start-2 row-start-1 flex flex-col pl-4">
-                <div className="flex gap-4">
-                  <div>Nickname</div>
-                  <div>Sent At</div>
-                </div>
-                <div>Role</div>
-              </div>
-
-              <Separator
-                orientation="vertical"
-                className="col-start-1 row-start-2 h-full justify-self-center"
-              />
-
-              <div className="col-start-2 row-start-2 flex flex-col gap-2 pl-4 pt-4">
-                <div>Comment text</div>
-                <div className="flex items-center gap-2">
-                  <PiThumbsUpBold /> <MessageCircleMore />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <Separator
-            orientation="vertical"
-            className="row-start-3 justify-self-center"
-          />
-
-          <div className="col-start-2 row-start-3 grid grid-cols-[auto_1fr] items-center gap-x-4 justify-self-start pt-4">
-            <div className="relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground">
-              <span className="absolute -left-5 top-2 h-3 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent hover:border-b-white hover:border-l-white" />
-            </div>
-            <div className="col-start-2 row-start-1 flex flex-col pl-4">
-              <div className="flex gap-4">
-                <div>Nickname</div>
-                <div>Sent At</div>
-              </div>
-              <div>Role</div>
-            </div>
-
-            <Separator
-              orientation="vertical"
-              className="col-start-1 row-start-2 h-full justify-self-center"
-            />
-
-            <div className="col-start-2 row-start-2 flex flex-col gap-2 pl-4 pt-4">
-              <div>Comment text</div>
-              <div className="flex items-center gap-2">
-                <PiThumbsUpBold /> <MessageCircleMore />
-              </div>
-            </div>
-          </div>
-
-          <Separator
-            orientation="vertical"
-            className="row-start-4 justify-self-center"
-          />
-
-          <div className="col-start-2 row-start-4 grid grid-cols-[auto_1fr] items-center gap-x-4 justify-self-start pt-4">
-            <div className="relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground">
-              <span className="absolute -left-5 top-2 h-3 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent hover:border-b-white hover:border-l-white" />
-            </div>
-            <div className="col-start-2 row-start-1 flex flex-col pl-4">
-              <div className="flex gap-4">
-                <div>Nickname</div>
-                <div>Sent At</div>
-              </div>
-              <div>Role</div>
-            </div>
-
-            <Separator
-              orientation="vertical"
-              className="col-start-1 row-start-2 h-full justify-self-center"
-            />
-
-            <div className="col-start-2 row-start-2 flex flex-col gap-2 pl-4 pt-4">
-              <div>Comment text</div>
-              <div className="flex items-center gap-2">
-                <PiThumbsUpBold /> <MessageCircleMore />
-              </div>
-            </div>
-          </div>
+          {renderComments(comments, 1, 1)}
         </div>
       </div>
     </section>
