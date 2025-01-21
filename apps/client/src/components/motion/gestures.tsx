@@ -1,10 +1,19 @@
 import * as motion from "motion/react-client";
-import type { ReactNode } from "react";
 
-export default function Gestures({ children }: { children: ReactNode }) {
+import type { ComponentProps } from "react";
+
+export default function ButtonGesture({
+  children,
+  className,
+  onClick,
+}: ComponentProps<"button">) {
   return (
-    <motion.div whileHover={{ scale: 1.2 }} whileTap={{ scale: 0.8 }}>
+    <motion.button
+      className={className}
+      onClick={onClick}
+      whileTap={{ scale: 0.8 }}
+    >
       {children}
-    </motion.div>
+    </motion.button>
   );
 }

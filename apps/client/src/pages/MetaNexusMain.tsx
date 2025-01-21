@@ -11,11 +11,13 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Heart, MessageCircleMore, Share, ThumbsUp } from "lucide-react";
+import { Heart, MessageCircleMore, Share } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { PiThumbsUpBold, PiThumbsUpFill } from "react-icons/pi";
 
 import { Link } from "@tanstack/react-router";
+import ButtonGesture from "../components/motion/gestures";
 import { Button } from "../components/ui/button";
 import {
   CardContent,
@@ -23,28 +25,22 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/card";
-import { ScrollArea } from "../components/ui/scroll-area";
 import { Separator } from "../components/ui/separator";
 
 export default function MetaNexusMain() {
   return (
-    <ScrollArea
-      type="always"
-      className="h-full w-full flex-1 [&>[data-radix-scroll-area-viewport]]:max-h-[calc(100vh-200px)]"
-    >
-      <div className="flex flex-1 flex-col gap-4 p-16 pb-6 pt-2">
-        <TrendingCarousel />
-        <PostPreview />
-        <PostPreview />
-        <PostPreview />
-      </div>
-    </ScrollArea>
+    <>
+      <TrendingCarousel />
+      <PostPreview />
+      <PostPreview />
+      <PostPreview />
+    </>
   );
 }
 
 function PostPreview() {
   return (
-    <div className="flex max-h-[50%] flex-col justify-between rounded-xl bg-muted/50 md:min-h-min">
+    <div className="flex max-h-[50%] min-h-min flex-col justify-between rounded-xl bg-muted/50">
       <CardHeader className="pb-3">
         <CardTitle className="line-clamp-4 text-2xl">Post Title</CardTitle>
         <CardDescription>
@@ -81,20 +77,52 @@ function PostPreview() {
       </CardContent>
       <Separator className="mt-4 px-3" />
       <div className="flex p-3">
-        <Button variant={"ghost"} className="flex-1 p-6">
-          <ThumbsUp />
-          Like
-        </Button>
-        <Button variant={"ghost"} className="flex-1 p-6">
-          <MessageCircleMore />
-          Comment
-        </Button>
-        <Button variant={"ghost"} className="flex-1 p-6">
-          <Share />
-          Share
-        </Button>
+        <LikeButton />
+        <CommentButton />
+        <ShareButton />
       </div>
     </div>
+  );
+}
+
+export function ShareButton() {
+  return (
+    <Button variant={"ghost"} asChild className="flex-1 p-6">
+      <ButtonGesture>
+        <Share />
+        Share
+      </ButtonGesture>
+    </Button>
+  );
+}
+
+export function CommentButton() {
+  return (
+    <Button variant={"ghost"} asChild className="flex-1 p-6">
+      <ButtonGesture>
+        <MessageCircleMore />
+        Comment
+      </ButtonGesture>
+    </Button>
+  );
+}
+
+export function LikeButton() {
+  const [isLiked, setIsLiked] = useState(false);
+  return (
+    <Button
+      asChild
+      variant={"ghost"}
+      onClick={() => {
+        setIsLiked(!isLiked);
+      }}
+      className="w-full flex-1 justify-center p-6"
+    >
+      <ButtonGesture>
+        {isLiked ? <PiThumbsUpFill /> : <PiThumbsUpBold />}
+        Like
+      </ButtonGesture>
+    </Button>
   );
 }
 
@@ -154,7 +182,11 @@ function TrendingCarousel() {
 function TrendingCard() {
   return (
     <CarouselItem className="flex aspect-video md:basis-1/2 2xl:basis-1/3">
-      <Link to={"/post"} className="w-full rounded-xl bg-muted/50 p-4">
+      <Link
+        to={"/rooms/posts/$postid"}
+        params={{ postid: "1" }}
+        className="w-full rounded-xl bg-muted/50 p-4"
+      >
         <div className="flex h-full flex-1 flex-col justify-between">
           <div className="flex items-center justify-end gap-2 self-end">
             <div className="max-w-[10ch] truncate">42</div>
@@ -166,23 +198,6 @@ function TrendingCard() {
               minim. Minim dolor pariatur sit veniam do deserunt proident culpa
               labore mollit labore mollit enim. Do anim dolore dolore ipsum
               ipsum cupidatat proident.Minim mollit adipisicing enim excepteur
-              incididunt qui officia incididunt ex excepteur consectetur mollit
-              ad. Dolor non dolor laborum laborum eu nulla reprehenderit laboris
-              mollit sit excepteur et. Magna fugiat elit minim duis sit proident
-              nostrud Lorem commodo ad aliquip tempor. Eiusmod duis ex laboris
-              pariatur elit non aliqua nisi irure proident tempor et labore
-              eiusmod. Sit esse laborum do ullamco adipisicing nisi aute
-              proident irure proident. Commodo dolore id minim fugiat commodo
-              fugiat ex. Nostrud culpa pariatur velit tempor irure dolor sunt ad
-              irure exercitation enim. Anim cillum officia id incididunt Lorem
-              aliquip ipsum nulla laboris mollit anim. Non sunt eu adipisicing
-              enim ut ea dolor occaecat ullamco sint esse qui sunt ex. Dolor non
-              consequat pariatur consectetur dolor minim non. Proident ipsum
-              consectetur aliqua exercitation ullamco esse. Excepteur velit enim
-              nisi mollit consectetur duis Lorem fugiat veniam. Aliqua aliquip
-              laboris duis amet exercitation velit velit aliqua ut deserunt. Et
-              amet aliquip elit esse officia. Eiusmod irure commodo laboris do
-              occaecat consequat eiusmod fugiat dolor esse non amet.
             </CardTitle>
             <p className="mt-1 line-clamp-1 text-muted-foreground">
               r/Something

@@ -12,26 +12,39 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
-import type { ReactNode } from "@tanstack/react-router";
+import { Link, type ReactNode } from "@tanstack/react-router";
 import { useActivePage } from "../../hooks/useActivePage";
 import { AppSidebar } from "../app-sidebar";
 import { SidebarRight } from "../sidebar-right";
+import { ScrollArea } from "../ui/scroll-area";
 
 export default function SidebarWrapper({ children }: { children: ReactNode }) {
   return (
     <SidebarProvider>
       <AppSidebar />
-
       <SidebarInset>
-        <SidebarHeader />
-        {children}
+        <InsetHeader />
+        <InsetScrollArea>{children}</InsetScrollArea>
       </SidebarInset>
-
       <SidebarRight />
     </SidebarProvider>
   );
 }
-function SidebarHeader() {
+
+function InsetScrollArea({ children }: { children: ReactNode }) {
+  return (
+    <ScrollArea
+      type="always"
+      className="h-full w-full flex-1 [&>[data-radix-scroll-area-viewport]]:max-h-[calc(100vh-200px)]"
+    >
+      <div className="flex flex-1 flex-col gap-4 p-16 pb-6 pt-2">
+        {children}
+      </div>
+    </ScrollArea>
+  );
+}
+
+function InsetHeader() {
   const activePage = useActivePage();
   return (
     <header className="flex h-16 shrink-0 items-center gap-2">
@@ -41,7 +54,9 @@ function SidebarHeader() {
         <Breadcrumb>
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
-              <BreadcrumbLink href="#">{activePage}</BreadcrumbLink>
+              <BreadcrumbLink asChild>
+                <Link to={activePage}>{activePage}</Link>
+              </BreadcrumbLink>
             </BreadcrumbItem>
             <BreadcrumbSeparator className="hidden md:block" />
             <BreadcrumbItem>
