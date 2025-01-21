@@ -18,7 +18,7 @@ export const Route = createFileRoute("/_app/rooms/posts/$postid")({
 
 function RouteComponent() {
   return (
-    <section className="h-svh rounded-xl bg-muted/50">
+    <section className="min-h-svh rounded-xl bg-muted/50">
       <CardHeader>
         <CardTitle className="text-2xl">
           Voluptate laboris excepteur incididunt dolor aliqua. Sint fugiat culpa
@@ -59,7 +59,54 @@ function RouteComponent() {
         <Input placeholder="Write a comment..." />
       </div>
       <Separator className="mt-1" />
-      <div className="p-6">Comments</div>
+
+      <div className="p-6">
+        <div className="py-6">Comments</div>
+        <div className="grid grid-cols-[2.5rem_1fr] grid-rows-2 items-center">
+          <div className="col-start-1 col-end-3 row-start-1 grid grid-cols-[auto_1fr] grid-rows-2 items-center gap-x-4 justify-self-start py-4">
+            <div className="col-start-1 row-start-1 row-end-3 h-10 w-10 rounded-full bg-foreground"></div>
+            <div className="row-start-1 row-end-2 flex gap-4">
+              <div>Nickname</div>
+              <div>Sent At</div>
+            </div>
+            <div className="row-start-2 row-end-3">Role</div>
+          </div>
+          <Separator
+            orientation="vertical"
+            className="col-start-1 row-start-2 h-full justify-self-center"
+          />
+          <div className="relative flex flex-col gap-2 pl-4">
+            <div>Comment text</div>
+            <div className="flex items-center gap-2">
+              <PiThumbsUpBold /> <MessageCircleMore />
+            </div>
+          </div>
+          <div className="col-start-2 col-end-3 row-start-3 grid grid-cols-[auto_1fr] grid-rows-2 items-center gap-x-4 justify-self-start py-4">
+            <div className="relative col-start-1 row-start-1 row-end-3 h-10 w-10 rounded-full bg-foreground">
+              <span className="absolute -left-5 h-6 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent" />
+            </div>
+            <div className="row-start-1 row-end-2 flex gap-4">
+              <div>Nickname</div>
+              <div>Sent At</div>
+            </div>
+            <div className="row-start-2 row-end-3">Role</div>
+          </div>
+          <Separator
+            orientation="vertical"
+            className="col-start-1 row-start-3 h-full justify-self-center"
+          />
+          <Separator
+            orientation="vertical"
+            className="col-start-1 row-start-4 h-full justify-self-center"
+          />
+          <div className="relative col-start-2 row-start-4 flex flex-col gap-2 pl-4">
+            <div>Comment text</div>
+            <div className="flex items-center gap-2">
+              <PiThumbsUpBold /> <MessageCircleMore />
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
   );
 }
