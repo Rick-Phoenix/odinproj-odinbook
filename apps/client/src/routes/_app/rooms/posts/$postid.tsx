@@ -33,7 +33,7 @@ function renderComments(
     const children = c?.sub;
     return (
       <div
-        className={`col-start-${startingColumn} row-start-${row} grid grid-cols-[auto_max-content] items-center pt-4`}
+        className={`col-start-${startingColumn} row-start-${row} grid grid-cols-[auto_1fr] items-center pt-4`}
       >
         <div
           className={`relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground`}
@@ -60,7 +60,7 @@ function renderComments(
           </div>
         </div>
 
-        {children && renderComments(children, 3, 1)}
+        {children && renderComments(children, 3, 2)}
       </div>
     );
   });
@@ -75,7 +75,24 @@ const comments: Comments = [
     sub: [
       {
         text: " comment text",
-        sub: [{ text: " comment text", sub: [{ text: "comment text" }] }],
+        sub: [
+          {
+            text: " comment text",
+            sub: [
+              {
+                text: "comment text",
+                sub: [
+                  {
+                    text: "comment text",
+                    sub: [
+                      { text: "comment text", sub: [{ text: "comment text" }] },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
       },
     ],
   },
