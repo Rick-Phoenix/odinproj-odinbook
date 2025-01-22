@@ -46,10 +46,10 @@ header {
   border-left: 12px solid transparent;
 }
 
-.swiper-container {
-  display: grid;
+.swiper {
+  /* width: 100%; */
+  /* max-width: 100%; */
 }
 
-.swiper {
-  max-width: 100%;
+.swiper-slide {
 }
