@@ -59,9 +59,7 @@ function renderComments(
             <div>Role</div>
           </div>
 
-          {startingColumn > 0 && (
-            <Separator orientation="vertical" className={separatorClass} />
-          )}
+          <Separator orientation="vertical" className={separatorClass} />
 
           <div className="col-start-2 row-start-2 flex flex-col gap-2 pl-4 pt-4">
             <div>{c.text}</div>
@@ -72,12 +70,6 @@ function renderComments(
 
           {children && renderComments(children, 3, 2)}
         </div>
-        {/* {startingColumn === 1 && row > 0 && (
-          <Separator
-            orientation="vertical"
-            className={`col-start-1 row-start-${row} min-h-full justify-self-center`}
-          />
-        )} */}
       </Fragment>
     );
   });

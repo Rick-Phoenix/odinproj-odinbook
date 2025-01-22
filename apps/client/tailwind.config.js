@@ -4,7 +4,7 @@ import cssplugin from "./cssplugin";
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
+  content: ["./index.html", "./src/**/*.{tsx,js,jsx}"],
   theme: {
     extend: {
       borderRadius: {
@@ -70,4 +70,5 @@ export default {
     require("tailwindcss-animate"),
     cssplugin(resolve(__dirname, "./src/styles/globals.css")),
   ],
+  safelist: [{ pattern: /row-end-\d+/ }],
 };
