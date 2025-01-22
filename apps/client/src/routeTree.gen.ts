@@ -18,6 +18,7 @@ import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
 import { Route as AppRoomsIndexImport } from './routes/_app/rooms/index'
 import { Route as AppChatsIndexImport } from './routes/_app/chats/index'
+import { Route as AppChatsContactImport } from './routes/_app/chats/$contact'
 import { Route as AppRoomsRoomIndexImport } from './routes/_app/rooms/$room/index'
 import { Route as AppRoomsRoomPostsPostidImport } from './routes/_app/rooms/$room/posts/$postid'
 
@@ -61,6 +62,12 @@ const AppRoomsIndexRoute = AppRoomsIndexImport.update({
 const AppChatsIndexRoute = AppChatsIndexImport.update({
   id: '/chats/',
   path: '/chats/',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppChatsContactRoute = AppChatsContactImport.update({
+  id: '/chats/$contact',
+  path: '/chats/$contact',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -115,6 +122,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
+    '/_app/chats/$contact': {
+      id: '/_app/chats/$contact'
+      path: '/chats/$contact'
+      fullPath: '/chats/$contact'
+      preLoaderRoute: typeof AppChatsContactImport
+      parentRoute: typeof AppImport
+    }
     '/_app/chats/': {
       id: '/_app/chats/'
       path: '/chats'
@@ -149,6 +163,7 @@ declare module '@tanstack/react-router' {
 // Create and export the route tree
 
 interface AppRouteChildren {
+  AppChatsContactRoute: typeof AppChatsContactRoute
   AppChatsIndexRoute: typeof AppChatsIndexRoute
   AppRoomsIndexRoute: typeof AppRoomsIndexRoute
   AppRoomsRoomIndexRoute: typeof AppRoomsRoomIndexRoute
@@ -156,6 +171,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppChatsContactRoute: AppChatsContactRoute,
   AppChatsIndexRoute: AppChatsIndexRoute,
   AppRoomsIndexRoute: AppRoomsIndexRoute,
   AppRoomsRoomIndexRoute: AppRoomsRoomIndexRoute,
@@ -170,6 +186,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
+  '/chats/$contact': typeof AppChatsContactRoute
   '/chats': typeof AppChatsIndexRoute
   '/rooms': typeof AppRoomsIndexRoute
   '/rooms/$room': typeof AppRoomsRoomIndexRoute
@@ -182,6 +199,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
+  '/chats/$contact': typeof AppChatsContactRoute
   '/chats': typeof AppChatsIndexRoute
   '/rooms': typeof AppRoomsIndexRoute
   '/rooms/$room': typeof AppRoomsRoomIndexRoute
@@ -195,6 +213,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
+  '/_app/chats/$contact': typeof AppChatsContactRoute
   '/_app/chats/': typeof AppChatsIndexRoute
   '/_app/rooms/': typeof AppRoomsIndexRoute
   '/_app/rooms/$room/': typeof AppRoomsRoomIndexRoute
@@ -209,6 +228,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/post'
     | '/signup'
+    | '/chats/$contact'
     | '/chats'
     | '/rooms'
     | '/rooms/$room'
@@ -220,6 +240,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/post'
     | '/signup'
+    | '/chats/$contact'
     | '/chats'
     | '/rooms'
     | '/rooms/$room'
@@ -231,6 +252,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/post'
     | '/signup'
+    | '/_app/chats/$contact'
     | '/_app/chats/'
     | '/_app/rooms/'
     | '/_app/rooms/$room/'
@@ -277,6 +299,7 @@ export const routeTree = rootRoute
     "/_app": {
       "filePath": "_app.tsx",
       "children": [
+        "/_app/chats/$contact",
         "/_app/chats/",
         "/_app/rooms/",
         "/_app/rooms/$room/",
@@ -291,6 +314,10 @@ export const routeTree = rootRoute
     },
     "/signup": {
       "filePath": "signup.tsx"
+    },
+    "/_app/chats/$contact": {
+      "filePath": "_app/chats/$contact.tsx",
+      "parent": "/_app"
     },
     "/_app/chats/": {
       "filePath": "_app/chats/index.tsx",

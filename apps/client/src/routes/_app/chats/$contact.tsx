@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import Chat from "../../../pages/Chat";
 
-export const Route = createFileRoute("/_app/chats/")({
+export const Route = createFileRoute("/_app/chats/$contact")({
   component: RouteComponent,
 });
 
