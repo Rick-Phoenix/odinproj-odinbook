@@ -25,14 +25,14 @@ export default function SidebarWrapper({ children }: { children: ReactNode }) {
       <AppSidebar />
       <SidebarInset>
         <InsetHeader />
-        <InsetScrollArea>{children}</InsetScrollArea>
+        {children}
       </SidebarInset>
       <SidebarRight />
     </SidebarProvider>
   );
 }
 
-function InsetScrollArea({ children }: { children: ReactNode }) {
+export function InsetScrollArea({ children }: { children: ReactNode }) {
   return (
     <ScrollArea
       type="always"
@@ -43,6 +43,10 @@ function InsetScrollArea({ children }: { children: ReactNode }) {
       </div>
     </ScrollArea>
   );
+}
+
+export function StaticInset({ children }: { children: ReactNode }) {
+  return <div className="flex flex-1 flex-col gap-4 p-16 pt-2">{children}</div>;
 }
 
 function InsetHeader() {
