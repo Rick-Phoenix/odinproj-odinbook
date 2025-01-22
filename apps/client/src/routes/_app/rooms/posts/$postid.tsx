@@ -34,11 +34,12 @@ function renderComments(
     const gridClassName = `col-start-${startingColumn} row-start-${row} grid grid-cols-[auto_1fr] items-center ${startingColumn !== 1 || row !== 1 ? "pt-8" : " "} ${startingColumn === 1 ? "col-end-3" : " "}`;
     let separatorSpan = children ? children.length + 3 : 3;
     if (startingColumn > 1) separatorSpan--;
+    const separatorRowEnd = `row-end-${separatorSpan}`;
     const separatorHeight =
       i === comments.length - 1 && !children
         ? "min-h-0"
         : "min-h-[calc(100%+4.5rem)]";
-    const separatorClass = `col-start-1 row-start-2 row-end-${separatorSpan} ${separatorHeight} justify-self-center`;
+    const separatorClass = `col-start-1 row-start-2 ${separatorRowEnd} ${separatorHeight} justify-self-center`;
     console.log(c.text, row, startingColumn);
     return (
       <Fragment key={i}>
