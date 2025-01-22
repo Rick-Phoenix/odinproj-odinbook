@@ -27,3 +27,21 @@ header {
     font-size: initial;
   }
 }
+
+.message-user::before {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 0;
+  border-top: 8px solid hsl(var(--muted-foreground) / 0.3);
+  border-right: 12px solid transparent;
+}
+
+.message-contact::before {
+  content: "";
+  position: absolute;
+  right: 100%;
+  top: 0;
+  border-top: 8px solid hsl(var(--muted-foreground) / 0.3);
+  border-left: 12px solid transparent;
+}

@@ -24,7 +24,7 @@ function RouteComponent() {
 
         <ScrollArea className="h-full w-full">
           <div className="grid w-full gap-5 rounded-xl p-8">
-            <div className="relative flex max-h-max items-end rounded-2xl rounded-tl-none bg-muted-foreground/30 p-3">
+            <div className="message-contact relative flex max-h-max items-end rounded-2xl rounded-tl-none bg-muted-foreground/30 p-3">
               <div>
                 Commodo quis anim Lorem ad id non ut dolore officia cillum
                 aliqua cupidatat amet mollit. Eu quis occaecat eu velit. Aute et
@@ -38,7 +38,7 @@ function RouteComponent() {
                 nostrud labore.
               </div>
             </div>
-            <div className="relative flex max-h-max items-end rounded-2xl rounded-tr-none bg-muted-foreground/30 p-3">
+            <div className="message-user relative flex max-h-max items-end rounded-2xl rounded-tr-none bg-muted-foreground/30 p-3">
               <div>
                 Commodo quis anim Lorem ad id non ut dolore officia cillum
                 aliqua cupidatat amet mollit. Eu quis occaecat eu velit. Aute et
