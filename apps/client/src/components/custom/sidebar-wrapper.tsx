@@ -36,9 +36,9 @@ export function InsetScrollArea({ children }: { children: ReactNode }) {
   return (
     <ScrollArea
       type="always"
-      className="h-full w-full flex-1 [&>[data-radix-scroll-area-viewport]]:max-h-[calc(100vh-200px)]"
+      className="h-full w-full max-w-full flex-1 [&>[data-radix-scroll-area-viewport]]:max-h-[calc(100vh-200px)]"
     >
-      <div className="flex flex-1 flex-col gap-4 p-16 pb-6 pt-2">
+      <div className="flex min-w-0 max-w-full flex-1 flex-col gap-4 p-16 pb-6 pt-2">
         {children}
       </div>
     </ScrollArea>
@@ -47,7 +47,7 @@ export function InsetScrollArea({ children }: { children: ReactNode }) {
 
 export function StaticInset({ children }: { children: ReactNode }) {
   return (
-    <div className="flex max-h-full min-h-full flex-1 flex-col gap-4 p-16 pt-2">
+    <div className="flex h-full max-h-full min-h-0 flex-1 flex-col gap-4 p-16 pt-2">
       {children}
     </div>
   );

@@ -17,6 +17,7 @@ import { Route as LoginImport } from './routes/login'
 import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
 import { Route as AppRoomsIndexImport } from './routes/_app/rooms/index'
+import { Route as AppMarketplaceIndexImport } from './routes/_app/marketplace/index'
 import { Route as AppChatsIndexImport } from './routes/_app/chats/index'
 import { Route as AppChatsContactImport } from './routes/_app/chats/$contact'
 import { Route as AppRoomsRoomIndexImport } from './routes/_app/rooms/$room/index'
@@ -56,6 +57,12 @@ const IndexRoute = IndexImport.update({
 const AppRoomsIndexRoute = AppRoomsIndexImport.update({
   id: '/rooms/',
   path: '/rooms/',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppMarketplaceIndexRoute = AppMarketplaceIndexImport.update({
+  id: '/marketplace/',
+  path: '/marketplace/',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -136,6 +143,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppChatsIndexImport
       parentRoute: typeof AppImport
     }
+    '/_app/marketplace/': {
+      id: '/_app/marketplace/'
+      path: '/marketplace'
+      fullPath: '/marketplace'
+      preLoaderRoute: typeof AppMarketplaceIndexImport
+      parentRoute: typeof AppImport
+    }
     '/_app/rooms/': {
       id: '/_app/rooms/'
       path: '/rooms'
@@ -165,6 +179,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppChatsContactRoute: typeof AppChatsContactRoute
   AppChatsIndexRoute: typeof AppChatsIndexRoute
+  AppMarketplaceIndexRoute: typeof AppMarketplaceIndexRoute
   AppRoomsIndexRoute: typeof AppRoomsIndexRoute
   AppRoomsRoomIndexRoute: typeof AppRoomsRoomIndexRoute
   AppRoomsRoomPostsPostidRoute: typeof AppRoomsRoomPostsPostidRoute
@@ -173,6 +188,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppChatsContactRoute: AppChatsContactRoute,
   AppChatsIndexRoute: AppChatsIndexRoute,
+  AppMarketplaceIndexRoute: AppMarketplaceIndexRoute,
   AppRoomsIndexRoute: AppRoomsIndexRoute,
   AppRoomsRoomIndexRoute: AppRoomsRoomIndexRoute,
   AppRoomsRoomPostsPostidRoute: AppRoomsRoomPostsPostidRoute,
@@ -188,6 +204,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/chats/$contact': typeof AppChatsContactRoute
   '/chats': typeof AppChatsIndexRoute
+  '/marketplace': typeof AppMarketplaceIndexRoute
   '/rooms': typeof AppRoomsIndexRoute
   '/rooms/$room': typeof AppRoomsRoomIndexRoute
   '/rooms/$room/posts/$postid': typeof AppRoomsRoomPostsPostidRoute
@@ -201,6 +218,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/chats/$contact': typeof AppChatsContactRoute
   '/chats': typeof AppChatsIndexRoute
+  '/marketplace': typeof AppMarketplaceIndexRoute
   '/rooms': typeof AppRoomsIndexRoute
   '/rooms/$room': typeof AppRoomsRoomIndexRoute
   '/rooms/$room/posts/$postid': typeof AppRoomsRoomPostsPostidRoute
@@ -215,6 +233,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_app/chats/$contact': typeof AppChatsContactRoute
   '/_app/chats/': typeof AppChatsIndexRoute
+  '/_app/marketplace/': typeof AppMarketplaceIndexRoute
   '/_app/rooms/': typeof AppRoomsIndexRoute
   '/_app/rooms/$room/': typeof AppRoomsRoomIndexRoute
   '/_app/rooms/$room/posts/$postid': typeof AppRoomsRoomPostsPostidRoute
@@ -230,6 +249,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/chats/$contact'
     | '/chats'
+    | '/marketplace'
     | '/rooms'
     | '/rooms/$room'
     | '/rooms/$room/posts/$postid'
@@ -242,6 +262,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/chats/$contact'
     | '/chats'
+    | '/marketplace'
     | '/rooms'
     | '/rooms/$room'
     | '/rooms/$room/posts/$postid'
@@ -254,6 +275,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_app/chats/$contact'
     | '/_app/chats/'
+    | '/_app/marketplace/'
     | '/_app/rooms/'
     | '/_app/rooms/$room/'
     | '/_app/rooms/$room/posts/$postid'
@@ -301,6 +323,7 @@ export const routeTree = rootRoute
       "children": [
         "/_app/chats/$contact",
         "/_app/chats/",
+        "/_app/marketplace/",
         "/_app/rooms/",
         "/_app/rooms/$room/",
         "/_app/rooms/$room/posts/$postid"
@@ -321,6 +344,10 @@ export const routeTree = rootRoute
     },
     "/_app/chats/": {
       "filePath": "_app/chats/index.tsx",
+      "parent": "/_app"
+    },
+    "/_app/marketplace/": {
+      "filePath": "_app/marketplace/index.tsx",
       "parent": "/_app"
     },
     "/_app/rooms/": {

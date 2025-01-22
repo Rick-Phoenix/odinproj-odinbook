@@ -66,7 +66,7 @@ const data = {
     },
     {
       title: "Marketplace",
-      url: "#",
+      url: "/marketplace",
       icon: Store,
       items: [
         {
