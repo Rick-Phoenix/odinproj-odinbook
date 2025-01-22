@@ -39,7 +39,7 @@ function TrendingCarousel() {
   const [isVisible, setIsVisible] = useState(true);
 
   return (
-    <div className="flex flex-col gap-5">
+    <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild className="p-3">
           <Button variant={"ghost"}>
@@ -113,7 +113,7 @@ function TrendingCarousel() {
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
 
