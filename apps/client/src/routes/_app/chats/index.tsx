@@ -1,8 +1,11 @@
 import { AvatarImage } from "@radix-ui/react-avatar";
 import { createFileRoute } from "@tanstack/react-router";
+import { Send } from "lucide-react";
 import { StaticInset } from "../../../components/custom/sidebar-wrapper";
 import { Avatar } from "../../../components/ui/avatar";
+import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
+import { ScrollArea } from "../../../components/ui/scroll-area";
 
 export const Route = createFileRoute("/_app/chats/")({
   component: RouteComponent,
@@ -18,8 +21,52 @@ function RouteComponent() {
           </Avatar>
           <div className="text-lg font-semibold">Nickname</div>
         </div>
-        <div className="h-full w-full rounded-xl pt-8"></div>
-        <Input className="p-8" />
+
+        <ScrollArea className="h-full w-full">
+          <div className="grid w-full gap-5 rounded-xl p-8">
+            <div className="relative flex max-h-max items-end rounded-2xl rounded-tl-none bg-muted-foreground/30 p-3">
+              <div>
+                Commodo quis anim Lorem ad id non ut dolore officia cillum
+                aliqua cupidatat amet mollit. Eu quis occaecat eu velit. Aute et
+                non sit laborum proident amet adipisicing Lorem fugiat non esse
+                nisi. Eu aute pariatur incididunt occaecat elit eu consequat
+                aute velit enim reprehenderit labore est incididunt. Qui mollit
+                non velit ea magna do consectetur eu. Eiusmod incididunt aute
+                excepteur nisi anim reprehenderit dolor voluptate aliqua. Lorem
+                eiusmod aliqua non Lorem sint mollit do qui adipisicing tempor.
+                Ad ad laborum quis ad velit ut sit enim labore ex minim eu
+                nostrud labore.
+              </div>
+            </div>
+            <div className="relative flex max-h-max items-end rounded-2xl rounded-tr-none bg-muted-foreground/30 p-3">
+              <div>
+                Commodo quis anim Lorem ad id non ut dolore officia cillum
+                aliqua cupidatat amet mollit. Eu quis occaecat eu velit. Aute et
+                non sit laborum proident amet adipisicing Lorem fugiat non esse
+                nisi. Eu aute pariatur incididunt occaecat elit eu consequat
+                aute velit enim reprehenderit labore est incididunt. Qui mollit
+                non velit ea magna do consectetur eu. Eiusmod incididunt aute
+                excepteur nisi anim reprehenderit dolor voluptate aliqua. Lorem
+                eiusmod aliqua non Lorem sint mollit do qui adipisicing tempor.
+                Ad ad laborum quis ad velit ut sit enim labore ex minim eu
+                nostrud labore.
+              </div>
+            </div>
+          </div>
+        </ScrollArea>
+
+        <form action="" className="flex items-center">
+          <Input
+            className="rounded-l-xl rounded-r-none border-r-0 p-8"
+            placeholder="Write a message..."
+          />
+          <Button
+            variant={"ghost"}
+            className="aspect-square h-full rounded-l-none rounded-r-xl border border-l-0 hover:bg-muted-foreground/30 focus:bg-muted-foreground/30"
+          >
+            <Send />
+          </Button>
+        </form>
       </section>
     </StaticInset>
   );

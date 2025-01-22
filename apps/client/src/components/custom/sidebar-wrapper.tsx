@@ -46,7 +46,11 @@ export function InsetScrollArea({ children }: { children: ReactNode }) {
 }
 
 export function StaticInset({ children }: { children: ReactNode }) {
-  return <div className="flex flex-1 flex-col gap-4 p-16 pt-2">{children}</div>;
+  return (
+    <div className="flex max-h-full min-h-full flex-1 flex-col gap-4 p-16 pt-2">
+      {children}
+    </div>
+  );
 }
 
 function InsetHeader() {
