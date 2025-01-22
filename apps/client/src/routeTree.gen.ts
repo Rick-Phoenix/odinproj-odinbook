@@ -10,240 +10,240 @@
 
 // Import Routes
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as SignupImport } from './routes/signup'
-import { Route as PostImport } from './routes/post'
-import { Route as LoginImport } from './routes/login'
-import { Route as AppImport } from './routes/_app'
-import { Route as IndexImport } from './routes/index'
-import { Route as AppRoomsIndexImport } from './routes/_app/rooms/index'
-import { Route as AppChatsIndexImport } from './routes/_app/chats/index'
-import { Route as AppRoomsRoomIndexImport } from './routes/_app/rooms/$room/index'
-import { Route as AppRoomsPostsPostidImport } from './routes/_app/rooms/posts/$postid'
+import { Route as rootRoute } from "./routes/__root";
+import { Route as AppImport } from "./routes/_app";
+import { Route as AppChatsIndexImport } from "./routes/_app/chats/index";
+import { Route as AppRoomsRoomIndexImport } from "./routes/_app/rooms/$room/index";
+import { Route as AppRoomsRoomPostsPostidImport } from "./routes/_app/rooms/$room/posts/$postid";
+import { Route as AppRoomsIndexImport } from "./routes/_app/rooms/index";
+import { Route as IndexImport } from "./routes/index";
+import { Route as LoginImport } from "./routes/login";
+import { Route as PostImport } from "./routes/post";
+import { Route as SignupImport } from "./routes/signup";
 
 // Create/Update Routes
 
 const SignupRoute = SignupImport.update({
-  id: '/signup',
-  path: '/signup',
+  id: "/signup",
+  path: "/signup",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const PostRoute = PostImport.update({
-  id: '/post',
-  path: '/post',
+  id: "/post",
+  path: "/post",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const LoginRoute = LoginImport.update({
-  id: '/login',
-  path: '/login',
+  id: "/login",
+  path: "/login",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const AppRoute = AppImport.update({
-  id: '/_app',
+  id: "/_app",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const IndexRoute = IndexImport.update({
-  id: '/',
-  path: '/',
+  id: "/",
+  path: "/",
   getParentRoute: () => rootRoute,
-} as any)
+} as any);
 
 const AppRoomsIndexRoute = AppRoomsIndexImport.update({
-  id: '/rooms/',
-  path: '/rooms/',
+  id: "/rooms/",
+  path: "/rooms/",
   getParentRoute: () => AppRoute,
-} as any)
+} as any);
 
 const AppChatsIndexRoute = AppChatsIndexImport.update({
-  id: '/chats/',
-  path: '/chats/',
+  id: "/chats/",
+  path: "/chats/",
   getParentRoute: () => AppRoute,
-} as any)
+} as any);
 
 const AppRoomsRoomIndexRoute = AppRoomsRoomIndexImport.update({
-  id: '/rooms/$room/',
-  path: '/rooms/$room/',
+  id: "/rooms/$room/",
+  path: "/rooms/$room/",
   getParentRoute: () => AppRoute,
-} as any)
+} as any);
 
-const AppRoomsPostsPostidRoute = AppRoomsPostsPostidImport.update({
-  id: '/rooms/posts/$postid',
-  path: '/rooms/posts/$postid',
+const AppRoomsRoomPostsPostidRoute = AppRoomsRoomPostsPostidImport.update({
+  id: "/rooms/$room/posts/$postid",
+  path: "/rooms/$room/posts/$postid",
   getParentRoute: () => AppRoute,
-} as any)
+} as any);
 
 // Populate the FileRoutesByPath interface
 
-declare module '@tanstack/react-router' {
+declare module "@tanstack/react-router" {
   interface FileRoutesByPath {
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexImport
-      parentRoute: typeof rootRoute
-    }
-    '/_app': {
-      id: '/_app'
-      path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AppImport
-      parentRoute: typeof rootRoute
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
-    }
-    '/post': {
-      id: '/post'
-      path: '/post'
-      fullPath: '/post'
-      preLoaderRoute: typeof PostImport
-      parentRoute: typeof rootRoute
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupImport
-      parentRoute: typeof rootRoute
-    }
-    '/_app/chats/': {
-      id: '/_app/chats/'
-      path: '/chats'
-      fullPath: '/chats'
-      preLoaderRoute: typeof AppChatsIndexImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/rooms/': {
-      id: '/_app/rooms/'
-      path: '/rooms'
-      fullPath: '/rooms'
-      preLoaderRoute: typeof AppRoomsIndexImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/rooms/posts/$postid': {
-      id: '/_app/rooms/posts/$postid'
-      path: '/rooms/posts/$postid'
-      fullPath: '/rooms/posts/$postid'
-      preLoaderRoute: typeof AppRoomsPostsPostidImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/rooms/$room/': {
-      id: '/_app/rooms/$room/'
-      path: '/rooms/$room'
-      fullPath: '/rooms/$room'
-      preLoaderRoute: typeof AppRoomsRoomIndexImport
-      parentRoute: typeof AppImport
-    }
+    "/": {
+      id: "/";
+      path: "/";
+      fullPath: "/";
+      preLoaderRoute: typeof IndexImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/_app": {
+      id: "/_app";
+      path: "";
+      fullPath: "";
+      preLoaderRoute: typeof AppImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/login": {
+      id: "/login";
+      path: "/login";
+      fullPath: "/login";
+      preLoaderRoute: typeof LoginImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/post": {
+      id: "/post";
+      path: "/post";
+      fullPath: "/post";
+      preLoaderRoute: typeof PostImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/signup": {
+      id: "/signup";
+      path: "/signup";
+      fullPath: "/signup";
+      preLoaderRoute: typeof SignupImport;
+      parentRoute: typeof rootRoute;
+    };
+    "/_app/chats/": {
+      id: "/_app/chats/";
+      path: "/chats";
+      fullPath: "/chats";
+      preLoaderRoute: typeof AppChatsIndexImport;
+      parentRoute: typeof AppImport;
+    };
+    "/_app/rooms/": {
+      id: "/_app/rooms/";
+      path: "/rooms";
+      fullPath: "/rooms";
+      preLoaderRoute: typeof AppRoomsIndexImport;
+      parentRoute: typeof AppImport;
+    };
+    "/_app/rooms/$room/": {
+      id: "/_app/rooms/$room/";
+      path: "/rooms/$room";
+      fullPath: "/rooms/$room";
+      preLoaderRoute: typeof AppRoomsRoomIndexImport;
+      parentRoute: typeof AppImport;
+    };
+    "/_app/rooms/$room/posts/$postid": {
+      id: "/_app/rooms/$room/posts/$postid";
+      path: "/rooms/$room/posts/$postid";
+      fullPath: "/rooms/$room/posts/$postid";
+      preLoaderRoute: typeof AppRoomsRoomPostsPostidImport;
+      parentRoute: typeof AppImport;
+    };
   }
 }
 
 // Create and export the route tree
 
 interface AppRouteChildren {
-  AppChatsIndexRoute: typeof AppChatsIndexRoute
-  AppRoomsIndexRoute: typeof AppRoomsIndexRoute
-  AppRoomsPostsPostidRoute: typeof AppRoomsPostsPostidRoute
-  AppRoomsRoomIndexRoute: typeof AppRoomsRoomIndexRoute
+  AppChatsIndexRoute: typeof AppChatsIndexRoute;
+  AppRoomsIndexRoute: typeof AppRoomsIndexRoute;
+  AppRoomsRoomIndexRoute: typeof AppRoomsRoomIndexRoute;
+  AppRoomsRoomPostsPostidRoute: typeof AppRoomsRoomPostsPostidRoute;
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppChatsIndexRoute: AppChatsIndexRoute,
   AppRoomsIndexRoute: AppRoomsIndexRoute,
-  AppRoomsPostsPostidRoute: AppRoomsPostsPostidRoute,
   AppRoomsRoomIndexRoute: AppRoomsRoomIndexRoute,
-}
+  AppRoomsRoomPostsPostidRoute: AppRoomsRoomPostsPostidRoute,
+};
 
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
+const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren);
 
 export interface FileRoutesByFullPath {
-  '/': typeof IndexRoute
-  '': typeof AppRouteWithChildren
-  '/login': typeof LoginRoute
-  '/post': typeof PostRoute
-  '/signup': typeof SignupRoute
-  '/chats': typeof AppChatsIndexRoute
-  '/rooms': typeof AppRoomsIndexRoute
-  '/rooms/posts/$postid': typeof AppRoomsPostsPostidRoute
-  '/rooms/$room': typeof AppRoomsRoomIndexRoute
+  "/": typeof IndexRoute;
+  "": typeof AppRouteWithChildren;
+  "/login": typeof LoginRoute;
+  "/post": typeof PostRoute;
+  "/signup": typeof SignupRoute;
+  "/chats": typeof AppChatsIndexRoute;
+  "/rooms": typeof AppRoomsIndexRoute;
+  "/rooms/$room": typeof AppRoomsRoomIndexRoute;
+  "/rooms/$room/posts/$postid": typeof AppRoomsRoomPostsPostidRoute;
 }
 
 export interface FileRoutesByTo {
-  '/': typeof IndexRoute
-  '': typeof AppRouteWithChildren
-  '/login': typeof LoginRoute
-  '/post': typeof PostRoute
-  '/signup': typeof SignupRoute
-  '/chats': typeof AppChatsIndexRoute
-  '/rooms': typeof AppRoomsIndexRoute
-  '/rooms/posts/$postid': typeof AppRoomsPostsPostidRoute
-  '/rooms/$room': typeof AppRoomsRoomIndexRoute
+  "/": typeof IndexRoute;
+  "": typeof AppRouteWithChildren;
+  "/login": typeof LoginRoute;
+  "/post": typeof PostRoute;
+  "/signup": typeof SignupRoute;
+  "/chats": typeof AppChatsIndexRoute;
+  "/rooms": typeof AppRoomsIndexRoute;
+  "/rooms/$room": typeof AppRoomsRoomIndexRoute;
+  "/rooms/$room/posts/$postid": typeof AppRoomsRoomPostsPostidRoute;
 }
 
 export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/': typeof IndexRoute
-  '/_app': typeof AppRouteWithChildren
-  '/login': typeof LoginRoute
-  '/post': typeof PostRoute
-  '/signup': typeof SignupRoute
-  '/_app/chats/': typeof AppChatsIndexRoute
-  '/_app/rooms/': typeof AppRoomsIndexRoute
-  '/_app/rooms/posts/$postid': typeof AppRoomsPostsPostidRoute
-  '/_app/rooms/$room/': typeof AppRoomsRoomIndexRoute
+  __root__: typeof rootRoute;
+  "/": typeof IndexRoute;
+  "/_app": typeof AppRouteWithChildren;
+  "/login": typeof LoginRoute;
+  "/post": typeof PostRoute;
+  "/signup": typeof SignupRoute;
+  "/_app/chats/": typeof AppChatsIndexRoute;
+  "/_app/rooms/": typeof AppRoomsIndexRoute;
+  "/_app/rooms/$room/": typeof AppRoomsRoomIndexRoute;
+  "/_app/rooms/$room/posts/$postid": typeof AppRoomsRoomPostsPostidRoute;
 }
 
 export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
+  fileRoutesByFullPath: FileRoutesByFullPath;
   fullPaths:
-    | '/'
-    | ''
-    | '/login'
-    | '/post'
-    | '/signup'
-    | '/chats'
-    | '/rooms'
-    | '/rooms/posts/$postid'
-    | '/rooms/$room'
-  fileRoutesByTo: FileRoutesByTo
+    | "/"
+    | ""
+    | "/login"
+    | "/post"
+    | "/signup"
+    | "/chats"
+    | "/rooms"
+    | "/rooms/$room"
+    | "/rooms/$room/posts/$postid";
+  fileRoutesByTo: FileRoutesByTo;
   to:
-    | '/'
-    | ''
-    | '/login'
-    | '/post'
-    | '/signup'
-    | '/chats'
-    | '/rooms'
-    | '/rooms/posts/$postid'
-    | '/rooms/$room'
+    | "/"
+    | ""
+    | "/login"
+    | "/post"
+    | "/signup"
+    | "/chats"
+    | "/rooms"
+    | "/rooms/$room"
+    | "/rooms/$room/posts/$postid";
   id:
-    | '__root__'
-    | '/'
-    | '/_app'
-    | '/login'
-    | '/post'
-    | '/signup'
-    | '/_app/chats/'
-    | '/_app/rooms/'
-    | '/_app/rooms/posts/$postid'
-    | '/_app/rooms/$room/'
-  fileRoutesById: FileRoutesById
+    | "__root__"
+    | "/"
+    | "/_app"
+    | "/login"
+    | "/post"
+    | "/signup"
+    | "/_app/chats/"
+    | "/_app/rooms/"
+    | "/_app/rooms/$room/"
+    | "/_app/rooms/$room/posts/$postid";
+  fileRoutesById: FileRoutesById;
 }
 
 export interface RootRouteChildren {
-  IndexRoute: typeof IndexRoute
-  AppRoute: typeof AppRouteWithChildren
-  LoginRoute: typeof LoginRoute
-  PostRoute: typeof PostRoute
-  SignupRoute: typeof SignupRoute
+  IndexRoute: typeof IndexRoute;
+  AppRoute: typeof AppRouteWithChildren;
+  LoginRoute: typeof LoginRoute;
+  PostRoute: typeof PostRoute;
+  SignupRoute: typeof SignupRoute;
 }
 
 const rootRouteChildren: RootRouteChildren = {
@@ -252,11 +252,11 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PostRoute: PostRoute,
   SignupRoute: SignupRoute,
-}
+};
 
 export const routeTree = rootRoute
   ._addFileChildren(rootRouteChildren)
-  ._addFileTypes<FileRouteTypes>()
+  ._addFileTypes<FileRouteTypes>();
 
 /* ROUTE_MANIFEST_START
 {
@@ -279,8 +279,8 @@ export const routeTree = rootRoute
       "children": [
         "/_app/chats/",
         "/_app/rooms/",
-        "/_app/rooms/posts/$postid",
-        "/_app/rooms/$room/"
+        "/_app/rooms/$room/",
+        "/_app/rooms/$room/posts/$postid"
       ]
     },
     "/login": {
@@ -300,12 +300,12 @@ export const routeTree = rootRoute
       "filePath": "_app/rooms/index.tsx",
       "parent": "/_app"
     },
-    "/_app/rooms/posts/$postid": {
-      "filePath": "_app/rooms/posts/$postid.tsx",
-      "parent": "/_app"
-    },
     "/_app/rooms/$room/": {
       "filePath": "_app/rooms/$room/index.tsx",
+      "parent": "/_app"
+    },
+    "/_app/rooms/$room/posts/$postid": {
+      "filePath": "_app/rooms/$room/posts/$postid.tsx",
       "parent": "/_app"
     }
   }

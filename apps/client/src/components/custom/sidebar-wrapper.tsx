@@ -13,7 +13,8 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 import { Link, type ReactNode } from "@tanstack/react-router";
-import { useActivePage } from "../../hooks/useActivePage";
+import { title } from "radashi";
+import { useActivePage } from "../../hooks/use-active-page";
 import { AppSidebar } from "../app-sidebar";
 import { SidebarRight } from "../sidebar-right";
 import { ScrollArea } from "../ui/scroll-area";
@@ -45,7 +46,7 @@ function InsetScrollArea({ children }: { children: ReactNode }) {
 }
 
 function InsetHeader() {
-  const activePage = useActivePage();
+  const { mainSection, subSection, activePage } = useActivePage();
   return (
     <header className="flex h-16 shrink-0 items-center gap-2">
       <div className="flex items-center gap-2 px-4">
@@ -55,13 +56,28 @@ function InsetHeader() {
           <BreadcrumbList>
             <BreadcrumbItem className="hidden md:block">
               <BreadcrumbLink asChild>
-                <Link to={activePage}>{activePage}</Link>
+                {mainSection &&
+                  (mainSection === activePage ? (
+                    <Link to={mainSection}>
+                      <BreadcrumbPage>{title(mainSection)}</BreadcrumbPage>
+                    </Link>
+                  ) : (
+                    <Link to={mainSection}>{title(mainSection)}</Link>
+                  ))}
               </BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator className="hidden md:block" />
-            <BreadcrumbItem>
-              <BreadcrumbPage>Home</BreadcrumbPage>
-            </BreadcrumbItem>
+            {subSection && (
+              <>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbLink asChild>
+                    <Link to={mainSection + "/" + subSection}>
+                      <BreadcrumbPage>{title(subSection)}</BreadcrumbPage>
+                    </Link>
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+              </>
+            )}
           </BreadcrumbList>
         </Breadcrumb>
       </div>

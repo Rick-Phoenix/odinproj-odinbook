@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
-import Post from "../../../../pages/Post";
+import Post from "../../../../../pages/Post";
 
-export const Route = createFileRoute("/_app/rooms/posts/$postid")({
+export const Route = createFileRoute("/_app/rooms/$room/posts/$postid")({
   component: RouteComponent,
 });
 

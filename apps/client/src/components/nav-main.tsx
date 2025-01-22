@@ -19,7 +19,8 @@ import {
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
-import { useActivePage } from "../hooks/useActivePage";
+import { title } from "radashi";
+import { useActivePage } from "../hooks/use-active-page";
 
 export function NavMain({
   items,
@@ -35,7 +36,7 @@ export function NavMain({
     }[];
   }[];
 }) {
-  const activePage = useActivePage();
+  const { mainSection } = useActivePage();
   return (
     <SidebarGroup>
       <SidebarGroupLabel>Platform</SidebarGroupLabel>
@@ -45,7 +46,7 @@ export function NavMain({
             <SidebarMenuItem>
               <SidebarMenuButton
                 asChild
-                isActive={activePage === item.title}
+                isActive={title(mainSection) === item.title}
                 tooltip={item.title}
               >
                 <Link to={item.url}>

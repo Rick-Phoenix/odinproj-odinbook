@@ -6,6 +6,12 @@ settings:
 
 catalogs:
   default:
+    drizzle-zod:
+      specifier: 0.5.1
+      version: 0.5.1
+    hono:
+      specifier: ^4.6.15
+      version: 4.6.15
     typescript:
       specifier: ^5.7.2
       version: 5.7.2
@@ -101,6 +107,9 @@ importers:
       motion:
         specifier: ^11.18.1
         version: 11.18.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      radashi:
+        specifier: ^12.3.3
+        version: 12.3.3
       react:
         specifier: ^19.0.0
         version: 19.0.0
@@ -5895,6 +5904,10 @@ packages:
 
   quick-format-unescaped@4.0.4:
     resolution: {integrity: sha512-tYC1Q1hgyRuHgloV/YXs2w15unPVh8qfu/qCTfhTYamaw7fyhumKa2yGpdSo87vY32rIclj+4fWYQXUMs9EHvg==}
+
+  radashi@12.3.3:
+    resolution: {integrity: sha512-HZ4xYl8L/meGsagrGYqIqLwpHS+5G62GlFsIM5bM5iEPqZA0J1fZMjycnyEcSNqhGlWWOJk/DhB1ly9lJpYW8A==}
+    engines: {node: '>=16.0.0'}
 
   radix3@1.1.2:
     resolution: {integrity: sha512-b484I/7b8rDEdSDKckSSBA8knMpcdsXudlE/LNL639wFoHKwLbEkQFZHWEYwDC0wa0FKUcCY+GAF73Z7wxNVFA==}
@@ -13413,6 +13426,8 @@ snapshots:
   queue-microtask@1.2.3: {}
 
   quick-format-unescaped@4.0.4: {}
+
+  radashi@12.3.3: {}
 
   radix3@1.1.2: {}
 
