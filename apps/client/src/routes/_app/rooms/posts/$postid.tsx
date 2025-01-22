@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { MessageCircleMore, Share } from "lucide-react";
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { PiThumbsUpBold, PiThumbsUpFill } from "react-icons/pi";
 import ButtonGesture from "../../../../components/motion/gestures";
 import { Button } from "../../../../components/ui/button";
@@ -31,16 +31,23 @@ function renderComments(
   return comments.map((c, i) => {
     const row = startingRow + i;
     const children = c?.sub;
+    const gridClassName = `col-start-${startingColumn} row-start-${row} grid grid-cols-[auto_1fr] items-center ${startingColumn !== 1 || row !== 1 ? "pt-8" : " "} ${startingColumn === 1 ? "col-end-3" : " "}`;
+    let separatorSpan = children ? children.length + 3 : 3;
+    if (startingColumn > 1) separatorSpan--;
+    const separatorHeight =
+      i === comments.length - 1 && !children
+        ? "min-h-0"
+        : "min-h-[calc(100%+4.5rem)]";
+    const separatorClass = `col-start-1 row-start-2 row-end-${separatorSpan} ${separatorHeight} justify-self-center`;
+    console.log(c.text, row, startingColumn);
     return (
-      <>
-        <div
-          className={`col-start-${startingColumn} row-start-${row} grid grid-cols-[auto_1fr] items-center ${startingColumn !== 1 || row !== 1 ? "pt-8" : " "} ${startingColumn === 1 ? "col-end-3" : " "}`}
-        >
+      <Fragment key={i}>
+        <div className={gridClassName}>
           <div
             className={`relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground`}
           >
             {startingColumn > 1 && (
-              <span className="absolute -left-5 top-2 h-3 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent hover:border-b-white hover:border-l-white" />
+              <span className="absolute -left-[1.27rem] top-[calc(-50%+1rem)] h-6 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent hover:border-b-white hover:border-l-white" />
             )}
           </div>
           <div className="col-start-2 row-start-1 flex flex-col pl-4">
@@ -51,8 +58,12 @@ function renderComments(
             <div>Role</div>
           </div>
 
+          {startingColumn > 0 && (
+            <Separator orientation="vertical" className={separatorClass} />
+          )}
+
           <div className="col-start-2 row-start-2 flex flex-col gap-2 pl-4 pt-4">
-            <div>Comment text</div>
+            <div>{c.text}</div>
             <div className="flex items-center gap-2">
               <PiThumbsUpBold /> <MessageCircleMore />
             </div>
@@ -60,38 +71,36 @@ function renderComments(
 
           {children && renderComments(children, 3, 2)}
         </div>
-        {startingColumn === 1 && row > 0 && (
+        {/* {startingColumn === 1 && row > 0 && (
           <Separator
             orientation="vertical"
-            className={`col-start-1 row-start-${row} h-${comments.length === 1 && !children ? "0" : i === comments.length - 1 ? "5" : "full"} justify-self-center`}
+            className={`col-start-1 row-start-${row} min-h-full justify-self-center`}
           />
-        )}
-      </>
+        )} */}
+      </Fragment>
     );
   });
 }
 
 const comments: Comments = [
-  { text: " comment text", sub: [{ text: "comment text" }] },
-  { text: " comment text" },
-  { text: " comment text" },
+  { text: " base 1", sub: [{ text: "1- 1" }] },
+  { text: " 2" },
+  { text: " 3" },
   {
-    text: " comment text",
+    text: " 4",
     sub: [
       {
-        text: " comment text",
+        text: " 4-1",
         sub: [
           {
-            text: " comment text",
+            text: "4-2",
             sub: [
               {
-                text: "comment text",
+                text: "4-3",
                 sub: [
                   {
-                    text: "comment text",
-                    sub: [
-                      { text: "comment text", sub: [{ text: "comment text" }] },
-                    ],
+                    text: "4-4",
+                    sub: [{ text: "4-5", sub: [{ text: "4-6" }] }],
                   },
                 ],
               },
@@ -102,12 +111,10 @@ const comments: Comments = [
     ],
   },
   {
-    text: " comment text",
-    sub: [
-      { text: "comment text" },
-      { text: " comment text", sub: [{ text: "comment text" }] },
-    ],
+    text: " 5",
+    sub: [{ text: "5-1" }, { text: " 5-2", sub: [{ text: "5-3" }] }],
   },
+  { text: " 3" },
 ];
 
 function RouteComponent() {
