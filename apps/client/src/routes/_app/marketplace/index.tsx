@@ -38,7 +38,7 @@ function TrendingCarousel() {
   const [isVisible, setIsVisible] = useState(true);
 
   return (
-    <div className="flex flex-col gap-5">
+    <>
       <DropdownMenu>
         <DropdownMenuTrigger asChild className="p-3">
           <Button variant={"ghost"}>
@@ -67,7 +67,7 @@ function TrendingCarousel() {
             className="max-w-full"
           >
             <Carousel opts={{ loop: true, align: "start" }}>
-              <CarouselContent className="max-w-[50rem]">
+              <CarouselContent>
                 <TrendingItem />
                 <TrendingItem />
                 <TrendingItem />
@@ -81,13 +81,13 @@ function TrendingCarousel() {
           </motion.div>
         ) : null}
       </AnimatePresence>
-    </div>
+    </>
   );
 }
 
 function TrendingItem() {
   return (
-    <CarouselItem className="basis-1/3">
+    <CarouselItem className="md:basis-1/2 lg:basis-1/3">
       <div className="flex flex-col items-center gap-4">
         <div className="flex flex-col items-center gap-3 rounded-xl bg-muted-foreground/30 p-6">
           <div className="h-40 w-40 bg-white"></div>
