@@ -79,7 +79,7 @@ function TrendingCarousel() {
               centeredSlides={true}
               grabCursor={true}
               coverflowEffect={{
-                rotate: 0,
+                rotate: 50,
                 slideShadows: false,
               }}
               className="coverflow"
