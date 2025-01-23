@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 
-import { AnimatePresence, motion, useSpring, useTransform } from "motion/react";
+import { motion, useSpring, useTransform } from "motion/react";
 import { type FC, type MouseEvent, type MouseEventHandler } from "react";
 import {
   Autoplay,
@@ -113,64 +113,57 @@ const CategoryCard: React.FC<
 function OffersCarousel() {
   return (
     <>
-      <AnimatePresence initial={false}>
-        <motion.div
-          initial={{ opacity: 0, scale: 0 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0, scale: 0 }}
-          className="h-full w-full p-8 [--swiper-pagination-bottom:-5px] [--swiper-pagination-bullet-horizontal-gap:0.5rem] [--swiper-pagination-color:hsl(var(--primary))] [&_.swiper]:pb-8"
+      <div className="h-full w-full p-8 [--swiper-pagination-bottom:-5px] [--swiper-pagination-bullet-horizontal-gap:0.5rem] [--swiper-pagination-color:hsl(var(--primary))] [&_.swiper]:pb-8">
+        <Swiper
+          modules={[Autoplay, EffectCoverflow, Pagination, Mousewheel]}
+          mousewheel={{
+            invert: false,
+          }}
+          effect={"coverflow"}
+          loop={true}
+          breakpoints={{
+            320: {
+              spaceBetween: 10,
+              slidesPerView: 1,
+            },
+            1024: {
+              spaceBetween: 15,
+              slidesPerView: 2,
+            },
+            1536: {
+              spaceBetween: 30,
+              slidesPerView: 3,
+            },
+          }}
+          pagination={{
+            clickable: true,
+          }}
+          autoplay={{
+            delay: 2000,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }}
+          centeredSlides={true}
+          grabCursor={true}
+          coverflowEffect={{
+            rotate: 50,
+            slideShadows: false,
+          }}
         >
-          <Swiper
-            modules={[Autoplay, EffectCoverflow, Pagination, Mousewheel]}
-            mousewheel={{
-              invert: false,
-            }}
-            effect={"coverflow"}
-            loop={true}
-            breakpoints={{
-              320: {
-                spaceBetween: 10,
-                slidesPerView: 1,
-              },
-              1024: {
-                spaceBetween: 15,
-                slidesPerView: 2,
-              },
-              1536: {
-                spaceBetween: 30,
-                slidesPerView: 3,
-              },
-            }}
-            pagination={{
-              clickable: true,
-            }}
-            autoplay={{
-              delay: 2000,
-              disableOnInteraction: false,
-              pauseOnMouseEnter: true,
-            }}
-            centeredSlides={true}
-            grabCursor={true}
-            coverflowEffect={{
-              rotate: 50,
-              slideShadows: false,
-            }}
-          >
-            {Array.from({ length: 12 }).map((e, i) => {
-              return (
-                <SwiperSlide key={i}>
-                  <PromotionItem
-                    price={10000}
-                    name="Occaecat velit quis nisi nisi do et. Irure quis tempor fugiat non aliquip. Nisi culpa esse est nostrud veniam dolore duis nisi magna. Consequat est Lorem qui commodo ea elit veniam dolor est ad sit.
+          {Array.from({ length: 12 }).map((e, i) => {
+            return (
+              <SwiperSlide key={i}>
+                <PromotionItem
+                  price={10000}
+                  name="Occaecat velit quis nisi nisi do et. Irure quis tempor fugiat non aliquip. Nisi culpa esse est nostrud veniam dolore duis nisi magna. Consequat est Lorem qui commodo ea elit veniam dolor est ad sit.
 
 Voluptate voluptate do ea eu. Et dolore pariatur esse occaecat aliqua consectetur voluptate et et aliquip sint consectetur. Id magna cillum pariatur Lorem voluptate proident. Id minim magna ipsum id cillum irure. Adipisicing laborum magna labore commodo ullamco adipisicing proident ad enim amet sint non incididunt fugiat. Voluptate ipsum incididunt ut aliqua. Aliqua culpa ea commodo consequat quis et sint fugiat ipsum."
-                  />
-                </SwiperSlide>
-              );
-            })}
-          </Swiper>
-        </motion.div>
-      </AnimatePresence>
+                />
+              </SwiperSlide>
+            );
+          })}
+        </Swiper>
+      </div>
     </>
   );
 }

@@ -46,3 +46,7 @@ header {
   border-top: 8px solid hsl(var(--muted-foreground) / 0.3);
   border-left: 12px solid transparent;
 }
+
+/* .swiper {
+  max-width: 100%;
+} */

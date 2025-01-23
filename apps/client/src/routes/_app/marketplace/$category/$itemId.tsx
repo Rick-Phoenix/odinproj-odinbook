@@ -1,6 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { Flag } from "lucide-react";
 import { PiStar } from "react-icons/pi";
+import "swiper/css/navigation";
+import { Navigation } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import { InsetScrollArea } from "../../../../components/custom/sidebar-wrapper";
 import { Button } from "../../../../components/ui/button";
 import {
@@ -28,8 +31,24 @@ function RouteComponent() {
         </h2>
         <div className="grid grid-cols-1 grid-rows-[auto_1fr] justify-center gap-x-8 p-8 xl:grid-cols-[auto_1fr] xl:grid-rows-1">
           <div className="flex flex-col items-center gap-5">
-            <div className="flex justify-center">
-              <div className="size-80 rounded-lg bg-white"></div>
+            <div className="grid max-h-full w-full min-w-0 max-w-80 justify-center [--swiper-navigation-color:hsl(var(--primary))] [&_.swiper]:max-w-full">
+              <Swiper
+                modules={[Navigation]}
+                navigation={true}
+                slidesPerView={1}
+                spaceBetween={20}
+                loop={true}
+              >
+                <SwiperSlide>
+                  <div className="size-80 rounded-lg bg-white"></div>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <div className="size-80 rounded-lg bg-black"></div>
+                </SwiperSlide>
+                <SwiperSlide>
+                  <div className="size-80 rounded-lg bg-white"></div>
+                </SwiperSlide>
+              </Swiper>
             </div>
             <div className="flex w-full flex-col items-center gap-5">
               <h2 className="text-2xl">Camera</h2>
@@ -75,7 +94,7 @@ function RouteComponent() {
             <div className="mt-2 flex gap-3">
               <Button
                 variant={"ghost"}
-                className="w-min rounded-full"
+                className="w-fit rounded-full"
                 title="Save"
               >
                 <PiStar />
@@ -143,3 +162,5 @@ function RouteComponent() {
     </InsetScrollArea>
   );
 }
+
+function ItemPictures() {}
