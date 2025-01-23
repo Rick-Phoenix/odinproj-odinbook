@@ -68,7 +68,7 @@ export default {
   },
   plugins: [
     require("tailwindcss-animate"),
-    cssplugin(resolve(__dirname, "./src/styles/globals.css")),
+    cssplugin(resolve(__dirname, "./src/styles/globals.css"))
   ],
   safelist: [{ pattern: /row-end-\d+/ }],
 };
