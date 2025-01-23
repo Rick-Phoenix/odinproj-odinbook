@@ -94,14 +94,16 @@ function RouteComponent() {
             <div className="mt-2 flex gap-3">
               <Button
                 variant={"ghost"}
-                className="w-fit rounded-full"
+                size={"lg"}
+                className="rounded-full"
                 title="Save"
               >
                 <PiStar />
               </Button>
               <Button
+                size={"lg"}
                 variant={"ghost"}
-                className="= w-min rounded-full"
+                className="rounded-full"
                 title="Report"
               >
                 <Flag />
