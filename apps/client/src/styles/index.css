@@ -52,4 +52,9 @@ header {
 }
 
 .swiper-slide {
+  /* width: 100%; */
+}
+
+.swiper-container {
+  /* width: 100%; */
 }

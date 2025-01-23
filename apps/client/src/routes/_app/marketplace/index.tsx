@@ -65,22 +65,24 @@ function TrendingCarousel() {
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
-            className="h-full w-full p-8"
+            className="h-full w-full p-20"
           >
             <Swiper
-              effect={"coverflow"}
-              grabCursor={true}
-              centeredSlides={true}
-              slidesPerView={"auto"}
-              coverflowEffect={{
-                rotate: 50,
-                stretch: 0,
-                depth: 100,
-                modifier: 1,
-                slideShadows: true,
-              }}
-              pagination={true}
               modules={[EffectCoverflow, Pagination]}
+              effect={"coverflow"}
+              loop={true}
+              spaceBetween={30}
+              slidesPerView={3}
+              pagination={{
+                clickable: true,
+              }}
+              centeredSlides={true}
+              grabCursor={true}
+              coverflowEffect={{
+                rotate: 0,
+                slideShadows: false,
+              }}
+              className="coverflow"
             >
               <SwiperSlide>
                 <TrendingItem />
