@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 
-import { AnimatePresence, motion } from "motion/react";
-import { useState } from "react";
+import { AnimatePresence, motion, useSpring, useTransform } from "motion/react";
+import { useState, type MouseEvent, type MouseEventHandler } from "react";
 import {
   Autoplay,
   EffectCoverflow,
@@ -27,7 +27,56 @@ export const Route = createFileRoute("/_app/marketplace/")({
   component: RouteComponent,
 });
 
+const cardRotation = 15;
+const cardScale = 1.07;
+
 function RouteComponent() {
+  const xPcnt = useSpring(0, { bounce: 0 });
+  const yPcnt = useSpring(0, { bounce: 0 });
+  const scale = useSpring(1, { bounce: 0 });
+
+  const rotateX = useTransform(
+    yPcnt,
+    [-0.5, 0.5],
+    [`-${cardRotation}deg`, `${cardRotation}deg`],
+  );
+  const rotateY = useTransform(
+    xPcnt,
+    [-0.5, 0.5],
+    [`-${cardRotation}deg`, `${cardRotation}deg`],
+  );
+
+  const getMousePosition = (e: MouseEvent) => {
+    const { width, height, left, top } =
+      e.currentTarget.getBoundingClientRect();
+    const currentMouseX = e.clientX - left;
+    const currentMouseY = e.clientY - top;
+
+    return {
+      currentMouseX,
+      currentMouseY,
+      containerWidth: width,
+      containerHeight: height,
+    };
+  };
+
+  const handleMouseMove: MouseEventHandler = (e: MouseEvent) => {
+    const { currentMouseX, currentMouseY, containerWidth, containerHeight } =
+      getMousePosition(e);
+
+    xPcnt.set(currentMouseX / containerWidth - 0.5);
+    yPcnt.set(currentMouseY / containerHeight - 0.5);
+  };
+  const handleMouseEnter: MouseEventHandler = (e: MouseEvent) => {
+    const { currentMouseX, currentMouseY } = getMousePosition(e);
+    scale.set(cardScale);
+  };
+  const handleMouseLeave: MouseEventHandler = (e: MouseEvent) => {
+    scale.set(1);
+    xPcnt.set(0);
+    yPcnt.set(0);
+  };
+
   return (
     <InsetScrollArea>
       <section className="flex min-h-svh max-w-full flex-col items-center rounded-xl bg-muted/50">
@@ -39,11 +88,17 @@ function RouteComponent() {
           Browse By Categories
         </h2>
         <div className="grid h-full w-full flex-1 auto-rows-[5rem] grid-cols-2 gap-8 p-8">
-          <button className="flex items-center justify-center rounded-xl bg-slate-300">
+          <motion.button
+            style={{ rotateX, rotateY, transformStyle: "preserve-3d", scale }}
+            onMouseMove={handleMouseMove}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            className="group flex items-center justify-center rounded-xl bg-slate-300"
+          >
             <h4 className="scroll-m-20 text-xl font-semibold tracking-tight text-primary-foreground">
               Tech
             </h4>
-          </button>
+          </motion.button>
         </div>
       </section>
     </InsetScrollArea>
