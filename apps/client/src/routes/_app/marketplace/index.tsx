@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
 import { AnimatePresence, motion, useSpring, useTransform } from "motion/react";
 import { type FC, type MouseEvent, type MouseEventHandler } from "react";
@@ -118,7 +118,7 @@ function OffersCarousel() {
           initial={{ opacity: 0, scale: 0 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0 }}
-          className="h-full w-full p-8 [--swiper-pagination-bottom:-5px] [--swiper-pagination-color:hsl(var(--primary))] [--swiper-pagination-bullet-horizontal-gap:0.5rem] [&_.swiper]:pb-8"
+          className="h-full w-full p-8 [--swiper-pagination-bottom:-5px] [--swiper-pagination-bullet-horizontal-gap:0.5rem] [--swiper-pagination-color:hsl(var(--primary))] [&_.swiper]:pb-8"
         >
           <Swiper
             modules={[Autoplay, EffectCoverflow, Pagination, Mousewheel]}
@@ -180,7 +180,11 @@ const PromotionItem: FC<{ price: number; name: string }> = ({
   name,
 }) => {
   return (
-    <div className="flex flex-col items-center gap-3 rounded-xl bg-muted-foreground/30 p-6">
+    <Link
+      to={"/marketplace/$category/$itemId"}
+      params={{ category: "foo", itemId: "1" }}
+      className="flex flex-col items-center gap-3 rounded-xl bg-muted-foreground/30 p-6"
+    >
       <div className="h-40 w-40 bg-white"></div>
       <h4 className="line-clamp-2 scroll-m-20 text-2xl font-semibold tracking-tight">
         {name}
@@ -188,6 +192,6 @@ const PromotionItem: FC<{ price: number; name: string }> = ({
       <h4 className="max-w-[6ch] text-center text-xl font-semibold leading-7">
         ${price}
       </h4>
-    </div>
+    </Link>
   );
 };
