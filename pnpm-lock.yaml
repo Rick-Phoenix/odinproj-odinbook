@@ -125,6 +125,9 @@ importers:
       react-icons:
         specifier: ^5.4.0
         version: 5.4.0(react@19.0.0)
+      swiper:
+        specifier: ^11.2.1
+        version: 11.2.1
       tailwind-merge:
         specifier: ^2.6.0
         version: 2.6.0
@@ -6515,6 +6518,10 @@ packages:
   supports-preserve-symlinks-flag@1.0.0:
     resolution: {integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==}
     engines: {node: '>= 0.4'}
+
+  swiper@11.2.1:
+    resolution: {integrity: sha512-62G69+iQRIfUqTmJkWpZDcX891Ra8O9050ckt1/JI2H+0483g+gq0m7gINecDqMtDh2zt5dK+uzBRxGhGOOvQA==}
+    engines: {node: '>= 4.7.0'}
 
   tableize-object@0.1.0:
     resolution: {integrity: sha512-seDB76zNqvGXG0W8gxUteRuq1fk1dvSxcRVbeYQ1a1QqMkbtqrGwvqTubfN6VCizzlb7NxOPM/j3z9JeBrbxYg==}
@@ -14123,6 +14130,8 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  swiper@11.2.1: {}
 
   tableize-object@0.1.0:
     dependencies:

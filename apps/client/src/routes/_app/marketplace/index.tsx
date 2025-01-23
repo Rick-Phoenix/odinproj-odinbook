@@ -1,15 +1,16 @@
 import { createFileRoute } from "@tanstack/react-router";
+
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { Autoplay, EffectCoverflow, Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
+
 import { InsetScrollArea } from "../../../components/custom/sidebar-wrapper";
 import { Button } from "../../../components/ui/button";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "../../../components/ui/carousel";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -64,20 +65,58 @@ function TrendingCarousel() {
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
-            className="max-w-full"
+            className="h-full w-full p-20"
           >
-            <Carousel opts={{ loop: true, align: "start" }}>
-              <CarouselContent>
+            <Swiper
+              modules={[Autoplay, EffectCoverflow, Pagination]}
+              effect={"coverflow"}
+              loop={true}
+              spaceBetween={30}
+              slidesPerView={3}
+              pagination={{
+                clickable: true,
+              }}
+              autoplay={{
+                delay: 2000,
+                disableOnInteraction: false,
+                pauseOnMouseEnter: true,
+              }}
+              centeredSlides={true}
+              grabCursor={true}
+              coverflowEffect={{
+                rotate: 50,
+                slideShadows: false,
+              }}
+              className="coverflow"
+            >
+              <SwiperSlide>
                 <TrendingItem />
+              </SwiperSlide>
+              <SwiperSlide>
                 <TrendingItem />
+              </SwiperSlide>
+              <SwiperSlide>
                 <TrendingItem />
+              </SwiperSlide>
+              <SwiperSlide>
                 <TrendingItem />
+              </SwiperSlide>
+              <SwiperSlide>
                 <TrendingItem />
+              </SwiperSlide>
+              <SwiperSlide>
                 <TrendingItem />
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
+              </SwiperSlide>
+              <SwiperSlide>
+                <TrendingItem />
+              </SwiperSlide>
+              <SwiperSlide>
+                <TrendingItem />
+              </SwiperSlide>
+              <SwiperSlide>
+                <TrendingItem />
+              </SwiperSlide>
+            </Swiper>
           </motion.div>
         ) : null}
       </AnimatePresence>
@@ -87,16 +126,12 @@ function TrendingCarousel() {
 
 function TrendingItem() {
   return (
-    <CarouselItem className="md:basis-1/2 lg:basis-1/3">
-      <div className="flex flex-col items-center gap-4">
-        <div className="flex flex-col items-center gap-3 rounded-xl bg-muted-foreground/30 p-6">
-          <div className="h-40 w-40 bg-white"></div>
-          <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
-            Price
-          </h3>
-          <p className="leading-7 [&:not(:first-child)]:mt-6">Description</p>
-        </div>
-      </div>
-    </CarouselItem>
+    <div className="flex flex-col items-center gap-3 rounded-xl bg-muted-foreground/30 p-6">
+      <div className="h-40 w-40 bg-white"></div>
+      <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight">
+        Price
+      </h3>
+      <p className="leading-7 [&:not(:first-child)]:mt-6">Description</p>
+    </div>
   );
 }

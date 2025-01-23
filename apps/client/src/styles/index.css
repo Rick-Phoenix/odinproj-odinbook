@@ -45,3 +45,17 @@ header {
   border-top: 8px solid hsl(var(--muted-foreground) / 0.3);
   border-left: 12px solid transparent;
 }
+
+.swiper {
+  /* width: 100%;
+  max-width: 100%;
+  margin: auto; */
+}
+
+.swiper-slide {
+  /* width: 100%; */
+}
+
+.swiper-container {
+  /* width: 100%; */
+}
