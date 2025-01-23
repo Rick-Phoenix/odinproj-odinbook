@@ -1,11 +1,4 @@
 import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -17,6 +10,8 @@ import { useState } from "react";
 import { PiThumbsUpBold, PiThumbsUpFill } from "react-icons/pi";
 
 import { Link } from "@tanstack/react-router";
+import { Autoplay, Mousewheel, Scrollbar } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 import ButtonGesture from "../components/motion/gestures";
 import { Button } from "../components/ui/button";
 import {
@@ -26,6 +21,11 @@ import {
   CardTitle,
 } from "../components/ui/card";
 import { Separator } from "../components/ui/separator";
+
+import "swiper/css";
+import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
 
 export default function MetaNexusMain() {
   return (
@@ -156,22 +156,60 @@ function TrendingCarousel() {
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
+            className="[--swiper-scrollbar-bottom:0] [--swiper-scrollbar-drag-bg-color:hsl(var(--muted-foreground)/0.3)]"
           >
-            <Carousel
-              opts={{ loop: true, align: "start" }}
-              className="max-w-full"
+            <Swiper
+              modules={[Autoplay, Mousewheel, Scrollbar]}
+              mousewheel={{
+                invert: false,
+              }}
+              loop={true}
+              scrollbar={{ hide: true }}
+              breakpoints={{
+                320: {
+                  spaceBetween: 10,
+                  slidesPerView: 1,
+                },
+                1024: {
+                  spaceBetween: 15,
+                  slidesPerView: 2,
+                },
+                1536: {
+                  spaceBetween: 30,
+                  slidesPerView: 3,
+                },
+              }}
+              autoplay={{
+                delay: 5000,
+                disableOnInteraction: true,
+                pauseOnMouseEnter: true,
+              }}
+              centeredSlides={true}
+              grabCursor={true}
+              coverflowEffect={{
+                rotate: 50,
+                slideShadows: false,
+              }}
             >
-              <CarouselContent>
+              <SwiperSlide>
                 <TrendingCard />
+              </SwiperSlide>
+              <SwiperSlide>
                 <TrendingCard />
+              </SwiperSlide>
+              <SwiperSlide>
                 <TrendingCard />
+              </SwiperSlide>
+              <SwiperSlide>
                 <TrendingCard />
+              </SwiperSlide>
+              <SwiperSlide>
                 <TrendingCard />
+              </SwiperSlide>
+              <SwiperSlide>
                 <TrendingCard />
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
+              </SwiperSlide>
+            </Swiper>
           </motion.div>
         ) : null}
       </AnimatePresence>
@@ -181,30 +219,26 @@ function TrendingCarousel() {
 
 function TrendingCard() {
   return (
-    <CarouselItem className="flex aspect-video md:basis-1/2 2xl:basis-1/3">
-      <Link
-        to={"/rooms/posts/$postid"}
-        params={{ postid: "1" }}
-        className="w-full rounded-xl bg-muted/50 p-4"
-      >
-        <div className="flex h-full flex-1 flex-col justify-between">
-          <div className="flex items-center justify-end gap-2 self-end">
-            <div className="max-w-[10ch] truncate">42</div>
-            <Heart className="min-w-fit" />
-          </div>
-          <div>
-            <CardTitle className="line-clamp-[6] max-w-full scroll-m-20">
-              Enim aliquip laborum Lorem officia esse labore sint ad non velit
-              minim. Minim dolor pariatur sit veniam do deserunt proident culpa
-              labore mollit labore mollit enim. Do anim dolore dolore ipsum
-              ipsum cupidatat proident.Minim mollit adipisicing enim excepteur
-            </CardTitle>
-            <p className="mt-1 line-clamp-1 text-muted-foreground">
-              r/Something
-            </p>
-          </div>
+    <Link
+      to={"/rooms/posts/$postid"}
+      params={{ postid: "1" }}
+      className="flex aspect-video w-full rounded-xl bg-muted/50 p-4"
+    >
+      <div className="flex h-full flex-1 flex-col justify-between">
+        <div className="flex items-center justify-end gap-2 self-end">
+          <div className="max-w-[10ch] truncate">42</div>
+          <Heart className="min-w-fit" />
         </div>
-      </Link>
-    </CarouselItem>
+        <div>
+          <CardTitle className="line-clamp-[6] max-w-full scroll-m-20">
+            Enim aliquip laborum Lorem officia esse labore sint ad non velit
+            minim. Minim dolor pariatur sit veniam do deserunt proident culpa
+            labore mollit labore mollit enim. Do anim dolore dolore ipsum ipsum
+            cupidatat proident.Minim mollit adipisicing enim excepteur
+          </CardTitle>
+          <p className="mt-1 line-clamp-1 text-muted-foreground">r/Something</p>
+        </div>
+      </div>
+    </Link>
   );
 }

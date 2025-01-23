@@ -2,7 +2,12 @@ import { createFileRoute } from "@tanstack/react-router";
 
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { Autoplay, EffectCoverflow, Pagination } from "swiper/modules";
+import {
+  Autoplay,
+  EffectCoverflow,
+  Mousewheel,
+  Pagination,
+} from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
 import "swiper/css";
@@ -68,11 +73,26 @@ function TrendingCarousel() {
             className="h-full w-full p-20"
           >
             <Swiper
-              modules={[Autoplay, EffectCoverflow, Pagination]}
+              modules={[Autoplay, EffectCoverflow, Pagination, Mousewheel]}
+              mousewheel={{
+                invert: false,
+              }}
               effect={"coverflow"}
               loop={true}
-              spaceBetween={30}
-              slidesPerView={3}
+              breakpoints={{
+                320: {
+                  spaceBetween: 10,
+                  slidesPerView: 1,
+                },
+                1024: {
+                  spaceBetween: 15,
+                  slidesPerView: 2,
+                },
+                1536: {
+                  spaceBetween: 30,
+                  slidesPerView: 3,
+                },
+              }}
               pagination={{
                 clickable: true,
               }}
@@ -87,7 +107,6 @@ function TrendingCarousel() {
                 rotate: 50,
                 slideShadows: false,
               }}
-              className="coverflow"
             >
               <SwiperSlide>
                 <TrendingItem />
