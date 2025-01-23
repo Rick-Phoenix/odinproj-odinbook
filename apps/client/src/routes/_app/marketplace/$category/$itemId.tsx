@@ -8,6 +8,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../../../../components/ui/popover";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from "../../../../components/ui/table";
 
 export const Route = createFileRoute("/_app/marketplace/$category/$itemId")({
   component: RouteComponent,
@@ -25,21 +31,42 @@ function RouteComponent() {
             <div className="flex justify-center">
               <div className="size-80 rounded-lg bg-white"></div>
             </div>
-            <div className="flex flex-col items-center gap-5">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <div className="flex items-center gap-3 text-xl *:text-xl">
-                    Seller: <Button variant="link">Seller</Button>
-                  </div>
-                </PopoverTrigger>
-                <PopoverContent className="w-fit">
-                  <Button variant={"ghost"} asChild>
-                    <Link to="/">View seller's profile</Link>
-                  </Button>
-                </PopoverContent>
-              </Popover>
+            <div className="flex w-full flex-col items-center gap-5">
               <h2 className="text-2xl">Camera</h2>
               <h2 className="text-2xl">$200</h2>
+              <Table className="w-full *:text-xl">
+                <TableBody>
+                  <TableRow>
+                    <TableCell>Seller:</TableCell>
+                    <TableCell className="text-right">
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button variant="link" className="p-0 text-xl">
+                            Seller
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-fit">
+                          <Button variant={"ghost"} asChild>
+                            <Link to="/">View seller's profile</Link>
+                          </Button>
+                        </PopoverContent>
+                      </Popover>
+                    </TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Item's conditions</TableCell>
+                    <TableCell className="text-right">New</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Listed On</TableCell>
+                    <TableCell className="text-right">Today 10AM</TableCell>
+                  </TableRow>
+                  <TableRow>
+                    <TableCell>Location</TableCell>
+                    <TableCell className="text-right">London</TableCell>
+                  </TableRow>
+                </TableBody>
+              </Table>
             </div>
             <div className="mt-2 flex gap-3">
               <Button>Buy</Button>
