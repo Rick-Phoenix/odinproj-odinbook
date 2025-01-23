@@ -32,12 +32,12 @@ function RouteComponent() {
           Browse By Category
         </h2>
         <div className="grid w-full auto-rows-[5rem] grid-cols-2 gap-8 p-8">
-          <CategoryCard articleText={"Technology"} />
-          <CategoryCard articleText={"Videogames"} />
-          <CategoryCard articleText={"Fashion"} />
-          <CategoryCard articleText={"Collectibles"} />
-          <CategoryCard articleText={"Books"} />
-          <CategoryCard articleText={"Motors"} />
+          <CategoryCard category={"Technology"} />
+          <CategoryCard category={"Videogames"} />
+          <CategoryCard category={"Fashion"} />
+          <CategoryCard category={"Collectibles"} />
+          <CategoryCard category={"Books"} />
+          <CategoryCard category={"Motors"} />
         </div>
       </section>
     </InsetScrollArea>
@@ -45,8 +45,8 @@ function RouteComponent() {
 }
 
 const CategoryCard: React.FC<
-  React.ComponentProps<"button"> & { articleText: string }
-> = ({ articleText, children, ...props }) => {
+  React.ComponentProps<"button"> & { category: string }
+> = ({ category, children, ...props }) => {
   const cardRotation = 15;
   const cardScale = 1.05;
 
@@ -103,9 +103,13 @@ const CategoryCard: React.FC<
       onMouseLeave={handleMouseLeave}
       className="group flex items-center justify-center rounded-xl bg-slate-300"
     >
-      <h4 className="scroll-m-20 text-xl font-semibold tracking-tight text-primary-foreground">
-        {articleText}
-      </h4>
+      <Link
+        to="/marketplace/$category"
+        params={{ category }}
+        className="flex size-full scroll-m-20 items-center justify-center text-xl font-semibold tracking-tight text-primary-foreground"
+      >
+        {category}
+      </Link>
     </motion.button>
   );
 };
@@ -178,7 +182,7 @@ const PromotionItem: FC<{ price: number; name: string }> = ({
       params={{ category: "foo", itemId: "1" }}
       className="flex flex-col items-center gap-3 rounded-xl bg-muted-foreground/30 p-6"
     >
-      <div className="h-40 w-40 bg-white"></div>
+      <div className="size-64 bg-white"></div>
       <h4 className="line-clamp-2 scroll-m-20 text-2xl font-semibold tracking-tight">
         {name}
       </h4>
