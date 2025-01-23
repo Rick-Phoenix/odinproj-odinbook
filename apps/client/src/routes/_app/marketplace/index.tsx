@@ -34,13 +34,23 @@ function RouteComponent() {
         <h2 className="scroll-m-20 border-b p-5 text-center text-3xl font-semibold tracking-tight first:mt-0">
           For Sale
         </h2>
-        <TrendingCarousel />
+        <OffersCarousel />
+        <h2 className="scroll-m-20 border-b p-5 text-center text-3xl font-semibold tracking-tight first:mt-0">
+          Browse By Categories
+        </h2>
+        <div className="grid h-full w-full flex-1 auto-rows-[5rem] grid-cols-2 gap-8 p-8">
+          <button className="flex items-center justify-center rounded-xl bg-slate-300">
+            <h4 className="scroll-m-20 text-xl font-semibold tracking-tight text-primary-foreground">
+              Tech
+            </h4>
+          </button>
+        </div>
       </section>
     </InsetScrollArea>
   );
 }
 
-function TrendingCarousel() {
+function OffersCarousel() {
   const [isVisible, setIsVisible] = useState(true);
 
   return (
@@ -70,7 +80,7 @@ function TrendingCarousel() {
             initial={{ opacity: 0, scale: 0 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0 }}
-            className="h-full w-full p-20"
+            className="h-full w-full p-8"
           >
             <Swiper
               modules={[Autoplay, EffectCoverflow, Pagination, Mousewheel]}
@@ -108,33 +118,13 @@ function TrendingCarousel() {
                 slideShadows: false,
               }}
             >
-              <SwiperSlide>
-                <TrendingItem />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TrendingItem />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TrendingItem />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TrendingItem />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TrendingItem />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TrendingItem />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TrendingItem />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TrendingItem />
-              </SwiperSlide>
-              <SwiperSlide>
-                <TrendingItem />
-              </SwiperSlide>
+              {Array.from({ length: 12 }).map((e, i) => {
+                return (
+                  <SwiperSlide key={i}>
+                    <TrendingItem />
+                  </SwiperSlide>
+                );
+              })}
             </Swiper>
           </motion.div>
         ) : null}
