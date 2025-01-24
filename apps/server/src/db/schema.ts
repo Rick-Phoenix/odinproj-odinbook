@@ -31,13 +31,19 @@ export const usersTable = pgTable(
 );
 
 export const userRelations = relations(usersTable, ({ many }) => ({
-  chats: many(chatInstancesTable, { relationName: "chats" }),
+  chats: many(chatInstancesTable),
+  messages: many(messagesTable),
 }));
 
 export const chatsTable = pgTable("chats", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+export const chatsRelations = relations(chatsTable, ({ many }) => ({
+  instances: many(chatInstancesTable),
+  messages: many(messagesTable),
+}));
 
 export const chatInstancesTable = pgTable(
   "chatInstances",
@@ -59,10 +65,13 @@ export const chatInstancesTable = pgTable(
 export const chatInstancesRelations = relations(
   chatInstancesTable,
   ({ one }) => ({
-    users: one(usersTable, {
-      relationName: "chats",
+    user: one(usersTable, {
       fields: [chatInstancesTable.userId],
       references: [usersTable.id],
+    }),
+    chat: one(chatsTable, {
+      fields: [chatInstancesTable.chatId],
+      references: [chatsTable.id],
     }),
   })
 );
@@ -81,10 +90,21 @@ export const sessionsTable = pgTable("sessions", {
 export const messagesTable = pgTable("messages", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   chatId: integer("chatId").references(() => chatsTable.id),
-  userId: text("userId").references(() => usersTable.id),
+  userId: text("userId").references(() => usersTable.id, {}),
   text: text("text").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+export const messagesRelations = relations(messagesTable, ({ one }) => ({
+  author: one(usersTable, {
+    fields: [messagesTable.userId],
+    references: [usersTable.id],
+  }),
+  chat: one(chatsTable, {
+    fields: [messagesTable.chatId],
+    references: [chatsTable.id],
+  }),
+}));
 
 export const listingsTable = pgTable("listings", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
