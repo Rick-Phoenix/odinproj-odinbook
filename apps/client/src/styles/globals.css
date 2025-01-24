@@ -99,3 +99,9 @@
     @apply line-clamp-2;
   }
 }
+
+@layer utilities {
+  .center {
+    @apply items-center justify-center;
+  }
+}

@@ -1,8 +1,6 @@
 import { Plus } from "lucide-react";
 import * as React from "react";
 
-import { Calendars } from "@/components/calendars";
-import { DatePicker } from "@/components/date-picker";
 import {
   Sidebar,
   SidebarContent,
@@ -13,46 +11,117 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { Link } from "@tanstack/react-router";
+import { title } from "radashi";
+import type { FC } from "react";
 import { useUser } from "../hooks/auth";
-
-// This is sample data.
-const data = {
-  user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
-  calendars: [
-    {
-      name: "My Calendars",
-      items: ["Personal", "Work", "Family"],
-    },
-    {
-      name: "Favorites",
-      items: ["Holidays", "Birthdays"],
-    },
-    {
-      name: "Other",
-      items: ["Travel", "Reminders", "Deadlines"],
-    },
-  ],
-};
+import { useActivePage } from "../hooks/use-active-page";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Table, TableBody, TableCell, TableRow } from "./ui/table";
 
 export function SidebarRight({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const user = useUser();
+  const { mainSection } = useActivePage();
   return (
     <Sidebar
       collapsible="none"
       className="sticky top-0 hidden border-l lg:flex"
       {...props}
     >
-      <SidebarHeader className="h-16 border-b border-sidebar-border"></SidebarHeader>
+      <SidebarHeader className="flex h-16 items-center justify-center border-b border-sidebar-border text-xl font-semibold">
+        {title(mainSection)}
+      </SidebarHeader>
       <SidebarContent>
-        <DatePicker />
+        <div className="p-4">
+          <h4 className="text-center text-lg font-semibold">Suggested Rooms</h4>
+          <ul className="flex flex-col justify-center gap-2 pt-6">
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+            <SuggestedRoom
+              roomAvatar="https://github.com/shadcn.png"
+              roomName="r/cats"
+            />
+          </ul>
+        </div>
         <SidebarSeparator className="mx-0" />
-        <Calendars calendars={data.calendars} />
+        <div className="p-4 text-center text-lg font-semibold">Your Stats</div>
+        <Table className="w-full">
+          <TableBody>
+            <TableRow>
+              <TableCell>Member since:</TableCell>
+              <TableCell className="text-right">Jan 10 2025</TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Total likes:</TableCell>
+              <TableCell className="text-right">32</TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+        <SidebarSeparator className="mx-0" />
       </SidebarContent>
       <SidebarFooter>
         <SidebarMenu>
@@ -67,3 +136,22 @@ export function SidebarRight({
     </Sidebar>
   );
 }
+
+const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({
+  roomAvatar,
+  roomName,
+}) => {
+  return (
+    <li>
+      <SidebarMenuButton asChild className="size-full">
+        <Link className="flex items-center justify-between gap-2" to="/">
+          <Avatar>
+            <AvatarImage src={roomAvatar} alt={roomName} />
+            <AvatarFallback>{roomName}</AvatarFallback>
+          </Avatar>
+          <p>{roomName}</p>
+        </Link>
+      </SidebarMenuButton>
+    </li>
+  );
+};
