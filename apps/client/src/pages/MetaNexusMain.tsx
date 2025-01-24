@@ -19,14 +19,17 @@ import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { PostPreview } from "../components/custom/post-preview";
+import { lorem2par } from "../utils/lorem";
 
 export default function MetaNexusMain() {
   return (
     <>
       <TrendingCarousel />
-      <PostPreview />
-      <PostPreview />
-      <PostPreview />
+      <PostPreview title={lorem2par} text={lorem2par} room="something" />
+      <PostPreview title={lorem2par} text={lorem2par} room="something" />
+      <PostPreview title={lorem2par} text={lorem2par} room="something" />
+      <PostPreview title={lorem2par} text={lorem2par} room="something" />
+      <PostPreview title={lorem2par} text={lorem2par} room="something" />
     </>
   );
 }
