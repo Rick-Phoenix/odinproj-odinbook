@@ -35,7 +35,7 @@ function RouteComponent() {
         >
           <TabsList className="flex w-full [&_button]:flex-grow">
             <TabsTrigger value="rooms">Rooms</TabsTrigger>
-            <TabsTrigger value="password" className="">
+            <TabsTrigger value="marketplace" className="">
               Marketplace
             </TabsTrigger>
           </TabsList>
@@ -44,12 +44,33 @@ function RouteComponent() {
             <CommentHistoryItem room="cats" />
             <CommentHistoryItem room="cats" />
           </TabsContent>
-          <TabsContent value="password">Change your password here.</TabsContent>
+          <TabsContent value="marketplace">
+            <MarketplaceHistoryItem />
+            <MarketplaceHistoryItem />
+            <MarketplaceHistoryItem />
+          </TabsContent>
         </Tabs>
       </section>
     </InsetScrollArea>
   );
 }
+
+const MarketplaceHistoryItem = () => {
+  return (
+    <div className="mt-4 grid grid-cols-[auto_1fr] grid-rows-1 rounded-lg bg-muted">
+      <div className="justify-self-center p-4">
+        <div className="size-40 rounded-lg bg-white"></div>
+      </div>
+      <div className="grid h-full grid-cols-1 grid-rows-[auto_auto_1fr] items-start gap-3 p-8 pt-4">
+        <span className="text-2xl font-semibold group-hover:underline">
+          Title
+        </span>
+        <span className="text-accent-foreground">Sold/Not sold</span>
+        <span className="pt-6 text-3xl font-semibold">${100}</span>
+      </div>
+    </div>
+  );
+};
 
 const CommentHistoryItem: FC<{
   room: string;
@@ -57,7 +78,7 @@ const CommentHistoryItem: FC<{
   comment: string;
 }> = ({ room, postTitle, comment }) => {
   return (
-    <div className="mt-2 flex min-h-40 w-full gap-8 rounded-xl bg-muted p-6 py-4 hover:bg-muted-foreground/30 hover:text-foreground">
+    <div className="mt-4 flex min-h-40 w-full gap-8 rounded-xl bg-muted p-6 py-4 hover:bg-muted-foreground/30 hover:text-foreground">
       <div className="grid w-full grid-cols-1 grid-rows-[auto_1fr_1fr] gap-2">
         <div>r/{title(room)}</div>
         <div className="text-xl font-semibold">{lorem1par}</div>
