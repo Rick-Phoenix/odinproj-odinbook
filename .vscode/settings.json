@@ -1,4 +1,3 @@
 {
-  "eslint.useESLintClass": false,
-  "typescript.preferences.autoImportFileExcludePatterns": ["@radix-ui/*"]
+  "eslint.useESLintClass": false
 }

@@ -23,6 +23,7 @@ import { Route as AppChatsContactImport } from './routes/_app/chats/$contact'
 import { Route as AppRoomsRoomIndexImport } from './routes/_app/rooms/$room/index'
 import { Route as AppMarketplaceCategoryIndexImport } from './routes/_app/marketplace/$category/index'
 import { Route as AppMarketplaceCategoryItemIdImport } from './routes/_app/marketplace/$category/$itemId'
+import { Route as AppRoomsRoomPostsIndexImport } from './routes/_app/rooms/$room/posts/index'
 import { Route as AppRoomsRoomPostsPostidImport } from './routes/_app/rooms/$room/posts/$postid'
 
 // Create/Update Routes
@@ -99,6 +100,12 @@ const AppMarketplaceCategoryItemIdRoute =
     path: '/marketplace/$category/$itemId',
     getParentRoute: () => AppRoute,
   } as any)
+
+const AppRoomsRoomPostsIndexRoute = AppRoomsRoomPostsIndexImport.update({
+  id: '/rooms/$room/posts/',
+  path: '/rooms/$room/posts/',
+  getParentRoute: () => AppRoute,
+} as any)
 
 const AppRoomsRoomPostsPostidRoute = AppRoomsRoomPostsPostidImport.update({
   id: '/rooms/$room/posts/$postid',
@@ -201,6 +208,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppRoomsRoomPostsPostidImport
       parentRoute: typeof AppImport
     }
+    '/_app/rooms/$room/posts/': {
+      id: '/_app/rooms/$room/posts/'
+      path: '/rooms/$room/posts'
+      fullPath: '/rooms/$room/posts'
+      preLoaderRoute: typeof AppRoomsRoomPostsIndexImport
+      parentRoute: typeof AppImport
+    }
   }
 }
 
@@ -215,6 +229,7 @@ interface AppRouteChildren {
   AppMarketplaceCategoryIndexRoute: typeof AppMarketplaceCategoryIndexRoute
   AppRoomsRoomIndexRoute: typeof AppRoomsRoomIndexRoute
   AppRoomsRoomPostsPostidRoute: typeof AppRoomsRoomPostsPostidRoute
+  AppRoomsRoomPostsIndexRoute: typeof AppRoomsRoomPostsIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
@@ -226,6 +241,7 @@ const AppRouteChildren: AppRouteChildren = {
   AppMarketplaceCategoryIndexRoute: AppMarketplaceCategoryIndexRoute,
   AppRoomsRoomIndexRoute: AppRoomsRoomIndexRoute,
   AppRoomsRoomPostsPostidRoute: AppRoomsRoomPostsPostidRoute,
+  AppRoomsRoomPostsIndexRoute: AppRoomsRoomPostsIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -244,6 +260,7 @@ export interface FileRoutesByFullPath {
   '/marketplace/$category': typeof AppMarketplaceCategoryIndexRoute
   '/rooms/$room': typeof AppRoomsRoomIndexRoute
   '/rooms/$room/posts/$postid': typeof AppRoomsRoomPostsPostidRoute
+  '/rooms/$room/posts': typeof AppRoomsRoomPostsIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -260,6 +277,7 @@ export interface FileRoutesByTo {
   '/marketplace/$category': typeof AppMarketplaceCategoryIndexRoute
   '/rooms/$room': typeof AppRoomsRoomIndexRoute
   '/rooms/$room/posts/$postid': typeof AppRoomsRoomPostsPostidRoute
+  '/rooms/$room/posts': typeof AppRoomsRoomPostsIndexRoute
 }
 
 export interface FileRoutesById {
@@ -277,6 +295,7 @@ export interface FileRoutesById {
   '/_app/marketplace/$category/': typeof AppMarketplaceCategoryIndexRoute
   '/_app/rooms/$room/': typeof AppRoomsRoomIndexRoute
   '/_app/rooms/$room/posts/$postid': typeof AppRoomsRoomPostsPostidRoute
+  '/_app/rooms/$room/posts/': typeof AppRoomsRoomPostsIndexRoute
 }
 
 export interface FileRouteTypes {
@@ -295,6 +314,7 @@ export interface FileRouteTypes {
     | '/marketplace/$category'
     | '/rooms/$room'
     | '/rooms/$room/posts/$postid'
+    | '/rooms/$room/posts'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -310,6 +330,7 @@ export interface FileRouteTypes {
     | '/marketplace/$category'
     | '/rooms/$room'
     | '/rooms/$room/posts/$postid'
+    | '/rooms/$room/posts'
   id:
     | '__root__'
     | '/'
@@ -325,6 +346,7 @@ export interface FileRouteTypes {
     | '/_app/marketplace/$category/'
     | '/_app/rooms/$room/'
     | '/_app/rooms/$room/posts/$postid'
+    | '/_app/rooms/$room/posts/'
   fileRoutesById: FileRoutesById
 }
 
@@ -374,7 +396,8 @@ export const routeTree = rootRoute
         "/_app/marketplace/$category/$itemId",
         "/_app/marketplace/$category/",
         "/_app/rooms/$room/",
-        "/_app/rooms/$room/posts/$postid"
+        "/_app/rooms/$room/posts/$postid",
+        "/_app/rooms/$room/posts/"
       ]
     },
     "/login": {
@@ -416,6 +439,10 @@ export const routeTree = rootRoute
     },
     "/_app/rooms/$room/posts/$postid": {
       "filePath": "_app/rooms/$room/posts/$postid.tsx",
+      "parent": "/_app"
+    },
+    "/_app/rooms/$room/posts/": {
+      "filePath": "_app/rooms/$room/posts/index.tsx",
       "parent": "/_app"
     }
   }

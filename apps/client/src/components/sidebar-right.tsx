@@ -1,14 +1,10 @@
-import { Plus } from "lucide-react";
 import * as React from "react";
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarFooter,
   SidebarHeader,
-  SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
@@ -44,23 +40,23 @@ export function SidebarRight({
             <ul className="flex flex-col justify-center gap-2 pt-6">
               <SuggestedRoom
                 roomAvatar="https://github.com/shadcn.png"
-                roomName="r/cats"
+                roomName="cats"
               />
               <SuggestedRoom
                 roomAvatar="https://github.com/shadcn.png"
-                roomName="r/cats"
+                roomName="cats"
               />
               <SuggestedRoom
                 roomAvatar="https://github.com/shadcn.png"
-                roomName="r/cats"
+                roomName="cats"
               />
               <SuggestedRoom
                 roomAvatar="https://github.com/shadcn.png"
-                roomName="r/cats"
+                roomName="cats"
               />
               <SuggestedRoom
                 roomAvatar="https://github.com/shadcn.png"
-                roomName="r/cats"
+                roomName="cats"
               />
             </ul>
           </div>
@@ -83,16 +79,6 @@ export function SidebarRight({
           <SidebarSeparator className="mx-0" />
         </SidebarContent>
       </ScrollArea>
-      <SidebarFooter>
-        <SidebarMenu>
-          <SidebarMenuItem>
-            <SidebarMenuButton>
-              <Plus />
-              <span>New Calendar</span>
-            </SidebarMenuButton>
-          </SidebarMenuItem>
-        </SidebarMenu>
-      </SidebarFooter>
     </Sidebar>
   );
 }
@@ -104,12 +90,16 @@ const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({
   return (
     <li>
       <SidebarMenuButton asChild className="size-full">
-        <Link className="flex items-center justify-between gap-2" to="/">
+        <Link
+          className="flex items-center justify-between gap-2"
+          to="/rooms/$room/posts"
+          params={{ room: roomName }}
+        >
           <Avatar>
             <AvatarImage src={roomAvatar} alt={roomName} />
             <AvatarFallback>{roomName}</AvatarFallback>
           </Avatar>
-          <p>{roomName}</p>
+          <p>r/{roomName}</p>
         </Link>
       </SidebarMenuButton>
     </li>
