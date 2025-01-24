@@ -17,6 +17,7 @@ import type { FC } from "react";
 import { useUser } from "../hooks/auth";
 import { useActivePage } from "../hooks/use-active-page";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { ScrollArea } from "./ui/scroll-area";
 import { Table, TableBody, TableCell, TableRow } from "./ui/table";
 
 export function SidebarRight({
@@ -33,96 +34,55 @@ export function SidebarRight({
       <SidebarHeader className="flex h-16 items-center justify-center border-b border-sidebar-border text-xl font-semibold">
         {title(mainSection)}
       </SidebarHeader>
-      <SidebarContent>
-        <div className="p-4">
-          <h4 className="text-center text-lg font-semibold">Suggested Rooms</h4>
-          <ul className="flex flex-col justify-center gap-2 pt-6">
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-            <SuggestedRoom
-              roomAvatar="https://github.com/shadcn.png"
-              roomName="r/cats"
-            />
-          </ul>
-        </div>
-        <SidebarSeparator className="mx-0" />
-        <div className="p-4 text-center text-lg font-semibold">Your Stats</div>
-        <Table className="w-full">
-          <TableBody>
-            <TableRow>
-              <TableCell>Member since:</TableCell>
-              <TableCell className="text-right">Jan 10 2025</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell>Total likes:</TableCell>
-              <TableCell className="text-right">32</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
-        <SidebarSeparator className="mx-0" />
-      </SidebarContent>
+      <ScrollArea className="[&_.scrollbar]:bg-muted-foreground/20">
+        <SidebarContent>
+          <div className="p-4">
+            <h4 className="text-center text-lg font-semibold">
+              Suggested Rooms
+            </h4>
+
+            <ul className="flex flex-col justify-center gap-2 pt-6">
+              <SuggestedRoom
+                roomAvatar="https://github.com/shadcn.png"
+                roomName="r/cats"
+              />
+              <SuggestedRoom
+                roomAvatar="https://github.com/shadcn.png"
+                roomName="r/cats"
+              />
+              <SuggestedRoom
+                roomAvatar="https://github.com/shadcn.png"
+                roomName="r/cats"
+              />
+              <SuggestedRoom
+                roomAvatar="https://github.com/shadcn.png"
+                roomName="r/cats"
+              />
+              <SuggestedRoom
+                roomAvatar="https://github.com/shadcn.png"
+                roomName="r/cats"
+              />
+            </ul>
+          </div>
+          <SidebarSeparator className="mx-0" />
+          <div className="p-4 text-center text-lg font-semibold">
+            Your Stats
+          </div>
+          <Table className="w-full">
+            <TableBody>
+              <TableRow>
+                <TableCell>Member since:</TableCell>
+                <TableCell className="text-right">Jan 10 2025</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Total likes:</TableCell>
+                <TableCell className="text-right">32</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <SidebarSeparator className="mx-0" />
+        </SidebarContent>
+      </ScrollArea>
       <SidebarFooter>
         <SidebarMenu>
           <SidebarMenuItem>
