@@ -4,14 +4,15 @@ import {
   Sidebar,
   SidebarContent,
   SidebarHeader,
+  SidebarMenu,
   SidebarMenuButton,
+  SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { Link } from "@tanstack/react-router";
-import { Flag, Plus } from "lucide-react";
+import { Link, useParams } from "@tanstack/react-router";
+import { Flag, MessageSquare, Plus } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
-import { useUser } from "../hooks/auth";
 import { useActivePage } from "../hooks/use-active-page";
 import { lorem2par } from "../utils/lorem";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -21,7 +22,6 @@ import { Table, TableBody, TableCell, TableRow } from "./ui/table";
 export function SidebarRight({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
-  const user = useUser();
   const { mainSection } = useActivePage();
   return (
     <Sidebar
@@ -37,6 +37,7 @@ export function SidebarRight({
           {mainSection === "rooms" && <RoomsSidebarContent />}
           {mainSection === "chats" && <ChatsSidebarContent />}
           {mainSection === "marketplace" && <MarketplaceSidebarContent />}
+          {mainSection === "users" && <UserProfileSidebarContent />}
           <SidebarSeparator className="mx-0" />
         </SidebarContent>
       </ScrollArea>
@@ -44,11 +45,32 @@ export function SidebarRight({
   );
 }
 
-const MarketplaceSidebarContent = () => {
-  const { subSection, mainSection, activePage } = useActivePage();
+const UserProfileSidebarContent = () => {
   return (
     <>
-      {mainSection === activePage && (
+      <SidebarMenu>
+        <SidebarMenuItem>
+          <SidebarMenuButton className="[&_svg]:size-5">
+            <MessageSquare />
+            <span>Send Message</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton className="[&_svg]:size-5">
+            <Flag />
+            <span>Report User</span>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+      </SidebarMenu>
+    </>
+  );
+};
+
+const MarketplaceSidebarContent = () => {
+  const { itemId } = useParams({ strict: false });
+  return (
+    <>
+      {!itemId && (
         <>
           <Table className="w-full">
             <TableBody>
@@ -64,7 +86,7 @@ const MarketplaceSidebarContent = () => {
           </Table>
         </>
       )}
-      {subSection && (
+      {itemId && (
         <>
           <div className="p-4 pb-0 text-center text-lg font-semibold">
             Seller
@@ -78,7 +100,7 @@ const MarketplaceSidebarContent = () => {
             </Avatar>
           </div>
           <div className="p-4 pt-0 text-center text-lg font-semibold">
-            {title(subSection)}
+            {"sellernickname"}
           </div>
           <Table className="w-full">
             <TableBody>
@@ -156,10 +178,14 @@ const ChatsSidebarContent = () => {
         </>
       )}
       {mainSection === activePage && (
-        <SidebarMenuButton>
-          <Plus />
-          <span>New Chat</span>
-        </SidebarMenuButton>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton className="[&_svg]:size-5">
+              <Plus />
+              <span>Send Message</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
       )}
     </>
   );

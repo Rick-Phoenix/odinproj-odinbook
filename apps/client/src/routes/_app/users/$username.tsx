@@ -20,7 +20,7 @@ function RouteComponent() {
   return (
     <InsetScrollArea>
       <section className="grid min-h-[80vh] max-w-full grid-rows-[auto_1fr] items-center gap-4 rounded-xl bg-muted/50">
-        <header className="flex h-56 w-full items-center justify-center gap-6 rounded-xl bg-muted p-8 hover:text-foreground">
+        <header className="flex h-56 w-full items-center justify-center gap-8 rounded-xl bg-muted p-8 hover:text-foreground">
           <Avatar className="h-full w-auto">
             <AvatarImage
               src={"https://github.com/shadcn.png"}
@@ -30,7 +30,7 @@ function RouteComponent() {
           <h3 className="w-fit text-2xl font-semibold">{username}</h3>
         </header>
         <Tabs
-          defaultValue="account"
+          defaultValue="rooms"
           className="size-full min-h-64 rounded-b-xl bg-muted/50 p-6"
         >
           <TabsList className="flex w-full [&_button]:flex-grow">
