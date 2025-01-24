@@ -1,8 +1,6 @@
 import {
-  Book,
   Box,
   Frame,
-  Image,
   LifeBuoy,
   Map,
   MessagesSquare,
@@ -14,7 +12,6 @@ import {
 import * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavProjects } from "@/components/nav-projects";
 import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
@@ -68,52 +65,6 @@ const data = {
       title: "Marketplace",
       url: "/marketplace",
       icon: Store,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Images",
-      url: "#",
-      icon: Image,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Library",
-      url: "#",
-      icon: Book,
       items: [
         {
           title: "Introduction",
@@ -202,7 +153,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarHeader>
         <SidebarContent>
           <NavMain items={data.navMain} />
-          <NavProjects projects={data.projects} />
           <NavSecondary items={data.navSecondary} className="mt-auto" />
         </SidebarContent>
       </Skeleton>

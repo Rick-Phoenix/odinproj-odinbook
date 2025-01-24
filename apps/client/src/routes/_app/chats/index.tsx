@@ -20,6 +20,15 @@ function RouteComponent() {
           Sit laborum duis reprehenderit dolore officia elit aliqua. Anim eu
           dolor labore officia do id veniam magna elit officia ex pariatur sunt."
         />
+        <ChatPreview
+          contactName="Nickname"
+          contactAvatar="https://github.com/shadcn.png"
+          lastMessage="Eu incididunt fugiat mollit nostrud aute cupidatat excepteur labore
+          duis laborum aliqua ullamco. Lorem dolore est qui mollit culpa. Sunt
+          eu mollit excepteur non veniam sint tempor irure dolore non tempor.
+          Sit laborum duis reprehenderit dolore officia elit aliqua. Anim eu
+          dolor labore officia do id veniam magna elit officia ex pariatur sunt."
+        />
       </section>
     </InsetScrollArea>
   );
