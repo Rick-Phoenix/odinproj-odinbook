@@ -8,6 +8,7 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
+import { Plus } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
 import { useUser } from "../hooks/auth";
@@ -34,13 +35,24 @@ export function SidebarRight({
       <ScrollArea className="[&_.scrollbar]:bg-muted-foreground/20">
         <SidebarContent>
           {mainSection === "rooms" && <RoomsSidebarContent />}
-
+          {mainSection === "chats" && <ChatsSidebarContent />}
           <SidebarSeparator className="mx-0" />
         </SidebarContent>
       </ScrollArea>
     </Sidebar>
   );
 }
+
+const ChatsSidebarContent = () => {
+  return (
+    <>
+      <SidebarMenuButton>
+        <Plus />
+        <span>New Chat</span>
+      </SidebarMenuButton>
+    </>
+  );
+};
 
 const RoomsSidebarContent = () => {
   const { mainSection, subSection, activePage } = useActivePage();
