@@ -1,14 +1,14 @@
-import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { sessionTable, userTable } from "../db/schema";
 import { z } from "@hono/zod-openapi";
+import { createInsertSchema, createSelectSchema } from "drizzle-zod";
+import { sessionsTable, usersTable } from "../db/schema";
 
 // Database Schemas
-export const userSchema = createSelectSchema(userTable);
-export const sessionSchema = createSelectSchema(sessionTable);
+export const userSchema = createSelectSchema(usersTable);
+export const sessionSchema = createSelectSchema(sessionsTable);
 
 // Input Validation Schemas
 
-export const signupValidationSchema = createInsertSchema(userTable)
+export const signupValidationSchema = createInsertSchema(usersTable)
   .pick({ username: true, email: true })
   .extend({
     username: z

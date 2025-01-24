@@ -6,7 +6,7 @@ import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { BAD_REQUEST, MOVED_TEMPORARILY } from "stoker/http-status-codes";
 import db from "../../db/dbConfig";
 import { findUserByOauthCredentials } from "../../db/queries";
-import { userTable } from "../../db/schema";
+import { usersTable } from "../../db/schema";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import env from "../../types/env";
 import type {
@@ -137,7 +137,7 @@ export const githubCallbackHandler: AppRouteHandler<
     };
 
     const [newUser] = await db
-      .insert(userTable)
+      .insert(usersTable)
       .values(userDetails)
       .returning();
 

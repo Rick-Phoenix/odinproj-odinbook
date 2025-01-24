@@ -4,7 +4,7 @@ import { webcrypto } from "crypto";
 import { eq } from "drizzle-orm";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import db from "../db/dbConfig";
-import { sessionTable, userTable } from "../db/schema";
+import { sessionsTable, usersTable } from "../db/schema";
 import type { AppContext, AppMiddleware } from "../types/app-bindings";
 import { entryExists } from "./db-methods";
 
@@ -19,7 +19,7 @@ export async function createSession(c: AppContext, userId: string) {
     userId,
     expiresAt,
   };
-  await db.insert(sessionTable).values(session);
+  await db.insert(sessionsTable).values(session);
   setCookie(c, "session", sessionToken, {
     httpOnly: true,
     sameSite: "Lax",
@@ -40,10 +40,10 @@ export const registerSession: AppMiddleware = async (c, next) => {
     );
 
     const result = await db
-      .select({ user: userTable, session: sessionTable })
-      .from(sessionTable)
-      .innerJoin(userTable, eq(sessionTable.userId, userTable.id))
-      .where(eq(sessionTable.id, sessionId));
+      .select({ user: usersTable, session: sessionsTable })
+      .from(sessionsTable)
+      .innerJoin(usersTable, eq(sessionsTable.userId, usersTable.id))
+      .where(eq(sessionsTable.id, sessionId));
 
     if (entryExists(result)) {
       user = result[0].user;
@@ -60,11 +60,11 @@ export const registerSession: AppMiddleware = async (c, next) => {
       ) {
         session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
         await db
-          .update(sessionTable)
+          .update(sessionsTable)
           .set({
             expiresAt: session.expiresAt,
           })
-          .where(eq(sessionTable.id, session.id));
+          .where(eq(sessionsTable.id, session.id));
       }
     }
   }
@@ -75,7 +75,7 @@ export const registerSession: AppMiddleware = async (c, next) => {
 };
 
 export async function invalidateSession(c: AppContext, sessionId: string) {
-  await db.delete(sessionTable).where(eq(sessionTable.id, sessionId));
+  await db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
   deleteCookie(c, "session");
 }
 
