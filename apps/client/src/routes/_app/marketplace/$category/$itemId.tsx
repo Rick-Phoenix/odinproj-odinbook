@@ -37,14 +37,7 @@ function RouteComponent() {
                 navigation={true}
                 slidesPerView={1}
                 spaceBetween={20}
-                loop={true}
               >
-                <SwiperSlide>
-                  <div className="size-80 rounded-lg bg-white"></div>
-                </SwiperSlide>
-                <SwiperSlide>
-                  <div className="size-80 rounded-lg bg-black"></div>
-                </SwiperSlide>
                 <SwiperSlide>
                   <div className="size-80 rounded-lg bg-white"></div>
                 </SwiperSlide>
@@ -94,16 +87,16 @@ function RouteComponent() {
             <div className="mt-2 flex gap-3">
               <Button
                 variant={"ghost"}
-                size={"lg"}
-                className="rounded-full"
+                size={"icon"}
+                className="rounded-full p-6 [&_svg]:size-6"
                 title="Save"
               >
                 <PiStar />
               </Button>
               <Button
-                size={"lg"}
+                size={"icon"}
                 variant={"ghost"}
-                className="rounded-full"
+                className="rounded-full p-6 [&_svg]:size-6"
                 title="Report"
               >
                 <Flag />

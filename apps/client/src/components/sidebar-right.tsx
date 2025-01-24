@@ -8,7 +8,7 @@ import {
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
-import { Plus } from "lucide-react";
+import { Flag, Plus } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
 import { useUser } from "../hooks/auth";
@@ -22,7 +22,7 @@ export function SidebarRight({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const user = useUser();
-  const { mainSection, activePage } = useActivePage();
+  const { mainSection } = useActivePage();
   return (
     <Sidebar
       collapsible="none"
@@ -36,6 +36,7 @@ export function SidebarRight({
         <SidebarContent>
           {mainSection === "rooms" && <RoomsSidebarContent />}
           {mainSection === "chats" && <ChatsSidebarContent />}
+          {mainSection === "marketplace" && <MarketplaceSidebarContent />}
           <SidebarSeparator className="mx-0" />
         </SidebarContent>
       </ScrollArea>
@@ -43,13 +44,123 @@ export function SidebarRight({
   );
 }
 
-const ChatsSidebarContent = () => {
+const MarketplaceSidebarContent = () => {
+  const { subSection, mainSection, activePage } = useActivePage();
   return (
     <>
-      <SidebarMenuButton>
-        <Plus />
-        <span>New Chat</span>
-      </SidebarMenuButton>
+      {mainSection === activePage && (
+        <>
+          <Table className="w-full">
+            <TableBody>
+              <TableRow>
+                <TableCell>Active Listings:</TableCell>
+                <TableCell className="text-right">0</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Saved Items:</TableCell>
+                <TableCell className="text-right">0</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </>
+      )}
+      {subSection && (
+        <>
+          <div className="p-4 pb-0 text-center text-lg font-semibold">
+            Seller
+          </div>
+          <div className="flex h-32 p-6 pb-0 center">
+            <Avatar className="h-full w-auto">
+              <AvatarImage
+                src={"https://github.com/shadcn.png"}
+                alt={`profile picture`}
+              />
+            </Avatar>
+          </div>
+          <div className="p-4 pt-0 text-center text-lg font-semibold">
+            {title(subSection)}
+          </div>
+          <Table className="w-full">
+            <TableBody>
+              <TableRow>
+                <TableCell>Member Since:</TableCell>
+                <TableCell className="text-right">20002</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Total Items Sold:</TableCell>
+                <TableCell className="text-right">12</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Average Feedback:</TableCell>
+                <TableCell className="text-right">5/5</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </>
+      )}
+    </>
+  );
+};
+
+const ChatsSidebarContent = () => {
+  const { subSection, mainSection, activePage } = useActivePage();
+  return (
+    <>
+      {subSection && (
+        <>
+          <div className="flex h-32 p-6 pb-0 center">
+            <Avatar className="h-full w-auto">
+              <AvatarImage
+                src={"https://github.com/shadcn.png"}
+                alt={`profile picture`}
+              />
+            </Avatar>
+          </div>
+          <div className="p-4 text-center text-lg font-semibold">
+            {title(subSection)}
+          </div>
+          <Table className="w-full">
+            <TableBody>
+              <TableRow>
+                <TableCell>Member Since:</TableCell>
+                <TableCell className="text-right">20002</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Most Active Rooms:</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>Member Since:</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell>Member Since:</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Status:</TableCell>
+                <TableCell></TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell></TableCell>
+                <TableCell className="text-right">
+                  Just here for the biscuits!
+                </TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <SidebarMenuButton className="flex items-center">
+            <Flag />
+            <span>Report User</span>
+          </SidebarMenuButton>
+        </>
+      )}
+      {mainSection === activePage && (
+        <SidebarMenuButton>
+          <Plus />
+          <span>New Chat</span>
+        </SidebarMenuButton>
+      )}
     </>
   );
 };

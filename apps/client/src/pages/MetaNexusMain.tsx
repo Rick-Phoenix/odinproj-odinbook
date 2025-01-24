@@ -128,8 +128,8 @@ function TrendingCarousel() {
 function TrendingCard() {
   return (
     <Link
-      to={"/rooms/posts/$postid"}
-      params={{ postid: "1" }}
+      to={"/rooms/$room/posts/$postid"}
+      params={{ room: "cats", postid: "1" }}
       className="flex aspect-video w-full rounded-xl bg-muted/50 p-4"
     >
       <div className="flex h-full flex-1 flex-col justify-between">

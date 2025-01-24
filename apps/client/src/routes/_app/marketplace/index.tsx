@@ -14,7 +14,9 @@ import "swiper/css";
 import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 
+import { HandCoins } from "lucide-react";
 import { InsetScrollArea } from "../../../components/custom/sidebar-wrapper";
+import { Button } from "../../../components/ui/button";
 
 export const Route = createFileRoute("/_app/marketplace/")({
   component: RouteComponent,
@@ -25,9 +27,14 @@ function RouteComponent() {
     <InsetScrollArea>
       <section className="flex min-h-svh max-w-full flex-col items-center rounded-xl bg-muted/50">
         <h2 className="scroll-m-20 border-b p-5 text-center text-3xl font-semibold tracking-tight first:mt-0">
-          Promotions
+          Marketplace
         </h2>
         <OffersCarousel />
+        <div className="flex h-40 w-full items-center justify-center p-8">
+          <Button className="size-full justify-between text-2xl [&_svg]:size-12">
+            <span>Sell An Item</span> <HandCoins />
+          </Button>
+        </div>
         <h2 className="scroll-m-20 border-b p-5 text-center text-3xl font-semibold tracking-tight first:mt-0">
           Browse By Category
         </h2>
@@ -180,7 +187,7 @@ const PromotionItem: FC<{ price: number; name: string }> = ({
     <Link
       to={"/marketplace/$category/$itemId"}
       params={{ category: "foo", itemId: "1" }}
-      className="flex flex-col items-center gap-3 rounded-xl bg-muted-foreground/30 p-6"
+      className="flex flex-col items-center gap-5 rounded-xl border-background bg-muted-foreground/30 p-6 py-8"
     >
       <div className="size-64 bg-white"></div>
       <h4 className="line-clamp-2 scroll-m-20 text-2xl font-semibold tracking-tight">
