@@ -1,7 +1,9 @@
+import { relations } from "drizzle-orm";
 import {
   boolean,
   integer,
   pgTable,
+  primaryKey,
   text,
   timestamp,
   uniqueIndex,
@@ -12,7 +14,7 @@ import { lowercase, trim } from "../utils/db-methods";
 export const usersTable = pgTable(
   "users",
   {
-    id: text("id").primaryKey(),
+    id: text("id").notNull().primaryKey(),
     username: varchar("username", { length: 31 }).notNull(),
     email: varchar("email", { length: 63 }),
     hash: text("hash"),
@@ -28,10 +30,42 @@ export const usersTable = pgTable(
   ]
 );
 
+export const userRelations = relations(usersTable, ({ many }) => ({
+  chats: many(chatInstancesTable, { relationName: "chats" }),
+}));
+
 export const chatsTable = pgTable("chats", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
+
+export const chatInstancesTable = pgTable(
+  "chatInstances",
+  {
+    userId: text("userId")
+      .references(() => usersTable.id)
+      .notNull(),
+    chatId: integer("chatId")
+      .references(() => chatsTable.id)
+      .notNull(),
+  },
+  (t) => [
+    primaryKey({
+      columns: [t.chatId, t.userId],
+    }),
+  ]
+);
+
+export const chatInstancesRelations = relations(
+  chatInstancesTable,
+  ({ one }) => ({
+    users: one(usersTable, {
+      relationName: "chats",
+      fields: [chatInstancesTable.userId],
+      references: [usersTable.id],
+    }),
+  })
+);
 
 export const sessionsTable = pgTable("sessions", {
   id: text("id").primaryKey(),
