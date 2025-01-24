@@ -106,7 +106,7 @@ const RoomsSidebarContent = () => {
             </Avatar>
           </div>
           <div className="p-4 text-center text-lg font-semibold">
-            r/{subSection}
+            r/{title(subSection)}
           </div>
           <Table className="w-full">
             <TableBody>

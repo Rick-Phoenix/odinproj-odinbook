@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { title } from "radashi";
 import { PostPreview } from "../../../../components/custom/post-preview";
 import { InsetScrollArea } from "../../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../../components/ui/avatar";
@@ -14,18 +15,20 @@ function RouteComponent() {
     <InsetScrollArea>
       <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
         <header className="grid h-28 w-full grid-cols-[auto_1fr] items-center rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
-          <Avatar>
+          <Avatar className="h-full w-auto">
             <AvatarImage
               src={"https://github.com/shadcn.png"}
               alt={`profile picture`}
             />
           </Avatar>
-          <div className="text-center text-2xl font-semibold">Cats</div>
+          <div className="text-center text-2xl font-semibold">
+            r/{title(room)}
+          </div>
         </header>
-        <PostPreview title={lorem2par} text={lorem2par} room="something" />
-        <PostPreview title={lorem2par} text={lorem2par} room="something" />
-        <PostPreview title={lorem2par} text={lorem2par} room="something" />
-        <PostPreview title={lorem2par} text={lorem2par} room="something" />
+        <PostPreview title={lorem2par} text={lorem2par} room={room} />
+        <PostPreview title={lorem2par} text={lorem2par} room={room} />
+        <PostPreview title={lorem2par} text={lorem2par} room={room} />
+        <PostPreview title={lorem2par} text={lorem2par} room={room} />
       </section>
     </InsetScrollArea>
   );
