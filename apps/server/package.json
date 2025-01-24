@@ -31,7 +31,7 @@
     "cloudinary": "^2.5.1",
     "dotenv": "^16.4.7",
     "dotenv-expand": "^12.0.1",
-    "drizzle-orm": "^0.38.4",
+    "drizzle-orm": "catalog:",
     "drizzle-zod": "catalog:",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-drizzle": "^0.2.3",
