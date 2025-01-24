@@ -49,10 +49,10 @@ export const chatInstancesTable = pgTable(
   "chatInstances",
   {
     userId: text("userId")
-      .references(() => usersTable.id)
+      .references(() => usersTable.id, { onDelete: "cascade" })
       .notNull(),
     chatId: integer("chatId")
-      .references(() => chatsTable.id)
+      .references(() => chatsTable.id, { onDelete: "cascade" })
       .notNull(),
   },
   (t) => [
@@ -77,7 +77,7 @@ export const chatInstancesRelations = relations(
 );
 
 export const sessionsTable = pgTable("sessions", {
-  id: text("id").primaryKey(),
+  id: text("id").primaryKey().notNull(),
   userId: text("userId")
     .notNull()
     .references(() => usersTable.id, { onDelete: "cascade" }),
@@ -89,8 +89,12 @@ export const sessionsTable = pgTable("sessions", {
 
 export const messagesTable = pgTable("messages", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  chatId: integer("chatId").references(() => chatsTable.id),
-  userId: text("userId").references(() => usersTable.id, {}),
+  chatId: integer("chatId")
+    .references(() => chatsTable.id, { onDelete: "cascade" })
+    .notNull(),
+  userId: text("userId")
+    .references(() => usersTable.id, { onDelete: "cascade" })
+    .notNull(),
   text: text("text").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
@@ -108,7 +112,9 @@ export const messagesRelations = relations(messagesTable, ({ one }) => ({
 
 export const listingsTable = pgTable("listings", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  userId: text("userId").references(() => usersTable.id),
+  userId: text("userId")
+    .references(() => usersTable.id, { onDelete: "cascade" })
+    .notNull(),
   title: text("title").notNull(),
   description: text("description").notNull(),
   price: integer("price").notNull(),
@@ -117,7 +123,9 @@ export const listingsTable = pgTable("listings", {
 
 export const listingPicsTable = pgTable("listingPics", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  listingId: integer("listingId").references(() => listingsTable.id),
-  url: text("url"),
+  listingId: integer("listingId")
+    .references(() => listingsTable.id, { onDelete: "cascade" })
+    .notNull(),
+  url: text("url").notNull(),
   isThumbnail: boolean("isThumbnail"),
 });
