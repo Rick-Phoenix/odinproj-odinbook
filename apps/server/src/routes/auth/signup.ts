@@ -10,12 +10,12 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import db from "../../db/dbConfig";
 import { emailIsNotAvailable, usernameIsNotAvailable } from "../../db/queries";
 import { usersTable } from "../../db/schema";
+import { createSession } from "../../lib/auth";
 import type { AppRouteHandler } from "../../types/app-bindings";
-import { signupValidationSchema, userSchema } from "../../types/zod-schemas";
+import { insertUserSchema, userSchema } from "../../types/zod-schemas";
 import { customError } from "../../utils/customErrors";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
 import { hashPassword } from "../../utils/password";
-import { createSession } from "../../utils/session";
 
 const tags = ["auth"];
 
@@ -43,14 +43,14 @@ export const signup = createRoute({
   tags,
   request: {
     body: jsonContentRequired(
-      signupValidationSchema,
+      insertUserSchema,
       "The credentials for signing up."
     ),
   },
   responses: {
     [CREATED]: jsonContent(userSchema, "Success message."),
     [CONFLICT]: errors.usernameIsTaken.template,
-    [UNPROCESSABLE_ENTITY]: inputErrorResponse(signupValidationSchema),
+    [UNPROCESSABLE_ENTITY]: inputErrorResponse(insertUserSchema),
   },
 });
 

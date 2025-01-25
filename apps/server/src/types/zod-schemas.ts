@@ -1,14 +1,38 @@
 import { z } from "@hono/zod-openapi";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
-import { sessionsTable, usersTable } from "../db/schema";
+import {
+  chatsTable,
+  commentsTable,
+  likesTable,
+  listingsTable,
+  messagesTable,
+  postsTable,
+  roomsTable,
+  roomSubscriptionsTable,
+  sessionsTable,
+  usersTable,
+} from "../db/schema";
 
 // Database Schemas
 export const userSchema = createSelectSchema(usersTable);
 export const sessionSchema = createSelectSchema(sessionsTable);
+export const messagesSchema = createSelectSchema(messagesTable);
+export const chatSchema = createSelectSchema(chatsTable).extend({
+  messages: z.array(messagesSchema),
+});
+export const commentSchema = createSelectSchema(commentsTable);
+export const likesSchema = createSelectSchema(likesTable);
+export const postSchema = createSelectSchema(postsTable).extend({
+  comments: z.array(commentSchema),
+  likes: z.array(likesSchema),
+});
+export const roomSchema = createSelectSchema(roomsTable).extend({
+  posts: z.array(postSchema),
+});
 
 // Input Validation Schemas
 
-export const signupValidationSchema = createInsertSchema(usersTable)
+export const insertUserSchema = createInsertSchema(usersTable)
   .pick({ username: true, email: true })
   .extend({
     username: z
@@ -39,7 +63,46 @@ export const signupValidationSchema = createInsertSchema(usersTable)
       .max(255, "Password cannot be longer than 255 characters."),
   });
 
-export const loginValidationSchema = signupValidationSchema.pick({
+export const loginValidationSchema = insertUserSchema.pick({
   username: true,
   password: true,
+});
+
+export const insertRoomSchema = createInsertSchema(roomsTable)
+  .pick({ category: true, name: true })
+  .extend({
+    name: z.string().max(20, "The name cannot be longer than 20 characters."),
+  });
+
+export const insertPostSchema = createInsertSchema(postsTable)
+  .omit({ createdAt: true, id: true, userId: true })
+  .extend({
+    title: z
+      .string()
+      .min(20, "The post's title must be at least 20 characters long.")
+      .max(100, "The title cannot be longer than 100 characters."),
+    text: z
+      .string()
+      .min(20, "The post's content must be at least 20 characters long.")
+      .max(200, "The post's content cannot be longer than 200 characters."),
+  });
+
+export const insertCommentSchema = createInsertSchema(commentsTable)
+  .omit({ createdAt: true, id: true, userId: true })
+  .extend({
+    text: z
+      .string()
+      .max(200, "A comment cannot be longer than 200 characters."),
+  });
+
+export const insertLikeSchema = createInsertSchema(likesTable).pick({
+  postId: true,
+});
+
+export const insertSubscriptionSchema = createInsertSchema(
+  roomSubscriptionsTable
+).omit({ id: true });
+
+export const insertListingSchema = createInsertSchema(listingsTable).omit({
+  id: true,
 });

@@ -19,8 +19,8 @@ export const usersTable = pgTable(
   "users",
   {
     id: text("id").notNull().primaryKey(),
-    username: varchar("username", { length: 31 }).notNull(),
-    email: varchar("email", { length: 63 }),
+    username: varchar("username", { length: 31 }).notNull().unique(),
+    email: varchar("email", { length: 63 }).unique(),
     hash: text("hash"),
     avatarUrl: text("avatarUrl"),
     oauthProvider: text("oauthProvider"),
@@ -72,6 +72,7 @@ export const chatInstancesTable = pgTable(
     primaryKey({
       columns: [t.chatId, t.userId],
     }),
+    uniqueIndex("uniqueUserChatIndex").on(t.userId, t.chatId),
   ]
 );
 
@@ -137,8 +138,7 @@ const mktCategories = [
   "Collectibles",
   "Sport",
 ] as const;
-
-export const categoryEnum = pgEnum("category", mktCategories);
+export const categoryEnum = pgEnum("mktCategories", mktCategories);
 
 export const listingsTable = pgTable("listings", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
@@ -166,11 +166,24 @@ export const listingPicsTable = pgTable("listingPics", {
 
 //
 
+const roomsCategories = [
+  "animals",
+  "technology",
+  "design",
+  "photography",
+  "science",
+  "history",
+  "philosophy",
+  "spirituality",
+] as const;
+export const roomsCategoriesEnum = pgEnum("roomCategories", roomsCategories);
+
 export const roomsTable = pgTable("rooms", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: text("name").notNull(),
+  name: text("name").notNull().unique(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  creatorId: text("userId").references(() => usersTable.id),
+  creatorId: text("creatorId").references(() => usersTable.id),
+  category: roomsCategoriesEnum().notNull(),
 });
 
 export const roomsRelations = relations(roomsTable, ({ many, one }) => ({
@@ -214,7 +227,7 @@ export const postsTable = pgTable("posts", {
   roomId: integer("roomId")
     .references(() => roomsTable.id, { onDelete: "cascade" })
     .notNull(),
-  userId: text("userId").references(() => usersTable.id),
+  authorId: text("authorId").references(() => usersTable.id),
   title: text("title").notNull(),
   text: text("text").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
@@ -222,7 +235,7 @@ export const postsTable = pgTable("posts", {
 
 export const postsRelations = relations(postsTable, ({ one, many }) => ({
   author: one(usersTable, {
-    fields: [postsTable.userId],
+    fields: [postsTable.authorId],
     references: [usersTable.id],
   }),
   comments: many(commentsTable),
@@ -288,15 +301,19 @@ export const commentRepliesRelations = relations(
 
 //
 
-export const likesTable = pgTable("likes", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  userId: text("userId").references(() => usersTable.id, {
-    onDelete: "cascade",
-  }),
-  postId: integer("postId")
-    .references(() => postsTable.id, { onDelete: "cascade" })
-    .notNull(),
-});
+export const likesTable = pgTable(
+  "likes",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    userId: text("userId").references(() => usersTable.id, {
+      onDelete: "cascade",
+    }),
+    postId: integer("postId")
+      .references(() => postsTable.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (table) => [uniqueIndex("uniqueUserPostLike").on(table.userId, table.postId)]
+);
 
 export const likesRelations = relations(likesTable, ({ one }) => ({
   user: one(usersTable, {

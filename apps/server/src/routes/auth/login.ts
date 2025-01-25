@@ -1,3 +1,4 @@
+import { alreadyLoggedError } from "@/utils/customErrors";
 import { createRoute } from "@hono/zod-openapi";
 import { verifySync } from "@node-rs/argon2";
 import {
@@ -9,13 +10,12 @@ import {
 } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import db from "../../db/dbConfig";
+import { createSession } from "../../lib/auth";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import { loginValidationSchema, userSchema } from "../../types/zod-schemas";
 import { customError } from "../../utils/customErrors";
 import { lowercase } from "../../utils/db-methods";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
-import { createSession } from "../../utils/session";
-import { alreadyLoggedError } from "@/utils/customErrors";
 
 const tags = ["auth"];
 
@@ -56,7 +56,7 @@ export const login = createRoute({
 
 export const loginHandler: AppRouteHandler<typeof login> = async (c) => {
   const { username, password } = c.req.valid("json");
-  const user = await db.query.userTable.findFirst({
+  const user = await db.query.usersTable.findFirst({
     where(existingUser, { eq }) {
       return eq(lowercase(existingUser.username), username.toLocaleLowerCase());
     },

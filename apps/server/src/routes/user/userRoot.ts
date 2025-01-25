@@ -5,10 +5,10 @@ import type { AppRouteHandler } from "../../types/app-bindings";
 import { userSchema } from "../../types/zod-schemas";
 import { accessDeniedError } from "../../utils/customErrors";
 
-const tags = ["protected"];
+const tags = ["user"];
 
-export const home = createRoute({
-  path: "/user",
+export const userRoot = createRoute({
+  path: "/",
   method: "get",
   tags,
   responses: {
@@ -17,12 +17,7 @@ export const home = createRoute({
   },
 });
 
-export const homeHandler: AppRouteHandler<typeof home> = async (c) => {
+export const userRootHandler: AppRouteHandler<typeof userRoot> = (c) => {
   const user = c.var.user!;
-  // await new Promise<void>((resolve) => {
-  //   setTimeout(() => {
-  //     resolve();
-  //   }, 2000);
-  // });
   return c.json(user, OK);
 };

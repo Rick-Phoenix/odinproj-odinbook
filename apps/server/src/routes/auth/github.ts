@@ -7,13 +7,13 @@ import { BAD_REQUEST, MOVED_TEMPORARILY } from "stoker/http-status-codes";
 import db from "../../db/dbConfig";
 import { findUserByOauthCredentials } from "../../db/queries";
 import { usersTable } from "../../db/schema";
+import { createSession } from "../../lib/auth";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import env from "../../types/env";
 import type {
   githubTokenResponse,
   githubUserData,
 } from "../../types/oauth-responses";
-import { createSession } from "../../utils/session";
 
 const tags = ["auth"];
 
