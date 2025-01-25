@@ -18,6 +18,6 @@ export const userRoot = createRoute({
 });
 
 export const userRootHandler: AppRouteHandler<typeof userRoot> = (c) => {
-  const user = c.var.user!;
+  const user = c.var.user;
   return c.json(user, OK);
 };

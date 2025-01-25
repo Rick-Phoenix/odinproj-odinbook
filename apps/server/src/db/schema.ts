@@ -74,6 +74,7 @@ export const chatInstancesTable = pgTable(
     primaryKey({
       columns: [t.chatId, t.userId],
     }),
+    uniqueIndex("uniqueUserChat").on(t.userId, t.chatId),
   ]
 );
 
