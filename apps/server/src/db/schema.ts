@@ -37,8 +37,8 @@ export const userRelations = relations(usersTable, ({ many }) => ({
   messages: many(messagesTable),
   posts: many(postsTable),
   comments: many(commentsTable),
-  roomsCreated: many(roomsTable, { relationName: "roomCreator" }),
-  roomsSubscribed: many(roomsTable, { relationName: "roomSubscribers" }),
+  roomsCreated: many(roomsTable),
+  roomSubscriptions: many(roomSubscriptionsTable),
 }));
 
 //
@@ -154,18 +154,42 @@ export const roomsTable = pgTable("rooms", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  userId: text("userId").references(() => usersTable.id),
+  creatorId: text("userId").references(() => usersTable.id),
 });
 
 export const roomsRelations = relations(roomsTable, ({ many, one }) => ({
   creator: one(usersTable, {
-    fields: [roomsTable.userId],
+    fields: [roomsTable.creatorId],
     references: [usersTable.id],
     relationName: "roomCreator",
   }),
-  subscribers: many(usersTable, { relationName: "roomSubscribers" }),
+  subscribers: many(roomSubscriptionsTable),
   posts: many(postsTable),
 }));
+
+export const roomSubscriptionsTable = pgTable("roomSubscriptions", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  roomId: integer("roomId")
+    .references(() => roomsTable.id, { onDelete: "cascade" })
+    .notNull(),
+  userId: text("userId").references(() => usersTable.id, {
+    onDelete: "cascade",
+  }),
+});
+
+export const roomSubscriptionsRelations = relations(
+  roomSubscriptionsTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [roomSubscriptionsTable.userId],
+      references: [usersTable.id],
+    }),
+    room: one(roomsTable, {
+      fields: [roomSubscriptionsTable.roomId],
+      references: [roomsTable.id],
+    }),
+  })
+);
 
 //
 
