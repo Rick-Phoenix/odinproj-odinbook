@@ -2,12 +2,14 @@ import { relations } from "drizzle-orm";
 import {
   boolean,
   integer,
+  pgEnum,
   pgTable,
   primaryKey,
   text,
   timestamp,
   uniqueIndex,
   varchar,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { lowercase, trim } from "../utils/db-methods";
 
@@ -39,6 +41,7 @@ export const userRelations = relations(usersTable, ({ many }) => ({
   comments: many(commentsTable),
   roomsCreated: many(roomsTable),
   roomSubscriptions: many(roomSubscriptionsTable),
+  likes: many(likesTable),
 }));
 
 //
@@ -126,6 +129,17 @@ export const messagesRelations = relations(messagesTable, ({ one }) => ({
 
 //
 
+const mktCategories = [
+  "Technology",
+  "Motors",
+  "Clothing",
+  "Books",
+  "Collectibles",
+  "Sport",
+] as const;
+
+export const categoryEnum = pgEnum("category", mktCategories);
+
 export const listingsTable = pgTable("listings", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   userId: text("userId")
@@ -135,6 +149,8 @@ export const listingsTable = pgTable("listings", {
   description: text("description").notNull(),
   price: integer("price").notNull(),
   location: text("location").notNull(),
+  sold: boolean("sold").notNull().default(false),
+  category: categoryEnum().notNull(),
 });
 
 //
@@ -145,7 +161,7 @@ export const listingPicsTable = pgTable("listingPics", {
     .references(() => listingsTable.id, { onDelete: "cascade" })
     .notNull(),
   url: text("url").notNull(),
-  isThumbnail: boolean("isThumbnail"),
+  isThumbnail: boolean("isThumbnail").notNull().default(false),
 });
 
 //
@@ -214,6 +230,7 @@ export const postsRelations = relations(postsTable, ({ one, many }) => ({
     fields: [postsTable.roomId],
     references: [roomsTable.id],
   }),
+  likes: many(likesTable),
 }));
 
 //
@@ -226,6 +243,9 @@ export const commentsTable = pgTable("comments", {
     .notNull(),
   text: text("text").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
+  parentCommentId: integer("parentCommentId").references(
+    (): AnyPgColumn => commentsTable.id
+  ),
 });
 
 export const commentsRelations = relations(commentsTable, ({ one, many }) => ({
@@ -235,6 +255,56 @@ export const commentsRelations = relations(commentsTable, ({ one, many }) => ({
   }),
   post: one(postsTable, {
     fields: [commentsTable.postId],
+    references: [postsTable.id],
+  }),
+  replies: many(commentRepliesTable, { relationName: "parentComment" }),
+  parentComment: one(commentsTable, {
+    fields: [commentsTable.parentCommentId],
+    references: [commentsTable.id],
+  }),
+}));
+
+export const commentRepliesTable = pgTable("commentReplies", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  commentId: integer("commentId").references(() => commentsTable.id),
+  replyId: integer("replyId").references(() => commentsTable.id),
+});
+
+export const commentRepliesRelations = relations(
+  commentRepliesTable,
+  ({ one }) => ({
+    comment: one(commentsTable, {
+      relationName: "parentComment",
+      fields: [commentRepliesTable.commentId],
+      references: [commentsTable.id],
+    }),
+    reply: one(commentsTable, {
+      relationName: "reply",
+      fields: [commentRepliesTable.replyId],
+      references: [commentsTable.id],
+    }),
+  })
+);
+
+//
+
+export const likesTable = pgTable("likes", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: text("userId").references(() => usersTable.id, {
+    onDelete: "cascade",
+  }),
+  postId: integer("postId")
+    .references(() => postsTable.id, { onDelete: "cascade" })
+    .notNull(),
+});
+
+export const likesRelations = relations(likesTable, ({ one }) => ({
+  user: one(usersTable, {
+    fields: [likesTable.userId],
+    references: [usersTable.id],
+  }),
+  post: one(postsTable, {
+    fields: [likesTable.postId],
     references: [postsTable.id],
   }),
 }));
