@@ -4,6 +4,7 @@ import {
   chatsTable,
   commentsTable,
   likesTable,
+  listingPicsTable,
   listingsTable,
   messagesTable,
   postsTable,
@@ -28,6 +29,10 @@ export const postSchema = createSelectSchema(postsTable).extend({
 });
 export const roomSchema = createSelectSchema(roomsTable).extend({
   posts: z.array(postSchema),
+});
+export const listingPicsSchema = createSelectSchema(listingPicsTable);
+export const listingSchema = createSelectSchema(listingsTable).extend({
+  pics: z.array(listingPicsSchema),
 });
 
 // Input Validation Schemas

@@ -37,11 +37,13 @@ export const usersTable = pgTable(
 export const userRelations = relations(usersTable, ({ many }) => ({
   chats: many(chatInstancesTable),
   messages: many(messagesTable),
-  posts: many(postsTable),
+  posts: many(postsTable, { relationName: "postAuthor" }),
   comments: many(commentsTable),
   roomsCreated: many(roomsTable),
   roomSubscriptions: many(roomSubscriptionsTable),
   likes: many(likesTable),
+  listingsCreated: many(listingsTable, { relationName: "listingsCreated" }),
+  listingsSaved: many(savedListingsTable),
 }));
 
 //
@@ -72,7 +74,6 @@ export const chatInstancesTable = pgTable(
     primaryKey({
       columns: [t.chatId, t.userId],
     }),
-    uniqueIndex("uniqueUserChatIndex").on(t.userId, t.chatId),
   ]
 );
 
@@ -151,6 +152,20 @@ export const listingsTable = pgTable("listings", {
   location: text("location").notNull(),
   sold: boolean("sold").notNull().default(false),
   category: categoryEnum().notNull(),
+});
+
+export const listingsRelations = relations(listingsTable, ({ many }) => ({
+  pics: many(listingPicsTable),
+}));
+
+export const savedListingsTable = pgTable("savedListings", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  userId: text("userId")
+    .references(() => usersTable.id, { onDelete: "cascade" })
+    .notNull(),
+  listingId: integer("listingId")
+    .notNull()
+    .references(() => listingsTable.id),
 });
 
 //
@@ -237,6 +252,7 @@ export const postsRelations = relations(postsTable, ({ one, many }) => ({
   author: one(usersTable, {
     fields: [postsTable.authorId],
     references: [usersTable.id],
+    relationName: "postAuthor",
   }),
   comments: many(commentsTable),
   room: one(roomsTable, {
