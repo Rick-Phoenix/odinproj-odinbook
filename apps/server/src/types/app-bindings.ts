@@ -1,9 +1,8 @@
 import type { OpenAPIHono, RouteConfig, RouteHandler } from "@hono/zod-openapi";
-import type env from "./env";
+import type { Context, Env, MiddlewareHandler } from "hono";
 import type { PinoLogger } from "hono-pino";
-import type { Context, MiddlewareHandler } from "hono";
-import type { Session } from "./db-items";
-import type { User } from "./db-items";
+import type { Session, User } from "./db-items";
+import type env from "./env";
 
 export type AppBindings = {
   Variables: {
@@ -16,10 +15,10 @@ export type AppBindings = {
 
 export type AppOpenAPI = OpenAPIHono<AppBindings>;
 
-export type AppRouteHandler<R extends RouteConfig> = RouteHandler<
-  R,
-  AppBindings
->;
+export type AppRouteHandler<
+  R extends RouteConfig,
+  AB extends Env = AppBindings,
+> = RouteHandler<R, AB>;
 
 export type AppMiddleware = MiddlewareHandler<AppBindings>;
 
