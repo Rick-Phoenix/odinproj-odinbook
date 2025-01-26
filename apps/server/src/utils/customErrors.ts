@@ -1,6 +1,6 @@
 import { z } from "@hono/zod-openapi";
-import { httpCodesMap } from "../lib/constants";
 import { BAD_REQUEST, CONFLICT, UNAUTHORIZED } from "stoker/http-status-codes";
+import { httpCodesMap } from "../lib/constants";
 
 export type CustomError = {
   message: string;
@@ -61,7 +61,7 @@ export const accessDeniedError = customError(
   UNAUTHORIZED
 );
 
-export const invalidRequestError = customError(
+export const badRequestError = customError(
   {
     message: "Invalid request.",
   },

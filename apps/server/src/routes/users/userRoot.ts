@@ -8,10 +8,10 @@ import type {
 import { userSchema } from "../../types/zod-schemas";
 import { accessDeniedError } from "../../utils/customErrors";
 
-const tags = ["user"];
+const tags = ["users"];
 
-export const userRoot = createRoute({
-  path: "/",
+export const user = createRoute({
+  path: "/user",
   method: "get",
   tags,
   responses: {
@@ -20,10 +20,9 @@ export const userRoot = createRoute({
   },
 });
 
-export const userRootHandler: AppRouteHandler<
-  typeof userRoot,
-  AppBindingsWithUser
-> = (c) => {
+export const userHandler: AppRouteHandler<typeof user, AppBindingsWithUser> = (
+  c
+) => {
   const user = c.var.user;
   return c.json(user, OK);
 };

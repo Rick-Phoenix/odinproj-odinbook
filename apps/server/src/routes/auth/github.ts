@@ -1,4 +1,4 @@
-import { invalidRequestError } from "@/utils/customErrors";
+import { badRequestError } from "@/utils/customErrors";
 import { createRoute, z } from "@hono/zod-openapi";
 import { encodeBase64 } from "@oslojs/encoding";
 import { webcrypto } from "crypto";
@@ -55,7 +55,7 @@ export const githubCallback = createRoute({
     }),
   },
   responses: {
-    [BAD_REQUEST]: invalidRequestError.template,
+    [BAD_REQUEST]: badRequestError.template,
     [MOVED_TEMPORARILY]: {
       description: "Redirecting to the client's main page.",
     },
@@ -69,7 +69,7 @@ export const githubCallbackHandler: AppRouteHandler<
   const storedState = getCookie(c, "github_oauth_state");
 
   if (state !== storedState)
-    return c.json(invalidRequestError.content, BAD_REQUEST);
+    return c.json(badRequestError.content, BAD_REQUEST);
 
   deleteCookie(c, "github_oauth_state");
 
@@ -100,7 +100,7 @@ export const githubCallbackHandler: AppRouteHandler<
     (await accessTokenRequest.json()) as githubTokenResponse;
 
   if ("error" in accessTokenResponse) {
-    return c.json(invalidRequestError.content, BAD_REQUEST);
+    return c.json(badRequestError.content, BAD_REQUEST);
   }
 
   const accessToken = accessTokenResponse.access_token;

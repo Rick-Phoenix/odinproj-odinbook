@@ -1,6 +1,7 @@
 import { z } from "@hono/zod-openapi";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import {
+  chatInstancesTable,
   chatsTable,
   commentsTable,
   likesTable,
@@ -21,6 +22,11 @@ export const messagesSchema = createSelectSchema(messagesTable);
 export const chatSchema = createSelectSchema(chatsTable).extend({
   messages: z.array(messagesSchema),
 });
+export const chatInstanceSchema = createSelectSchema(chatInstancesTable).extend(
+  {
+    chat: chatSchema,
+  }
+);
 export const commentSchema = createSelectSchema(commentsTable);
 export const likesSchema = createSelectSchema(likesTable);
 export const postSchema = createSelectSchema(postsTable).extend({
@@ -80,7 +86,7 @@ export const insertRoomSchema = createInsertSchema(roomsTable)
   });
 
 export const insertPostSchema = createInsertSchema(postsTable)
-  .omit({ createdAt: true, id: true, userId: true })
+  .omit({ createdAt: true, id: true, authorId: true })
   .extend({
     title: z
       .string()

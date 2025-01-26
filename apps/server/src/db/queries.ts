@@ -1,4 +1,3 @@
-import { postSchema } from "../types/zod-schemas";
 import { lowercase } from "../utils/db-methods";
 import db from "./dbConfig";
 
@@ -29,13 +28,25 @@ export async function findUserByUsername(username: string) {
   });
 }
 
-export async function getChat(chatId: number) {
-  return await db.query.chatsTable.findFirst({
+export async function getUserChats(userId: string) {
+  return await db.query.chatInstancesTable.findMany({
     where(chat, { eq }) {
-      return eq(chat.id, chatId);
+      return eq(chat.userId, userId);
     },
-    with: { messages: true },
+    with: { chat: { with: { messages: true } } },
   });
+}
+
+export async function getSingleChat(userId: string, chatId: number) {
+  const chat = await db.query.chatInstancesTable.findFirst({
+    where(chat, { eq, and }) {
+      return and(eq(chat.userId, userId), eq(chat.chatId, chatId));
+    },
+    with: { chat: { with: { messages: true } } },
+    columns: {},
+  });
+
+  return chat;
 }
 
 export async function getPost(postId: number) {
@@ -62,6 +73,3 @@ export async function findUserByOauthCredentials(provider: string, id: number) {
     },
   });
 }
-
-const chat = await getPost(1);
-console.log(postSchema.safeParse(chat));

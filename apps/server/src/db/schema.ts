@@ -42,7 +42,7 @@ export const userRelations = relations(usersTable, ({ many }) => ({
   roomsCreated: many(roomsTable),
   roomSubscriptions: many(roomSubscriptionsTable),
   likes: many(likesTable),
-  listingsCreated: many(listingsTable, { relationName: "listingsCreated" }),
+  listingsCreated: many(listingsTable),
   listingsSaved: many(savedListingsTable),
 }));
 
@@ -144,7 +144,7 @@ export const categoryEnum = pgEnum("mktCategories", mktCategories);
 
 export const listingsTable = pgTable("listings", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  userId: text("userId")
+  sellerId: text("sellerId")
     .references(() => usersTable.id, { onDelete: "cascade" })
     .notNull(),
   title: text("title").notNull(),
@@ -155,8 +155,12 @@ export const listingsTable = pgTable("listings", {
   category: categoryEnum().notNull(),
 });
 
-export const listingsRelations = relations(listingsTable, ({ many }) => ({
+export const listingsRelations = relations(listingsTable, ({ many, one }) => ({
   pics: many(listingPicsTable),
+  seller: one(usersTable, {
+    fields: [listingsTable.sellerId],
+    references: [usersTable.id],
+  }),
 }));
 
 export const savedListingsTable = pgTable("savedListings", {
@@ -169,6 +173,16 @@ export const savedListingsTable = pgTable("savedListings", {
     .references(() => listingsTable.id),
 });
 
+export const savedListingsRelations = relations(
+  savedListingsTable,
+  ({ one }) => ({
+    user: one(usersTable, {
+      fields: [savedListingsTable.userId],
+      references: [usersTable.id],
+    }),
+  })
+);
+
 //
 
 export const listingPicsTable = pgTable("listingPics", {
@@ -179,6 +193,13 @@ export const listingPicsTable = pgTable("listingPics", {
   url: text("url").notNull(),
   isThumbnail: boolean("isThumbnail").notNull().default(false),
 });
+
+export const listingPicsRelations = relations(listingPicsTable, ({ one }) => ({
+  listing: one(listingsTable, {
+    fields: [listingPicsTable.listingId],
+    references: [listingsTable.id],
+  }),
+}));
 
 //
 
