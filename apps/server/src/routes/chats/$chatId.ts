@@ -6,6 +6,7 @@ import type {
   AppBindingsWithUser,
   AppRouteHandler,
 } from "../../types/app-bindings";
+import { numberParamSchema } from "../../types/schema-helpers";
 import { chatSchema } from "../../types/zod-schemas";
 import { badRequestError } from "../../utils/customErrors";
 
@@ -17,9 +18,7 @@ export const chatId = createRoute({
   tags,
   request: {
     params: z.object({
-      chatId: z.coerce
-        .number()
-        .openapi({ param: { required: true }, type: "number" }),
+      chatId: numberParamSchema,
     }),
   },
   responses: {
@@ -36,5 +35,5 @@ export const chatIdHandler: AppRouteHandler<
   const { id: userId } = c.var.user;
   const chat = await getSingleChat(userId, chatId);
   if (!chat) return c.json(badRequestError.content, BAD_REQUEST);
-  return c.json(chat.chat, OK);
+  return c.json(chat, OK);
 };

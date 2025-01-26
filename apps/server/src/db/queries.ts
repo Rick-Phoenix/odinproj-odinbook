@@ -29,12 +29,17 @@ export async function findUserByUsername(username: string) {
 }
 
 export async function getUserChats(userId: string) {
-  return await db.query.chatInstancesTable.findMany({
+  const chats = await db.query.chatInstancesTable.findMany({
     where(chat, { eq }) {
       return eq(chat.userId, userId);
     },
     with: { chat: { with: { messages: true } } },
+    columns: {},
   });
+
+  if (chats.length === 0) return null;
+
+  return chats.map((item) => item.chat);
 }
 
 export async function getSingleChat(userId: string, chatId: number) {
@@ -46,7 +51,7 @@ export async function getSingleChat(userId: string, chatId: number) {
     columns: {},
   });
 
-  return chat;
+  return chat?.chat;
 }
 
 export async function getPost(postId: number) {
