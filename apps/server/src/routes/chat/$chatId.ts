@@ -17,7 +17,9 @@ export const chatId = createRoute({
   tags,
   request: {
     params: z.object({
-      chatId: z.coerce.number(),
+      chatId: z.coerce
+        .number()
+        .openapi({ param: { required: true }, type: "number" }),
     }),
   },
   responses: {
