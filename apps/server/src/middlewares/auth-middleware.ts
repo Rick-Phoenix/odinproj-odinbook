@@ -5,10 +5,14 @@ import { getCookie } from "hono/cookie";
 import { CONFLICT, UNAUTHORIZED } from "stoker/http-status-codes";
 import db from "../db/dbConfig";
 import { sessionsTable, usersTable } from "../db/schema";
-import { invalidateSession, userIsAuthenticated } from "../lib/auth";
-import type { AppMiddleware } from "../types/app-bindings";
+import { invalidateSession } from "../lib/auth";
+import type { AppContext, AppMiddleware } from "../types/app-bindings";
 import { accessDeniedError, alreadyLoggedError } from "../utils/customErrors";
 import { entryExists } from "../utils/db-methods";
+
+export const userIsAuthenticated = (c: AppContext) => {
+  return !!c.var.user && !!c.var.session;
+};
 
 export const protectRoute: AppMiddleware = async (c, next) => {
   if (c.req.path.startsWith("/api/auth")) return await next();

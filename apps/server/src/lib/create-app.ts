@@ -4,8 +4,8 @@ import { notFound, onError } from "stoker/middlewares";
 import { pinoLogger } from "../middlewares/pino-logger";
 import type { AppBindings } from "../types/app-bindings";
 
-export function createRouter() {
-  return new OpenAPIHono<AppBindings>({
+export function createRouter<AB extends AppBindings = AppBindings>() {
+  return new OpenAPIHono<AB>({
     strict: false,
     defaultHook: (result, c) => {
       if (!result.success) {

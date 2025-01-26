@@ -31,7 +31,3 @@ export async function invalidateSession(c: AppContext, sessionId: string) {
   await db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
   deleteCookie(c, "session");
 }
-
-export const userIsAuthenticated = (c: AppContext) => {
-  return !!c.var.user && !!c.var.session;
-};

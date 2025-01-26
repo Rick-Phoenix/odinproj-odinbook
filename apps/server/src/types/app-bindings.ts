@@ -13,6 +13,8 @@ export type AppBindings = {
   Bindings: typeof env;
 };
 
+export type AppBindingsWithUser = AppBindings & { Variables: { user: User } };
+
 export type AppOpenAPI = OpenAPIHono<AppBindings>;
 
 export type AppRouteHandler<
