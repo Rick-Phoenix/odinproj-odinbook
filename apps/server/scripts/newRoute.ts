@@ -69,7 +69,7 @@ const routeBoilerplate = `
 import { createRoute, z } from "@hono/zod-openapi";
 import { OK } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
-import type { AppRouteHandler ${isAuthenticatedRoute && ", AppBindingsWithUser"} } from "../../types/app-bindings";
+import type { AppRouteHandler ${isAuthenticatedRoute ? ", AppBindingsWithUser" : ""} } from "../../types/app-bindings";
 
 const tags = ["${routeCategory}"]
 
@@ -90,7 +90,7 @@ export const ${routeName} = createRoute({
   }
 });
 
-export const ${routeName + "Handler"}: AppRouteHandler<typeof ${routeName}${isAuthenticatedRoute && ", AppBindingsWithUser"}> = async (c) => {
+export const ${routeName + "Handler"}: AppRouteHandler<typeof ${routeName}${isAuthenticatedRoute ? ", AppBindingsWithUser" : ""}> = async (c) => {
   
 }
 `;
