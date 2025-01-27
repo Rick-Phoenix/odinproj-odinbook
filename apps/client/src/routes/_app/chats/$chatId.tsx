@@ -1,24 +1,44 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Send } from "lucide-react";
-import { title } from "radashi";
 import type { FC } from "react";
 import { StaticInset } from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
+import { api } from "../../../lib/api-client";
 
-export const Route = createFileRoute("/_app/chats/$contact")({
+export const Route = createFileRoute("/_app/chats/$chatId")({
   component: RouteComponent,
+  params: {
+    parse: ({ chatId }) => {
+      return { chatId: +chatId };
+    },
+  },
 });
 
 function RouteComponent() {
-  const { contact } = Route.useParams();
+  const { chatId } = Route.useParams();
+  const chat = useQuery({
+    queryKey: ["chat"],
+    queryFn: async () => {
+      const res = await api.chats[":chatId"].$get({ param: { chatId } });
+      if (!res.ok) throw Error("Server Error");
+      const data = await res.json();
+      console.log(data);
+      return data;
+    },
+  });
   return (
-    <Chat
-      contactName={title(contact)}
-      contactAvatar="https://github.com/shadcn.png"
-    />
+    <>
+      {/* {chat.data && (
+        <Chat
+          contactName={title(chat.data.contact.username)}
+          contactAvatar={chat.data.contact.avatarUrl}
+        />
+      )} */}
+    </>
   );
 }
 

@@ -22,7 +22,11 @@ export const users = pgTable(
     username: varchar("username", { length: 31 }).notNull().unique(),
     email: varchar("email", { length: 63 }).unique(),
     hash: text("hash"),
-    avatarUrl: text("avatarUrl"),
+    avatarUrl: text("avatarUrl")
+      .notNull()
+      .default(
+        "https://res.cloudinary.com/dqjizh49f/image/upload/v1733903271/Messaging%20App/genericpfp.jpg"
+      ),
     oauthProvider: text("oauthProvider"),
     oauthId: integer("oauthId"),
     status: text("status"),

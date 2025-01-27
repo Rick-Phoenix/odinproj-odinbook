@@ -1,15 +1,26 @@
+import { useQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SquarePen } from "lucide-react";
 import type { FC } from "react";
 import { InsetScrollArea } from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
+import { api } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/chats/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const chats = useQuery({
+    queryKey: ["chats"],
+    queryFn: async () => {
+      const res = await api.chats.$get();
+      if (!res.ok) throw Error("Server Error");
+      const data = await res.json();
+      return data;
+    },
+  });
   return (
     <InsetScrollArea>
       <section className="grid min-h-[75vh] max-w-full flex-1 grid-cols-1 grid-rows-6 gap-4 rounded-xl bg-muted/50 p-4">
@@ -24,24 +35,15 @@ function RouteComponent() {
             <SquarePen />
           </Button>
         </header>
-        <ChatPreview
-          contactName="Nickname"
-          contactAvatar="https://github.com/shadcn.png"
-          lastMessage="Eu incididunt fugiat mollit nostrud aute cupidatat excepteur labore
-          duis laborum aliqua ullamco. Lorem dolore est qui mollit culpa. Sunt
-          eu mollit excepteur non veniam sint tempor irure dolore non tempor.
-          Sit laborum duis reprehenderit dolore officia elit aliqua. Anim eu
-          dolor labore officia do id veniam magna elit officia ex pariatur sunt."
-        />
-        <ChatPreview
-          contactName="Nickname"
-          contactAvatar="https://github.com/shadcn.png"
-          lastMessage="Eu incididunt fugiat mollit nostrud aute cupidatat excepteur labore
-          duis laborum aliqua ullamco. Lorem dolore est qui mollit culpa. Sunt
-          eu mollit excepteur non veniam sint tempor irure dolore non tempor.
-          Sit laborum duis reprehenderit dolore officia elit aliqua. Anim eu
-          dolor labore officia do id veniam magna elit officia ex pariatur sunt."
-        />
+        {Array.isArray(chats.data) &&
+          chats.data.map((chat, i) => (
+            <ChatPreview
+              key={i}
+              contactName={chat.contact.username}
+              contactAvatar={chat.contact.avatarUrl}
+              lastMessage={chat.messages.at(-1)?.text}
+            />
+          ))}
       </section>
     </InsetScrollArea>
   );
@@ -51,11 +53,12 @@ const ChatPreview: FC<{
   contactName: string;
   contactAvatar: string;
   lastMessage: string;
-}> = ({ contactName, contactAvatar, lastMessage }) => {
+  chatId: number;
+}> = ({ contactName, contactAvatar, lastMessage, chatId }) => {
   return (
     <Link
-      to={"/chats/$contact"}
-      params={{ contact: contactName }}
+      to={"/chats/$chatId"}
+      params={{ chatId }}
       className="flex h-28 w-full items-center justify-between gap-8 rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
     >
       <Avatar className="h-full w-auto">
