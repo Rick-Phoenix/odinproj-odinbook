@@ -1,5 +1,6 @@
 import { input, select } from "@inquirer/prompts";
 import chalk from "chalk";
+import dedent from "dedent";
 import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -74,35 +75,35 @@ async function newRoute() {
     ],
   });
 
-  const routeBoilerplate = `
-import { createRoute, z } from "@hono/zod-openapi";
-import { OK } from "stoker/http-status-codes";
-import { jsonContent } from "stoker/openapi/helpers";
-import type { AppRouteHandler ${isAuthenticatedRoute ? ", AppBindingsWithUser" : ""} } from "../../types/app-bindings";
+  const routeBoilerplate = dedent`
+  import { createRoute, z } from "@hono/zod-openapi";
+  import { OK } from "stoker/http-status-codes";
+  import { jsonContent } from "stoker/openapi/helpers";
+  import type { AppRouteHandler ${isAuthenticatedRoute ? ", AppBindingsWithUser" : ""} } from "../../types/app-bindings";
 
-const tags = ["${routeGroup}"]
+  const tags = ["${routeGroup}"]
 
-export const ${routeName} = createRoute({
-  path: '/',
-  method: '${requestMethod}',
-  tags,
-  request: {
-    ${
-      requestMethod === "post"
-        ? `body: {
-        
-      }`
-        : ""
-    }
-  },
-  responses: {
-    [OK]:
+  export const ${routeName} = createRoute({
+    path: '/',
+    method: '${requestMethod}',
+    tags,
+    request: {
+      ${
+        requestMethod === "post"
+          ? `body: {
+          
+        }`
+          : ""
+      }
+    },
+    responses: {
+      [OK]:
+    },
+  });
+
+  export const ${routeName + "Handler"}: AppRouteHandler<typeof ${routeName}${isAuthenticatedRoute ? ", AppBindingsWithUser" : ""}> = async (c) => {
+    
   }
-});
-
-export const ${routeName + "Handler"}: AppRouteHandler<typeof ${routeName}${isAuthenticatedRoute ? ", AppBindingsWithUser" : ""}> = async (c) => {
-  
-}
 `;
 
   const localConfigContent = await fs.readFile(routeConfigFile, "utf8");

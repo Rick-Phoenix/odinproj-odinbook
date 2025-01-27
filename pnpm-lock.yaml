@@ -249,6 +249,9 @@ importers:
       cloudinary:
         specifier: ^2.5.1
         version: 2.5.1
+      dedent:
+        specifier: ^1.5.3
+        version: 1.5.3
       dotenv:
         specifier: ^16.4.7
         version: 16.4.7
@@ -3483,6 +3486,14 @@ packages:
   decompress-response@6.0.0:
     resolution: {integrity: sha512-aW35yZM6Bb/4oJlZncMH2LCoZtJXTRxES17vE3hoRiowU2kWHaJKFkSBDnDR+cm9J+9QhXmREyIfv0pji9ejCQ==}
     engines: {node: '>=10'}
+
+  dedent@1.5.3:
+    resolution: {integrity: sha512-NHQtfOOW68WD8lgypbLA5oT+Bt0xXJhiYvoR6SmmNXZfpzOGXwdKWmcwG8N7PwVVWV3eF/68nmD9BaJSsTBhyQ==}
+    peerDependencies:
+      babel-plugin-macros: ^3.1.0
+    peerDependenciesMeta:
+      babel-plugin-macros:
+        optional: true
 
   deep-bind@0.3.0:
     resolution: {integrity: sha512-SwekOBPDnCT3qhOM78ARzBdPSbNMyQ63F8eZDahBzzVAoqousMhYh3HYIh2pLmhtGcVvO8/SU6B6kMsj0SXb1Q==}
@@ -10578,6 +10589,8 @@ snapshots:
     dependencies:
       mimic-response: 3.1.0
     optional: true
+
+  dedent@1.5.3: {}
 
   deep-bind@0.3.0:
     dependencies:

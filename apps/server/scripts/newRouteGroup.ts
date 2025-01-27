@@ -1,5 +1,6 @@
 import { input, select } from "@inquirer/prompts";
 import chalk from "chalk";
+import dedent from "dedent";
 import { existsSync } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
@@ -63,7 +64,7 @@ async function newRouteGroup() {
 
   const updatedConfig = configBlock.replace(
     /;$/,
-    `.route("${routeGroupName}", ${routeGroupName}Router);`
+    `.route("/${routeGroupName}", ${routeGroupName}Router);`
   );
   const updatedImports = importsBlock.replace(
     /\n$/,
@@ -83,9 +84,8 @@ async function newRouteGroup() {
     `${routeGroupName}Router.ts`
   );
 
-  const routerBoilerplate = `
-  import { createRouter } from "../../lib/create-app";
-  ${isAuthenticatedRoute ? 'import type { AppBindingsWithUser } from "../../types/app-bindings"' : ""}
+  const routerBoilerplate = dedent`import { createRouter } from "../../lib/create-app";
+  ${isAuthenticatedRoute ? 'import type { AppBindingsWithUser } from "../../types/app-bindings";' : ""}
   
   export const ${routeGroupName}Router = createRouter${isAuthenticatedRoute ? "<AppBindingsWithUser>" : ""}();
   `;
