@@ -9,7 +9,7 @@ import {
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import db from "../../db/dbConfig";
 import { emailIsNotAvailable, usernameIsNotAvailable } from "../../db/queries";
-import { usersTable } from "../../db/schema";
+import { users } from "../../db/schema";
 import { createSession } from "../../lib/auth";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import { insertUserSchema, userSchema } from "../../types/zod-schemas";
@@ -73,7 +73,7 @@ export const signupHandler: AppRouteHandler<typeof signup> = async (c) => {
   };
 
   const [registeredUser] = await db
-    .insert(usersTable)
+    .insert(users)
     .values(hashedUser)
     .returning();
   await createSession(c, userId);

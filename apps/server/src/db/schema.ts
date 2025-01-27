@@ -15,7 +15,7 @@ import { lowercase, trim } from "../utils/db-methods";
 
 //
 
-export const usersTable = pgTable(
+export const users = pgTable(
   "users",
   {
     id: text("id").notNull().primaryKey(),
@@ -34,40 +34,41 @@ export const usersTable = pgTable(
   ]
 );
 
-export const userRelations = relations(usersTable, ({ many }) => ({
-  chats: many(chatInstancesTable),
-  messages: many(messagesTable),
-  posts: many(postsTable, { relationName: "postAuthor" }),
-  comments: many(commentsTable),
-  roomsCreated: many(roomsTable),
-  roomSubscriptions: many(roomSubscriptionsTable),
-  likes: many(likesTable),
-  listingsCreated: many(listingsTable),
-  listingsSaved: many(savedListingsTable),
+export const userRelations = relations(users, ({ many }) => ({
+  chats: many(chatInstances),
+  messages: many(messages),
+  posts: many(posts, { relationName: "postAuthor" }),
+  comments: many(comments),
+  roomsCreated: many(rooms),
+  roomSubscriptions: many(roomSubs),
+  likes: many(likes),
+  listingsCreated: many(listings),
+  listingsSaved: many(savedListings),
 }));
 
 //
 
-export const chatsTable = pgTable("chats", {
+export const chats = pgTable("chats", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-export const chatsRelations = relations(chatsTable, ({ many }) => ({
-  instances: many(chatInstancesTable),
-  messages: many(messagesTable),
+export const chatsRelations = relations(chats, ({ many }) => ({
+  instances: many(chatInstances),
+  messages: many(messages),
+  users: many(users),
 }));
 
 //
 
-export const chatInstancesTable = pgTable(
+export const chatInstances = pgTable(
   "chatInstances",
   {
     userId: text("userId")
-      .references(() => usersTable.id, { onDelete: "cascade" })
+      .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
     chatId: integer("chatId")
-      .references(() => chatsTable.id, { onDelete: "cascade" })
+      .references(() => chats.id, { onDelete: "cascade" })
       .notNull(),
   },
   (t) => [
@@ -78,27 +79,24 @@ export const chatInstancesTable = pgTable(
   ]
 );
 
-export const chatInstancesRelations = relations(
-  chatInstancesTable,
-  ({ one }) => ({
-    user: one(usersTable, {
-      fields: [chatInstancesTable.userId],
-      references: [usersTable.id],
-    }),
-    chat: one(chatsTable, {
-      fields: [chatInstancesTable.chatId],
-      references: [chatsTable.id],
-    }),
-  })
-);
+export const chatInstancesRelations = relations(chatInstances, ({ one }) => ({
+  user: one(users, {
+    fields: [chatInstances.userId],
+    references: [users.id],
+  }),
+  chat: one(chats, {
+    fields: [chatInstances.chatId],
+    references: [chats.id],
+  }),
+}));
 
 //
 
-export const sessionsTable = pgTable("sessions", {
+export const sessions = pgTable("sessions", {
   id: text("id").primaryKey().notNull(),
   userId: text("userId")
     .notNull()
-    .references(() => usersTable.id, { onDelete: "cascade" }),
+    .references(() => users.id, { onDelete: "cascade" }),
   expiresAt: timestamp("expires_at", {
     withTimezone: true,
     mode: "date",
@@ -107,26 +105,26 @@ export const sessionsTable = pgTable("sessions", {
 
 //
 
-export const messagesTable = pgTable("messages", {
+export const messages = pgTable("messages", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   chatId: integer("chatId")
-    .references(() => chatsTable.id, { onDelete: "cascade" })
+    .references(() => chats.id, { onDelete: "cascade" })
     .notNull(),
   userId: text("userId")
-    .references(() => usersTable.id, { onDelete: "cascade" })
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   text: text("text").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-export const messagesRelations = relations(messagesTable, ({ one }) => ({
-  author: one(usersTable, {
-    fields: [messagesTable.userId],
-    references: [usersTable.id],
+export const messagesRelations = relations(messages, ({ one }) => ({
+  author: one(users, {
+    fields: [messages.userId],
+    references: [users.id],
   }),
-  chat: one(chatsTable, {
-    fields: [messagesTable.chatId],
-    references: [chatsTable.id],
+  chat: one(chats, {
+    fields: [messages.chatId],
+    references: [chats.id],
   }),
 }));
 
@@ -142,10 +140,10 @@ const mktCategories = [
 ] as const;
 export const categoryEnum = pgEnum("mktCategories", mktCategories);
 
-export const listingsTable = pgTable("listings", {
+export const listings = pgTable("listings", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   sellerId: text("sellerId")
-    .references(() => usersTable.id, { onDelete: "cascade" })
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   title: text("title").notNull(),
   description: text("description").notNull(),
@@ -155,49 +153,46 @@ export const listingsTable = pgTable("listings", {
   category: categoryEnum().notNull(),
 });
 
-export const listingsRelations = relations(listingsTable, ({ many, one }) => ({
-  pics: many(listingPicsTable),
-  seller: one(usersTable, {
-    fields: [listingsTable.sellerId],
-    references: [usersTable.id],
+export const listingsRelations = relations(listings, ({ many, one }) => ({
+  pics: many(listingPics),
+  seller: one(users, {
+    fields: [listings.sellerId],
+    references: [users.id],
   }),
 }));
 
-export const savedListingsTable = pgTable("savedListings", {
+export const savedListings = pgTable("savedListings", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   userId: text("userId")
-    .references(() => usersTable.id, { onDelete: "cascade" })
+    .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   listingId: integer("listingId")
     .notNull()
-    .references(() => listingsTable.id),
+    .references(() => listings.id),
 });
 
-export const savedListingsRelations = relations(
-  savedListingsTable,
-  ({ one }) => ({
-    user: one(usersTable, {
-      fields: [savedListingsTable.userId],
-      references: [usersTable.id],
-    }),
-  })
-);
+export const savedListingsRelations = relations(savedListings, ({ one }) => ({
+  user: one(users, {
+    fields: [savedListings.userId],
+    references: [users.id],
+  }),
+}));
 
 //
 
-export const listingPicsTable = pgTable("listingPics", {
+export const listingPics = pgTable("listingPics", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   listingId: integer("listingId")
-    .references(() => listingsTable.id, { onDelete: "cascade" })
+    .references(() => listings.id, { onDelete: "cascade" })
     .notNull(),
   url: text("url").notNull(),
   isThumbnail: boolean("isThumbnail").notNull().default(false),
 });
 
-export const listingPicsRelations = relations(listingPicsTable, ({ one }) => ({
-  listing: one(listingsTable, {
-    fields: [listingPicsTable.listingId],
-    references: [listingsTable.id],
+export const listingPicsRelations = relations(listingPics, ({ one }) => ({
+  listing: one(listings, {
+    fields: [listingPics.listingId],
+    references: [listings.id],
   }),
 }));
 
@@ -215,152 +210,146 @@ const roomsCategories = [
 ] as const;
 export const roomsCategoriesEnum = pgEnum("roomCategories", roomsCategories);
 
-export const roomsTable = pgTable("rooms", {
+export const rooms = pgTable("rooms", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull().unique(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
-  creatorId: text("creatorId").references(() => usersTable.id),
+  creatorId: text("creatorId").references(() => users.id),
   category: roomsCategoriesEnum().notNull(),
 });
 
-export const roomsRelations = relations(roomsTable, ({ many, one }) => ({
-  creator: one(usersTable, {
-    fields: [roomsTable.creatorId],
-    references: [usersTable.id],
+export const roomsRelations = relations(rooms, ({ many, one }) => ({
+  creator: one(users, {
+    fields: [rooms.creatorId],
+    references: [users.id],
     relationName: "roomCreator",
   }),
-  subscribers: many(roomSubscriptionsTable),
-  posts: many(postsTable),
+  subscribers: many(roomSubs),
+  posts: many(posts),
 }));
 
-export const roomSubscriptionsTable = pgTable("roomSubscriptions", {
+export const roomSubs = pgTable("roomSubscriptions", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   roomId: integer("roomId")
-    .references(() => roomsTable.id, { onDelete: "cascade" })
+    .references(() => rooms.id, { onDelete: "cascade" })
     .notNull(),
-  userId: text("userId").references(() => usersTable.id, {
+  userId: text("userId").references(() => users.id, {
     onDelete: "cascade",
   }),
 });
 
-export const roomSubscriptionsRelations = relations(
-  roomSubscriptionsTable,
-  ({ one }) => ({
-    user: one(usersTable, {
-      fields: [roomSubscriptionsTable.userId],
-      references: [usersTable.id],
-    }),
-    room: one(roomsTable, {
-      fields: [roomSubscriptionsTable.roomId],
-      references: [roomsTable.id],
-    }),
-  })
-);
+export const roomSubscriptionsRelations = relations(roomSubs, ({ one }) => ({
+  user: one(users, {
+    fields: [roomSubs.userId],
+    references: [users.id],
+  }),
+  room: one(rooms, {
+    fields: [roomSubs.roomId],
+    references: [rooms.id],
+  }),
+}));
 
 //
 
-export const postsTable = pgTable("posts", {
+export const posts = pgTable("posts", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   roomId: integer("roomId")
-    .references(() => roomsTable.id, { onDelete: "cascade" })
+    .references(() => rooms.id, { onDelete: "cascade" })
     .notNull(),
-  authorId: text("authorId").references(() => usersTable.id),
+  authorId: text("authorId").references(() => users.id),
   title: text("title").notNull(),
   text: text("text").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
-export const postsRelations = relations(postsTable, ({ one, many }) => ({
-  author: one(usersTable, {
-    fields: [postsTable.authorId],
-    references: [usersTable.id],
+export const postsRelations = relations(posts, ({ one, many }) => ({
+  author: one(users, {
+    fields: [posts.authorId],
+    references: [users.id],
     relationName: "postAuthor",
   }),
-  comments: many(commentsTable),
-  room: one(roomsTable, {
-    fields: [postsTable.roomId],
-    references: [roomsTable.id],
+  comments: many(comments),
+  room: one(rooms, {
+    fields: [posts.roomId],
+    references: [rooms.id],
   }),
-  likes: many(likesTable),
+  likes: many(likes),
 }));
 
 //
 
-export const commentsTable = pgTable("comments", {
+export const comments = pgTable("comments", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  userId: text("userId").references(() => usersTable.id),
+  userId: text("userId").references(() => users.id),
   postId: integer("postId")
-    .references(() => postsTable.id, { onDelete: "cascade" })
+    .references(() => posts.id, { onDelete: "cascade" })
     .notNull(),
   text: text("text").notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   parentCommentId: integer("parentCommentId").references(
-    (): AnyPgColumn => commentsTable.id
+    (): AnyPgColumn => comments.id
   ),
 });
 
-export const commentsRelations = relations(commentsTable, ({ one, many }) => ({
-  author: one(usersTable, {
-    fields: [commentsTable.userId],
-    references: [usersTable.id],
+export const commentsRelations = relations(comments, ({ one, many }) => ({
+  author: one(users, {
+    fields: [comments.userId],
+    references: [users.id],
   }),
-  post: one(postsTable, {
-    fields: [commentsTable.postId],
-    references: [postsTable.id],
+  post: one(posts, {
+    fields: [comments.postId],
+    references: [posts.id],
   }),
-  replies: many(commentRepliesTable, { relationName: "parentComment" }),
-  parentComment: one(commentsTable, {
-    fields: [commentsTable.parentCommentId],
-    references: [commentsTable.id],
+  replies: many(commentReplies, { relationName: "parentComment" }),
+  parentComment: one(comments, {
+    fields: [comments.parentCommentId],
+    references: [comments.id],
   }),
 }));
 
-export const commentRepliesTable = pgTable("commentReplies", {
+export const commentReplies = pgTable("commentReplies", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  commentId: integer("commentId").references(() => commentsTable.id),
-  replyId: integer("replyId").references(() => commentsTable.id),
+  commentId: integer("commentId").references(() => comments.id),
+  replyId: integer("replyId").references(() => comments.id),
 });
 
-export const commentRepliesRelations = relations(
-  commentRepliesTable,
-  ({ one }) => ({
-    comment: one(commentsTable, {
-      relationName: "parentComment",
-      fields: [commentRepliesTable.commentId],
-      references: [commentsTable.id],
-    }),
-    reply: one(commentsTable, {
-      relationName: "reply",
-      fields: [commentRepliesTable.replyId],
-      references: [commentsTable.id],
-    }),
-  })
-);
+export const commentRepliesRelations = relations(commentReplies, ({ one }) => ({
+  comment: one(comments, {
+    relationName: "parentComment",
+    fields: [commentReplies.commentId],
+    references: [comments.id],
+  }),
+  reply: one(comments, {
+    relationName: "reply",
+    fields: [commentReplies.replyId],
+    references: [comments.id],
+  }),
+}));
 
 //
 
-export const likesTable = pgTable(
+export const likes = pgTable(
   "likes",
   {
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-    userId: text("userId").references(() => usersTable.id, {
+    userId: text("userId").references(() => users.id, {
       onDelete: "cascade",
     }),
     postId: integer("postId")
-      .references(() => postsTable.id, { onDelete: "cascade" })
+      .references(() => posts.id, { onDelete: "cascade" })
       .notNull(),
   },
   (table) => [uniqueIndex("uniqueUserPostLike").on(table.userId, table.postId)]
 );
 
-export const likesRelations = relations(likesTable, ({ one }) => ({
-  user: one(usersTable, {
-    fields: [likesTable.userId],
-    references: [usersTable.id],
+export const likesRelations = relations(likes, ({ one }) => ({
+  user: one(users, {
+    fields: [likes.userId],
+    references: [users.id],
   }),
-  post: one(postsTable, {
-    fields: [likesTable.postId],
-    references: [postsTable.id],
+  post: one(posts, {
+    fields: [likes.postId],
+    references: [posts.id],
   }),
 }));
 

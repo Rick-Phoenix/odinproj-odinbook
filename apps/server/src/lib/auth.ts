@@ -4,7 +4,7 @@ import { webcrypto } from "crypto";
 import { eq } from "drizzle-orm";
 import { deleteCookie, setCookie } from "hono/cookie";
 import db from "../db/dbConfig";
-import { sessionsTable } from "../db/schema";
+import { sessions } from "../db/schema";
 import type { AppContext } from "../types/app-bindings";
 
 export async function createSession(c: AppContext, userId: string) {
@@ -18,7 +18,7 @@ export async function createSession(c: AppContext, userId: string) {
     userId,
     expiresAt,
   };
-  await db.insert(sessionsTable).values(session);
+  await db.insert(sessions).values(session);
   setCookie(c, "session", sessionToken, {
     httpOnly: true,
     sameSite: "Lax",
@@ -28,6 +28,6 @@ export async function createSession(c: AppContext, userId: string) {
 }
 
 export async function invalidateSession(c: AppContext, sessionId: string) {
-  await db.delete(sessionsTable).where(eq(sessionsTable.id, sessionId));
+  await db.delete(sessions).where(eq(sessions.id, sessionId));
   deleteCookie(c, "session");
 }

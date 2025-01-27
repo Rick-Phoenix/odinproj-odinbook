@@ -1,52 +1,50 @@
 import { z } from "@hono/zod-openapi";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import {
-  chatInstancesTable,
-  chatsTable,
-  commentsTable,
-  likesTable,
-  listingPicsTable,
-  listingsTable,
-  messagesTable,
-  postsTable,
-  roomsTable,
-  roomSubscriptionsTable,
-  sessionsTable,
-  usersTable,
+  chatInstances,
+  chats,
+  comments,
+  likes,
+  listingPics,
+  listings,
+  messages,
+  posts,
+  rooms,
+  roomSubs,
+  sessions,
+  users,
 } from "../db/schema";
 
 // Database Schemas
-export const userSchema = createSelectSchema(usersTable);
-export const sessionSchema = createSelectSchema(sessionsTable);
+export const userSchema = createSelectSchema(users);
+export const sessionSchema = createSelectSchema(sessions);
 
-export const messagesSchema = createSelectSchema(messagesTable);
-export const chatSchema = createSelectSchema(chatsTable).extend({
+export const messagesSchema = createSelectSchema(messages);
+export const chatSchema = createSelectSchema(chats).extend({
   messages: z.array(messagesSchema),
 });
-export const chatInstanceSchema = createSelectSchema(chatInstancesTable).extend(
-  {
-    chat: chatSchema,
-  }
-);
+export const chatInstanceSchema = createSelectSchema(chatInstances).extend({
+  chat: chatSchema,
+});
 
-export const commentSchema = createSelectSchema(commentsTable);
-export const likesSchema = createSelectSchema(likesTable);
-export const postSchema = createSelectSchema(postsTable).extend({
+export const commentSchema = createSelectSchema(comments);
+export const likesSchema = createSelectSchema(likes);
+export const postSchema = createSelectSchema(posts).extend({
   comments: z.array(commentSchema),
   likes: z.array(likesSchema),
 });
-export const roomSchema = createSelectSchema(roomsTable).extend({
+export const roomSchema = createSelectSchema(rooms).extend({
   posts: z.array(postSchema),
 });
 
-export const listingPicsSchema = createSelectSchema(listingPicsTable);
-export const listingSchema = createSelectSchema(listingsTable).extend({
+export const listingPicsSchema = createSelectSchema(listingPics);
+export const listingSchema = createSelectSchema(listings).extend({
   pics: z.array(listingPicsSchema),
 });
 
 // Input Validation Schemas
 
-export const insertUserSchema = createInsertSchema(usersTable)
+export const insertUserSchema = createInsertSchema(users)
   .pick({ username: true, email: true })
   .extend({
     username: z
@@ -82,13 +80,13 @@ export const loginValidationSchema = insertUserSchema.pick({
   password: true,
 });
 
-export const insertRoomSchema = createInsertSchema(roomsTable)
+export const insertRoomSchema = createInsertSchema(rooms)
   .pick({ category: true, name: true })
   .extend({
     name: z.string().max(20, "The name cannot be longer than 20 characters."),
   });
 
-export const insertPostSchema = createInsertSchema(postsTable)
+export const insertPostSchema = createInsertSchema(posts)
   .omit({ createdAt: true, id: true, authorId: true })
   .extend({
     title: z
@@ -101,7 +99,7 @@ export const insertPostSchema = createInsertSchema(postsTable)
       .max(200, "The post's content cannot be longer than 200 characters."),
   });
 
-export const insertCommentSchema = createInsertSchema(commentsTable)
+export const insertCommentSchema = createInsertSchema(comments)
   .omit({ createdAt: true, id: true, userId: true })
   .extend({
     text: z
@@ -109,14 +107,14 @@ export const insertCommentSchema = createInsertSchema(commentsTable)
       .max(200, "A comment cannot be longer than 200 characters."),
   });
 
-export const insertLikeSchema = createInsertSchema(likesTable).pick({
+export const insertLikeSchema = createInsertSchema(likes).pick({
   postId: true,
 });
 
-export const insertSubscriptionSchema = createInsertSchema(
-  roomSubscriptionsTable
-).omit({ id: true });
+export const insertSubscriptionSchema = createInsertSchema(roomSubs).omit({
+  id: true,
+});
 
-export const insertListingSchema = createInsertSchema(listingsTable).omit({
+export const insertListingSchema = createInsertSchema(listings).omit({
   id: true,
 });

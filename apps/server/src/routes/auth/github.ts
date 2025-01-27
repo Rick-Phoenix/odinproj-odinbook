@@ -6,7 +6,7 @@ import { deleteCookie, getCookie, setCookie } from "hono/cookie";
 import { BAD_REQUEST, MOVED_TEMPORARILY } from "stoker/http-status-codes";
 import db from "../../db/dbConfig";
 import { findUserByOauthCredentials } from "../../db/queries";
-import { usersTable } from "../../db/schema";
+import { users } from "../../db/schema";
 import { createSession } from "../../lib/auth";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import env from "../../types/env";
@@ -136,10 +136,7 @@ export const githubCallbackHandler: AppRouteHandler<
       oauthProvider: "github",
     };
 
-    const [newUser] = await db
-      .insert(usersTable)
-      .values(userDetails)
-      .returning();
+    const [newUser] = await db.insert(users).values(userDetails).returning();
 
     user = newUser;
   }

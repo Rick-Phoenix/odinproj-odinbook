@@ -2,7 +2,7 @@ import { lowercase } from "../utils/db-methods";
 import db from "./dbConfig";
 
 export async function emailIsNotAvailable(email: string): Promise<boolean> {
-  const result = await db.query.usersTable.findFirst({
+  const result = await db.query.users.findFirst({
     where: (existingUser, { eq }) => eq(existingUser.email, email),
   });
 
@@ -12,7 +12,7 @@ export async function emailIsNotAvailable(email: string): Promise<boolean> {
 export async function usernameIsNotAvailable(
   username: string
 ): Promise<boolean> {
-  const result = await db.query.usersTable.findFirst({
+  const result = await db.query.users.findFirst({
     where: (existingUser, { eq }) =>
       eq(lowercase(existingUser.username), username.toLocaleLowerCase()),
   });
@@ -21,7 +21,7 @@ export async function usernameIsNotAvailable(
 }
 
 export async function findUserByUsername(username: string) {
-  return await db.query.usersTable.findFirst({
+  return await db.query.users.findFirst({
     where(user, { eq }) {
       return eq(lowercase(user.username), username.toLocaleLowerCase());
     },
@@ -29,7 +29,7 @@ export async function findUserByUsername(username: string) {
 }
 
 export async function getUserChats(userId: string) {
-  const chats = await db.query.chatInstancesTable.findMany({
+  const chats = await db.query.chatInstances.findMany({
     where(chat, { eq }) {
       return eq(chat.userId, userId);
     },
@@ -43,7 +43,7 @@ export async function getUserChats(userId: string) {
 }
 
 export async function getSingleChat(userId: string, chatId: number) {
-  const chat = await db.query.chatInstancesTable.findFirst({
+  const chat = await db.query.chatInstances.findFirst({
     where(chat, { eq, and }) {
       return and(eq(chat.userId, userId), eq(chat.chatId, chatId));
     },
@@ -55,7 +55,7 @@ export async function getSingleChat(userId: string, chatId: number) {
 }
 
 export async function getPost(postId: number) {
-  return await db.query.postsTable.findFirst({
+  return await db.query.posts.findFirst({
     where(post, { eq }) {
       return eq(post.id, postId);
     },
@@ -64,7 +64,7 @@ export async function getPost(postId: number) {
 }
 
 export async function findUserByEmail(email: string) {
-  return await db.query.usersTable.findFirst({
+  return await db.query.users.findFirst({
     where(user, { eq }) {
       return eq(user.email, email.toLocaleLowerCase());
     },
@@ -72,7 +72,7 @@ export async function findUserByEmail(email: string) {
 }
 
 export async function findUserByOauthCredentials(provider: string, id: number) {
-  return await db.query.usersTable.findFirst({
+  return await db.query.users.findFirst({
     where(user, { eq, and }) {
       return and(eq(user.oauthProvider, provider), eq(user.oauthId, id));
     },

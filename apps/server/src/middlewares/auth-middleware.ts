@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { getCookie } from "hono/cookie";
 import { CONFLICT, UNAUTHORIZED } from "stoker/http-status-codes";
 import db from "../db/dbConfig";
-import { sessionsTable, usersTable } from "../db/schema";
+import { sessions, users } from "../db/schema";
 import { invalidateSession } from "../lib/auth";
 import type { AppContext, AppMiddleware } from "../types/app-bindings";
 import { accessDeniedError, alreadyLoggedError } from "../utils/customErrors";
@@ -40,10 +40,10 @@ export const registerSession: AppMiddleware = async (c, next) => {
     );
 
     const result = await db
-      .select({ user: usersTable, session: sessionsTable })
-      .from(sessionsTable)
-      .innerJoin(usersTable, eq(sessionsTable.userId, usersTable.id))
-      .where(eq(sessionsTable.id, sessionId));
+      .select({ user: users, session: sessions })
+      .from(sessions)
+      .innerJoin(users, eq(sessions.userId, users.id))
+      .where(eq(sessions.id, sessionId));
 
     if (entryExists(result)) {
       user = result[0].user;
@@ -60,11 +60,11 @@ export const registerSession: AppMiddleware = async (c, next) => {
       ) {
         session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
         await db
-          .update(sessionsTable)
+          .update(sessions)
           .set({
             expiresAt: session.expiresAt,
           })
-          .where(eq(sessionsTable.id, session.id));
+          .where(eq(sessions.id, session.id));
       }
     }
   }
