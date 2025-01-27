@@ -12,6 +12,7 @@ const routesFolderContent = await fs.readdir(
     withFileTypes: true,
   }
 );
+
 const routeNames = routesFolderContent
   .filter((dirent) => dirent.isDirectory())
   .map((dirent) => dirent.name);
@@ -47,13 +48,52 @@ if (existsSync(newFilePath)) {
   process.exit(1);
 }
 
+const isAuthenticatedRoute = await select({
+  message:
+    "Does this route include an authenticated user? (---This will cause bugs if wrong!---)",
+  choices: [
+    { name: "Yes", value: true },
+    { name: "No", value: false },
+  ],
+});
+
+const requestMethod = await select({
+  message: "What's the request method?",
+  choices: [
+    { name: "get", value: "get" },
+    { name: "post", value: "post" },
+  ],
+});
+
 const routeBoilerplate = `
 import { createRoute, z } from "@hono/zod-openapi";
 import { OK } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
-import type { AppRouteHandler } from "../../types/app-bindings";
+import type { AppRouteHandler ${isAuthenticatedRoute && ", AppBindingsWithUser"} } from "../../types/app-bindings";
 
-const tags = ["${routeCategory}"]`;
+const tags = ["${routeCategory}"]
+
+export const ${routeName} = createRoute({
+  path: '/',
+  method: '${requestMethod}',
+  tags,
+  request: {
+    ${
+      requestMethod === "post" &&
+      `body: {
+        
+      }`
+    }
+  },
+  responses: {
+    [OK]:
+  }
+});
+
+export const ${routeName + "Handler"}: AppRouteHandler<typeof ${routeName}${isAuthenticatedRoute && ", AppBindingsWithUser"}> = async (c) => {
+  
+}
+`;
 
 await fs.writeFile(newFilePath, routeBoilerplate, { flag: "w+" });
 
