@@ -31,27 +31,35 @@ export async function findUserByUsername(username: string) {
 export async function getUserChats(userId: string) {
   const chats = await db.query.chatInstances.findMany({
     where(chat, { eq }) {
-      return eq(chat.userId, userId);
+      return eq(chat.ownerId, userId);
     },
-    with: { chat: { with: { messages: true } } },
+    with: {
+      contact: { columns: { username: true, avatarUrl: true } },
+      chat: { with: { messages: true } },
+    },
     columns: {},
   });
 
   if (chats.length === 0) return null;
 
-  return chats.map((item) => item.chat);
+  return chats.map((item) => ({ contact: item.contact, ...item.chat }));
 }
 
 export async function getSingleChat(userId: string, chatId: number) {
   const chat = await db.query.chatInstances.findFirst({
     where(chat, { eq, and }) {
-      return and(eq(chat.userId, userId), eq(chat.chatId, chatId));
+      return and(eq(chat.ownerId, userId), eq(chat.chatId, chatId));
     },
-    with: { chat: { with: { messages: true } } },
+    with: {
+      contact: { columns: { username: true, avatarUrl: true } },
+      chat: { with: { messages: true } },
+    },
     columns: {},
   });
 
-  return chat?.chat;
+  if (chat) return { contact: chat.contact, ...chat.chat };
+
+  return chat;
 }
 
 export async function getPost(postId: number) {
@@ -78,3 +86,6 @@ export async function findUserByOauthCredentials(provider: string, id: number) {
     },
   });
 }
+
+const chats = await getUserChats("1");
+console.log(chats);

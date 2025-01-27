@@ -35,7 +35,8 @@ export const users = pgTable(
 );
 
 export const userRelations = relations(users, ({ many }) => ({
-  chats: many(chatInstances),
+  ownChats: many(chatInstances, { relationName: "chatOwner" }),
+  chatsIn: many(chatInstances, { relationName: "chatContact" }),
   messages: many(messages),
   posts: many(posts, { relationName: "postAuthor" }),
   comments: many(comments),
@@ -56,7 +57,6 @@ export const chats = pgTable("chats", {
 export const chatsRelations = relations(chats, ({ many }) => ({
   instances: many(chatInstances),
   messages: many(messages),
-  users: many(users),
 }));
 
 //
@@ -64,7 +64,10 @@ export const chatsRelations = relations(chats, ({ many }) => ({
 export const chatInstances = pgTable(
   "chatInstances",
   {
-    userId: text("userId")
+    ownerId: text("ownerId")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    contactId: text("contactId")
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
     chatId: integer("chatId")
@@ -73,16 +76,22 @@ export const chatInstances = pgTable(
   },
   (t) => [
     primaryKey({
-      columns: [t.chatId, t.userId],
+      columns: [t.chatId, t.ownerId],
     }),
-    uniqueIndex("uniqueUserChat").on(t.userId, t.chatId),
+    uniqueIndex("uniqueUserChat").on(t.ownerId, t.chatId, t.contactId),
   ]
 );
 
 export const chatInstancesRelations = relations(chatInstances, ({ one }) => ({
-  user: one(users, {
-    fields: [chatInstances.userId],
+  owner: one(users, {
+    fields: [chatInstances.ownerId],
     references: [users.id],
+    relationName: "chatOwner",
+  }),
+  contact: one(users, {
+    fields: [chatInstances.contactId],
+    references: [users.id],
+    relationName: "chatContact",
   }),
   chat: one(chats, {
     fields: [chatInstances.chatId],
