@@ -2,14 +2,6 @@ import type { ApiRoutes } from "@nexus/hono-api/routes";
 import * as zodSchemas from "@nexus/hono-api/schemas";
 import { hc } from "hono/client";
 import { z } from "zod";
-export type {
-  ClientRequest,
-  ClientRequestOptions,
-  ClientResponse,
-  Fetch,
-  InferRequestType,
-  InferResponseType,
-} from "hono/client";
 
 // Shared Types
 export type User = z.infer<typeof schemas.userSchema>;
