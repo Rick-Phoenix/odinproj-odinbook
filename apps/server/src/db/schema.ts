@@ -30,7 +30,9 @@ export const users = pgTable(
     oauthProvider: text("oauthProvider"),
     oauthId: integer("oauthId"),
     status: text("status"),
-    createdAt: timestamp("createdAt").defaultNow().notNull(),
+    createdAt: timestamp("createdAt", { mode: "string" })
+      .defaultNow()
+      .notNull(),
   },
   (table) => [
     uniqueIndex("emailUniqueIndex").on(lowercase(trim(table.email))),
@@ -55,7 +57,7 @@ export const userRelations = relations(users, ({ many }) => ({
 
 export const chats = pgTable("chats", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
 });
 
 export const chatsRelations = relations(chats, ({ many }) => ({
@@ -127,7 +129,7 @@ export const messages = pgTable("messages", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   text: text("text").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
 });
 
 export const messagesRelations = relations(messages, ({ one }) => ({
@@ -164,6 +166,7 @@ export const listings = pgTable("listings", {
   location: text("location").notNull(),
   sold: boolean("sold").notNull().default(false),
   category: categoryEnum().notNull(),
+  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
 });
 
 export const listingsRelations = relations(listings, ({ many, one }) => ({
@@ -226,7 +229,7 @@ export const roomsCategoriesEnum = pgEnum("roomCategories", roomsCategories);
 export const rooms = pgTable("rooms", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   name: text("name").notNull().unique(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
   creatorId: text("creatorId").references(() => users.id),
   category: roomsCategoriesEnum().notNull(),
 });
@@ -272,7 +275,7 @@ export const posts = pgTable("posts", {
   authorId: text("authorId").references(() => users.id),
   title: text("title").notNull(),
   text: text("text").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
 });
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
@@ -298,7 +301,7 @@ export const comments = pgTable("comments", {
     .references(() => posts.id, { onDelete: "cascade" })
     .notNull(),
   text: text("text").notNull(),
-  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
   parentCommentId: integer("parentCommentId").references(
     (): AnyPgColumn => comments.id
   ),

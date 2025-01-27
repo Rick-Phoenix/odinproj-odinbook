@@ -27,7 +27,6 @@ function RouteComponent() {
       const res = await api.chats[":chatId"].$get({ param: { chatId } });
       if (!res.ok) throw Error("Server Error");
       const data = await res.json();
-      console.log(data);
       return data;
     },
   });
