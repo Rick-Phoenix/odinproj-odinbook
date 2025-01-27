@@ -1,7 +1,7 @@
 import { createRouter } from "../lib/create-app";
 import type { AppOpenAPI } from "../types/app-bindings";
 import { authRouter } from "./auth/authRouter";
-import { chatRouter } from "./chats/chatRouter";
+import { chatRouter } from "./chats/chatsRouter";
 import { userRouter } from "./users/userRouter";
 
 const app = createRouter();

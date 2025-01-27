@@ -22,8 +22,7 @@ if (existsSync(destinationFolder)) {
 }
 
 const isAuthenticatedRoute = await select({
-  message:
-    "Does this route include an authenticated user? (---This will cause bugs if wrong!---)",
+  message: `Does this route include an authenticated user? ${chalk.red("--- This will cause bugs if wrong! ---")}`,
   choices: [
     { name: "Yes", value: true },
     { name: "No", value: false },

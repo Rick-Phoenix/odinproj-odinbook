@@ -22,7 +22,7 @@ if (routeNames.length === 0) {
   process.exit(1);
 }
 
-const routeCategory = await select({
+const routeGroup = await select({
   message: "Where do you want to add the new route?",
   choices: routeNames.map((route) => {
     return {
@@ -40,7 +40,9 @@ const routeName = await input({
   },
 });
 
-const destinationFolder = path.resolve(routesFolderPath, routeCategory);
+const destinationFolder = path.resolve(routesFolderPath, routeGroup);
+const routeConfigFile = path.join(destinationFolder, `${routeGroup}Router.ts`);
+const globalConfigFile = path.join(routesFolderPath, "routingConfig.ts");
 const newFilePath = path.join(destinationFolder, `${routeName}.ts`);
 
 if (existsSync(newFilePath)) {
@@ -48,9 +50,18 @@ if (existsSync(newFilePath)) {
   process.exit(1);
 }
 
+if (!existsSync(routeConfigFile)) {
+  console.error("Router config file not found.");
+  process.exit(1);
+}
+
+if (!existsSync(globalConfigFile)) {
+  console.error("Global routing config file not found.");
+  process.exit(1);
+}
+
 const isAuthenticatedRoute = await select({
-  message:
-    "Does this route include an authenticated user? (---This will cause bugs if wrong!---)",
+  message: `Does this route include an authenticated user? ${chalk.red("--- This will cause bugs if wrong! ---")}`,
   choices: [
     { name: "Yes", value: true },
     { name: "No", value: false },
@@ -71,7 +82,7 @@ import { OK } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import type { AppRouteHandler ${isAuthenticatedRoute ? ", AppBindingsWithUser" : ""} } from "../../types/app-bindings";
 
-const tags = ["${routeCategory}"]
+const tags = ["${routeGroup}"]
 
 export const ${routeName} = createRoute({
   path: '/',
@@ -79,10 +90,11 @@ export const ${routeName} = createRoute({
   tags,
   request: {
     ${
-      requestMethod === "post" &&
-      `body: {
+      requestMethod === "post"
+        ? `body: {
         
       }`
+        : ""
     }
   },
   responses: {
