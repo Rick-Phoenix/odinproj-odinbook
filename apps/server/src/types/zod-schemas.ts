@@ -18,6 +18,7 @@ import {
 // Database Schemas
 export const userSchema = createSelectSchema(usersTable);
 export const sessionSchema = createSelectSchema(sessionsTable);
+
 export const messagesSchema = createSelectSchema(messagesTable);
 export const chatSchema = createSelectSchema(chatsTable).extend({
   messages: z.array(messagesSchema),
@@ -27,6 +28,7 @@ export const chatInstanceSchema = createSelectSchema(chatInstancesTable).extend(
     chat: chatSchema,
   }
 );
+
 export const commentSchema = createSelectSchema(commentsTable);
 export const likesSchema = createSelectSchema(likesTable);
 export const postSchema = createSelectSchema(postsTable).extend({
@@ -36,6 +38,7 @@ export const postSchema = createSelectSchema(postsTable).extend({
 export const roomSchema = createSelectSchema(roomsTable).extend({
   posts: z.array(postSchema),
 });
+
 export const listingPicsSchema = createSelectSchema(listingPicsTable);
 export const listingSchema = createSelectSchema(listingsTable).extend({
   pics: z.array(listingPicsSchema),

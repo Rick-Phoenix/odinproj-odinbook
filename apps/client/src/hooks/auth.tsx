@@ -4,7 +4,7 @@ import { api } from "../lib/api-client";
 export const userQueryOptions = {
   queryKey: ["user"],
   queryFn: async () => {
-    const res = await api.user.$get();
+    const res = await api.users.user.$get();
     if (res.status === 401) {
       return null;
     }

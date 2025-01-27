@@ -23,7 +23,7 @@ function RouteComponent() {
       email: "",
     },
     validators: {
-      onChange: schemas.signupValidationSchema,
+      onChange: schemas.insertUserSchema,
       onSubmitAsync: async ({ value }) => {
         try {
           await handleSignup.mutateAsync(value);
