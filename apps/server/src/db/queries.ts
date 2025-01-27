@@ -86,6 +86,3 @@ export async function findUserByOauthCredentials(provider: string, id: number) {
     },
   });
 }
-
-const chats = await getUserChats("1");
-console.log(chats);

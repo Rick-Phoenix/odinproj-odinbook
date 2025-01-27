@@ -1,13 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Send } from "lucide-react";
+import { title } from "radashi";
 import type { FC } from "react";
 import { StaticInset } from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
-import { api } from "../../../lib/api-client";
+import { api, type Message } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/chats/$chatId")({
   component: RouteComponent,
@@ -32,20 +33,22 @@ function RouteComponent() {
   });
   return (
     <>
-      {/* {chat.data && (
+      {chat.data && (
         <Chat
           contactName={title(chat.data.contact.username)}
           contactAvatar={chat.data.contact.avatarUrl}
+          messages={chat.data.messages}
         />
-      )} */}
+      )}
     </>
   );
 }
 
-const Chat: FC<{ contactAvatar: string; contactName: string }> = ({
-  contactAvatar,
-  contactName,
-}) => {
+const Chat: FC<{
+  contactAvatar: string;
+  contactName: string;
+  messages: Message[];
+}> = ({ contactAvatar, contactName, messages }) => {
   return (
     <StaticInset>
       <section className="flex h-full flex-col justify-between rounded-xl bg-muted/50">

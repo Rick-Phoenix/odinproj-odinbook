@@ -22,7 +22,7 @@ export const sessionSchema = createSelectSchema(sessions);
 export const messagesSchema = createSelectSchema(messages);
 export const chatSchema = createSelectSchema(chats).extend({
   messages: z.array(messagesSchema),
-  contact: z.object({ username: z.string(), avatarUrl: z.string().nullable() }),
+  contact: z.object({ username: z.string(), avatarUrl: z.string() }),
 });
 export const chatInstanceSchema = createSelectSchema(chatInstances).extend({
   chat: chatSchema,
