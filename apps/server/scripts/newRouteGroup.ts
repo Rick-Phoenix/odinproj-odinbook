@@ -15,13 +15,6 @@ async function newRouteGroup() {
     },
   });
 
-  const destinationFolder = path.resolve(routesFolderPath, routeGroupName);
-
-  if (existsSync(destinationFolder)) {
-    console.error("This route group already exists.");
-    return;
-  }
-
   const isAuthenticatedRoute = await select({
     message: `Does this route include an authenticated user? ${chalk.red("--- This will cause bugs if wrong! ---")}`,
     choices: [
@@ -29,6 +22,59 @@ async function newRouteGroup() {
       { name: "No", value: false },
     ],
   });
+
+  const destinationFolder = path.resolve(routesFolderPath, routeGroupName);
+  const globalConfigFile = path.join(routesFolderPath, "routingConfig.ts");
+
+  if (!existsSync(globalConfigFile)) {
+    console.error("Global routing config file not found.");
+    return;
+  }
+
+  if (existsSync(destinationFolder)) {
+    console.error("This route group already exists.");
+    return;
+  }
+
+  const globalConfigContent = await fs.readFile(globalConfigFile, "utf-8");
+
+  const configRegex = /\.route\([^)]+\);\s*$/m;
+  const importsRegex = /^import .*;\n\s*\n(?!import)/m;
+
+  const configMatch = globalConfigContent.match(configRegex);
+  const importsMatch = globalConfigContent.match(importsRegex);
+
+  if (!configMatch) {
+    console.error(
+      "Could not find the global config block. Check the formatting for that file."
+    );
+    return;
+  }
+
+  if (!importsMatch) {
+    console.error(
+      "Could not find the import config block. Check the formatting for that file."
+    );
+    return;
+  }
+
+  const [configBlock] = configMatch;
+  const [importsBlock] = importsMatch;
+
+  const updatedConfig = configBlock.replace(
+    /;$/,
+    `.route("${routeGroupName}", ${routeGroupName}Router);`
+  );
+  const updatedImports = importsBlock.replace(
+    /\n$/,
+    `import { ${routeGroupName}Router } from './${routeGroupName}/${routeGroupName}Router';\n\n`
+  );
+
+  const updatedContent = globalConfigContent
+    .replace(configRegex, updatedConfig)
+    .replace(importsRegex, updatedImports);
+
+  await fs.writeFile(globalConfigFile, updatedContent, { flag: "w+" });
 
   await fs.mkdir(destinationFolder);
 

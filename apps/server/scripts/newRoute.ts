@@ -46,7 +46,6 @@ async function newRoute() {
     destinationFolder,
     `${routeGroup}Router.ts`
   );
-  const globalConfigFile = path.join(routesFolderPath, "routingConfig.ts");
   const newFilePath = path.join(destinationFolder, `${routeName}.ts`);
 
   if (existsSync(newFilePath)) {
@@ -56,11 +55,6 @@ async function newRoute() {
 
   if (!existsSync(routeConfigFile)) {
     console.error("Router config file not found.");
-    return;
-  }
-
-  if (!existsSync(globalConfigFile)) {
-    console.error("Global routing config file not found.");
     return;
   }
 
@@ -147,7 +141,7 @@ export const ${routeName + "Handler"}: AppRouteHandler<typeof ${routeName}${isAu
 
   const updatedImports = importMatch.replace(
     /\n$/,
-    `import { ${routeName}, ${routeName}Handler } from './${routeName}';\n\n `
+    `import { ${routeName}, ${routeName}Handler } from './${routeName}';\n\n`
   );
 
   const updatedContent = localConfigContent
