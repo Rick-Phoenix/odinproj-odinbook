@@ -1,3 +1,4 @@
+import { schemas } from "@nexus/shared-schemas";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Send } from "lucide-react";
@@ -27,7 +28,8 @@ function RouteComponent() {
       const res = await api.chats[":chatId"].$get({ param: { chatId } });
       if (!res.ok) throw Error("Server Error");
       const data = await res.json();
-      return data;
+      const parsed = schemas.chatSchema.parse(data);
+      return parsed;
     },
   });
   return (
