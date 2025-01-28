@@ -2,9 +2,10 @@ import { createRoute, z } from "@hono/zod-openapi";
 import { BAD_REQUEST, OK } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { getSingleChat } from "../../db/queries";
-import type {
-  AppBindingsWithUser,
-  AppRouteHandler,
+import {
+  jsonS,
+  type AppBindingsWithUser,
+  type AppRouteHandler,
 } from "../../types/app-bindings";
 import { numberParamSchema } from "../../types/schema-helpers";
 import { chatSchema } from "../../types/zod-schemas";
@@ -37,5 +38,5 @@ export const chatIdHandler: AppRouteHandler<
   console.log("🚀 ~ file: $chatId.ts:37 ~ >= ~ chat:", chat);
   if (!chat) return c.json(badRequestError.content, BAD_REQUEST);
 
-  return c.json(chat, OK);
+  return jsonS(c, chat, 200);
 };
