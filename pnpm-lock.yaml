@@ -134,6 +134,9 @@ importers:
       react-icons:
         specifier: ^5.4.0
         version: 5.4.0(react@19.0.0)
+      superjson:
+        specifier: ^2.2.2
+        version: 2.2.2
       swiper:
         specifier: ^11.2.1
         version: 11.2.1

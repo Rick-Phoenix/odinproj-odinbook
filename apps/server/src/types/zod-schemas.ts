@@ -20,8 +20,9 @@ export const userSchema = createSelectSchema(users);
 export const sessionSchema = createSelectSchema(sessions);
 
 export const messagesSchema = createSelectSchema(messages, {
-  createdAt: z.coerce.date(),
+  // createdAt: z.coerce.date(),
 });
+
 export const chatSchema = createSelectSchema(chats).extend({
   messages: z.array(messagesSchema),
   contact: z.object({ username: z.string(), avatarUrl: z.string() }),

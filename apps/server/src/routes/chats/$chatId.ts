@@ -35,8 +35,8 @@ export const chatIdHandler: AppRouteHandler<
   const { chatId } = c.req.valid("param");
   const { id: userId } = c.var.user;
   const chat = await getSingleChat(userId, chatId);
-  console.log("🚀 ~ file: $chatId.ts:37 ~ >= ~ chat:", chat);
   if (!chat) return c.json(badRequestError.content, BAD_REQUEST);
 
   return jsonS(c, chat, 200);
+  return c.json(chat, OK);
 };

@@ -129,7 +129,7 @@ export const messages = pgTable("messages", {
     .references(() => users.id, { onDelete: "cascade" })
     .notNull(),
   text: text("text").notNull(),
-  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
+  createdAt: timestamp("createdAt", { mode: "date" }).defaultNow().notNull(),
 });
 
 export const messagesRelations = relations(messages, ({ one }) => ({

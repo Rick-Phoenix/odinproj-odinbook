@@ -4,6 +4,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Send } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
+import { SuperJSON } from "superjson";
+import { z } from "zod";
 import { StaticInset } from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
@@ -26,9 +28,13 @@ function RouteComponent() {
     queryKey: ["chat"],
     queryFn: async () => {
       const res = await api.chats[":chatId"].$get({ param: { chatId } });
+      console.log("🚀 ~ file: $chatId.tsx:29 ~ queryFn: ~ res:", res);
       if (!res.ok) throw Error("Server Error");
-      const data = await res.json();
-      const parsed = schemas.chatSchema.parse(data);
+
+      const data = await res.text();
+      const parsed: z.infer<typeof schemas.chatSchema> = SuperJSON.parse(data);
+      console.log(parsed.messages[0].createdAt.getDay());
+      console.log("🚀 ~ file: $chatId.tsx:36 ~ queryFn: ~ parsed:", parsed);
       return parsed;
     },
   });

@@ -5,7 +5,6 @@ import type { Context, Env, MiddlewareHandler, TypedResponse } from "hono";
 import type { PinoLogger } from "hono-pino";
 import type { ResponseFormat } from "hono/types";
 import superjson from "superjson";
-import type { SuperJSONValue } from "superjson/dist/types";
 import type { Session, User } from "./db-items";
 import type env from "./env";
 
@@ -63,7 +62,7 @@ type HeaderRecord = Record<string, string | string[]>;
 const getSuperjsonResponse = <
   T,
   F extends ResponseFormat = ResponseFormat,
-  S extends StatusCode = StatusCode,
+  S extends StatusCode,
 >(
   object: T extends SuperJSONValue ? T : SuperJSONValue,
   arg: S,
@@ -72,7 +71,7 @@ const getSuperjsonResponse = <
   const _data = superjson.stringify(object);
   const _format = format;
   const _status = arg;
-  return { _data, _status, _format };
+  return { _data, _status: 200, _format };
   // return typeof arg === "number"
   //   ? c.newResponse(body, arg, headers)
   //   : c.newResponse(body, arg);
@@ -85,5 +84,5 @@ export const jsonS = <T, S extends StatusCode>(
 ) => {
   c.header("content-type", "application/json; charset=UTF-8");
   c.header("x-superjson", "true");
-  return getSuperjsonResponse(object, arg, "json");
+  return c.newResponse(superjson.stringify(object), 200);
 };
