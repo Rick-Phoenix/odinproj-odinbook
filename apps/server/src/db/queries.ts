@@ -1,5 +1,6 @@
 import { lowercase } from "../utils/db-methods";
 import db from "./dbConfig";
+import { messages } from "./schema";
 
 export async function emailIsNotAvailable(email: string): Promise<boolean> {
   const result = await db.query.users.findFirst({
@@ -85,4 +86,25 @@ export async function findUserByOauthCredentials(provider: string, id: number) {
       return and(eq(user.oauthProvider, provider), eq(user.oauthId, id));
     },
   });
+}
+
+export async function registerMessage(
+  chatId: number,
+  userId: string,
+  text: string
+) {
+  const validChat = await db.query.chatInstances.findFirst({
+    where(chatIns, { and, eq }) {
+      return and(eq(chatIns.chatId, chatId), eq(chatIns.ownerId, userId));
+    },
+  });
+
+  if (!validChat) return false;
+
+  const [message] = await db
+    .insert(messages)
+    .values({ text, userId, chatId })
+    .returning();
+
+  return message;
 }

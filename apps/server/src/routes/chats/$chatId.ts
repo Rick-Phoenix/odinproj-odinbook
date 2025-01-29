@@ -1,18 +1,22 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { BAD_REQUEST, OK } from "stoker/http-status-codes";
-import { jsonContent } from "stoker/openapi/helpers";
-import { getSingleChat } from "../../db/queries";
+import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
+import { getSingleChat, registerMessage } from "../../db/queries";
 import type {
   AppBindingsWithUser,
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { numberParamSchema } from "../../types/schema-helpers";
-import { chatSchema } from "../../types/zod-schemas";
+import {
+  chatSchema,
+  insertMessageSchema,
+  messagesSchema,
+} from "../../types/zod-schemas";
 import { badRequestError } from "../../utils/customErrors";
 
 const tags = ["chats"];
 
-export const chatId = createRoute({
+export const getChat = createRoute({
   path: "/{chatId}",
   method: "get",
   tags,
@@ -27,15 +31,41 @@ export const chatId = createRoute({
   },
 });
 
-export const chatIdHandler: AppRouteHandler<
-  typeof chatId,
+export const getChatHandler: AppRouteHandler<
+  typeof getChat,
   AppBindingsWithUser
 > = async (c) => {
   const { chatId } = c.req.valid("param");
   const { id: userId } = c.var.user;
   const chat = await getSingleChat(userId, chatId);
-  console.log("🚀 ~ file: $chatId.ts:37 ~ >= ~ chat:", chat);
   if (!chat) return c.json(badRequestError.content, BAD_REQUEST);
-
   return c.json(chat, OK);
+};
+
+export const postMessage = createRoute({
+  path: "/{chatId}",
+  method: "post",
+  tags,
+  request: {
+    params: z.object({
+      chatId: numberParamSchema,
+    }),
+    body: jsonContentRequired(insertMessageSchema, "The text message."),
+  },
+  responses: {
+    [OK]: jsonContent(messagesSchema, "The message sent."),
+    [BAD_REQUEST]: badRequestError.template,
+  },
+});
+
+export const postMessageHandler: AppRouteHandler<
+  typeof postMessage,
+  AppBindingsWithUser
+> = async (c) => {
+  const { chatId } = c.req.valid("param");
+  const { text } = c.req.valid("json");
+  const { id: userId } = c.var.user;
+  const message = await registerMessage(chatId, userId, text);
+  if (!message) return c.json(badRequestError.content, BAD_REQUEST);
+  return c.json(message, OK);
 };

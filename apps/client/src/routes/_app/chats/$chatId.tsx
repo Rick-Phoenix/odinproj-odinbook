@@ -1,3 +1,4 @@
+import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -5,7 +6,6 @@ import { format } from "date-fns";
 import { Send } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
-import { z } from "zod";
 import { StaticInset } from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
@@ -70,9 +70,7 @@ const Chat: FC<{
           if (errorTypeGuard(error)) return error.message;
         }
       },
-      onChange: z.object({
-        text: z.string().min(1).max(1000),
-      }),
+      onChange: schemas.insertMessageSchema,
     },
     validatorAdapter: singleErrorsAdapter,
     onSubmit() {

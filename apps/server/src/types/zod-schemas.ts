@@ -123,3 +123,7 @@ export const insertSubscriptionSchema = createInsertSchema(roomSubs).omit({
 export const insertListingSchema = createInsertSchema(listings).omit({
   id: true,
 });
+
+export const insertMessageSchema = z.object({
+  text: z.string().min(1).max(1000),
+});
