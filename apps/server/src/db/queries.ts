@@ -34,7 +34,7 @@ export async function getUserChats(userId: string) {
       return eq(chat.ownerId, userId);
     },
     with: {
-      contact: { columns: { username: true, avatarUrl: true } },
+      contact: { columns: { username: true, avatarUrl: true, id: true } },
       chat: { with: { messages: true } },
     },
     columns: {},
@@ -51,7 +51,7 @@ export async function getSingleChat(userId: string, chatId: number) {
       return and(eq(chat.ownerId, userId), eq(chat.chatId, chatId));
     },
     with: {
-      contact: { columns: { username: true, avatarUrl: true } },
+      contact: { columns: { username: true, avatarUrl: true, id: true } },
       chat: { with: { messages: true } },
     },
     columns: {},

@@ -9112,7 +9112,7 @@ snapshots:
 
   '@types/pg@8.11.10':
     dependencies:
-      '@types/node': 22.10.5
+      '@types/node': 22.10.10
       pg-protocol: 1.7.0
       pg-types: 4.0.2
 

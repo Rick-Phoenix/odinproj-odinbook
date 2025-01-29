@@ -5,6 +5,7 @@ import type { FC } from "react";
 import { InsetScrollArea } from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
+import { Skeleton } from "../../../components/ui/skeleton";
 import { api } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/chats/")({
@@ -20,6 +21,8 @@ function RouteComponent() {
       const data = await res.json();
       return data;
     },
+    gcTime: Infinity,
+    staleTime: Infinity,
   });
   return (
     <InsetScrollArea>
@@ -37,12 +40,14 @@ function RouteComponent() {
         </header>
         {Array.isArray(chats.data) &&
           chats.data.map((chat, i) => (
-            <ChatPreview
-              key={i}
-              contactName={chat.contact.username}
-              contactAvatar={chat.contact.avatarUrl}
-              lastMessage={chat.messages.at(-1)?.text}
-            />
+            <Skeleton key={i} queryKey={["chats"]} className="rounded-xl">
+              <ChatPreview
+                contactName={chat.contact.username}
+                contactAvatar={chat.contact.avatarUrl}
+                lastMessage={chat.messages.at(-1)?.text}
+                chatId={chat.id}
+              />
+            </Skeleton>
           ))}
       </section>
     </InsetScrollArea>
@@ -52,7 +57,7 @@ function RouteComponent() {
 const ChatPreview: FC<{
   contactName: string;
   contactAvatar: string;
-  lastMessage: string;
+  lastMessage: string | undefined;
   chatId: number;
 }> = ({ contactName, contactAvatar, lastMessage, chatId }) => {
   return (
