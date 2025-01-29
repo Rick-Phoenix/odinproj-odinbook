@@ -1,15 +1,19 @@
+import { useForm } from "@tanstack/react-form";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Send } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
+import { z } from "zod";
 import { StaticInset } from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
 import { api, type Message } from "../../../lib/api-client";
+import { singleErrorsAdapter } from "../../../utils/form-utils";
+import { errorTypeGuard } from "../../../utils/type-guards";
 
 export const Route = createFileRoute("/_app/chats/$chatId")({
   component: RouteComponent,
@@ -28,9 +32,10 @@ function RouteComponent() {
       const res = await api.chats[":chatId"].$get({ param: { chatId } });
       if (!res.ok) throw Error("Server Error");
       const data = await res.json();
-      console.log(data);
       return data;
     },
+    gcTime: Infinity,
+    staleTime: Infinity,
   });
   return (
     <>
@@ -52,6 +57,28 @@ const Chat: FC<{
   messages: Message[];
   contactId: string;
 }> = ({ contactAvatar, contactName, messages, contactId }) => {
+  const form = useForm({
+    defaultValues: {
+      text: "",
+    },
+    validators: {
+      onSubmitAsync: async ({ value }) => {
+        try {
+          await handleSignup.mutateAsync(value);
+          return null;
+        } catch (error) {
+          if (errorTypeGuard(error)) return error.message;
+        }
+      },
+      onChange: z.object({
+        text: z.string().min(1).max(1000),
+      }),
+    },
+    validatorAdapter: singleErrorsAdapter,
+    onSubmit() {
+      location.href = "/";
+    },
+  });
   return (
     <StaticInset>
       <section className="flex h-full flex-col justify-between rounded-xl bg-muted/50">
@@ -81,17 +108,48 @@ const Chat: FC<{
           </div>
         </ScrollArea>
 
-        <form action="" className="flex items-center">
-          <Input
-            className="rounded-l-xl rounded-r-none border-r-0 p-8"
-            placeholder="Write a message..."
+        <form
+          className="flex items-center"
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+        >
+          <form.Field
+            name="text"
+            children={(field) => (
+              <>
+                <Input
+                  className="rounded-l-xl rounded-r-none border-r-0 p-8"
+                  name={field.name}
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  placeholder="Write a message..."
+                  required
+                />
+              </>
+            )}
+          ></form.Field>
+
+          <form.Subscribe
+            selector={(state) => [
+              state.canSubmit,
+              state.isSubmitting,
+              state.isTouched,
+            ]}
+            children={([canSubmit, isSubmitting, isTouched]) => (
+              <Button
+                type="submit"
+                aria-disabled={!canSubmit || isSubmitting || !isTouched}
+                disabled={!canSubmit || isSubmitting || !isTouched}
+                variant={"ghost"}
+                className="aspect-square h-full rounded-l-none rounded-r-xl border border-l-0 hover:bg-muted-foreground/30 focus:bg-muted-foreground/30"
+              >
+                <Send />
+              </Button>
+            )}
           />
-          <Button
-            variant={"ghost"}
-            className="aspect-square h-full rounded-l-none rounded-r-xl border border-l-0 hover:bg-muted-foreground/30 focus:bg-muted-foreground/30"
-          >
-            <Send />
-          </Button>
         </form>
       </section>
     </StaticInset>
@@ -108,22 +166,13 @@ const Message: FC<{ text: string; createdAt: string; isFromUser: boolean }> = ({
   now.setHours(0, 0, 0, 0);
   const sentBeforeToday = sentAt < now;
   const conditionalClasses = isFromUser
-    ? "message-user rounded-tr-none text-end"
+    ? "message-user rounded-tr-none justify-self-end text-end"
     : "message-contact rounded-tl-none";
   const className = `${conditionalClasses} relative flex max-h-max w-fit items-end rounded-2xl bg-muted-foreground/30 p-3`;
   return (
     <div className={className}>
       <div className="flex flex-col gap-1">
-        <div>
-          Voluptate eiusmod commodo eu aliquip consequat sint incididunt dolore.
-          Consectetur id exercitation elit amet id sunt esse ad quis ipsum nisi
-          ad consequat ea. Aliqua quis nostrud aute consectetur eu eiusmod
-          laborum. Dolore pariatur fugiat est consequat qui voluptate
-          exercitation consectetur. Do occaecat ut nulla ipsum ipsum culpa
-          laborum incididunt aliqua est aliquip. Qui eu occaecat laboris sit sit
-          nostrud irure nostrud. Adipisicing irure aute labore proident.
-          Exercitation nulla id nulla excepteur magna ipsum cupidatat.
-        </div>
+        <div>{text}</div>
         <span className="text-sm text-muted-foreground">
           {sentBeforeToday
             ? format(sentAt, "MMM do '|' H:mm")

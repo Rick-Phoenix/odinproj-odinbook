@@ -74,7 +74,7 @@ const ChatPreview: FC<{
       </Avatar>
       <div className="flex w-1/2 flex-col items-end gap-3">
         <div className="text-lg font-semibold">{contactName}</div>
-        <div className="line-clamp-1 pr-3 text-end font-semibold text-muted-foreground">
+        <div className="line-clamp-1 text-end font-semibold text-muted-foreground">
           {lastMessage}
         </div>
       </div>
