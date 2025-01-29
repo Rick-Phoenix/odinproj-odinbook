@@ -3,10 +3,16 @@ import * as React from "react";
 
 import { cn } from "@/utils/shadcn-helper";
 
+// Adding this to control the ScrollArea viewport
+interface ScrollAreaProps
+  extends React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root> {
+  viewportRef?: React.Ref<HTMLDivElement>;
+}
+
 const ScrollArea = React.forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
->(({ className, children, ...props }, ref) => (
+  ScrollAreaProps
+>(({ className, children, viewportRef, ...props }, ref) => (
   <ScrollAreaPrimitive.Root
     ref={ref}
     className={cn("relative overflow-hidden", className)}
@@ -15,7 +21,10 @@ const ScrollArea = React.forwardRef<
     {/* Added [&>div]:!block to override display:table on the carousel which creates
     issues when combined with Scrollarea
   */}
-    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit] [&>div]:!block">
+    <ScrollAreaPrimitive.Viewport
+      ref={viewportRef}
+      className="h-full w-full rounded-[inherit] [&>div]:!block"
+    >
       {children}
     </ScrollAreaPrimitive.Viewport>
     <ScrollBar />

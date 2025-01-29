@@ -4,3 +4,4 @@ import { z } from "zod";
 export const api = RPC("/api");
 
 export type Message = z.infer<typeof schemas.messagesSchema>;
+export type Chat = z.infer<typeof schemas.chatSchema>;

@@ -1,17 +1,17 @@
 import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Send } from "lucide-react";
 import { title } from "radashi";
-import type { FC } from "react";
+import { useEffect, useRef, type FC } from "react";
 import { StaticInset } from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
-import { api, type Message } from "../../../lib/api-client";
+import { api, type Chat, type Message } from "../../../lib/api-client";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 
@@ -27,7 +27,7 @@ export const Route = createFileRoute("/_app/chats/$chatId")({
 function RouteComponent() {
   const { chatId } = Route.useParams();
   const { data: chat } = useQuery({
-    queryKey: ["chat"],
+    queryKey: ["chat", chatId],
     queryFn: async () => {
       const res = await api.chats[":chatId"].$get({ param: { chatId } });
       if (!res.ok) throw Error("Server Error");
@@ -45,6 +45,7 @@ function RouteComponent() {
           contactAvatar={chat.contact.avatarUrl}
           contactId={chat.contact.id}
           messages={chat.messages}
+          chatId={chat.id}
         />
       )}
     </>
@@ -56,7 +57,9 @@ const Chat: FC<{
   contactName: string;
   messages: Message[];
   contactId: string;
-}> = ({ contactAvatar, contactName, messages, contactId }) => {
+  chatId: number;
+}> = ({ contactAvatar, contactName, messages, contactId, chatId }) => {
+  const queryClient = useQueryClient();
   const form = useForm({
     defaultValues: {
       text: "",
@@ -64,19 +67,56 @@ const Chat: FC<{
     validators: {
       onSubmitAsync: async ({ value }) => {
         try {
-          await handleSignup.mutateAsync(value);
+          await handleSendMessage.mutateAsync(value.text);
           return null;
         } catch (error) {
           if (errorTypeGuard(error)) return error.message;
         }
       },
-      onChange: schemas.insertMessageSchema,
+      onSubmit: schemas.insertMessageSchema,
     },
     validatorAdapter: singleErrorsAdapter,
-    onSubmit() {
-      location.href = "/";
+    onSubmit(props) {},
+  });
+
+  const handleSendMessage = useMutation({
+    mutationKey: ["chat", chatId],
+    mutationFn: async (text: string) => {
+      const res = await api.chats[":chatId"].$post({
+        param: { chatId },
+        json: { text },
+      });
+      const resData = await res.json();
+      if ("issues" in resData) {
+        throw new Error(resData.issues[0].message);
+      }
+      return resData;
+    },
+    onSuccess(data, variables, context) {
+      queryClient.setQueryData(["chat", chatId], (old: Chat) => {
+        return { ...old, messages: [...old.messages, data] };
+      });
+      form.reset();
+      scrollToBottom();
     },
   });
+
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    if (scrollAreaRef !== null && scrollAreaRef.current !== null) {
+      setTimeout(() => {
+        const scrollArea = scrollAreaRef.current!;
+        scrollArea.scroll({ behavior: "smooth", top: scrollArea.scrollHeight });
+      }, 0);
+    }
+  };
+
+  useEffect(() => {
+    const scrollArea = scrollAreaRef.current!;
+    scrollArea.scroll({ behavior: "instant", top: scrollArea.scrollHeight });
+  }, []);
+
   return (
     <StaticInset>
       <section className="flex h-full flex-col justify-between rounded-xl bg-muted/50">
@@ -90,9 +130,9 @@ const Chat: FC<{
           <div className="text-lg font-semibold">{title(contactName)}</div>
         </div>
 
-        <ScrollArea className="h-full w-full">
+        <ScrollArea className="h-full w-full" viewportRef={scrollAreaRef}>
           <div className="grid w-full gap-8 rounded-xl p-8">
-            {messages.map((message) => {
+            {messages.map((message, i, a) => {
               const isFromUser = message.userId !== contactId;
               return (
                 <Message
@@ -119,7 +159,7 @@ const Chat: FC<{
             children={(field) => (
               <>
                 <Input
-                  className="rounded-l-xl rounded-r-none border-r-0 p-8"
+                  className="textm-md rounded-l-xl rounded-r-none border-r-0 p-8"
                   name={field.name}
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
@@ -154,11 +194,11 @@ const Chat: FC<{
   );
 };
 
-const Message: FC<{ text: string; createdAt: string; isFromUser: boolean }> = ({
-  text,
-  createdAt,
-  isFromUser,
-}) => {
+const Message: FC<{
+  text: string;
+  createdAt: string;
+  isFromUser: boolean;
+}> = ({ text, createdAt, isFromUser }) => {
   const sentAt = new Date(createdAt);
   const now = new Date();
   now.setHours(0, 0, 0, 0);
