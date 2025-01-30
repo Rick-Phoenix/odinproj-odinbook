@@ -24,13 +24,10 @@ export default defineConfig({
     },
   },
   server: {
-    origin: "http://localhost:3000",
+    // origin: "http://localhost:3000",
     proxy: {
       "/api": {
         target: "http://localhost:3000",
-      },
-      "/api/ws": {
-        target: "ws://127.0.0.1:3000",
         ws: true,
       },
     },

@@ -7,7 +7,9 @@ import { userRouter } from "./users/userRouter";
 
 const app = createRouter();
 
-const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({ app });
+const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({
+  app,
+});
 export { injectWebSocket, upgradeWebSocket };
 
 export function registerApiRoutes(app: AppOpenAPI) {
