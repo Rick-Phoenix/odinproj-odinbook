@@ -12,6 +12,7 @@ import env from "./types/env.js";
 
 const app = createApp();
 
+
 // Global Middleware
 app.use(csrf());
 app.use(registerSession);

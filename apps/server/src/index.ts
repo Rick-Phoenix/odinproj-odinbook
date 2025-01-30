@@ -1,11 +1,13 @@
+import env from "@/types/env.js";
 import { serve } from "@hono/node-server";
 import app from "./app.js";
-import env from "@/types/env.js";
+import { injectWebSocket } from "./routes/routingConfig.js";
 
 const port = env.PORT;
-console.log(`Server is running on http://localhost:${port}`);
 
-serve({
+const server = serve({
   fetch: app.fetch,
   port,
 });
+
+injectWebSocket(server);
