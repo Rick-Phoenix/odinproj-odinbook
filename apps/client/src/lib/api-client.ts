@@ -6,10 +6,9 @@ export const api = RPC("/api");
 export type Message = z.infer<typeof schemas.messagesSchema>;
 export type Chat = z.infer<typeof schemas.chatSchema>;
 
-const ws = new WebSocket("/api/ws");
+const client = RPC("ws://127.0.0.1:5173/api");
+const ws = client.ws.$ws();
+
 ws.addEventListener("open", () => {
-  console.log("OPENED");
-  setInterval(() => {
-    ws.send(new Date().toString());
-  }, 1000);
+  console.log("opened");
 });
