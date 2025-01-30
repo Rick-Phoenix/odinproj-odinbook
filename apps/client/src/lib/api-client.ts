@@ -11,7 +11,9 @@ const ws = client.ws.$ws();
 
 ws.addEventListener("open", () => {
   console.log("opened");
-  ws.send("Hello from client!");
+  setTimeout(() => {
+    ws.send("Hello from client!");
+  }, 200);
 });
 
 ws.addEventListener("message", (e) => {
