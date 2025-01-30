@@ -12,7 +12,6 @@ import env from "./types/env.js";
 
 const app = createApp();
 
-
 // Global Middleware
 app.use(csrf());
 app.use(registerSession);
@@ -26,6 +25,14 @@ configureOpenApiReference(app);
 
 // Api Routes Configuration
 app.route("/api", apiRoutes);
+
+app.get("*", async (c, next) => {
+  console.log(c.req.header("upgrade"));
+  if (c.req.header("upgrade") === "websocket") {
+    return c.json("WebSocket not allowed here", 400);
+  }
+  return await next();
+});
 
 // Static Assets Serving
 if (env.NODE_ENV === "development") {
