@@ -28,12 +28,10 @@ export default defineConfig({
     proxy: {
       "/api": {
         target: "http://localhost:3000",
-        // changeOrigin: true,
       },
       "/api/ws": {
         target: "ws://127.0.0.1:3000",
         ws: true,
-        // changeOrigin: true,
       },
     },
   },
