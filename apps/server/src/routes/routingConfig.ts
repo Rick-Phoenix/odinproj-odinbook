@@ -23,7 +23,25 @@ export function registerApiRoutes(app: AppOpenAPI) {
         return {
           onOpen(evt, ws) {
             console.log(`connection open!!!!!`);
+            ws.send("Hello from serve11111!");
+          },
+          onMessage(event, ws) {
+            console.log(`Message from client: ${event.data}`);
             ws.send("Hello from server!");
+          },
+          onClose: () => {
+            console.log("Connection closed");
+          },
+        };
+      })
+    )
+    .get(
+      "/ws2",
+      upgradeWebSocket((c) => {
+        return {
+          onOpen(evt, ws) {
+            console.log(`connection open!!!!!`);
+            ws.send("Hello from server22222!");
           },
           onMessage(event, ws) {
             console.log(`Message from client: ${event.data}`);
