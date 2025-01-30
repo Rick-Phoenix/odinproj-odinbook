@@ -6,33 +6,17 @@ export const api = RPC("/api");
 export type Message = z.infer<typeof schemas.messagesSchema>;
 export type Chat = z.infer<typeof schemas.chatSchema>;
 
-const client = RPC("ws://127.0.0.1:5173");
-const ws = client.ws.$ws();
+const ws = RPC("ws://127.0.0.1:5173");
 
-const url1 = client.ws.$url();
-console.log("🚀 ~ file: api-client.ts:13 ~ url1:", url1);
-const url2 = client.ws2.$url();
-console.log("🚀 ~ file: api-client.ts:15 ~ url2:", url2);
+const ws3 = ws.ws[":chatId"].$ws({ param: { chatId: "12345" } });
 
-ws.addEventListener("open", () => {
+ws3.addEventListener("open", () => {
   console.log("opened");
   setTimeout(() => {
-    ws.send("Hello from client!");
+    ws3.send("Hello from client!");
   }, 200);
 });
 
-ws.addEventListener("message", (e) => {
-  console.log(e.data);
-});
-const ws2 = client.ws2.$ws();
-
-ws2.addEventListener("open", () => {
-  console.log("opened");
-  setTimeout(() => {
-    ws.send("Hello from client!");
-  }, 200);
-});
-
-ws2.addEventListener("message", (e) => {
+ws3.addEventListener("message", (e) => {
   console.log(e.data);
 });

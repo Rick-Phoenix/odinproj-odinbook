@@ -18,30 +18,14 @@ export function registerApiRoutes(app: AppOpenAPI) {
     .route("/users", userRouter)
     .route("/chats", chatRouter)
     .get(
-      "/ws",
+      "/ws/:chatId",
       upgradeWebSocket((c) => {
+        const params = c.req.param("chatId");
+        console.log(params);
         return {
           onOpen(evt, ws) {
             console.log(`connection open!!!!!`);
-            ws.send("Hello from serve11111!");
-          },
-          onMessage(event, ws) {
-            console.log(`Message from client: ${event.data}`);
-            ws.send("Hello from server!");
-          },
-          onClose: () => {
-            console.log("Connection closed");
-          },
-        };
-      })
-    )
-    .get(
-      "/ws2",
-      upgradeWebSocket((c) => {
-        return {
-          onOpen(evt, ws) {
-            console.log(`connection open!!!!!`);
-            ws.send("Hello from server22222!");
+            ws.send(`Param is ${params}`);
           },
           onMessage(event, ws) {
             console.log(`Message from client: ${event.data}`);
