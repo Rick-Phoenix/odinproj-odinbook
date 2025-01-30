@@ -20,12 +20,11 @@ export function registerApiRoutes(app: AppOpenAPI) {
     .get(
       "/ws/:chatId",
       upgradeWebSocket((c) => {
-        const params = c.req.param("chatId");
-        console.log(params);
+        const chatId = c.req.param("chatId");
         return {
           onOpen(evt, ws) {
             console.log(`connection open!!!!!`);
-            ws.send(`Param is ${params}`);
+            ws.send(`Param is ${chatId}`);
           },
           onMessage(event, ws) {
             console.log(`Message from client: ${event.data}`);

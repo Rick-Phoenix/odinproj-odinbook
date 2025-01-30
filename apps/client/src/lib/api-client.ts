@@ -20,3 +20,16 @@ ws3.addEventListener("open", () => {
 ws3.addEventListener("message", (e) => {
   console.log(e.data);
 });
+
+const ws4 = ws.ws[":chatId"].$ws({ param: { chatId: "ws4" } });
+
+ws4.addEventListener("open", () => {
+  console.log("opened");
+  setTimeout(() => {
+    ws4.send("Hello from client!");
+  }, 200);
+});
+
+ws4.addEventListener("message", (e) => {
+  console.log(e.data);
+});
