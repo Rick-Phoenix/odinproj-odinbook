@@ -7,6 +7,7 @@ import { userRouter } from "./users/userRouter";
 
 const app = createRouter();
 
+// eslint-disable-next-line @typescript-eslint/unbound-method
 const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({
   app,
 });
