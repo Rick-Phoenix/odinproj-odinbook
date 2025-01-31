@@ -13,9 +13,9 @@ const ws3 = ws.ws[":chatId"].$ws({ param: { chatId: "12345" } });
 ws3.addEventListener("open", (e) => {
   console.log("opened");
   console.log(e);
-  setTimeout(() => {
+  setInterval(() => {
     ws3.send("Hello from client!");
-  }, 200);
+  }, 1000);
   console.log(ws3);
 });
 

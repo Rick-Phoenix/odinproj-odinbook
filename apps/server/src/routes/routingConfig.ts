@@ -1,6 +1,6 @@
 import { createNodeWebSocket } from "@hono/node-ws";
 import { createRouter } from "../lib/create-app";
-import { getUser } from "../middlewares/auth-middleware";
+import { checkUser, getUser } from "../middlewares/auth-middleware";
 import type { AppContext, AppOpenAPI } from "../types/app-bindings";
 import { authRouter } from "./auth/authRouter";
 import { chatRouter } from "./chats/chatsRouter";
@@ -21,6 +21,7 @@ export function registerApiRoutes(app: AppOpenAPI) {
     .route("/chats", chatRouter)
     .get(
       "/ws/:chatId",
+      checkUser,
       upgradeWebSocket((c: AppContext) => {
         return {
           async onOpen(evt, ws) {

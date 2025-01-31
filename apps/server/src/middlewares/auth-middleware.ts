@@ -88,3 +88,10 @@ export async function getUser(c: AppContext) {
 
   return userObject;
 }
+
+export const checkUser: AppMiddleware = async (c, next) => {
+  const user = await getUser(c);
+  if (!user) return c.json("Unauthorized", 401);
+  c.set("user", user);
+  return await next();
+};
