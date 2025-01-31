@@ -28,11 +28,35 @@ export const rejectIfAlreadyLogged: AppMiddleware = async (c, next) => {
   await next();
 };
 
-export const registerSession: AppMiddleware = async (c, next) => {
+export const registerUser: AppMiddleware = async (c, next) => {
+  const sessionToken = getCookie(c, "session");
+  const { user, session } = await fetchUser(sessionToken);
+
+  if (user && session) {
+    if (Date.now() >= session.expiresAt.getTime()) {
+      await invalidateSession(c, session.id);
+      return await next();
+    }
+
+    if (Date.now() >= session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15) {
+      session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
+      await db
+        .update(sessions)
+        .set({
+          expiresAt: session.expiresAt,
+        })
+        .where(eq(sessions.id, session.id));
+    }
+  }
+
+  c.set("session", session);
+  c.set("user", user);
+  await next();
+};
+
+export async function fetchUser(sessionToken: string | undefined) {
   let user = null;
   let session = null;
-
-  const sessionToken = getCookie(c, "session");
 
   if (sessionToken) {
     const sessionId = encodeHexLowerCase(
@@ -48,28 +72,19 @@ export const registerSession: AppMiddleware = async (c, next) => {
     if (entryExists(result)) {
       user = result[0].user;
       session = result[0].session;
-
-      if (Date.now() >= session.expiresAt.getTime()) {
-        await invalidateSession(c, session.id);
-        return await next();
-      }
-
-      if (
-        Date.now() >=
-        session.expiresAt.getTime() - 1000 * 60 * 60 * 24 * 15
-      ) {
-        session.expiresAt = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30);
-        await db
-          .update(sessions)
-          .set({
-            expiresAt: session.expiresAt,
-          })
-          .where(eq(sessions.id, session.id));
-      }
     }
   }
 
-  c.set("session", session);
-  c.set("user", user);
-  await next();
-};
+  return { user, session };
+}
+
+export async function getUser(c: AppContext) {
+  let userObject = c.var.user;
+  if (!userObject) {
+    const sessionToken = getCookie(c, "session");
+    const { user } = await fetchUser(sessionToken);
+    userObject = user;
+  }
+
+  return userObject;
+}

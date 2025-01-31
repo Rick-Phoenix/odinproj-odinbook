@@ -2,7 +2,7 @@ import { serveStatic } from "@hono/node-server/serve-static";
 import { csrf } from "hono/csrf";
 import configureOpenApiReference from "./lib/configure-open-api-reference.js";
 import createApp from "./lib/create-app.js";
-import { registerSession } from "./middlewares/auth-middleware";
+import { registerUser } from "./middlewares/auth-middleware";
 import {
   protectRoute,
   rejectIfAlreadyLogged,
@@ -14,7 +14,7 @@ const app = createApp();
 
 // Global Middleware
 app.use(csrf());
-app.use(registerSession);
+app.use(registerUser);
 
 // Route Specific Middleware
 app.use("/api/*", protectRoute);
@@ -25,14 +25,6 @@ configureOpenApiReference(app);
 
 // Api Routes Configuration
 app.route("/api", apiRoutes);
-
-app.get("*", async (c, next) => {
-  console.log(c.req.header("upgrade"));
-  if (c.req.header("upgrade") === "websocket") {
-    return c.json("WebSocket not allowed here", 400);
-  }
-  return await next();
-});
 
 // Static Assets Serving
 if (env.NODE_ENV === "development") {

@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "lintconfig": "eslint-config-inspector"
+    "lintconfig": "eslint-config-inspector",
+    "debug": "vite --debug"
   },
   "dependencies": {
     "@nexus/shared-schemas": "workspace:*",
