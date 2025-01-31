@@ -2,7 +2,7 @@ import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { eq } from "drizzle-orm";
 import { getCookie } from "hono/cookie";
-import { CONFLICT } from "stoker/http-status-codes";
+import { CONFLICT, UNAUTHORIZED } from "stoker/http-status-codes";
 import db from "../db/dbConfig";
 import { sessions, users } from "../db/schema";
 import { invalidateSession } from "../lib/auth";
@@ -12,7 +12,7 @@ import { entryExists } from "../utils/db-methods";
 
 export const protectRoute: AppMiddleware = async (c, next) => {
   const user = await getUser(c);
-  if (!user) return c.json("Unauthorized", 401);
+  if (!user) return c.json("Unauthorized", UNAUTHORIZED);
   c.set("user", user);
   return await next();
 };

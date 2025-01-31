@@ -1,6 +1,6 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
-import { notFound, onError } from "stoker/middlewares";
+import { onError } from "stoker/middlewares";
 import { pinoLogger } from "../middlewares/pino-logger";
 import type { AppBindings } from "../types/app-bindings";
 
@@ -24,7 +24,9 @@ export function createRouter<AB extends AppBindings = AppBindings>() {
 export default function createApp() {
   const app = createRouter();
   app.use(pinoLogger());
-  app.notFound(notFound);
+  app.notFound((c) => {
+    return c.json("Not Found", 404);
+  });
   app.onError(onError);
   return app;
 }
