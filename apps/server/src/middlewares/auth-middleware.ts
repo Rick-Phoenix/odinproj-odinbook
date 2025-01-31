@@ -2,30 +2,25 @@ import { sha256 } from "@oslojs/crypto/sha2";
 import { encodeHexLowerCase } from "@oslojs/encoding";
 import { eq } from "drizzle-orm";
 import { getCookie } from "hono/cookie";
-import { CONFLICT, UNAUTHORIZED } from "stoker/http-status-codes";
+import { CONFLICT } from "stoker/http-status-codes";
 import db from "../db/dbConfig";
 import { sessions, users } from "../db/schema";
 import { invalidateSession } from "../lib/auth";
 import type { AppContext, AppMiddleware } from "../types/app-bindings";
-import { accessDeniedError, alreadyLoggedError } from "../utils/customErrors";
+import { alreadyLoggedError } from "../utils/customErrors";
 import { entryExists } from "../utils/db-methods";
 
-export const userIsAuthenticated = (c: AppContext) => {
-  return !!c.var.user && !!c.var.session;
-};
-
 export const protectRoute: AppMiddleware = async (c, next) => {
-  if (c.req.path.startsWith("/api/auth")) return await next();
-  if (!userIsAuthenticated(c))
-    return c.json(accessDeniedError.content, UNAUTHORIZED);
-  await next();
+  const user = await getUser(c);
+  if (!user) return c.json("Unauthorized", 401);
+  c.set("user", user);
+  return await next();
 };
 
 export const rejectIfAlreadyLogged: AppMiddleware = async (c, next) => {
   if (c.req.path === "/api/auth/logout") return await next();
-  if (userIsAuthenticated(c))
-    return c.json(alreadyLoggedError.content, CONFLICT);
-  await next();
+  if (c.var.user) return c.json(alreadyLoggedError.content, CONFLICT);
+  return await next();
 };
 
 export const registerUser: AppMiddleware = async (c, next) => {
@@ -88,10 +83,3 @@ export async function getUser(c: AppContext) {
 
   return userObject;
 }
-
-export const checkUser: AppMiddleware = async (c, next) => {
-  const user = await getUser(c);
-  if (!user) return c.json("Unauthorized", 401);
-  c.set("user", user);
-  return await next();
-};

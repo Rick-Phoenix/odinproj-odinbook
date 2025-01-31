@@ -25,3 +25,4 @@ export type AppRouteHandler<
 export type AppMiddleware = MiddlewareHandler<AppBindings>;
 
 export type AppContext = Context<AppBindings>;
+export type AppContextWithUser = Context<AppBindingsWithUser>;

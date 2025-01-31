@@ -1,4 +1,3 @@
-import { userIsAuthenticated } from "@/middlewares/auth-middleware";
 import { createRoute, z } from "@hono/zod-openapi";
 import { OK, UNAUTHORIZED } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
@@ -28,7 +27,7 @@ export const logout = createRoute({
 });
 
 export const logoutHandler: AppRouteHandler<typeof logout> = async (c) => {
-  if (!userIsAuthenticated(c) || !c.var.session) {
+  if (!c.var.user || !c.var.session) {
     return c.json(errors.userNotLoggedIn.content, UNAUTHORIZED);
   }
 
