@@ -21,13 +21,16 @@ export function registerApiRoutes(app: AppOpenAPI) {
     .route("/chats", chatRouter)
     .get(
       "/ws/:chatId",
-      upgradeWebSocket(async (c: AppContext) => {
-        const user = await getUser(c);
-        const chatId = c.req.param("chatId");
+      upgradeWebSocket((c: AppContext) => {
         return {
-          onOpen(evt, ws) {
+          async onOpen(evt, ws) {
+            const user = await getUser(c);
+            const chatId = c.req.param("chatId");
             console.log(`connection open!!!!!`);
-            ws.send(`Param is ${chatId}`);
+            console.log(ws.url);
+            setTimeout(() => {
+              ws.send(`Param is ${chatId}`);
+            }, 200);
           },
           onMessage(event, ws) {
             console.log(`Message from client: ${event.data}`);

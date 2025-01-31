@@ -30,10 +30,8 @@ export default defineConfig({
         target: "http://localhost:3000",
       },
       "/ws": {
-        target: "ws://127.0.0.1:3000",
+        target: "ws://localhost:3000",
         ws: true,
-        changeOrigin: true,
-        rewriteWsOrigin: true,
       },
     },
   },
