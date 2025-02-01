@@ -10,6 +10,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { useUser } from "./hooks/auth";
+import { api } from "./lib/api-client";
 import { routeTree } from "./routeTree.gen";
 
 export type AppRouter = typeof router;
@@ -22,6 +23,26 @@ declare module "@tanstack/react-router" {
 const queryClient = new QueryClient({
   defaultOptions: { queries: {} },
 });
+
+queryClient.setQueryDefaults(["chat"], {
+  gcTime: Infinity,
+  staleTime: Infinity,
+});
+
+export const chatsQueryOptions = {
+  queryKey: ["chats"],
+  queryFn: async () => {
+    const res = await api.chats.$get();
+    if (!res.ok) throw Error("Server Error");
+    const chats = await res.json();
+    for (const chat of chats) {
+      queryClient.setQueryData(["chat", chat.id], chat);
+    }
+    return chats;
+  },
+  gcTime: Infinity,
+  staleTime: Infinity,
+};
 
 const router = createRouter({
   routeTree,
@@ -50,6 +71,6 @@ if (!rootElement.innerHTML) {
         <App />
         {/* </ThemeProvider> */}
       </QueryClientProvider>
-    </StrictMode>
+    </StrictMode>,
   );
 }

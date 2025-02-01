@@ -12,6 +12,7 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
 import { api, type Chat, type Message } from "../../../lib/api-client";
+import { chatsQueryOptions } from "../../../main";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 
@@ -21,6 +22,9 @@ export const Route = createFileRoute("/_app/chats/$chatId")({
     parse: ({ chatId }) => {
       return { chatId: +chatId };
     },
+  },
+  loader: async ({ context: { queryClient } }) => {
+    await queryClient.fetchQuery(chatsQueryOptions);
   },
 });
 
