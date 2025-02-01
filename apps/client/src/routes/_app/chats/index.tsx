@@ -9,7 +9,7 @@ import { chatsQueryOptions } from "../../../main";
 
 export const Route = createFileRoute("/_app/chats/")({
   component: RouteComponent,
-  loader: async ({ context: { queryClient, user } }) => {
+  loader: async ({ context: { queryClient } }) => {
     await queryClient.fetchQuery(chatsQueryOptions);
   },
 });

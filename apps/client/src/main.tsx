@@ -10,7 +10,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { useUser } from "./hooks/auth";
-import { api, wsRPC } from "./lib/api-client";
+import { api, wsRPC, type ChatContent } from "./lib/api-client";
 import { routeTree } from "./routeTree.gen";
 
 export type AppRouter = typeof router;
@@ -20,41 +20,55 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const queryClient = new QueryClient({
-  defaultOptions: { queries: {} },
-});
+const queryClient = new QueryClient();
 
 queryClient.setQueryDefaults(["chat"], {
   gcTime: Infinity,
   staleTime: Infinity,
 });
 
+function connectChat(chat: ChatContent) {
+  const webSocket = wsRPC.ws[":chatId"].$ws({
+    param: { chatId: chat.id.toString() },
+  });
+
+  webSocket.addEventListener("open", (e) => {
+    const msg = `Hello from`;
+    setInterval(() => {
+      webSocket.send(msg);
+      console.log(`Sent message: ${msg}`);
+    }, 5000);
+  });
+
+  webSocket.addEventListener("message", (e) => {
+    console.log(`Received message: ${e.data}`);
+  });
+
+  queryClient.setQueryDefaults(["chat", chat.id], {
+    gcTime: Infinity,
+    staleTime: Infinity,
+    queryFn: async () => {
+      const res = await api.chats[":chatId"].$get({
+        param: { chatId: chat.id },
+      });
+      const data = await res.json();
+      if ("issues" in data) throw new Error("Chat not found.");
+      return { content: data, webSocket };
+    },
+  });
+  queryClient.setQueryData(["chat", chat.id], { content: chat, webSocket });
+}
+
 export const chatsQueryOptions = {
   queryKey: ["chats"],
   queryFn: async () => {
     const res = await api.chats.$get();
-    if (!res.ok) throw Error("Server Error");
-    const chats = await res.json();
-    const user = await api.users.user.$get();
-    const user2 = await user.json();
-    for (const chat of chats) {
-      queryClient.setQueryData(["chat", chat.id], chat);
-      const webSocket = wsRPC.ws[":chatId"].$ws({
-        param: { chatId: chat.id.toString() },
-      });
-      webSocket.addEventListener("open", (e) => {
-        const msg = `Hello from ${user2?.username}`;
-        setInterval(() => {
-          webSocket.send(msg);
-          console.log(`Sent message: ${msg}`);
-        }, 5000);
-      });
-
-      webSocket.addEventListener("message", (e) => {
-        console.log(`Received message: ${e.data}`);
-      });
+    const data = await res.json();
+    if ("issues" in data) throw Error("Server Error");
+    for (const chat of data) {
+      connectChat(chat);
     }
-    return chats;
+    return data;
   },
   gcTime: Infinity,
   staleTime: Infinity,

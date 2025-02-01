@@ -1,6 +1,10 @@
 import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Send } from "lucide-react";
@@ -11,10 +15,16 @@ import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
-import { api, type Chat, type Message } from "../../../lib/api-client";
+import { useUser } from "../../../hooks/auth";
+import { api, type ChatContent, type Message } from "../../../lib/api-client";
 import { chatsQueryOptions } from "../../../main";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
+
+interface Chat {
+  chat: ChatContent;
+  webSocket: WebSocket;
+}
 
 export const Route = createFileRoute("/_app/chats/$chatId")({
   component: RouteComponent,
@@ -23,24 +33,23 @@ export const Route = createFileRoute("/_app/chats/$chatId")({
       return { chatId: +chatId };
     },
   },
-  loader: async ({ context: { queryClient } }) => {
+  loader: async ({ context: { queryClient }, params: { chatId } }) => {
     await queryClient.fetchQuery(chatsQueryOptions);
+    const chat: Chat | undefined = queryClient.getQueryData(["chat", chatId]);
+    if (!chat) throw new Error("Chat not found");
+    console.log(chat);
   },
 });
 
 function RouteComponent() {
   const { chatId } = Route.useParams();
-  const { data: chat } = useQuery({
-    queryKey: ["chat", chatId],
-    queryFn: async () => {
-      const res = await api.chats[":chatId"].$get({ param: { chatId } });
-      if (!res.ok) throw Error("Server Error");
-      const data = await res.json();
-      return data;
-    },
-    gcTime: Infinity,
-    staleTime: Infinity,
-  });
+  const queryClient = useQueryClient();
+  const defaults = queryClient.getQueryDefaults(["chat", chatId]);
+  const {
+    data: { content: chat, webSocket },
+  } = useSuspenseQuery({ queryKey: ["chat", chatId] });
+  console.log(chat, webSocket);
+  console.log(chat);
   return (
     <>
       {chat && (
@@ -64,6 +73,10 @@ const Chat: FC<{
   chatId: number;
 }> = ({ contactAvatar, contactName, messages, contactId, chatId }) => {
   const queryClient = useQueryClient();
+  const {
+    data: { webSocket },
+  } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
+  const user = useUser();
   const form = useForm({
     defaultValues: {
       text: "",
@@ -94,11 +107,13 @@ const Chat: FC<{
       if ("issues" in resData) {
         throw new Error(resData.issues[0].message);
       }
-      return resData;
+      return;
     },
     onSuccess(data, variables, context) {
-      queryClient.setQueryData(["chat", chatId], (old: Chat) => {
-        return { ...old, messages: [...old.messages, data] };
+      webSocket.send(`Message from ${user?.username}`);
+      queryClient.invalidateQueries({
+        queryKey: ["chat", chatId],
+        exact: true,
       });
       form.reset();
       scrollToBottom();
