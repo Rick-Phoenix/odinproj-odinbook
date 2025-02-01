@@ -10,7 +10,7 @@ import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { useUser } from "./hooks/auth";
-import { api } from "./lib/api-client";
+import { api, wsRPC } from "./lib/api-client";
 import { routeTree } from "./routeTree.gen";
 
 export type AppRouter = typeof router;
@@ -35,8 +35,24 @@ export const chatsQueryOptions = {
     const res = await api.chats.$get();
     if (!res.ok) throw Error("Server Error");
     const chats = await res.json();
+    const user = await api.users.user.$get();
+    const user2 = await user.json();
     for (const chat of chats) {
       queryClient.setQueryData(["chat", chat.id], chat);
+      const webSocket = wsRPC.ws[":chatId"].$ws({
+        param: { chatId: chat.id.toString() },
+      });
+      webSocket.addEventListener("open", (e) => {
+        const msg = `Hello from ${user2?.username}`;
+        setInterval(() => {
+          webSocket.send(msg);
+          console.log(`Sent message: ${msg}`);
+        }, 5000);
+      });
+
+      webSocket.addEventListener("message", (e) => {
+        console.log(`Received message: ${e.data}`);
+      });
     }
     return chats;
   },

@@ -1,29 +1,21 @@
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SquarePen } from "lucide-react";
 import type { FC } from "react";
 import { InsetScrollArea } from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
-import { Skeleton } from "../../../components/ui/skeleton";
-import { api } from "../../../lib/api-client";
+import { chatsQueryOptions } from "../../../main";
 
 export const Route = createFileRoute("/_app/chats/")({
   component: RouteComponent,
+  loader: async ({ context: { queryClient, user } }) => {
+    await queryClient.fetchQuery(chatsQueryOptions);
+  },
 });
 
 function RouteComponent() {
-  const chats = useQuery({
-    queryKey: ["chats"],
-    queryFn: async () => {
-      const res = await api.chats.$get();
-      if (!res.ok) throw Error("Server Error");
-      const data = await res.json();
-      return data;
-    },
-    gcTime: Infinity,
-    staleTime: Infinity,
-  });
+  const { data: chats } = useSuspenseQuery(chatsQueryOptions);
   return (
     <InsetScrollArea>
       <section className="grid min-h-[75vh] max-w-full flex-1 grid-cols-1 grid-rows-6 gap-4 rounded-xl bg-muted/50 p-4">
@@ -38,16 +30,15 @@ function RouteComponent() {
             <SquarePen />
           </Button>
         </header>
-        {Array.isArray(chats.data) &&
-          chats.data.map((chat, i) => (
-            <Skeleton key={i} queryKey={["chats"]} className="rounded-xl">
-              <ChatPreview
-                contactName={chat.contact.username}
-                contactAvatar={chat.contact.avatarUrl}
-                lastMessage={chat.messages.at(-1)?.text}
-                chatId={chat.id}
-              />
-            </Skeleton>
+        {chats.length &&
+          chats.map((chat) => (
+            <ChatPreview
+              key={chat.id}
+              contactName={chat.contact.username}
+              contactAvatar={chat.contact.avatarUrl}
+              lastMessage={chat.messages.at(-1)?.text}
+              chatId={chat.id}
+            />
           ))}
       </section>
     </InsetScrollArea>

@@ -32,12 +32,12 @@ export function registerApiRoutes(app: AppOpenAPI) {
       upgradeWebSocket((c: AppContextWithUser) => {
         const { id: userId, username } = c.var.user;
         const chatId = +c.req.param("chatId");
-
         return {
           onOpen(evt, ws) {
             if (!chatRooms.has(chatId)) {
               chatRooms.set(chatId, new Set());
             }
+            // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             chatRooms.get(chatId)!.add({ userId, socket: ws });
             ws.send(`Welcome to chat ${chatId}, User ${username}!`);
           },
@@ -47,6 +47,7 @@ export function registerApiRoutes(app: AppOpenAPI) {
                 connection.userId !== userId &&
                 connection.socket.readyState === 1
               ) {
+                // @ts-expect-error Small props mismatch for Hono's definition of the event and the event itself
                 connection.socket.send(event.data);
               }
             });
@@ -59,12 +60,7 @@ export function registerApiRoutes(app: AppOpenAPI) {
             });
             if (chatConnections.size === 0) {
               chatRooms.delete(chatId);
-              console.log(`deleted chatroom`);
             }
-            console.log(chatRooms.get(chatId));
-            console.log(
-              `Connection closed for chat ${chatId} and user ${username}`
-            );
           },
         };
       })

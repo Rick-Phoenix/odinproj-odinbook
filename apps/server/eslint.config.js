@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-import globals from "globals";
 import js from "@eslint/js";
-import tseslint from "typescript-eslint";
 import eslintConfigPrettier from "eslint-config-prettier";
 import drizzle from "eslint-plugin-drizzle";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default tseslint.config(
@@ -24,6 +24,10 @@ export default tseslint.config(
     rules: {
       "@typescript-eslint/no-unused-vars": "warn",
       ...drizzle.configs.recommended.rules,
+      "drizzle/enforce-delete-with-where": [
+        "error",
+        { drizzleObjectName: "db" },
+      ],
     },
   },
   eslintConfigPrettier
