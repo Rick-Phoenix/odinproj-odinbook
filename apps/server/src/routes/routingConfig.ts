@@ -1,4 +1,5 @@
 import { createNodeWebSocket } from "@hono/node-ws";
+import type { WSContext } from "hono/ws";
 import { createRouter } from "../lib/create-app";
 import { protectRoute } from "../middlewares/auth-middleware";
 import type { AppContextWithUser, AppOpenAPI } from "../types/app-bindings";
@@ -14,6 +15,8 @@ const { injectWebSocket, upgradeWebSocket } = createNodeWebSocket({
 });
 export { injectWebSocket, upgradeWebSocket };
 
+const chatRooms = new Map<string, Set<WSContext<WebSocket>>>();
+
 export function registerApiRoutes(app: AppOpenAPI) {
   return app
     .route("/auth", authRouter)
@@ -27,11 +30,14 @@ export function registerApiRoutes(app: AppOpenAPI) {
           async onOpen(evt, ws) {
             const user = c.var.user;
             const chatId = c.req.param("chatId");
-            console.log(`connection open!!!!!`);
-            console.log(ws.url);
-            setTimeout(() => {
-              ws.send(`Param is ${chatId}`);
-            }, 200);
+            if (!chatRooms.has(chatId)) {
+              chatRooms.set(chatId, new Set());
+            }
+            chatRooms.get(chatId)!.add(ws);
+
+            console.log(`User ${user.id} connected to chat ${chatId}`);
+
+            ws.send(`Welcome to chat ${chatId}, User ${user.id}!`);
           },
           onMessage(event, ws) {
             console.log(`Message from client: ${event.data}`);
