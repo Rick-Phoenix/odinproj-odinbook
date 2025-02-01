@@ -38,32 +38,3 @@ export async function handleLogout() {
 export function handleGithubLogin() {
   location.href = "/api/auth/github";
 }
-
-// Context based auth: not necessary at the moment
-
-// export const UserContext = createContext<User | null | undefined>(null);
-
-// export function UserProvider({ children }: { children: ReactNode }) {
-//   const user = useFetchUser();
-//   console.log("🚀 ~ UserProvider ~ user:", user);
-
-//   return <UserContext value={user}>{children}</UserContext>;
-// }
-
-// Version with context
-
-// function App() {
-//   const user = useFetchUser();
-//   console.log("🚀 ~ App ~ user:", user);
-//   return (
-//     <UserProvider>
-//       <InnerApp />
-//     </UserProvider>
-//   );
-// }
-
-// function InnerApp() {
-//   const user = use(UserContext);
-//   console.log("🚀 ~ App ~ user:", user);
-//   return <RouterProvider router={router} context={{ user }} />;
-// }

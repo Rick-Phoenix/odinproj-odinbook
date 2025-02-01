@@ -51,6 +51,7 @@ export const userRelations = relations(users, ({ many }) => ({
   likes: many(likes),
   listingsCreated: many(listings),
   listingsSaved: many(savedListings),
+  sessions: many(sessions),
 }));
 
 //
@@ -117,6 +118,10 @@ export const sessions = pgTable("sessions", {
     mode: "date",
   }).notNull(),
 });
+
+export const sessionsRelations = relations(sessions, ({ one }) => ({
+  user: one(users, { fields: [sessions.userId], references: [users.id] }),
+}));
 
 //
 

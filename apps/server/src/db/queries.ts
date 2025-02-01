@@ -1,6 +1,7 @@
+import { eq } from "drizzle-orm";
 import { lowercase } from "../utils/db-methods";
 import db from "./dbConfig";
-import { messages } from "./schema";
+import { chatInstances, chats, messages } from "./schema";
 
 export async function emailIsNotAvailable(email: string): Promise<boolean> {
   const result = await db.query.users.findFirst({
@@ -44,6 +45,15 @@ export async function getUserChats(userId: string) {
   if (chats.length === 0) return null;
 
   return chats.map((item) => ({ contact: item.contact, ...item.chat }));
+}
+
+export async function getUserChatIds(userId: string) {
+  const chatIds = await db
+    .select({ id: chats.id })
+    .from(chatInstances)
+    .innerJoin(chats, eq(chatInstances.chatId, chats.id))
+    .where(eq(chatInstances.ownerId, userId));
+  return chatIds.map((obj) => obj.id);
 }
 
 export async function getSingleChat(userId: string, chatId: number) {

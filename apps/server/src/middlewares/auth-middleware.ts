@@ -4,6 +4,7 @@ import { eq } from "drizzle-orm";
 import { getCookie } from "hono/cookie";
 import { CONFLICT, UNAUTHORIZED } from "stoker/http-status-codes";
 import db from "../db/dbConfig";
+import { getUserChatIds } from "../db/queries";
 import { sessions, users } from "../db/schema";
 import { invalidateSession } from "../lib/auth";
 import type { AppContext, AppMiddleware } from "../types/app-bindings";
@@ -11,6 +12,7 @@ import { alreadyLoggedError } from "../utils/customErrors";
 import { entryExists } from "../utils/db-methods";
 
 export const protectRoute: AppMiddleware = async (c, next) => {
+  if (c.req.path.startsWith("/api/auth")) return await next();
   const user = await getUser(c);
   if (!user) return c.json("Unauthorized", UNAUTHORIZED);
   c.set("user", user);
@@ -83,3 +85,13 @@ export async function getUser(c: AppContext) {
 
   return userObject;
 }
+
+export const verifyChatAccess: AppMiddleware = async (c, next) => {
+  const user = await getUser(c);
+  if (!user) return c.json("Unauthorized", UNAUTHORIZED);
+  const userChatIds = await getUserChatIds(user.id);
+  const chatId = +c.req.param("chatId")!;
+  if (!userChatIds.includes(chatId)) return c.notFound();
+  c.set("user", user);
+  return await next();
+};
