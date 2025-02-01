@@ -22,7 +22,7 @@ import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 
 interface Chat {
-  chat: ChatContent;
+  content: ChatContent;
   webSocket: WebSocket;
 }
 
@@ -37,19 +37,14 @@ export const Route = createFileRoute("/_app/chats/$chatId")({
     await queryClient.fetchQuery(chatsQueryOptions);
     const chat: Chat | undefined = queryClient.getQueryData(["chat", chatId]);
     if (!chat) throw new Error("Chat not found");
-    console.log(chat);
   },
 });
 
 function RouteComponent() {
   const { chatId } = Route.useParams();
-  const queryClient = useQueryClient();
-  const defaults = queryClient.getQueryDefaults(["chat", chatId]);
   const {
     data: { content: chat, webSocket },
-  } = useSuspenseQuery({ queryKey: ["chat", chatId] });
-  console.log(chat, webSocket);
-  console.log(chat);
+  } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
   return (
     <>
       {chat && (
