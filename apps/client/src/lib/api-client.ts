@@ -6,9 +6,9 @@ export const api = RPC("/api");
 export type Message = z.infer<typeof schemas.messagesSchema>;
 export type Chat = z.infer<typeof schemas.chatSchema>;
 
-const ws = RPC("ws://localhost:5173/");
+const wsRPC = RPC("ws://localhost:5173/");
 
-const ws3 = ws.ws[":chatId"].$ws({ param: { chatId: "2" } });
+const ws3 = wsRPC.ws[":chatId"].$ws({ param: { chatId: "2" } });
 
 const user = await api.users.user.$get();
 const user2 = await user.json();
