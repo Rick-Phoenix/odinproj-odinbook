@@ -27,21 +27,43 @@ queryClient.setQueryDefaults(["chat"], {
   staleTime: Infinity,
 });
 
-function connectChat(chat: ChatContent) {
+function createWebSocket(chatId: number) {
   const webSocket = wsRPC.ws[":chatId"].$ws({
-    param: { chatId: chat.id.toString() },
+    param: { chatId: chatId.toString() },
   });
 
-  webSocket.addEventListener("open", (e) => {
-    const msg = `Hello from`;
-    setInterval(() => {
-      webSocket.send(msg);
-      console.log(`Sent message: ${msg}`);
-    }, 5000);
+  webSocket.addEventListener("message", () => {
+    queryClient.invalidateQueries({
+      queryKey: ["chat", chatId],
+      exact: true,
+    });
   });
 
-  webSocket.addEventListener("message", (e) => {
-    console.log(`Received message: ${e.data}`);
+  return webSocket;
+}
+
+function cacheChat(chat: ChatContent) {
+  const webSocket = createWebSocket(chat.id);
+
+  queryClient.setMutationDefaults(["chat", chat.id], {
+    mutationFn: async ({ text }: { text: string }) => {
+      const res = await api.chats[":chatId"].$post({
+        param: { chatId: chat.id },
+        json: { text },
+      });
+      const resData = await res.json();
+      if ("issues" in resData) {
+        throw new Error(resData.issues[0].message);
+      }
+      return;
+    },
+    onSuccess: () => {
+      webSocket.send("Message Sent");
+      queryClient.invalidateQueries({
+        queryKey: ["chat", chat.id],
+        exact: true,
+      });
+    },
   });
 
   queryClient.setQueryDefaults(["chat", chat.id], {
@@ -56,6 +78,7 @@ function connectChat(chat: ChatContent) {
       return { content: data, webSocket };
     },
   });
+
   queryClient.setQueryData(["chat", chat.id], { content: chat, webSocket });
 }
 
@@ -66,7 +89,7 @@ export const chatsQueryOptions = {
     const data = await res.json();
     if ("issues" in data) throw Error("Server Error");
     for (const chat of data) {
-      connectChat(chat);
+      cacheChat(chat);
     }
     return data;
   },
