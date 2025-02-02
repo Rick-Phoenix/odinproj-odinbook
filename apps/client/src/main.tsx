@@ -32,11 +32,23 @@ function createWebSocket(chatId: number) {
     param: { chatId: chatId.toString() },
   });
 
+  webSocket.onopen = () => {
+    console.log("Connected.");
+  };
+
   webSocket.addEventListener("message", () => {
     queryClient.invalidateQueries({
       queryKey: ["chat", chatId],
       exact: true,
     });
+  });
+
+  webSocket.addEventListener("close", () => {
+    console.log("Disconnected.");
+
+    setTimeout(() => {
+      const newSocket = createWebSocket(chatId);
+    }, 2000);
   });
 
   return webSocket;
