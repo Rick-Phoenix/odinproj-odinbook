@@ -46,20 +46,7 @@ const data = {
       title: "Chats",
       url: "/chats",
       icon: MessagesSquare,
-      items: [
-        {
-          title: "Chat1",
-          url: "#",
-        },
-        {
-          title: "Chat2",
-          url: "#",
-        },
-        {
-          title: "Chat3",
-          url: "#",
-        },
-      ],
+      items: [],
     },
     {
       title: "Marketplace",

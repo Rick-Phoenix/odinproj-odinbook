@@ -9,11 +9,14 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
 import { Flag, MessageSquare, Plus } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
 import { useActivePage } from "../hooks/use-active-page";
+import { chatsQueryOptions } from "../main";
+import { ChatDialog } from "../routes/_app/chats";
 import { lorem2par } from "../utils/lorem";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { ScrollArea } from "./ui/scroll-area";
@@ -126,6 +129,7 @@ const MarketplaceSidebarContent = () => {
 
 const ChatsSidebarContent = () => {
   const { subSection, mainSection, activePage } = useActivePage();
+  const { data: chats } = useSuspenseQuery(chatsQueryOptions);
   return (
     <>
       {subSection && (
@@ -180,11 +184,35 @@ const ChatsSidebarContent = () => {
       {mainSection === activePage && (
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton className="[&_svg]:size-5">
-              <Plus />
-              <span>Send Message</span>
-            </SidebarMenuButton>
+            <ChatDialog>
+              <SidebarMenuButton className="[&_svg]:size-5">
+                <Plus />
+                <span>Create Chat</span>
+              </SidebarMenuButton>
+            </ChatDialog>
           </SidebarMenuItem>
+          <ul className="flex flex-col justify-center gap-2 pt-6">
+            {chats.map((chat) => (
+              <li key={chat.id}>
+                <SidebarMenuButton asChild className="size-full">
+                  <Link
+                    className="flex items-center justify-between gap-2"
+                    to="/chats/$chatId"
+                    params={{ chatId: chat.id }}
+                  >
+                    <Avatar className="h-14 w-auto">
+                      <AvatarImage
+                        src={chat.contact.avatarUrl}
+                        alt={chat.contact.username}
+                      />
+                      <AvatarFallback>{chat.contact.username}</AvatarFallback>
+                    </Avatar>
+                    <p>{chat.contact.username}</p>
+                  </Link>
+                </SidebarMenuButton>
+              </li>
+            ))}
+          </ul>
         </SidebarMenu>
       )}
     </>

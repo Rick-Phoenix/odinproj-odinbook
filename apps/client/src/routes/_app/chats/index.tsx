@@ -4,12 +4,7 @@ import {
   useQueryClient,
   useSuspenseQuery,
 } from "@tanstack/react-query";
-import {
-  createFileRoute,
-  Link,
-  redirect,
-  useNavigate,
-} from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { SquarePen } from "lucide-react";
 import type { FC, ReactNode } from "react";
 import { z } from "zod";
@@ -37,13 +32,25 @@ export const Route = createFileRoute("/_app/chats/")({
   },
 });
 
-const ChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
+export const ChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
+  const queryClient = useQueryClient();
+  const nav = useNavigate();
   const form = useForm({
     defaultValues: {
       contactUsername: "",
     },
     validators: {
       onSubmitAsync: async ({ value: { contactUsername } }) => {
+        const chat = queryClient
+          .getQueryData<ChatContent[]>(["chats"])!
+          .find((chat) => chat.contact.username === contactUsername);
+        if (chat) {
+          nav({
+            to: "/chats/$chatId",
+            params: { chatId: chat.id },
+          });
+          return;
+        }
         try {
           await createChat.mutateAsync({ contactUsername });
           return null;
@@ -58,21 +65,10 @@ const ChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
     },
   });
 
-  const queryClient = useQueryClient();
-  const nav = useNavigate();
-
   const createChat = useMutation({
     mutationKey: ["chat"],
     mutationFn: async (v: { contactUsername: string }) => {
       const { contactUsername } = v;
-      const chat = queryClient
-        .getQueryData<ChatContent[]>(["chats"])!
-        .find((chat) => chat.contact.username === contactUsername);
-      if (chat)
-        redirect({
-          to: "/chats/$chatId",
-          params: { chatId: chat.id },
-        });
       const res = await api.chats.$post({ json: { contactUsername } });
       const data = await res.json();
       if ("issues" in data) {
