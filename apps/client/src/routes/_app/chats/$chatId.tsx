@@ -1,10 +1,6 @@
 import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Send } from "lucide-react";
@@ -15,8 +11,7 @@ import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
-import { useUser } from "../../../hooks/auth";
-import { api, type ChatContent, type Message } from "../../../lib/api-client";
+import { type ChatContent, type Message } from "../../../lib/api-client";
 import { chatsQueryOptions } from "../../../main";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
@@ -43,7 +38,7 @@ export const Route = createFileRoute("/_app/chats/$chatId")({
 function RouteComponent() {
   const { chatId } = Route.useParams();
   const {
-    data: { content: chat, webSocket },
+    data: { content: chat },
   } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
   return (
     <>
@@ -67,11 +62,7 @@ const Chat: FC<{
   contactId: string;
   chatId: number;
 }> = ({ contactAvatar, contactName, messages, contactId, chatId }) => {
-  const queryClient = useQueryClient();
-  const {
-    data: { webSocket },
-  } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
-  const user = useUser();
+  const { data: chat } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
   const form = useForm({
     defaultValues: {
       text: "",
@@ -79,7 +70,7 @@ const Chat: FC<{
     validators: {
       onSubmitAsync: async ({ value }) => {
         try {
-          await handleSendMessage.mutateAsync(value.text);
+          await handleSendMessage.mutateAsync({ text: value.text });
           return null;
         } catch (error) {
           if (errorTypeGuard(error)) return error.message;
@@ -88,46 +79,26 @@ const Chat: FC<{
       onSubmit: schemas.insertMessageSchema,
     },
     validatorAdapter: singleErrorsAdapter,
-    onSubmit(props) {},
-  });
-
-  const handleSendMessage = useMutation({
-    mutationKey: ["chat", chatId],
-    mutationFn: async (text: string) => {
-      const res = await api.chats[":chatId"].$post({
-        param: { chatId },
-        json: { text },
-      });
-      const resData = await res.json();
-      if ("issues" in resData) {
-        throw new Error(resData.issues[0].message);
-      }
-      return;
-    },
-    onSuccess(data, variables, context) {
-      webSocket.send(`Message from ${user?.username}`);
-      queryClient.invalidateQueries({
-        queryKey: ["chat", chatId],
-        exact: true,
-      });
+    onSubmit() {
       form.reset();
-      scrollToBottom();
     },
   });
 
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const handleSendMessage = useMutation<unknown, unknown, { text: string }>({
+    mutationKey: ["chat", chatId],
+  });
 
-  const scrollToBottom = () => {
-    if (scrollAreaRef !== null && scrollAreaRef.current !== null) {
-      setTimeout(() => {
-        const scrollArea = scrollAreaRef.current!;
-        scrollArea.scroll({ behavior: "smooth", top: scrollArea.scrollHeight });
-      }, 0);
-    }
-  };
+  const viewportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const scrollArea = scrollAreaRef.current!;
+    if (viewportRef !== null && viewportRef.current !== null) {
+      const scrollArea = viewportRef.current!;
+      scrollArea.scroll({ behavior: "smooth", top: scrollArea.scrollHeight });
+    }
+  }, [chat]);
+
+  useEffect(() => {
+    const scrollArea = viewportRef.current!;
     scrollArea.scroll({ behavior: "instant", top: scrollArea.scrollHeight });
   }, []);
 
@@ -144,7 +115,7 @@ const Chat: FC<{
           <div className="text-lg font-semibold">{title(contactName)}</div>
         </div>
 
-        <ScrollArea className="h-full w-full" viewportRef={scrollAreaRef}>
+        <ScrollArea className="h-full w-full" viewportRef={viewportRef}>
           <div className="grid w-full gap-8 rounded-xl p-8">
             {messages.map((message, i, a) => {
               const isFromUser = message.userId !== contactId;
@@ -154,6 +125,7 @@ const Chat: FC<{
                   isFromUser={isFromUser}
                   text={message.text}
                   createdAt={message.createdAt}
+                  // ref={i === a.length - 1 ? viewportRef : null}
                 />
               );
             })}

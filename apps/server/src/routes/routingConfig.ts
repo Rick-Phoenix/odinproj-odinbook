@@ -30,7 +30,7 @@ export function registerApiRoutes(app: AppOpenAPI) {
       "/ws/:chatId",
       verifyChatAccess,
       upgradeWebSocket((c: AppContextWithUser) => {
-        const { id: userId, username } = c.var.user;
+        const { id: userId } = c.var.user;
         const chatId = +c.req.param("chatId");
         return {
           onOpen(evt, ws) {
@@ -53,12 +53,14 @@ export function registerApiRoutes(app: AppOpenAPI) {
           },
           onClose: (ws) => {
             const chatConnections = chatRooms.get(chatId)!;
-            chatConnections.forEach((connection) => {
-              if (connection.userId === userId)
-                chatConnections.delete(connection);
-            });
-            if (chatConnections.size === 0) {
-              chatRooms.delete(chatId);
+            if (chatConnections) {
+              chatConnections.forEach((connection) => {
+                if (connection.userId === userId)
+                  chatConnections.delete(connection);
+              });
+              if (chatConnections.size === 0) {
+                chatRooms.delete(chatId);
+              }
             }
           },
         };

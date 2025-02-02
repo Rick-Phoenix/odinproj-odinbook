@@ -32,16 +32,32 @@ function connectChat(chat: ChatContent) {
     param: { chatId: chat.id.toString() },
   });
 
-  webSocket.addEventListener("open", (e) => {
-    const msg = `Hello from`;
-    setInterval(() => {
-      webSocket.send(msg);
-      console.log(`Sent message: ${msg}`);
-    }, 5000);
+  webSocket.addEventListener("message", () => {
+    queryClient.invalidateQueries({
+      queryKey: ["chat", chat.id],
+      exact: true,
+    });
   });
 
-  webSocket.addEventListener("message", (e) => {
-    console.log(`Received message: ${e.data}`);
+  queryClient.setMutationDefaults(["chat", chat.id], {
+    mutationFn: async ({ text }: { text: string }) => {
+      const res = await api.chats[":chatId"].$post({
+        param: { chatId: chat.id },
+        json: { text },
+      });
+      const resData = await res.json();
+      if ("issues" in resData) {
+        throw new Error(resData.issues[0].message);
+      }
+      return;
+    },
+    onSuccess: () => {
+      webSocket.send("Message Sent");
+      queryClient.invalidateQueries({
+        queryKey: ["chat", chat.id],
+        exact: true,
+      });
+    },
   });
 
   queryClient.setQueryDefaults(["chat", chat.id], {
@@ -56,6 +72,7 @@ function connectChat(chat: ChatContent) {
       return { content: data, webSocket };
     },
   });
+
   queryClient.setQueryData(["chat", chat.id], { content: chat, webSocket });
 }
 
