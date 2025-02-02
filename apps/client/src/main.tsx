@@ -42,7 +42,7 @@ function createWebSocket(chatId: number) {
   return webSocket;
 }
 
-function connectChat(chat: ChatContent) {
+function cacheChat(chat: ChatContent) {
   const webSocket = createWebSocket(chat.id);
 
   queryClient.setMutationDefaults(["chat", chat.id], {
@@ -89,7 +89,7 @@ export const chatsQueryOptions = {
     const data = await res.json();
     if ("issues" in data) throw Error("Server Error");
     for (const chat of data) {
-      connectChat(chat);
+      cacheChat(chat);
     }
     return data;
   },
