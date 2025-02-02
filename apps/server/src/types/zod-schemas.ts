@@ -30,12 +30,13 @@ export const chatSchema = createSelectSchema(chats).extend({
 
 const commentSchema = createSelectSchema(comments);
 export const likesSchema = createSelectSchema(likes);
-export const postSchema = createSelectSchema(posts).extend({
+export const postSchema = createSelectSchema(posts);
+const fullPostSchema = createSelectSchema(posts).extend({
   comments: z.array(commentSchema),
   likes: z.array(likesSchema),
 });
 export const roomSchema = createSelectSchema(rooms).extend({
-  posts: z.array(postSchema),
+  posts: z.array(fullPostSchema),
 });
 
 export const listingPicsSchema = createSelectSchema(listingPics);
@@ -54,8 +55,8 @@ export const profileSchema = userSchema
   })
   .extend({
     comments: z.array(commentSchema),
-    posts: z.array(commentSchema),
-    listings: z.array(listingSchema),
+    posts: z.array(postSchema),
+    listingsCreated: z.array(listingSchema),
   });
 
 // Input Validation Schemas

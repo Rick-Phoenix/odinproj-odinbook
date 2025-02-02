@@ -30,7 +30,7 @@ export async function findUserByUsername(username: string) {
   });
 }
 
-export async function getUserProfile(username: string) {
+export async function fetchUserProfile(username: string) {
   return await db.query.users.findFirst({
     where(user, { eq }) {
       return eq(lowercase(user.username), username.toLocaleLowerCase());
@@ -39,7 +39,7 @@ export async function getUserProfile(username: string) {
     with: {
       comments: true,
       posts: true,
-      listingsCreated: true,
+      listingsCreated: { with: { pics: true } },
       roomSubscriptions: true,
     },
   });

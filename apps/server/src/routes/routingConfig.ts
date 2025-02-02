@@ -5,7 +5,7 @@ import { verifyChatAccess } from "../middlewares/auth-middleware";
 import type { AppContextWithUser, AppOpenAPI } from "../types/app-bindings";
 import { authRouter } from "./auth/authRouter";
 import { chatRouter } from "./chats/chatsRouter";
-import { userRouter } from "./users/userRouter";
+import { userRouter } from "./users/usersRouter";
 
 const app = createRouter();
 
@@ -23,9 +23,6 @@ const chatRooms = new Map<number, Set<chatConnection>>();
 
 export function registerApiRoutes(app: AppOpenAPI) {
   return app
-    .route("/auth", authRouter)
-    .route("/users", userRouter)
-    .route("/chats", chatRouter)
     .get(
       "/ws/:chatId",
       verifyChatAccess,
@@ -65,7 +62,10 @@ export function registerApiRoutes(app: AppOpenAPI) {
           },
         };
       })
-    );
+    )
+    .route("/auth", authRouter)
+    .route("/users", userRouter)
+    .route("/chats", chatRouter);
 }
 
 export const apiRoutes = registerApiRoutes(app);

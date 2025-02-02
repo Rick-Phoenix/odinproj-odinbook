@@ -38,7 +38,7 @@ async function newRoute() {
     message: "Enter the route's name:",
     required: true,
     validate(value) {
-      return /^[a-zA-Z-]{2,40}$/.test(value);
+      return /^[a-zA-Z-$]{2,40}$/.test(value);
     },
   });
 
