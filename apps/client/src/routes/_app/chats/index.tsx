@@ -5,6 +5,13 @@ import type { FC } from "react";
 import { InsetScrollArea } from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../../../components/ui/dialog";
 import { chatsQueryOptions } from "../../../main";
 
 export const Route = createFileRoute("/_app/chats/")({
@@ -21,14 +28,23 @@ function RouteComponent() {
       <section className="grid min-h-[75vh] max-w-full flex-1 grid-cols-1 grid-rows-6 gap-4 rounded-xl bg-muted/50 p-4">
         <header className="flex h-28 w-full items-center justify-between rounded-xl bg-muted-foreground/30 p-8 hover:text-foreground">
           <h2 className="text-3xl font-semibold">Chats</h2>
-          <Button
-            variant={"ghost"}
-            size={"icon"}
-            className="p-6 [&_svg]:size-10"
-            title="New Chat"
-          >
-            <SquarePen />
-          </Button>
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button
+                variant={"ghost"}
+                size={"icon"}
+                className="p-6 [&_svg]:size-10"
+                title="New Chat"
+              >
+                <SquarePen />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Create Chat</DialogTitle>
+              </DialogHeader>
+            </DialogContent>
+          </Dialog>
         </header>
         {chats.length &&
           chats.map((chat) => (
