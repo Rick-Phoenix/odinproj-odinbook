@@ -30,6 +30,21 @@ export async function findUserByUsername(username: string) {
   });
 }
 
+export async function getUserProfile(username: string) {
+  return await db.query.users.findFirst({
+    where(user, { eq }) {
+      return eq(lowercase(user.username), username.toLocaleLowerCase());
+    },
+    columns: { avatarUrl: true, username: true, createdAt: true, status: true },
+    with: {
+      comments: true,
+      posts: true,
+      listingsCreated: true,
+      roomSubscriptions: true,
+    },
+  });
+}
+
 export async function getUserChats(userId: string) {
   const chats = await db.query.chatInstances.findMany({
     where(chat, { eq }) {

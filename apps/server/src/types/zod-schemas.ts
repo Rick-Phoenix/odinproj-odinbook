@@ -1,7 +1,6 @@
 import { z } from "@hono/zod-openapi";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import {
-  chatInstances,
   chats,
   comments,
   likes,
@@ -28,11 +27,8 @@ export const chatSchema = createSelectSchema(chats).extend({
     id: z.string(),
   }),
 });
-export const chatInstanceSchema = createSelectSchema(chatInstances).extend({
-  chat: chatSchema,
-});
 
-export const commentSchema = createSelectSchema(comments);
+const commentSchema = createSelectSchema(comments);
 export const likesSchema = createSelectSchema(likes);
 export const postSchema = createSelectSchema(posts).extend({
   comments: z.array(commentSchema),
@@ -46,6 +42,21 @@ export const listingPicsSchema = createSelectSchema(listingPics);
 export const listingSchema = createSelectSchema(listings).extend({
   pics: z.array(listingPicsSchema),
 });
+
+const subscriptionsSchema = createSelectSchema(roomSubs);
+
+export const profileSchema = userSchema
+  .pick({
+    avatarUrl: true,
+    status: true,
+    createdAt: true,
+    username: true,
+  })
+  .extend({
+    comments: z.array(commentSchema),
+    posts: z.array(commentSchema),
+    listings: z.array(listingSchema),
+  });
 
 // Input Validation Schemas
 

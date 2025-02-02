@@ -5,7 +5,6 @@ import { z } from "zod";
 
 // Shared Types
 export type User = z.infer<typeof schemas.userSchema>;
-export type Session = z.infer<typeof schemas.sessionSchema>;
 export const schemas = zodSchemas;
 
 // Api Client
