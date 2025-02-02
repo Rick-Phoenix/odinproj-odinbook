@@ -27,17 +27,23 @@ queryClient.setQueryDefaults(["chat"], {
   staleTime: Infinity,
 });
 
-function connectChat(chat: ChatContent) {
+function createWebSocket(chatId: number) {
   const webSocket = wsRPC.ws[":chatId"].$ws({
-    param: { chatId: chat.id.toString() },
+    param: { chatId: chatId.toString() },
   });
 
   webSocket.addEventListener("message", () => {
     queryClient.invalidateQueries({
-      queryKey: ["chat", chat.id],
+      queryKey: ["chat", chatId],
       exact: true,
     });
   });
+
+  return webSocket;
+}
+
+function connectChat(chat: ChatContent) {
+  const webSocket = createWebSocket(chat.id);
 
   queryClient.setMutationDefaults(["chat", chat.id], {
     mutationFn: async ({ text }: { text: string }) => {
