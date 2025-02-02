@@ -73,7 +73,13 @@ export async function getSingleChat(userId: string, chatId: number) {
   return chat;
 }
 
-export async function findOrCreateChat(userId: string, contactId: string) {
+export async function findOrCreateChat(
+  userId: string,
+  contactUsername: string
+) {
+  const contact = await findUserByUsername(contactUsername);
+  if (!contact) return false;
+  const { id: contactId } = contact;
   const chatInstance = await db.query.chatInstances.findFirst({
     where(chat, { eq, and }) {
       return and(eq(chat.ownerId, userId), eq(chat.contactId, contactId));

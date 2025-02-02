@@ -6,9 +6,15 @@ import {
   postMessage,
   postMessageHandler,
 } from "./$chatId";
-import { chatsIndex, chatsIndexHandler } from "./chatsIndex";
+import {
+  chatsIndexHandler,
+  createChat,
+  createChatHandler,
+  getChats,
+} from "./chatsIndex";
 
 export const chatRouter = createRouter<AppBindingsWithUser>()
-  .openapi(chatsIndex, chatsIndexHandler)
+  .openapi(getChats, chatsIndexHandler)
   .openapi(postMessage, postMessageHandler)
-  .openapi(getChat, getChatHandler);
+  .openapi(getChat, getChatHandler)
+  .openapi(createChat, createChatHandler);
