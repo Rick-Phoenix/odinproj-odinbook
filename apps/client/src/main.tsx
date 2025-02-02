@@ -42,7 +42,7 @@ function createWebSocket(chatId: number) {
   return webSocket;
 }
 
-function cacheChat(chat: ChatContent) {
+export function cacheChat(chat: ChatContent) {
   const webSocket = createWebSocket(chat.id);
 
   queryClient.setMutationDefaults(["chat", chat.id], {

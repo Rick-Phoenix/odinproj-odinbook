@@ -16,7 +16,7 @@ import { chatsQueryOptions } from "../../../main";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 
-interface Chat {
+export interface Chat {
   content: ChatContent;
   webSocket: WebSocket;
 }
@@ -89,6 +89,7 @@ const Chat: FC<{
   });
 
   const viewportRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (viewportRef !== null && viewportRef.current !== null) {
@@ -100,6 +101,7 @@ const Chat: FC<{
   useEffect(() => {
     const scrollArea = viewportRef.current!;
     scrollArea.scroll({ behavior: "instant", top: scrollArea.scrollHeight });
+    inputRef.current!.focus();
   }, []);
 
   return (
@@ -150,6 +152,7 @@ const Chat: FC<{
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
                   placeholder="Write a message..."
+                  ref={inputRef}
                   required
                 />
               </>

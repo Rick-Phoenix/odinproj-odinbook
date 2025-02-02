@@ -107,6 +107,11 @@ export async function findOrCreateChat(
         .insert(chats)
         .values({})
         .returning({ id: chats.id });
+
+      await tx
+        .insert(chatInstances)
+        .values({ chatId: id, ownerId: contactId, contactId: userId });
+
       chatId = id;
     }
 
@@ -115,7 +120,7 @@ export async function findOrCreateChat(
       .values({ chatId, ownerId: userId, contactId });
   });
 
-  return findOrCreateChat(userId, contactId);
+  return findOrCreateChat(userId, contactUsername);
 }
 
 export async function getPost(postId: number) {

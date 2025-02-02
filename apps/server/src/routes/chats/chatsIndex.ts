@@ -1,5 +1,5 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { BAD_REQUEST, OK } from "stoker/http-status-codes";
+import { BAD_REQUEST, NOT_FOUND, OK } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { findOrCreateChat, getUserChats } from "../../db/queries";
 import type {
@@ -7,7 +7,7 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { chatSchema } from "../../types/zod-schemas";
-import { badRequestError } from "../../utils/customErrors";
+import { badRequestError, customError } from "../../utils/customErrors";
 
 const tags = ["chats"];
 
@@ -31,6 +31,14 @@ export const chatsIndexHandler: AppRouteHandler<
   return c.json(chats, OK);
 };
 
+const noUserError = customError(
+  {
+    message: "This user does not exist.",
+    path: ["contactUsername"],
+  },
+  NOT_FOUND
+);
+
 export const createChat = createRoute({
   path: "/",
   method: "post",
@@ -45,6 +53,7 @@ export const createChat = createRoute({
   },
   responses: {
     [OK]: jsonContent(chatSchema, "The new chat."),
+    [NOT_FOUND]: noUserError.template,
     [BAD_REQUEST]: badRequestError.template,
   },
 });
@@ -56,6 +65,6 @@ export const createChatHandler: AppRouteHandler<
   const { id: userId } = c.var.user;
   const { contactUsername } = c.req.valid("json");
   const chat = await findOrCreateChat(userId, contactUsername);
-  if (!chat) return c.json(badRequestError.content, BAD_REQUEST);
+  if (!chat) return c.json(noUserError.content, NOT_FOUND);
   return c.json(chat, OK);
 };
