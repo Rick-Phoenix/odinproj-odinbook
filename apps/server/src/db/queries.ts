@@ -73,6 +73,45 @@ export async function getSingleChat(userId: string, chatId: number) {
   return chat;
 }
 
+export async function findOrCreateChat(userId: string, contactId: string) {
+  const chatInstance = await db.query.chatInstances.findFirst({
+    where(chat, { eq, and }) {
+      return and(eq(chat.ownerId, userId), eq(chat.contactId, contactId));
+    },
+    with: {
+      contact: { columns: { username: true, avatarUrl: true, id: true } },
+      chat: { with: { messages: true } },
+    },
+    columns: {},
+  });
+
+  if (chatInstance)
+    return { contact: chatInstance.contact, ...chatInstance.chat };
+
+  await db.transaction(async (tx) => {
+    const existingChat = await tx.query.chatInstances.findFirst({
+      where(inst, { eq, and }) {
+        return and(eq(inst.contactId, userId), eq(inst.ownerId, contactId));
+      },
+      columns: { chatId: true },
+    });
+    let chatId = existingChat?.chatId;
+    if (!chatId) {
+      const [{ id }] = await tx
+        .insert(chats)
+        .values({})
+        .returning({ id: chats.id });
+      chatId = id;
+    }
+
+    await tx
+      .insert(chatInstances)
+      .values({ chatId, ownerId: userId, contactId });
+  });
+
+  return findOrCreateChat(userId, contactId);
+}
+
 export async function getPost(postId: number) {
   return await db.query.posts.findFirst({
     where(post, { eq }) {
