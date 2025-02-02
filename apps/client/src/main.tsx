@@ -12,6 +12,7 @@ import ReactDOM from "react-dom/client";
 import { useUser } from "./hooks/auth";
 import { api, wsRPC, type ChatContent } from "./lib/api-client";
 import { routeTree } from "./routeTree.gen";
+import type { Chat } from "./routes/_app/chats/$chatId";
 
 export type AppRouter = typeof router;
 declare module "@tanstack/react-router" {
@@ -32,24 +33,30 @@ function createWebSocket(chatId: number) {
     param: { chatId: chatId.toString() },
   });
 
-  webSocket.onopen = () => {
-    console.log("Connected.");
-  };
-
-  webSocket.addEventListener("message", () => {
+  webSocket.onmessage = () => {
     queryClient.invalidateQueries({
       queryKey: ["chat", chatId],
       exact: true,
     });
-  });
+  };
 
-  webSocket.addEventListener("close", () => {
+  webSocket.onclose = () => {
     console.log("Disconnected.");
-
     setTimeout(() => {
       const newSocket = createWebSocket(chatId);
-    }, 2000);
-  });
+      newSocket.onopen = () => {
+        console.log("Reconnected.");
+        queryClient.setQueryData(["chat", chatId], (old: Chat) => ({
+          ...old,
+          webSocket,
+        }));
+        queryClient.invalidateQueries({
+          queryKey: ["chat", chatId],
+          exact: true,
+        });
+      };
+    }, 200);
+  };
 
   return webSocket;
 }
@@ -58,7 +65,13 @@ function cacheChat(chat: ChatContent) {
   const webSocket = createWebSocket(chat.id);
 
   queryClient.setMutationDefaults(["chat", chat.id], {
-    mutationFn: async ({ text }: { text: string }) => {
+    mutationFn: async ({
+      text,
+      webSocket,
+    }: {
+      text: string;
+      webSocket: WebSocket;
+    }) => {
       const res = await api.chats[":chatId"].$post({
         param: { chatId: chat.id },
         json: { text },
@@ -69,8 +82,8 @@ function cacheChat(chat: ChatContent) {
       }
       return;
     },
-    onSuccess: () => {
-      webSocket.send("Message Sent");
+    onSuccess: (d, v) => {
+      v.webSocket.send("Message Sent");
       queryClient.invalidateQueries({
         queryKey: ["chat", chat.id],
         exact: true,
@@ -82,6 +95,7 @@ function cacheChat(chat: ChatContent) {
     gcTime: Infinity,
     staleTime: Infinity,
     queryFn: async () => {
+      const { webSocket } = queryClient.getQueryData(["chat", chat.id]) as Chat;
       const res = await api.chats[":chatId"].$get({
         param: { chatId: chat.id },
       });

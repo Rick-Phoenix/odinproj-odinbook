@@ -39,6 +39,7 @@ export function registerApiRoutes(app: AppOpenAPI) {
             }
             // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
             chatRooms.get(chatId)!.add({ userId, socket: ws });
+            console.log(chatRooms.get(chatId));
           },
           onMessage(event, ws) {
             chatRooms.get(chatId)?.forEach((connection) => {

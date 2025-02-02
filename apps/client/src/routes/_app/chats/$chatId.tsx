@@ -16,7 +16,7 @@ import { chatsQueryOptions } from "../../../main";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 
-interface Chat {
+export interface Chat {
   content: ChatContent;
   webSocket: WebSocket;
 }
@@ -62,7 +62,10 @@ const Chat: FC<{
   contactId: string;
   chatId: number;
 }> = ({ contactAvatar, contactName, messages, contactId, chatId }) => {
-  const { data: chat } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
+  const {
+    data: { content: chat, webSocket },
+  } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
+  console.log(webSocket);
   const form = useForm({
     defaultValues: {
       text: "",
@@ -70,7 +73,7 @@ const Chat: FC<{
     validators: {
       onSubmitAsync: async ({ value }) => {
         try {
-          await handleSendMessage.mutateAsync({ text: value.text });
+          await handleSendMessage.mutateAsync({ text: value.text, webSocket });
           return null;
         } catch (error) {
           if (errorTypeGuard(error)) return error.message;
@@ -84,7 +87,11 @@ const Chat: FC<{
     },
   });
 
-  const handleSendMessage = useMutation<unknown, unknown, { text: string }>({
+  const handleSendMessage = useMutation<
+    unknown,
+    unknown,
+    { text: string; webSocket: WebSocket }
+  >({
     mutationKey: ["chat", chatId],
   });
 
