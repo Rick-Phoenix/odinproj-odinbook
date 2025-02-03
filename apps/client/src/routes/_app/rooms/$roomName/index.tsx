@@ -20,14 +20,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
+import { api } from "../../../../lib/api-client";
 import { lorem2par } from "../../../../utils/lorem";
 
-export const Route = createFileRoute("/_app/rooms/$room/")({
+export const Route = createFileRoute("/_app/rooms/$roomName/")({
   component: RouteComponent,
 });
 
 function RouteComponent() {
-  const { room } = Route.useParams();
+  const { roomName } = Route.useParams();
   return (
     <InsetScrollArea>
       <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
@@ -39,14 +40,14 @@ function RouteComponent() {
             />
           </Avatar>
           <div className="text-center text-2xl font-semibold">
-            r/{title(room)}
+            r/{title(roomName)}
           </div>
           <SubscribeButton />
         </header>
-        <PostPreview title={lorem2par} text={lorem2par} room={room} />
-        <PostPreview title={lorem2par} text={lorem2par} room={room} />
-        <PostPreview title={lorem2par} text={lorem2par} room={room} />
-        <PostPreview title={lorem2par} text={lorem2par} room={room} />
+        <PostPreview title={lorem2par} text={lorem2par} room={roomName} />
+        <PostPreview title={lorem2par} text={lorem2par} room={roomName} />
+        <PostPreview title={lorem2par} text={lorem2par} room={roomName} />
+        <PostPreview title={lorem2par} text={lorem2par} room={roomName} />
       </section>
     </InsetScrollArea>
   );
@@ -55,7 +56,10 @@ function RouteComponent() {
 const SubscribeButton = () => {
   const [isSubscribed, setIsSubcribed] = useState(false);
 
-  const handleSubscribe = () => {
+  const handleSubscribe = async () => {
+    if (!isSubscribed) {
+      await api.rooms[":roomId"].subscribe.$post({ param: { roomId: 1 } });
+    }
     setIsSubcribed(!isSubscribed);
   };
   return (

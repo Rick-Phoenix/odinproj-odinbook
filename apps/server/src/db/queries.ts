@@ -1,7 +1,14 @@
 import { eq } from "drizzle-orm";
 import { lowercase } from "../utils/db-methods";
 import db from "./dbConfig";
-import { chatInstances, chats, messages } from "./schema";
+import {
+  chatInstances,
+  chats,
+  messages,
+  rooms,
+  roomSubs,
+  type roomsCategory,
+} from "./schema";
 
 export async function emailIsNotAvailable(email: string): Promise<boolean> {
   const result = await db.query.users.findFirst({
@@ -155,6 +162,32 @@ export async function getPost(postId: number) {
     },
     with: { comments: true, likes: true },
   });
+}
+
+export async function addSubscription(userId: string, roomId: number) {
+  await db.insert(roomSubs).values({ userId, roomId }).onConflictDoNothing();
+}
+
+export async function fetchRoom(name: string) {
+  const room = await db.query.rooms.findFirst({
+    where: (room, { eq }) => eq(lowercase(room.name), name.toLocaleLowerCase()),
+    with: { posts: { with: { comments: true, likes: true } } },
+  });
+
+  return room;
+}
+
+export async function insertRoom(
+  userId: string,
+  name: string,
+  category: roomsCategory
+) {
+  const [room] = await db
+    .insert(rooms)
+    .values({ creatorId: userId, name, category })
+    .onConflictDoNothing()
+    .returning();
+  return room as typeof room | undefined;
 }
 
 export async function findUserByEmail(email: string) {

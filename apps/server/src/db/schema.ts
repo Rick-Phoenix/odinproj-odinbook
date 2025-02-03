@@ -229,6 +229,7 @@ const roomsCategories = [
   "philosophy",
   "spirituality",
 ] as const;
+export type roomsCategory = (typeof roomsCategories)[number];
 export const roomsCategoriesEnum = pgEnum("roomCategories", roomsCategories);
 
 export const rooms = pgTable("rooms", {

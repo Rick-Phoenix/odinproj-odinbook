@@ -1,3 +1,4 @@
+import { z } from "@hono/zod-openapi";
 import { jsonContent } from "stoker/openapi/helpers";
 
 export function inputErrorResponse(schema: Zod.ZodSchema) {
@@ -7,7 +8,6 @@ export function inputErrorResponse(schema: Zod.ZodSchema) {
   );
 }
 
-import { z } from "@hono/zod-openapi";
 const createInputErrorSchema = (schema: Zod.ZodSchema) => {
   const { error } = schema.safeParse(
     schema._type === z.ZodFirstPartyTypeKind.ZodArray ? [] : {}

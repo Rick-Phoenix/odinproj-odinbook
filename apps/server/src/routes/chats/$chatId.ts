@@ -1,5 +1,9 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { BAD_REQUEST, OK } from "stoker/http-status-codes";
+import {
+  BAD_REQUEST,
+  OK,
+  UNPROCESSABLE_ENTITY,
+} from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { getSingleChat, registerMessage } from "../../db/queries";
 import type {
@@ -13,6 +17,7 @@ import {
   messagesSchema,
 } from "../../types/zod-schemas";
 import { badRequestError } from "../../utils/customErrors";
+import { inputErrorResponse } from "../../utils/inputErrorResponse";
 
 const tags = ["chats"];
 
@@ -28,6 +33,11 @@ export const getChat = createRoute({
   responses: {
     [OK]: jsonContent(chatSchema, "The requested chat."),
     [BAD_REQUEST]: badRequestError.template,
+    [UNPROCESSABLE_ENTITY]: inputErrorResponse(
+      z.object({
+        chatId: numberParamSchema,
+      })
+    ),
   },
 });
 
@@ -55,6 +65,11 @@ export const postMessage = createRoute({
   responses: {
     [OK]: jsonContent(messagesSchema, "The message sent."),
     [BAD_REQUEST]: badRequestError.template,
+    [UNPROCESSABLE_ENTITY]: inputErrorResponse(
+      z.object({
+        chatId: numberParamSchema,
+      })
+    ),
   },
 });
 

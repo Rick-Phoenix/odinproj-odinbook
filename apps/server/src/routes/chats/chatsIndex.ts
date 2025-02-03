@@ -1,5 +1,10 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { BAD_REQUEST, NOT_FOUND, OK } from "stoker/http-status-codes";
+import {
+  BAD_REQUEST,
+  NOT_FOUND,
+  OK,
+  UNPROCESSABLE_ENTITY,
+} from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { findOrCreateChat, getUserChats } from "../../db/queries";
 import type {
@@ -8,6 +13,7 @@ import type {
 } from "../../types/app-bindings";
 import { chatSchema } from "../../types/zod-schemas";
 import { badRequestError, customError } from "../../utils/customErrors";
+import { inputErrorResponse } from "../../utils/inputErrorResponse";
 
 const tags = ["chats"];
 
@@ -55,6 +61,11 @@ export const createChat = createRoute({
     [OK]: jsonContent(chatSchema, "The new chat."),
     [NOT_FOUND]: noUserError.template,
     [BAD_REQUEST]: badRequestError.template,
+    [UNPROCESSABLE_ENTITY]: inputErrorResponse(
+      z.object({
+        contactUsername: z.string(),
+      })
+    ),
   },
 });
 

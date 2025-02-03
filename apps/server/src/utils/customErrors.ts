@@ -1,5 +1,10 @@
 import { z } from "@hono/zod-openapi";
-import { BAD_REQUEST, CONFLICT, UNAUTHORIZED } from "stoker/http-status-codes";
+import {
+  BAD_REQUEST,
+  CONFLICT,
+  NOT_FOUND,
+  UNAUTHORIZED,
+} from "stoker/http-status-codes";
 import { httpCodesMap } from "../lib/constants";
 
 export type CustomError = {
@@ -67,3 +72,5 @@ export const badRequestError = customError(
   },
   BAD_REQUEST
 );
+
+export const notFoundError = customError({ message: "Not Found." }, NOT_FOUND);
