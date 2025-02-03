@@ -8,14 +8,24 @@ import {
   SidebarMenuButton,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link, useLoaderData, useParams } from "@tanstack/react-router";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
+import {
+  Link,
+  useLoaderData,
+  useNavigate,
+  useParams,
+} from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Flag, MessageSquare, Plus } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
 import { useActivePage } from "../hooks/use-active-page";
-import { chatsQueryOptions } from "../main";
+import { api } from "../lib/api-client";
+import { cacheChat, chatsQueryOptions } from "../main";
 import type { Chat } from "../routes/_app/chats/$chatId";
 import { lorem2par } from "../utils/lorem";
 import { ChatDialog } from "./custom/chat-dialog";
@@ -53,6 +63,35 @@ export function SidebarRight({
 
 const UserProfileSidebarContent = () => {
   const profile = useLoaderData({ from: "/_app/users/$username" });
+  const queryClient = useQueryClient();
+  const nav = useNavigate();
+  const createChat = useMutation({
+    mutationKey: ["chat"],
+    mutationFn: async (v: { contactUsername: string }) => {
+      const { contactUsername } = v;
+      const res = await api.chats.$post({ json: { contactUsername } });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error(data.issues[0].message);
+      }
+      return data;
+    },
+    onSuccess(data) {
+      queryClient.setQueryData(["chats"], (old: Chat[]) => [...old, data]);
+      cacheChat(data);
+      nav({ to: "/chats/$chatId", params: { chatId: data.id } });
+    },
+  });
+
+  const handleSendMessage = async () => {
+    const chats = await queryClient.fetchQuery(chatsQueryOptions);
+    const existingChat = chats.find(
+      (chat) => chat.contact.username === profile.username,
+    );
+    if (existingChat)
+      return nav({ to: "/chats/$chatId", params: { chatId: existingChat.id } });
+    createChat.mutate({ contactUsername: profile.username });
+  };
   return (
     <>
       <div className="flex h-32 p-6 pb-0 center">
@@ -76,7 +115,11 @@ const UserProfileSidebarContent = () => {
         </TableBody>
       </Table>
       <SidebarMenu>
-        <Button variant={"outline"} className="mx-2 flex items-center">
+        <Button
+          variant={"outline"}
+          onClick={handleSendMessage}
+          className="mx-2 flex items-center"
+        >
           <MessageSquare />
           <span>Send Message</span>
         </Button>
