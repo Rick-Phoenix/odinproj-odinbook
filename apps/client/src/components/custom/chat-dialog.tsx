@@ -3,9 +3,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { FC, ReactNode } from "react";
 import { z } from "zod";
-import { type ChatContent, api } from "../../lib/api-client";
+import { type Chat, api } from "../../lib/api-client";
 import { cacheChat } from "../../main";
-import type { Chat } from "../../routes/_app/chats/$chatId";
 import { errorTypeGuard } from "../../utils/type-guards";
 import { Button } from "../ui/button";
 import {
@@ -28,7 +27,7 @@ export const ChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
     validators: {
       onSubmitAsync: async ({ value: { contactUsername } }) => {
         const chat = queryClient
-          .getQueryData<ChatContent[]>(["chats"])!
+          .getQueryData<Chat[]>(["chats"])!
           .find((chat) => chat.contact.username === contactUsername);
         if (chat) {
           nav({

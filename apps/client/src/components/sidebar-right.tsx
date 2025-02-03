@@ -24,9 +24,8 @@ import { MessageSquare, Plus } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
 import { useActivePage } from "../hooks/use-active-page";
-import { api } from "../lib/api-client";
+import { api, type Chat } from "../lib/api-client";
 import { cacheChat, chatsQueryOptions } from "../main";
-import type { Chat } from "../routes/_app/chats/$chatId";
 import { ChatDialog } from "./custom/chat-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
@@ -187,9 +186,7 @@ const MarketplaceSidebarContent = () => {
 const ChatSidebarContent = () => {
   const { chatId } = useParams({ from: "/_app/chats/$chatId" });
   const {
-    data: {
-      content: { contact },
-    },
+    data: { contact },
   } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
 
   return (

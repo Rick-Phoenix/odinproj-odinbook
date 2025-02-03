@@ -10,11 +10,11 @@ import {
   QueryClientProvider,
   queryOptions,
 } from "@tanstack/react-query";
-import { RouterProvider, createRouter } from "@tanstack/react-router";
+import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
 import { useUser } from "./hooks/auth";
-import { api, wsRPC, type ChatContent } from "./lib/api-client";
+import { api, wsRPC, type Chat } from "./lib/api-client";
 import { routeTree } from "./routeTree.gen";
 
 export type AppRouter = typeof router;
@@ -46,24 +46,16 @@ export const roomQueryOptions = (roomName: string) =>
     },
   });
 
-function createWebSocket(chatId: number) {
-  const webSocket = wsRPC.ws[":chatId"].$ws({
-    param: { chatId: chatId.toString() },
+export const chatWebSocket = wsRPC.ws.$ws();
+chatWebSocket.addEventListener("message", (e) => {
+  const chatId = +e.data;
+  queryClient.invalidateQueries({
+    queryKey: ["chat", chatId],
+    exact: true,
   });
+});
 
-  webSocket.addEventListener("message", () => {
-    queryClient.invalidateQueries({
-      queryKey: ["chat", chatId],
-      exact: true,
-    });
-  });
-
-  return webSocket;
-}
-
-export function cacheChat(chat: ChatContent) {
-  const webSocket = createWebSocket(chat.id);
-
+export function cacheChat(chat: Chat) {
   queryClient.setMutationDefaults(["chat", chat.id], {
     mutationFn: async ({ text }: { text: string }) => {
       const res = await api.chats[":chatId"].$post({
@@ -77,7 +69,9 @@ export function cacheChat(chat: ChatContent) {
       return;
     },
     onSuccess: () => {
-      webSocket.send("Message Sent");
+      chatWebSocket.send(
+        JSON.stringify({ receiver: chat.contact.id, chatId: chat.id }),
+      );
       queryClient.invalidateQueries({
         queryKey: ["chat", chat.id],
         exact: true,
@@ -94,11 +88,11 @@ export function cacheChat(chat: ChatContent) {
       });
       const data = await res.json();
       if ("issues" in data) throw new Error("Chat not found.");
-      return { content: data, webSocket };
+      return data;
     },
   });
 
-  queryClient.setQueryData(["chat", chat.id], { content: chat, webSocket });
+  queryClient.setQueryData(["chat", chat.id], chat);
 }
 
 export const chatsQueryOptions = {

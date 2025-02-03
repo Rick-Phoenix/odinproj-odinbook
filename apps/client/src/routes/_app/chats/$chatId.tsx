@@ -11,15 +11,10 @@ import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
-import { type ChatContent, type Message } from "../../../lib/api-client";
+import { type Chat, type Message } from "../../../lib/api-client";
 import { chatsQueryOptions } from "../../../main";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
-
-export interface Chat {
-  content: ChatContent;
-  webSocket: WebSocket;
-}
 
 export const Route = createFileRoute("/_app/chats/$chatId")({
   component: RouteComponent,
@@ -37,9 +32,9 @@ export const Route = createFileRoute("/_app/chats/$chatId")({
 
 function RouteComponent() {
   const { chatId } = Route.useParams();
-  const {
-    data: { content: chat },
-  } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
+  const { data: chat } = useSuspenseQuery<Chat>({
+    queryKey: ["chat", chatId],
+  });
   return (
     <>
       {chat && (
@@ -62,7 +57,9 @@ const Chat: FC<{
   contactId: string;
   chatId: number;
 }> = ({ contactAvatar, contactName, messages, contactId, chatId }) => {
-  const { data: chat } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
+  const { data: chat } = useSuspenseQuery<Chat>({
+    queryKey: ["chat", chatId],
+  });
   const form = useForm({
     defaultValues: {
       text: "",
@@ -109,7 +106,7 @@ const Chat: FC<{
       <section className="flex h-full flex-col justify-between rounded-xl bg-muted/50">
         <Link
           to="/users/$username"
-          params={{ username: chat.content.contact.username }}
+          params={{ username: chat.contact.username }}
           className="flex h-28 w-full items-center justify-between rounded-xl rounded-b-none bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
         >
           <Avatar>
