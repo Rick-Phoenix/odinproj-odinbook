@@ -40,13 +40,13 @@ export async function fetchUserProfile(username: string) {
       comments: {
         with: {
           post: {
-            columns: { title: true },
+            columns: { title: true, id: true },
             with: { room: { columns: { name: true } } },
           },
         },
       },
       posts: {
-        columns: { text: true, title: true },
+        columns: { text: true, title: true, id: true, createdAt: true },
         with: { room: { columns: { name: true } } },
       },
       listingsCreated: { with: { pics: true } },

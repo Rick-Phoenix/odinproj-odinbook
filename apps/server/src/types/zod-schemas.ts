@@ -59,6 +59,7 @@ export const profileSchema = userSchema
         post: z.object({
           title: z.string(),
           room: z.object({ name: z.string() }),
+          id: z.number(),
         }),
       })
     ),
@@ -69,6 +70,8 @@ export const profileSchema = userSchema
         room: z.object({
           name: z.string(),
         }),
+        id: z.number(),
+        createdAt: z.string(),
       })
     ),
     listingsCreated: z.array(listingSchema),

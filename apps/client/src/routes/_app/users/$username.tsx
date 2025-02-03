@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { title } from "radashi";
 import type { FC } from "react";
 import { InsetScrollArea } from "../../../components/custom/sidebar-wrapper";
@@ -10,7 +10,6 @@ import {
   TabsTrigger,
 } from "../../../components/ui/tabs";
 import { api } from "../../../lib/api-client";
-import { lorem1par } from "../../../utils/lorem";
 
 export const Route = createFileRoute("/_app/users/$username")({
   component: RouteComponent,
@@ -47,7 +46,6 @@ function RouteComponent() {
     return d1 > d2 ? -1 : d1 === d2 ? 0 : 1;
   });
 
-  console.log(postingHistory);
   return (
     <InsetScrollArea>
       <section className="grid min-h-[80vh] max-w-full grid-rows-[auto_1fr] items-center gap-4 rounded-xl bg-muted/50">
@@ -68,12 +66,25 @@ function RouteComponent() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="rooms">
-            {/* {postingHistory.map((item)=> {
-              'title' in item ? <CommentHistoryItem
-            })} */}
-            <CommentHistoryItem room="cats" />
-            <CommentHistoryItem room="cats" />
-            <CommentHistoryItem room="cats" />
+            {postingHistory.map((item, i) => {
+              return "title" in item ? (
+                <PostPreview
+                  key={i}
+                  room={item.room.name}
+                  title={item.title}
+                  text={item.text}
+                  postId={item.id}
+                />
+              ) : (
+                <CommentPreview
+                  key={i}
+                  room={item.post.room.name}
+                  text={item.text}
+                  postTitle={item.post.title}
+                  postId={item.post.id}
+                />
+              );
+            })}
           </TabsContent>
           <TabsContent value="marketplace">
             <MarketplaceHistoryItem />
@@ -103,18 +114,51 @@ const MarketplaceHistoryItem = () => {
   );
 };
 
-const CommentHistoryItem: FC<{
+const PostPreview: FC<{
+  room: string;
+  title: string;
+  text: string;
+  postId: number;
+}> = ({ room, title: postTitle, text, postId }) => {
+  return (
+    <Link
+      to={"/rooms/$room/posts/$postId"}
+      params={{ postId, room }}
+      className="mt-4 flex h-fit w-full gap-8 rounded-xl bg-muted p-6 py-4 hover:bg-muted-foreground/30 hover:text-foreground"
+    >
+      <div className="grid w-full grid-cols-1 grid-rows-[auto_1fr_1fr]">
+        <Link to={"/rooms/$room"} params={{ room }}>
+          r/{title(room)}
+        </Link>
+        <div className="text-xl font-semibold">{postTitle}</div>
+        <div className="mt-2">{text}</div>
+      </div>
+    </Link>
+  );
+};
+
+const CommentPreview: FC<{
   room: string;
   postTitle: string;
-  comment: string;
-}> = ({ room, postTitle, comment }) => {
+  text: string;
+  postId: number;
+}> = ({ room, postTitle, text, postId }) => {
   return (
-    <div className="mt-4 flex min-h-40 w-full gap-8 rounded-xl bg-muted p-6 py-4 hover:bg-muted-foreground/30 hover:text-foreground">
-      <div className="grid w-full grid-cols-1 grid-rows-[auto_1fr_1fr] gap-2">
-        <div>r/{title(room)}</div>
-        <div className="text-xl font-semibold">{lorem1par}</div>
-        <div>{lorem1par}</div>
+    <Link
+      to={"/rooms/$room/posts/$postId"}
+      params={{ postId, room }}
+      className="mt-4 flex h-fit w-full gap-8 rounded-xl bg-muted p-6 py-4 hover:bg-muted-foreground/30 hover:text-foreground"
+    >
+      <div className="grid w-full auto-rows-min grid-cols-1">
+        <div className="flex gap-2">
+          <Link to={"/rooms/$room"} params={{ room }}>
+            r/{title(room)}
+          </Link>
+          <div> | </div>
+          <div className="text-l font-semibold">{postTitle}</div>
+        </div>
+        <div className="mt-2">{text}</div>
       </div>
-    </div>
+    </Link>
   );
 };
