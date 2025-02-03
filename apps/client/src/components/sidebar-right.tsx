@@ -8,14 +8,13 @@ import {
   SidebarMenuButton,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { Link, useParams } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import { Link, useLoaderData, useParams } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Flag, MessageSquare, Plus } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
 import { useActivePage } from "../hooks/use-active-page";
-import type { Profile } from "../lib/api-client";
 import { chatsQueryOptions } from "../main";
 import type { Chat } from "../routes/_app/chats/$chatId";
 import { lorem2par } from "../utils/lorem";
@@ -53,9 +52,7 @@ export function SidebarRight({
 }
 
 const UserProfileSidebarContent = () => {
-  const { subSection: username } = useActivePage();
-  const queryClient = useQueryClient();
-  const profile: Profile = queryClient.getQueryData(["profile", username])!;
+  const profile = useLoaderData({ from: "/_app/users/$username" });
   return (
     <>
       <div className="flex h-32 p-6 pb-0 center">
