@@ -9,16 +9,28 @@ import {
   SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
+import { format } from "date-fns";
 import { Flag, MessageSquare, Plus } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
 import { useActivePage } from "../hooks/use-active-page";
+import type { Profile } from "../lib/api-client";
 import { chatsQueryOptions } from "../main";
 import { ChatDialog } from "../routes/_app/chats";
+import type { Chat } from "../routes/_app/chats/$chatId";
 import { lorem2par } from "../utils/lorem";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { Button } from "./ui/button";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 import { ScrollArea } from "./ui/scroll-area";
 import { Table, TableBody, TableCell, TableRow } from "./ui/table";
 
@@ -49,8 +61,31 @@ export function SidebarRight({
 }
 
 const UserProfileSidebarContent = () => {
+  const { subSection: username } = useActivePage();
+  const queryClient = useQueryClient();
+  const profile: Profile = queryClient.getQueryData(["profile", username])!;
   return (
     <>
+      <div className="flex h-32 p-6 pb-0 center">
+        <Avatar className="h-full w-auto">
+          <AvatarImage
+            src={profile.avatarUrl}
+            alt={`${profile.username} profile picture`}
+          />
+        </Avatar>
+      </div>
+      <div className="p-4 pt-0 text-center text-lg font-semibold">
+        {profile.username}
+      </div>
+      <Table className="w-full">
+        <TableBody>
+          <TableRow>
+            <TableCell>Member Since:</TableCell>
+            <TableCell className="text-right">{`${format(new Date(profile.createdAt), "MMM do y")}`}</TableCell>
+          </TableRow>
+          <TableRow>{profile.status}</TableRow>
+        </TableBody>
+      </Table>
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton className="[&_svg]:size-5">
@@ -59,10 +94,29 @@ const UserProfileSidebarContent = () => {
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton className="[&_svg]:size-5">
-            <Flag />
-            <span>Report User</span>
-          </SidebarMenuButton>
+          <Dialog>
+            <DialogTrigger asChild>
+              <SidebarMenuButton className="[&_svg]:size-5">
+                <Flag />
+                <span>Report User</span>
+              </SidebarMenuButton>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle className="text-center">
+                  Are you sure you want to report this user?
+                </DialogTitle>
+              </DialogHeader>
+              <div className="mt-3 flex w-full justify-center gap-3">
+                <DialogClose asChild>
+                  <Button size={"lg"}>Cancel</Button>
+                </DialogClose>
+                <Button variant={"destructive"} size={"lg"}>
+                  Report
+                </Button>
+              </div>
+            </DialogContent>
+          </Dialog>
         </SidebarMenuItem>
       </SidebarMenu>
     </>
@@ -127,60 +181,47 @@ const MarketplaceSidebarContent = () => {
   );
 };
 
+const ChatSidebarContent = () => {
+  const { chatId } = useParams({ from: "/_app/chats/$chatId" });
+  const {
+    data: {
+      content: { contact },
+    },
+  } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
+
+  return (
+    <>
+      <div className="flex h-32 p-6 pb-0 center">
+        <Avatar className="h-full w-auto">
+          <AvatarImage
+            src={contact.avatarUrl}
+            alt={`${contact.username} profile picture`}
+          />
+        </Avatar>
+      </div>
+      <div className="p-4 text-center text-lg font-semibold">
+        {contact.username}
+      </div>
+      <Button className="mx-2" variant={"outline"} asChild>
+        <Link to={"/users/$username"} params={{ username: contact.username }}>
+          View Profile
+        </Link>
+      </Button>
+      <Button variant={"outline"} className="mx-2 flex items-center">
+        <Flag />
+        <span>Report User</span>
+      </Button>
+    </>
+  );
+};
+
 const ChatsSidebarContent = () => {
   const { subSection, mainSection, activePage } = useActivePage();
   const { data: chats } = useSuspenseQuery(chatsQueryOptions);
+
+  if (subSection) return <ChatSidebarContent />;
   return (
     <>
-      {subSection && (
-        <>
-          <div className="flex h-32 p-6 pb-0 center">
-            <Avatar className="h-full w-auto">
-              <AvatarImage
-                src={"https://github.com/shadcn.png"}
-                alt={`profile picture`}
-              />
-            </Avatar>
-          </div>
-          <div className="p-4 text-center text-lg font-semibold">
-            {title(subSection)}
-          </div>
-          <Table className="w-full">
-            <TableBody>
-              <TableRow>
-                <TableCell>Member Since:</TableCell>
-                <TableCell className="text-right">20002</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Most Active Rooms:</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell>Member Since:</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell>Member Since:</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Status:</TableCell>
-                <TableCell></TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell></TableCell>
-                <TableCell className="text-right">
-                  Just here for the biscuits!
-                </TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-          <SidebarMenuButton className="flex items-center">
-            <Flag />
-            <span>Report User</span>
-          </SidebarMenuButton>
-        </>
-      )}
       {mainSection === activePage && (
         <SidebarMenu>
           <SidebarMenuItem>

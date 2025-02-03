@@ -1,7 +1,7 @@
 import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Send } from "lucide-react";
 import { title } from "radashi";
@@ -107,7 +107,11 @@ const Chat: FC<{
   return (
     <StaticInset>
       <section className="flex h-full flex-col justify-between rounded-xl bg-muted/50">
-        <div className="flex h-28 w-full items-center justify-between rounded-xl rounded-b-none bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
+        <Link
+          to="/users/$username"
+          params={{ username: chat.content.contact.username }}
+          className="flex h-28 w-full items-center justify-between rounded-xl rounded-b-none bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
+        >
           <Avatar>
             <AvatarImage
               src={contactAvatar}
@@ -115,7 +119,7 @@ const Chat: FC<{
             />
           </Avatar>
           <div className="text-lg font-semibold">{title(contactName)}</div>
-        </div>
+        </Link>
 
         <ScrollArea className="h-full w-full" viewportRef={viewportRef}>
           <div className="grid w-full gap-8 rounded-xl p-8">
@@ -127,7 +131,6 @@ const Chat: FC<{
                   isFromUser={isFromUser}
                   text={message.text}
                   createdAt={message.createdAt}
-                  // ref={i === a.length - 1 ? viewportRef : null}
                 />
               );
             })}
