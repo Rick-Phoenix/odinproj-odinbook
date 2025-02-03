@@ -116,7 +116,7 @@ export const loginValidationSchema = insertUserSchema.pick({
 });
 
 export const insertRoomSchema = createInsertSchema(rooms)
-  .pick({ category: true, name: true })
+  .pick({ category: true, name: true, description: true })
   .extend({
     name: z.string().max(20, "The name cannot be longer than 20 characters."),
   });

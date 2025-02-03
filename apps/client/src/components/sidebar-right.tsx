@@ -27,7 +27,6 @@ import { useActivePage } from "../hooks/use-active-page";
 import { api } from "../lib/api-client";
 import { cacheChat, chatsQueryOptions } from "../main";
 import type { Chat } from "../routes/_app/chats/$chatId";
-import { lorem2par } from "../utils/lorem";
 import { ChatDialog } from "./custom/chat-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
@@ -49,7 +48,7 @@ export function SidebarRight({
       </SidebarHeader>
       <ScrollArea className="[&_.scrollbar]:bg-muted-foreground/20">
         <SidebarContent>
-          {mainSection === "rooms" && <RoomsSidebarContent />}
+          {mainSection === "rooms" && <RoomsIndexSidebarContent />}
           {mainSection === "chats" && <ChatsSidebarContent />}
           {mainSection === "marketplace" && <MarketplaceSidebarContent />}
           {mainSection === "users" && <UserProfileSidebarContent />}
@@ -259,7 +258,7 @@ const ChatsSidebarContent = () => {
   );
 };
 
-const RoomsSidebarContent = () => {
+const RoomsIndexSidebarContent = () => {
   const { mainSection, subSection, activePage } = useActivePage();
   return (
     <>
@@ -312,34 +311,7 @@ const RoomsSidebarContent = () => {
         </>
       )}
 
-      {subSection && (
-        <>
-          <div className="flex h-32 p-6 pb-0 center">
-            <Avatar className="h-full w-auto">
-              <AvatarImage
-                src={"https://github.com/shadcn.png"}
-                alt={`profile picture`}
-              />
-            </Avatar>
-          </div>
-          <div className="p-4 text-center text-lg font-semibold">
-            r/{title(subSection)}
-          </div>
-          <Table className="w-full">
-            <TableBody>
-              <TableRow>
-                <TableCell>Active Members:</TableCell>
-                <TableCell className="text-right">20002</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Created On:</TableCell>
-                <TableCell className="text-right">22 October 2023</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
-          <div className="p-6">{lorem2par}</div>
-        </>
-      )}
+      {subSection && <RoomSidebarContent />}
     </>
   );
 };
@@ -353,8 +325,8 @@ const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({
       <SidebarMenuButton asChild className="size-full">
         <Link
           className="flex items-center justify-between gap-2"
-          to="/rooms/$room/posts"
-          params={{ room: roomName }}
+          to="/rooms/$roomName"
+          params={{ roomName }}
         >
           <Avatar>
             <AvatarImage src={roomAvatar} alt={roomName} />
@@ -364,5 +336,34 @@ const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({
         </Link>
       </SidebarMenuButton>
     </li>
+  );
+};
+
+const RoomSidebarContent = () => {
+  const room = useLoaderData({ from: "/_app/rooms/$roomName/" });
+  return (
+    <>
+      <div className="flex h-32 p-6 pb-0 center">
+        <Avatar className="h-full w-auto">
+          <AvatarImage src={room.avatar} alt={`${room.name} avatar`} />
+        </Avatar>
+      </div>
+      <div className="p-4 text-center text-lg font-semibold">
+        r/{title(room.name)}
+      </div>
+      <Table className="w-full">
+        <TableBody>
+          <TableRow>
+            <TableCell>Active Members:</TableCell>
+            <TableCell className="text-right">20002</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell>Created On:</TableCell>
+            <TableCell className="text-right">22 October 2023</TableCell>
+          </TableRow>
+        </TableBody>
+      </Table>
+      <div className="p-6">{room.description}</div>
+    </>
   );
 };

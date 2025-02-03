@@ -21,33 +21,39 @@ import {
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
 import { api } from "../../../../lib/api-client";
+import { roomQueryOptions } from "../../../../main";
 import { lorem2par } from "../../../../utils/lorem";
 
 export const Route = createFileRoute("/_app/rooms/$roomName/")({
   component: RouteComponent,
+  loader: async (c) => {
+    const { roomName } = c.params;
+    const room = await c.context.queryClient.fetchQuery(
+      roomQueryOptions(roomName),
+    );
+    console.log(room);
+    return room;
+  },
 });
 
 function RouteComponent() {
-  const { roomName } = Route.useParams();
+  const { name, avatar } = Route.useLoaderData();
   return (
     <InsetScrollArea>
       <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
         <header className="flex h-28 w-full items-center justify-between rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
           <Avatar className="h-full w-auto">
-            <AvatarImage
-              src={"https://github.com/shadcn.png"}
-              alt={`profile picture`}
-            />
+            <AvatarImage src={avatar} alt={`${name} avatar`} />
           </Avatar>
           <div className="text-center text-2xl font-semibold">
-            r/{title(roomName)}
+            r/{title(name)}
           </div>
           <SubscribeButton />
         </header>
-        <PostPreview title={lorem2par} text={lorem2par} room={roomName} />
-        <PostPreview title={lorem2par} text={lorem2par} room={roomName} />
-        <PostPreview title={lorem2par} text={lorem2par} room={roomName} />
-        <PostPreview title={lorem2par} text={lorem2par} room={roomName} />
+        <PostPreview title={lorem2par} text={lorem2par} room={name} />
+        <PostPreview title={lorem2par} text={lorem2par} room={name} />
+        <PostPreview title={lorem2par} text={lorem2par} room={name} />
+        <PostPreview title={lorem2par} text={lorem2par} room={name} />
       </section>
     </InsetScrollArea>
   );

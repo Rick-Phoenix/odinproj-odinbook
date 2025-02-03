@@ -33,7 +33,7 @@ function RouteComponent() {
             </Button>
           </ChatDialog>
         </header>
-        {chats.length &&
+        {chats.length > 0 &&
           chats.map((chat) => (
             <ChatPreview
               key={chat.id}

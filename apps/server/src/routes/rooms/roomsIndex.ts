@@ -23,7 +23,7 @@ export const createRoom = createRoute({
   method: "post",
   tags,
   request: {
-    body: jsonContentRequired(insertRoomSchema, "The room name and category."),
+    body: jsonContentRequired(insertRoomSchema, "The data for the room."),
   },
   responses: {
     [OK]: jsonContent(roomSchema.omit({ posts: true }), "The created room."),

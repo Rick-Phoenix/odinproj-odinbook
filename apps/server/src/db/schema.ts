@@ -232,13 +232,25 @@ const roomsCategories = [
 export type roomsCategory = (typeof roomsCategories)[number];
 export const roomsCategoriesEnum = pgEnum("roomCategories", roomsCategories);
 
-export const rooms = pgTable("rooms", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  name: text("name").notNull().unique(),
-  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
-  creatorId: text("creatorId").references(() => users.id),
-  category: roomsCategoriesEnum().notNull(),
-});
+export const rooms = pgTable(
+  "rooms",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    name: text("name").notNull().unique(),
+    createdAt: timestamp("createdAt", { mode: "string" })
+      .defaultNow()
+      .notNull(),
+    creatorId: text("creatorId").references(() => users.id),
+    category: roomsCategoriesEnum().notNull(),
+    avatar: text("avatar")
+      .notNull()
+      .default(
+        "https://res.cloudinary.com/dqjizh49f/image/upload/v1738602566/Nexus/foq8r5a5lczqphdexyy3.jpg"
+      ),
+    description: text("description"),
+  },
+  (t) => [uniqueIndex("uniqueRoomIndex").on(lowercase(trim(t.name)))]
+);
 
 export const roomsRelations = relations(rooms, ({ many, one }) => ({
   creator: one(users, {

@@ -5,7 +5,11 @@ import "vite/modulepreload-polyfill";
 
 import "./styles/index.css";
 
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  queryOptions,
+} from "@tanstack/react-query";
 import { RouterProvider, createRouter } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
@@ -28,6 +32,19 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+export const roomQueryOptions = (roomName: string) =>
+  queryOptions({
+    queryKey: ["room", roomName],
+    queryFn: async () => {
+      const res = await api.rooms[":roomName"].$get({ param: { roomName } });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("Room not found.");
+      }
+      return data;
+    },
+  });
 
 function createWebSocket(chatId: number) {
   const webSocket = wsRPC.ws[":chatId"].$ws({
@@ -90,9 +107,10 @@ export const chatsQueryOptions = {
     const res = await api.chats.$get();
     const data = await res.json();
     if ("issues" in data) throw Error("Server Error");
-    for (const chat of data) {
-      cacheChat(chat);
-    }
+    if (data.length > 0)
+      for (const chat of data) {
+        cacheChat(chat);
+      }
     return data;
   },
 };

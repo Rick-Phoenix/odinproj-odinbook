@@ -22,7 +22,10 @@ export const getChats = createRoute({
   method: "get",
   tags,
   responses: {
-    [OK]: jsonContent(z.array(chatSchema), "The requested chat."),
+    [OK]: jsonContent(
+      z.array(chatSchema).or(z.array(z.any()).length(0)),
+      "The requested chats."
+    ),
     [BAD_REQUEST]: badRequestError.template,
   },
 });

@@ -74,7 +74,7 @@ export async function getUserChats(userId: string) {
     columns: {},
   });
 
-  if (chats.length === 0) return null;
+  if (chats.length === 0) return chats;
 
   return chats.map((item) => ({ contact: item.contact, ...item.chat }));
 }
