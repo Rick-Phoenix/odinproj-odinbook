@@ -21,16 +21,9 @@ import { chatsQueryOptions } from "../main";
 import { ChatDialog } from "../routes/_app/chats";
 import type { Chat } from "../routes/_app/chats/$chatId";
 import { lorem2par } from "../utils/lorem";
+import ReportDialog from "./custom/report-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "./ui/dialog";
 import { ScrollArea } from "./ui/scroll-area";
 import { Table, TableBody, TableCell, TableRow } from "./ui/table";
 
@@ -94,29 +87,12 @@ const UserProfileSidebarContent = () => {
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <Dialog>
-            <DialogTrigger asChild>
-              <SidebarMenuButton className="[&_svg]:size-5">
-                <Flag />
-                <span>Report User</span>
-              </SidebarMenuButton>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle className="text-center">
-                  Are you sure you want to report this user?
-                </DialogTitle>
-              </DialogHeader>
-              <div className="mt-3 flex w-full justify-center gap-3">
-                <DialogClose asChild>
-                  <Button size={"lg"}>Cancel</Button>
-                </DialogClose>
-                <Button variant={"destructive"} size={"lg"}>
-                  Report
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <ReportDialog>
+            <SidebarMenuButton className="[&_svg]:size-5">
+              <Flag />
+              <span>Report User</span>
+            </SidebarMenuButton>
+          </ReportDialog>
         </SidebarMenuItem>
       </SidebarMenu>
     </>
@@ -207,10 +183,12 @@ const ChatSidebarContent = () => {
           View Profile
         </Link>
       </Button>
-      <Button variant={"outline"} className="mx-2 flex items-center">
-        <Flag />
-        <span>Report User</span>
-      </Button>
+      <ReportDialog>
+        <Button variant={"outline"} className="mx-2 flex items-center">
+          <Flag />
+          <span>Report User</span>
+        </Button>
+      </ReportDialog>
     </>
   );
 };
