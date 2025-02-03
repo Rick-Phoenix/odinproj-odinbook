@@ -12,7 +12,8 @@
     "skipLibCheck": true,
     "moduleDetection": "force",
     "noUncheckedSideEffectImports": true,
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "incremental": true
     // "preserveSymlinks": true
   },
 

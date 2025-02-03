@@ -54,8 +54,23 @@ export const profileSchema = userSchema
     username: true,
   })
   .extend({
-    comments: z.array(commentSchema),
-    posts: z.array(postSchema),
+    comments: z.array(
+      commentSchema.extend({
+        post: z.object({
+          title: z.string(),
+          room: z.object({ name: z.string() }),
+        }),
+      })
+    ),
+    posts: z.array(
+      z.object({
+        text: z.string(),
+        title: z.string(),
+        room: z.object({
+          name: z.string(),
+        }),
+      })
+    ),
     listingsCreated: z.array(listingSchema),
   });
 

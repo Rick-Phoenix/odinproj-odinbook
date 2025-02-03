@@ -20,11 +20,13 @@ declare module "@tanstack/react-router" {
   }
 }
 
-const queryClient = new QueryClient();
-
-queryClient.setQueryDefaults(["chat"], {
-  gcTime: Infinity,
-  staleTime: Infinity,
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      gcTime: Infinity,
+      staleTime: Infinity,
+    },
+  },
 });
 
 function createWebSocket(chatId: number) {
@@ -93,8 +95,6 @@ export const chatsQueryOptions = {
     }
     return data;
   },
-  gcTime: Infinity,
-  staleTime: Infinity,
 };
 
 const router = createRouter({

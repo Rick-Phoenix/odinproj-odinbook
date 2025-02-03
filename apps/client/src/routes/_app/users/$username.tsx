@@ -9,23 +9,51 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../../components/ui/tabs";
+import { api } from "../../../lib/api-client";
 import { lorem1par } from "../../../utils/lorem";
 
 export const Route = createFileRoute("/_app/users/$username")({
   component: RouteComponent,
+  loader: async (ctx) => {
+    const { username } = ctx.params;
+    return await ctx.context.queryClient.ensureQueryData({
+      queryKey: ["profile", username],
+      queryFn: async () => {
+        const res = await api.users[":username"].$get({ param: { username } });
+        const data = await res.json();
+        if ("issues" in data) {
+          throw new Error("Could not fetch user.");
+        }
+        return data;
+      },
+    });
+  },
 });
 
 function RouteComponent() {
-  const { username } = Route.useParams();
+  const {
+    username,
+    avatarUrl,
+    comments,
+    createdAt,
+    listingsCreated,
+    posts,
+    status,
+  } = Route.useLoaderData();
+
+  const postingHistory = [...comments, ...posts].sort((a, b) => {
+    const d1 = new Date(a.createdAt);
+    const d2 = new Date(b.createdAt);
+    return d1 > d2 ? -1 : d1 === d2 ? 0 : 1;
+  });
+
+  console.log(postingHistory);
   return (
     <InsetScrollArea>
       <section className="grid min-h-[80vh] max-w-full grid-rows-[auto_1fr] items-center gap-4 rounded-xl bg-muted/50">
         <header className="flex h-56 w-full items-center justify-center gap-8 rounded-xl bg-muted p-8 hover:text-foreground">
           <Avatar className="h-full w-auto">
-            <AvatarImage
-              src={"https://github.com/shadcn.png"}
-              alt={`${username} profile picture`}
-            />
+            <AvatarImage src={avatarUrl} alt={`${avatarUrl} profile picture`} />
           </Avatar>
           <h3 className="w-fit text-2xl font-semibold">{username}</h3>
         </header>
@@ -40,6 +68,9 @@ function RouteComponent() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="rooms">
+            {/* {postingHistory.map((item)=> {
+              'title' in item ? <CommentHistoryItem
+            })} */}
             <CommentHistoryItem room="cats" />
             <CommentHistoryItem room="cats" />
             <CommentHistoryItem room="cats" />

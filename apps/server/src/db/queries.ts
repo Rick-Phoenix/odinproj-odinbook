@@ -37,8 +37,18 @@ export async function fetchUserProfile(username: string) {
     },
     columns: { avatarUrl: true, username: true, createdAt: true, status: true },
     with: {
-      comments: true,
-      posts: true,
+      comments: {
+        with: {
+          post: {
+            columns: { title: true },
+            with: { room: { columns: { name: true } } },
+          },
+        },
+      },
+      posts: {
+        columns: { text: true, title: true },
+        with: { room: { columns: { name: true } } },
+      },
       listingsCreated: { with: { pics: true } },
       roomSubscriptions: true,
     },
