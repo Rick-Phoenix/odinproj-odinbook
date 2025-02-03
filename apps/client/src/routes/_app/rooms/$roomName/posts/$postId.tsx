@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import InsetScrollArea from "../../../../../components/custom/sidebar-wrapper";
+import InsetScrollArea from "../../../../../components/custom/inset-scrollarea";
 import Post from "../../../../../pages/Post";
 
 export const Route = createFileRoute("/_app/rooms/$roomName/posts/$postId")({

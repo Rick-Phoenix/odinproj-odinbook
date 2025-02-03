@@ -4,7 +4,7 @@ import { PiStar } from "react-icons/pi";
 import "swiper/css/navigation";
 import { Navigation } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import InsetScrollArea from "../../../../components/custom/sidebar-wrapper";
+import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
 import { Button } from "../../../../components/ui/button";
 import {
   Popover,

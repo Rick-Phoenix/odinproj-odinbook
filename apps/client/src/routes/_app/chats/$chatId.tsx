@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { Send } from "lucide-react";
 import { title } from "radashi";
 import { useEffect, useRef, type FC } from "react";
-import StaticInset from "../../../components/custom/sidebar-wrapper";
+import StaticInset from "../../../components/custom/static-inset";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";

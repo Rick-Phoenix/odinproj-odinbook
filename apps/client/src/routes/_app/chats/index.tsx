@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { SquarePen } from "lucide-react";
 import type { FC } from "react";
 import ChatDialog from "../../../components/custom/chat-dialog";
-import InsetScrollArea from "../../../components/custom/sidebar-wrapper";
+import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { chatsQueryOptions } from "../../../main";
