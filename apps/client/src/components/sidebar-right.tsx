@@ -6,7 +6,6 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuButton,
-  SidebarMenuItem,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
@@ -18,9 +17,9 @@ import type { FC } from "react";
 import { useActivePage } from "../hooks/use-active-page";
 import type { Profile } from "../lib/api-client";
 import { chatsQueryOptions } from "../main";
-import { ChatDialog } from "../routes/_app/chats";
 import type { Chat } from "../routes/_app/chats/$chatId";
 import { lorem2par } from "../utils/lorem";
+import { ChatDialog } from "./custom/chat-dialog";
 import ReportDialog from "./custom/report-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
@@ -80,20 +79,16 @@ const UserProfileSidebarContent = () => {
         </TableBody>
       </Table>
       <SidebarMenu>
-        <SidebarMenuItem>
-          <SidebarMenuButton className="[&_svg]:size-5">
-            <MessageSquare />
-            <span>Send Message</span>
-          </SidebarMenuButton>
-        </SidebarMenuItem>
-        <SidebarMenuItem>
-          <ReportDialog>
-            <SidebarMenuButton className="[&_svg]:size-5">
-              <Flag />
-              <span>Report User</span>
-            </SidebarMenuButton>
-          </ReportDialog>
-        </SidebarMenuItem>
+        <Button variant={"outline"} className="mx-2 flex items-center">
+          <MessageSquare />
+          <span>Send Message</span>
+        </Button>
+        <ReportDialog>
+          <Button variant={"outline"} className="mx-2 flex items-center">
+            <Flag />
+            <span>Report User</span>
+          </Button>
+        </ReportDialog>
       </SidebarMenu>
     </>
   );
@@ -202,14 +197,13 @@ const ChatsSidebarContent = () => {
     <>
       {mainSection === activePage && (
         <SidebarMenu>
-          <SidebarMenuItem>
-            <ChatDialog>
-              <SidebarMenuButton className="[&_svg]:size-5">
-                <Plus />
-                <span>Create Chat</span>
-              </SidebarMenuButton>
-            </ChatDialog>
-          </SidebarMenuItem>
+          <ChatDialog>
+            <Button variant={"outline"} size={"lg"} className="[&_svg]:size-5">
+              <Plus />
+              <span>Create Chat</span>
+            </Button>
+          </ChatDialog>
+
           <ul className="flex flex-col justify-center gap-2 pt-6">
             {chats.map((chat) => (
               <li key={chat.id}>
