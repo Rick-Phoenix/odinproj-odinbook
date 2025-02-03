@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { title } from "radashi";
 import { useState } from "react";
 import { PostPreview } from "../../../../components/custom/post-preview";
-import { InsetScrollArea } from "../../../../components/custom/sidebar-wrapper";
+import InsetScrollArea from "../../../../components/custom/sidebar-wrapper";
 import ButtonGesture from "../../../../components/motion/gestures";
 import { Avatar, AvatarImage } from "../../../../components/ui/avatar";
 import { Button } from "../../../../components/ui/button";

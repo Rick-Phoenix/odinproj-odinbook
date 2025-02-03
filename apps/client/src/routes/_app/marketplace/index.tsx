@@ -15,7 +15,7 @@ import "swiper/css/effect-coverflow";
 import "swiper/css/pagination";
 
 import { HandCoins } from "lucide-react";
-import { InsetScrollArea } from "../../../components/custom/sidebar-wrapper";
+import InsetScrollArea from "../../../components/custom/sidebar-wrapper";
 import { Button } from "../../../components/ui/button";
 
 export const Route = createFileRoute("/_app/marketplace/")({

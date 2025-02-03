@@ -17,7 +17,7 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-export const ChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
+const ChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
   const queryClient = useQueryClient();
   const nav = useNavigate();
   const form = useForm({
@@ -126,3 +126,5 @@ export const ChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
     </Dialog>
   );
 };
+
+export default ChatDialog;

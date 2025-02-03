@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { InsetScrollArea } from "../../../components/custom/sidebar-wrapper";
+import InsetScrollArea from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 
 export const Route = createFileRoute("/_app/rooms/starred")({

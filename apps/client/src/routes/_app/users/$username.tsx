@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { title } from "radashi";
 import type { FC } from "react";
-import { InsetScrollArea } from "../../../components/custom/sidebar-wrapper";
+import InsetScrollArea from "../../../components/custom/sidebar-wrapper";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import {
   Tabs,

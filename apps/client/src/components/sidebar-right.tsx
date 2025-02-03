@@ -26,7 +26,7 @@ import type { FC } from "react";
 import { useActivePage } from "../hooks/use-active-page";
 import { api, type Chat } from "../lib/api-client";
 import { cacheChat, chatsQueryOptions } from "../main";
-import { ChatDialog } from "./custom/chat-dialog";
+import ChatDialog from "./custom/chat-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
