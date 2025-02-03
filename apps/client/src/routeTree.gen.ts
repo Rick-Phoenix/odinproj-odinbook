@@ -20,6 +20,7 @@ import { Route as AppRoomsIndexImport } from './routes/_app/rooms/index'
 import { Route as AppMarketplaceIndexImport } from './routes/_app/marketplace/index'
 import { Route as AppChatsIndexImport } from './routes/_app/chats/index'
 import { Route as AppUsersUsernameImport } from './routes/_app/users/$username'
+import { Route as AppRoomsStarredImport } from './routes/_app/rooms/starred'
 import { Route as AppChatsChatIdImport } from './routes/_app/chats/$chatId'
 import { Route as AppRoomsRoomIndexImport } from './routes/_app/rooms/$room/index'
 import { Route as AppMarketplaceCategoryIndexImport } from './routes/_app/marketplace/$category/index'
@@ -79,6 +80,12 @@ const AppChatsIndexRoute = AppChatsIndexImport.update({
 const AppUsersUsernameRoute = AppUsersUsernameImport.update({
   id: '/users/$username',
   path: '/users/$username',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppRoomsStarredRoute = AppRoomsStarredImport.update({
+  id: '/rooms/starred',
+  path: '/rooms/starred',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -166,6 +173,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppChatsChatIdImport
       parentRoute: typeof AppImport
     }
+    '/_app/rooms/starred': {
+      id: '/_app/rooms/starred'
+      path: '/rooms/starred'
+      fullPath: '/rooms/starred'
+      preLoaderRoute: typeof AppRoomsStarredImport
+      parentRoute: typeof AppImport
+    }
     '/_app/users/$username': {
       id: '/_app/users/$username'
       path: '/users/$username'
@@ -236,6 +250,7 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppChatsChatIdRoute: typeof AppChatsChatIdRoute
+  AppRoomsStarredRoute: typeof AppRoomsStarredRoute
   AppUsersUsernameRoute: typeof AppUsersUsernameRoute
   AppChatsIndexRoute: typeof AppChatsIndexRoute
   AppMarketplaceIndexRoute: typeof AppMarketplaceIndexRoute
@@ -249,6 +264,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppChatsChatIdRoute: AppChatsChatIdRoute,
+  AppRoomsStarredRoute: AppRoomsStarredRoute,
   AppUsersUsernameRoute: AppUsersUsernameRoute,
   AppChatsIndexRoute: AppChatsIndexRoute,
   AppMarketplaceIndexRoute: AppMarketplaceIndexRoute,
@@ -269,6 +285,7 @@ export interface FileRoutesByFullPath {
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
   '/chats/$chatId': typeof AppChatsChatIdRoute
+  '/rooms/starred': typeof AppRoomsStarredRoute
   '/users/$username': typeof AppUsersUsernameRoute
   '/chats': typeof AppChatsIndexRoute
   '/marketplace': typeof AppMarketplaceIndexRoute
@@ -287,6 +304,7 @@ export interface FileRoutesByTo {
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
   '/chats/$chatId': typeof AppChatsChatIdRoute
+  '/rooms/starred': typeof AppRoomsStarredRoute
   '/users/$username': typeof AppUsersUsernameRoute
   '/chats': typeof AppChatsIndexRoute
   '/marketplace': typeof AppMarketplaceIndexRoute
@@ -306,6 +324,7 @@ export interface FileRoutesById {
   '/post': typeof PostRoute
   '/signup': typeof SignupRoute
   '/_app/chats/$chatId': typeof AppChatsChatIdRoute
+  '/_app/rooms/starred': typeof AppRoomsStarredRoute
   '/_app/users/$username': typeof AppUsersUsernameRoute
   '/_app/chats/': typeof AppChatsIndexRoute
   '/_app/marketplace/': typeof AppMarketplaceIndexRoute
@@ -326,6 +345,7 @@ export interface FileRouteTypes {
     | '/post'
     | '/signup'
     | '/chats/$chatId'
+    | '/rooms/starred'
     | '/users/$username'
     | '/chats'
     | '/marketplace'
@@ -343,6 +363,7 @@ export interface FileRouteTypes {
     | '/post'
     | '/signup'
     | '/chats/$chatId'
+    | '/rooms/starred'
     | '/users/$username'
     | '/chats'
     | '/marketplace'
@@ -360,6 +381,7 @@ export interface FileRouteTypes {
     | '/post'
     | '/signup'
     | '/_app/chats/$chatId'
+    | '/_app/rooms/starred'
     | '/_app/users/$username'
     | '/_app/chats/'
     | '/_app/marketplace/'
@@ -412,6 +434,7 @@ export const routeTree = rootRoute
       "filePath": "_app.tsx",
       "children": [
         "/_app/chats/$chatId",
+        "/_app/rooms/starred",
         "/_app/users/$username",
         "/_app/chats/",
         "/_app/marketplace/",
@@ -434,6 +457,10 @@ export const routeTree = rootRoute
     },
     "/_app/chats/$chatId": {
       "filePath": "_app/chats/$chatId.tsx",
+      "parent": "/_app"
+    },
+    "/_app/rooms/starred": {
+      "filePath": "_app/rooms/starred.tsx",
       "parent": "/_app"
     },
     "/_app/users/$username": {

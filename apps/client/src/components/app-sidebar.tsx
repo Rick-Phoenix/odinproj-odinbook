@@ -37,7 +37,7 @@ const data = {
         },
         {
           title: "Starred",
-          url: "#",
+          url: "/rooms/starred",
         },
       ],
     },
