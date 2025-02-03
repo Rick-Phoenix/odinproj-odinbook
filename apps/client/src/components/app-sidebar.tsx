@@ -21,7 +21,6 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import { useUser } from "../hooks/auth";
 import { Skeleton } from "./ui/skeleton";
 
 const data = {
@@ -127,14 +126,13 @@ const data = {
 };
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const user = useUser();
   return (
     <Sidebar variant="inset" {...props}>
       <Skeleton queryKey={["user"]} className="bg-sidebar-background/50">
         <SidebarHeader>
           <SidebarMenu>
             <SidebarMenuItem>
-              <NavUser user={user} />
+              <NavUser />
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarHeader>

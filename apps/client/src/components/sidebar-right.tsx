@@ -20,7 +20,7 @@ import {
   useParams,
 } from "@tanstack/react-router";
 import { format } from "date-fns";
-import { Flag, MessageSquare, Plus } from "lucide-react";
+import { MessageSquare, Plus } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
 import { useActivePage } from "../hooks/use-active-page";
@@ -29,7 +29,6 @@ import { cacheChat, chatsQueryOptions } from "../main";
 import type { Chat } from "../routes/_app/chats/$chatId";
 import { lorem2par } from "../utils/lorem";
 import { ChatDialog } from "./custom/chat-dialog";
-import ReportDialog from "./custom/report-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";
 import { ScrollArea } from "./ui/scroll-area";
@@ -123,12 +122,6 @@ const UserProfileSidebarContent = () => {
           <MessageSquare />
           <span>Send Message</span>
         </Button>
-        <ReportDialog>
-          <Button variant={"outline"} className="mx-2 flex items-center">
-            <Flag />
-            <span>Report User</span>
-          </Button>
-        </ReportDialog>
       </SidebarMenu>
     </>
   );
@@ -218,12 +211,6 @@ const ChatSidebarContent = () => {
           View Profile
         </Link>
       </Button>
-      <ReportDialog>
-        <Button variant={"outline"} className="mx-2 flex items-center">
-          <Flag />
-          <span>Report User</span>
-        </Button>
-      </ReportDialog>
     </>
   );
 };
