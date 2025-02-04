@@ -1,9 +1,11 @@
 import { eq } from "drizzle-orm";
-import { lowercase } from "../utils/db-methods";
+import { countRelation, lowercase } from "../utils/db-methods";
 import db from "./dbConfig";
 import {
   chatInstances,
   chats,
+  comments,
+  likes,
   messages,
   rooms,
   roomSubs,
@@ -160,7 +162,11 @@ export async function getPost(postId: number) {
     where(post, { eq }) {
       return eq(post.id, postId);
     },
-    with: { comments: true, likes: true },
+    with: { comments: true },
+    extras: (fields) => ({
+      ...countRelation("likesCount", fields.id, likes.postId),
+      ...countRelation("commentsCount", fields.id, comments.postId),
+    }),
   });
 }
 
@@ -171,7 +177,18 @@ export async function addSubscription(userId: string, roomId: number) {
 export async function fetchRoom(name: string) {
   const room = await db.query.rooms.findFirst({
     where: (room, { eq }) => eq(lowercase(room.name), name.toLocaleLowerCase()),
-    with: { posts: { with: { comments: true, likes: true } } },
+    with: {
+      posts: {
+        with: { comments: true },
+        extras: (fields) => ({
+          ...countRelation("likesCount", fields.id, likes.postId),
+          ...countRelation("commentsCount", fields.id, comments.postId),
+        }),
+      },
+    },
+    extras: (fields) => ({
+      ...countRelation("subsCount", fields.id, roomSubs.roomId),
+    }),
   });
 
   return room;

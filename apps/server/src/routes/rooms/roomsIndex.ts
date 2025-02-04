@@ -26,7 +26,10 @@ export const createRoom = createRoute({
     body: jsonContentRequired(insertRoomSchema, "The data for the room."),
   },
   responses: {
-    [OK]: jsonContent(roomSchema.omit({ posts: true }), "The created room."),
+    [OK]: jsonContent(
+      roomSchema.omit({ posts: true, subsCount: true }),
+      "The created room."
+    ),
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(insertRoomSchema),
     [CONFLICT]: roomExistsError.template,
   },

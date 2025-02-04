@@ -33,7 +33,7 @@ export default function InsetHeader() {
                   ))}
               </BreadcrumbLink>
             </BreadcrumbItem>
-            {subSection && (
+            {subSection && mainSection !== "chats" && (
               <>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>

@@ -30,13 +30,14 @@ export const chatSchema = createSelectSchema(chats).extend({
 
 const commentSchema = createSelectSchema(comments);
 export const likesSchema = createSelectSchema(likes);
-export const postSchema = createSelectSchema(posts);
-const fullPostSchema = createSelectSchema(posts).extend({
+export const fullPostSchema = createSelectSchema(posts).extend({
   comments: z.array(commentSchema),
-  likes: z.array(likesSchema),
+  likesCount: z.number(),
+  commentsCount: z.number(),
 });
 export const roomSchema = createSelectSchema(rooms).extend({
   posts: z.array(fullPostSchema),
+  subsCount: z.number(),
 });
 
 export const listingPicsSchema = createSelectSchema(listingPics);
