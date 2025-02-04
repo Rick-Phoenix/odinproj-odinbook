@@ -219,14 +219,16 @@ export const listingPicsRelations = relations(listingPics, ({ one }) => ({
 //
 
 const roomsCategories = [
-  "Animals",
-  "Technology",
-  "Design",
-  "Photography",
-  "Science",
-  "History",
-  "Philosophy",
-  "Spirituality",
+  "Pets",
+  "Computers",
+  "Gaming",
+  "Books",
+  "Movies",
+  "Music",
+  "Fitness",
+  "Food",
+  "Travel",
+  "Art",
 ] as const;
 export type roomsCategory = (typeof roomsCategories)[number];
 export const roomsCategoriesEnum = pgEnum("roomCategories", roomsCategories);
