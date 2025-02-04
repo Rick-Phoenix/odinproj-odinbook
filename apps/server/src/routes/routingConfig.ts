@@ -7,6 +7,7 @@ import { authRouter } from "./auth/authRouter";
 import { chatRouter } from "./chats/chatsRouter";
 import { roomsRouter } from "./rooms/roomsRouter";
 import { userRouter } from "./users/usersRouter";
+import { postsRouter } from './posts/postsRouter';
 
 const app = createRouter();
 
@@ -50,7 +51,7 @@ export function registerApiRoutes(app: AppOpenAPI) {
     .route("/auth", authRouter)
     .route("/users", userRouter)
     .route("/chats", chatRouter)
-    .route("/rooms", roomsRouter);
+    .route("/rooms", roomsRouter).route("/posts", postsRouter);
 }
 
 export const apiRoutes = registerApiRoutes(app);

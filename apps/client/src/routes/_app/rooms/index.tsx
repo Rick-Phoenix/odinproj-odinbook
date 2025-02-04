@@ -34,7 +34,6 @@ export const Route = createFileRoute("/_app/rooms/")({
 function RouteComponent() {
   const queryClient = useQueryClient();
   const feed = queryClient.getQueryData(["feed"]) as PostFeed[];
-  console.log("🚀 ~ RouteComponent ~ feed:", feed);
   const trending = feed.slice(0, 6);
   return (
     <InsetScrollArea>
@@ -44,7 +43,8 @@ function RouteComponent() {
           key={post.id}
           title={post.title}
           text={post.text}
-          room={"something"}
+          postId={post.id}
+          roomName={post.roomName}
         />
       ))}
     </InsetScrollArea>
@@ -72,9 +72,14 @@ const TrendingCard: FC<{
           <CardTitle className="line-clamp-[6] max-w-full scroll-m-20">
             {title}
           </CardTitle>
-          <p className="mt-1 line-clamp-1 text-muted-foreground">
+          Card
+          <Link
+            to="/rooms/$roomName"
+            params={{ roomName }}
+            className="mt-1 line-clamp-1 text-muted-foreground"
+          >
             r/{roomName}
-          </p>
+          </Link>
         </div>
       </div>
     </Link>

@@ -50,10 +50,10 @@ function RouteComponent() {
           </div>
           <SubscribeButton />
         </header>
-        <PostPreview title={lorem2par} text={lorem2par} room={name} />
-        <PostPreview title={lorem2par} text={lorem2par} room={name} />
-        <PostPreview title={lorem2par} text={lorem2par} room={name} />
-        <PostPreview title={lorem2par} text={lorem2par} room={name} />
+        <PostPreview title={lorem2par} text={lorem2par} roomName={name} />
+        <PostPreview title={lorem2par} text={lorem2par} roomName={name} />
+        <PostPreview title={lorem2par} text={lorem2par} roomName={name} />
+        <PostPreview title={lorem2par} text={lorem2par} roomName={name} />
       </section>
     </InsetScrollArea>
   );

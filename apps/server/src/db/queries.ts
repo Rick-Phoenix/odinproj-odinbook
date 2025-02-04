@@ -1,9 +1,10 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { lowercase } from "../utils/db-methods";
 import db from "./dbConfig";
 import {
   chatInstances,
   chats,
+  likes,
   messages,
   rooms,
   roomSubs,
@@ -282,4 +283,14 @@ export async function registerMessage(
     .returning();
 
   return message;
+}
+
+export async function insertLike(userId: string, postId: number) {
+  return await db.insert(likes).values({ userId, postId });
+}
+
+export async function removeLike(userId: string, postId: number) {
+  return await db
+    .delete(likes)
+    .where(and(eq(likes.userId, userId), eq(likes.postId, postId)));
 }
