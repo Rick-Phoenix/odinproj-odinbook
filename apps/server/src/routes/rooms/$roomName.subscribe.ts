@@ -6,16 +6,15 @@ import type {
   AppBindingsWithUser,
   AppRouteHandler,
 } from "../../types/app-bindings";
-import { numberParamSchema } from "../../types/schema-helpers";
 
 const tags = ["rooms"];
 
 export const subscribe = createRoute({
-  path: "/{roomId}/subscribe",
+  path: "/{roomName}/subscribe",
   method: "post",
   tags,
   request: {
-    params: z.object({ roomId: numberParamSchema }),
+    params: z.object({ roomName: z.string() }),
     query: z.object({ action: z.enum(["add", "remove"]) }),
   },
   responses: {
@@ -28,12 +27,12 @@ export const subscribeHandler: AppRouteHandler<
   AppBindingsWithUser
 > = async (c) => {
   const { id: userId } = c.var.user;
-  const { roomId } = c.req.valid("param");
+  const { roomName } = c.req.valid("param");
   const { action } = c.req.valid("query");
   if (action === "add") {
-    await addSubscription(userId, roomId);
+    await addSubscription(userId, roomName);
   } else {
-    await removeSubscription(userId, roomId);
+    await removeSubscription(userId, roomName);
   }
   return c.json("OK", OK);
 };

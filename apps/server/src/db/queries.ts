@@ -7,7 +7,7 @@ import {
   likes,
   messages,
   rooms,
-  roomSubs,
+  subs,
   type roomsCategory,
 } from "./schema";
 
@@ -204,24 +204,24 @@ export async function fetchPost(userId: string, postId: number) {
   return post;
 }
 
-export async function addSubscription(userId: string, roomId: number) {
-  await db.insert(roomSubs).values({ userId, roomId }).onConflictDoNothing();
+export async function addSubscription(userId: string, room: string) {
+  await db.insert(subs).values({ userId, room }).onConflictDoNothing();
 }
 
-export async function removeSubscription(userId: string, roomId: number) {
+export async function removeSubscription(userId: string, room: string) {
   await db
-    .delete(roomSubs)
-    .where(and(eq(roomSubs.roomId, roomId), eq(roomSubs.userId, userId)));
+    .delete(subs)
+    .where(and(eq(subs.room, room), eq(subs.userId, userId)));
 }
 
 export async function fetchPosts(
   userId: string,
-  roomId: number,
+  room: string,
   cursor: number,
   orderBy: "likes" | "time"
 ) {
   const posts = await db.query.posts.findMany({
-    where: (post, { eq }) => eq(post.roomId, roomId),
+    where: (post, { eq }) => eq(post.room, room),
     with: { author: { columns: { username: true } } },
     limit: 20,
     offset: cursor * 20,
@@ -235,11 +235,12 @@ export async function fetchPosts(
 
 export async function fetchRoom(
   userId: string,
-  name: string,
+  roomName: string,
   orderBy: "time" | "likes"
 ) {
   const room = await db.query.rooms.findFirst({
-    where: (room, { eq }) => eq(lowercase(room.name), name.toLocaleLowerCase()),
+    where: (room, { eq }) =>
+      eq(lowercase(room.name), roomName.toLocaleLowerCase()),
     with: {
       posts: {
         limit: 20,

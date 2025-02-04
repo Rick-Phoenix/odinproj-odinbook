@@ -9,8 +9,8 @@ import {
   messages,
   posts,
   rooms,
-  roomSubs,
   sessions,
+  subs,
   users,
 } from "../db/schema";
 
@@ -161,7 +161,7 @@ export const insertLikeSchema = createInsertSchema(likes).pick({
   postId: true,
 });
 
-export const insertSubscriptionSchema = createInsertSchema(roomSubs).omit({
+export const insertSubscriptionSchema = createInsertSchema(subs).omit({
   id: true,
 });
 

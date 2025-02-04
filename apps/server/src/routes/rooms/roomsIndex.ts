@@ -43,5 +43,5 @@ export const createRoomHandler: AppRouteHandler<
   const { name, category } = c.req.valid("json");
   const room = await insertRoom(userId, name, category);
   if (room === undefined) return c.json(roomExistsError.content, CONFLICT);
-  return c.json(room, OK);
+  return c.json({ ...room, isSubscribed: true }, OK);
 };

@@ -36,30 +36,23 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
 });
 
 function RouteComponent() {
-  const { roomName } = Route.useParams();
-  const {
-    name,
-    avatar,
-    posts,
-    isSubscribed,
-    id: roomId,
-  } = Route.useLoaderData();
+  const { name: roomName, avatar, posts, isSubscribed } = Route.useLoaderData();
 
   return (
     <InsetScrollArea>
       <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
         <header className="flex h-28 w-full items-center justify-between rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
           <Avatar className="h-full w-auto">
-            <AvatarImage src={avatar} alt={`${name} avatar`} />
+            <AvatarImage src={avatar} alt={`${roomName} avatar`} />
           </Avatar>
           <Link
             to="/rooms/$roomName"
             params={{ roomName }}
             className="text-center text-2xl font-semibold hover:underline"
           >
-            r/{title(name)}
+            r/{title(roomName)}
           </Link>
-          <SubscribeButton roomId={roomId} isSubscribed={isSubscribed} />
+          <SubscribeButton roomName={roomName} isSubscribed={isSubscribed} />
         </header>
         {posts.map((post) => (
           <PostPreview
@@ -78,18 +71,18 @@ function RouteComponent() {
   );
 }
 
-const SubscribeButton: FC<{ isSubscribed: boolean; roomId: number }> = ({
+const SubscribeButton: FC<{ isSubscribed: boolean; roomName: string }> = ({
   isSubscribed,
-  roomId,
+  roomName,
 }) => {
   const [userIsSubscribed, setUserIsSubscribed] = useState(isSubscribed);
 
   const subscribeMutation = useMutation({
-    mutationKey: ["subscription", roomId],
+    mutationKey: ["subscription", roomName],
     mutationFn: async () => {
       const action = !userIsSubscribed ? "add" : "remove";
-      const res = await api.rooms[":roomId"].subscribe.$post({
-        param: { roomId },
+      const res = await api.rooms[":roomName"].subscribe.$post({
+        param: { roomName },
         query: { action },
       });
       const data = await res.json();

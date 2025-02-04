@@ -48,14 +48,12 @@ export const userRelations = relations(users, ({ many }) => ({
   posts: many(posts, { relationName: "postAuthor" }),
   comments: many(comments),
   roomsCreated: many(rooms),
-  roomSubscriptions: many(roomSubs),
+  roomSubscriptions: many(subs),
   likes: many(likes),
   listingsCreated: many(listings),
   listingsSaved: many(savedListings),
   sessions: many(sessions),
 }));
-
-//
 
 export const chats = pgTable("chats", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
@@ -221,14 +219,14 @@ export const listingPicsRelations = relations(listingPics, ({ one }) => ({
 //
 
 const roomsCategories = [
-  "animals",
-  "technology",
-  "design",
-  "photography",
-  "science",
-  "history",
-  "philosophy",
-  "spirituality",
+  "Animals",
+  "Technology",
+  "Design",
+  "Photography",
+  "Science",
+  "History",
+  "Philosophy",
+  "Spirituality",
 ] as const;
 export type roomsCategory = (typeof roomsCategories)[number];
 export const roomsCategoriesEnum = pgEnum("roomCategories", roomsCategories);
@@ -236,8 +234,7 @@ export const roomsCategoriesEnum = pgEnum("roomCategories", roomsCategories);
 export const rooms = pgTable(
   "rooms",
   {
-    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-    name: text("name").notNull().unique(),
+    name: text("name").primaryKey(),
     createdAt: timestamp("createdAt", { mode: "string" })
       .defaultNow()
       .notNull(),
@@ -254,7 +251,6 @@ export const rooms = pgTable(
   (t) => [
     uniqueIndex("uniqueRoomIndex").on(lowercase(trim(t.name))),
     index("subsCountIndex").on(t.subsCount),
-    index("roomNameIndex").on(t.name),
   ]
 );
 
@@ -264,28 +260,28 @@ export const roomsRelations = relations(rooms, ({ many, one }) => ({
     references: [users.id],
     relationName: "roomCreator",
   }),
-  subscribers: many(roomSubs),
+  subscribers: many(subs),
   posts: many(posts),
 }));
 
-export const roomSubs = pgTable("roomSubscriptions", {
+export const subs = pgTable("subs", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  roomId: integer("roomId")
-    .references(() => rooms.id, { onDelete: "cascade" })
+  room: text("room")
+    .references(() => rooms.name, { onDelete: "cascade" })
     .notNull(),
   userId: text("userId").references(() => users.id, {
     onDelete: "cascade",
   }),
 });
 
-export const roomSubscriptionsRelations = relations(roomSubs, ({ one }) => ({
+export const roomSubscriptionsRelations = relations(subs, ({ one }) => ({
   user: one(users, {
-    fields: [roomSubs.userId],
+    fields: [subs.userId],
     references: [users.id],
   }),
   room: one(rooms, {
-    fields: [roomSubs.roomId],
-    references: [rooms.id],
+    fields: [subs.room],
+    references: [rooms.name],
   }),
 }));
 
@@ -295,8 +291,8 @@ export const posts = pgTable(
   "posts",
   {
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-    roomId: integer("roomId")
-      .references(() => rooms.id, { onDelete: "cascade" })
+    room: text("room")
+      .references(() => rooms.name, { onDelete: "cascade" })
       .notNull(),
     authorId: text("authorId")
       .notNull()
@@ -322,8 +318,8 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
   }),
   comments: many(comments),
   room: one(rooms, {
-    fields: [posts.roomId],
-    references: [rooms.id],
+    fields: [posts.room],
+    references: [rooms.name],
   }),
   likes: many(likes),
 }));

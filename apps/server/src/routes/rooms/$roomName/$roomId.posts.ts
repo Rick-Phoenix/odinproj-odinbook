@@ -14,11 +14,11 @@ import { getUserId } from "../../../utils/getters";
 const tags = ["posts"];
 
 export const getPosts = createRoute({
-  path: "/{roomId}/posts",
+  path: "/{roomName}/posts",
   method: "get",
   tags,
   request: {
-    params: z.object({ roomId: numberParamSchema }),
+    params: z.object({ roomName: z.string() }),
     query: z.object({
       orderBy: z.enum(["time", "likes"]).default("likes"),
       cursor: numberParamSchema.default(0),
@@ -35,10 +35,10 @@ export const getPostsHandler: AppRouteHandler<
   AppBindingsWithUser
 > = async (c) => {
   const userId = getUserId(c);
-  const { roomId } = c.req.valid("param");
+  const { roomName } = c.req.valid("param");
   const { orderBy, cursor } = c.req.valid("query");
 
-  const posts = await fetchPosts(userId, roomId, cursor, orderBy);
+  const posts = await fetchPosts(userId, roomName, cursor, orderBy);
   if (!posts) return c.json(notFoundError.content, NOT_FOUND);
   return c.json(posts, OK);
 };
