@@ -12,3 +12,18 @@
 
 // const a = await fetchRoom("Cats");
 // console.log(a);
+// export async function fetchRooms() {
+//   const room = await db.query.posts.findMany({
+//     extras: (fields) => ({
+//       ...countRelation("likesCount", fields.id, likes.postId),
+//     }),
+//     orderBy: desc(sql`"likesCount"`),
+//     // desc(groupByColumn("likesCount", fields.id, likes.postId)),
+//     limit: 50,
+//   });
+
+//   return room;
+// }
+
+// const a = await fetchRooms();
+// console.log(a);

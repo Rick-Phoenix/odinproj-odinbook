@@ -1,6 +1,7 @@
 import { relations } from "drizzle-orm";
 import {
   boolean,
+  index,
   integer,
   pgEnum,
   pgTable,
@@ -248,8 +249,12 @@ export const rooms = pgTable(
         "https://res.cloudinary.com/dqjizh49f/image/upload/v1738602566/Nexus/foq8r5a5lczqphdexyy3.jpg"
       ),
     description: text("description"),
+    subsCount: integer("subsCount").notNull().default(0),
   },
-  (t) => [uniqueIndex("uniqueRoomIndex").on(lowercase(trim(t.name)))]
+  (t) => [
+    uniqueIndex("uniqueRoomIndex").on(lowercase(trim(t.name))),
+    index("subsCountIndex").on(t.subsCount),
+  ]
 );
 
 export const roomsRelations = relations(rooms, ({ many, one }) => ({
@@ -285,16 +290,23 @@ export const roomSubscriptionsRelations = relations(roomSubs, ({ one }) => ({
 
 //
 
-export const posts = pgTable("posts", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  roomId: integer("roomId")
-    .references(() => rooms.id, { onDelete: "cascade" })
-    .notNull(),
-  authorId: text("authorId").references(() => users.id),
-  title: text("title").notNull(),
-  text: text("text").notNull(),
-  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
-});
+export const posts = pgTable(
+  "posts",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    roomId: integer("roomId")
+      .references(() => rooms.id, { onDelete: "cascade" })
+      .notNull(),
+    authorId: text("authorId").references(() => users.id),
+    title: text("title").notNull(),
+    text: text("text").notNull(),
+    createdAt: timestamp("createdAt", { mode: "string" })
+      .defaultNow()
+      .notNull(),
+    likesCount: integer("likesCount").notNull().default(0),
+  },
+  (t) => [index("likesCountIndex").on(t.likesCount)]
+);
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
   author: one(users, {

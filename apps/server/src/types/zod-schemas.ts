@@ -32,12 +32,9 @@ const commentSchema = createSelectSchema(comments);
 export const likesSchema = createSelectSchema(likes);
 export const fullPostSchema = createSelectSchema(posts).extend({
   comments: z.array(commentSchema),
-  likesCount: z.number(),
-  commentsCount: z.number(),
 });
 export const roomSchema = createSelectSchema(rooms).extend({
   posts: z.array(fullPostSchema),
-  subsCount: z.number(),
 });
 
 export const listingPicsSchema = createSelectSchema(listingPics);
