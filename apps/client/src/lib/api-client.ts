@@ -10,5 +10,7 @@ export type PostBasic = z.infer<typeof schemas.basicPostSchema>;
 export interface PostFeed extends PostBasic {
   roomName: string;
 }
+export type PostFull = z.infer<typeof schemas.fullPostSchema>;
+export type Room = z.infer<typeof schemas.roomSchema>;
 
 export const wsRPC = RPC("ws://localhost:5173/");

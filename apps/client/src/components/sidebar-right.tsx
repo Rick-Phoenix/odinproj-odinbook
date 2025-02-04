@@ -24,7 +24,7 @@ import { MessageSquare, Plus } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
 import { useActivePage } from "../hooks/use-active-page";
-import { api, type Chat } from "../lib/api-client";
+import { api, type Chat, type Room } from "../lib/api-client";
 import { cacheChat, chatsQueryOptions } from "../main";
 import ChatDialog from "./custom/chat-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
@@ -337,7 +337,10 @@ const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({
 };
 
 const RoomSidebarContent = () => {
-  const room = useLoaderData({ from: "/_app/rooms/$roomName/" });
+  const { subSection } = useActivePage();
+  const queryClient = useQueryClient();
+
+  const room = queryClient.getQueryData(["room", subSection]) as Room;
   return (
     <>
       <div className="flex h-32 p-6 pb-0 center">

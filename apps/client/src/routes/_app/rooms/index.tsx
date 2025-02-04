@@ -150,7 +150,7 @@ const TrendingCarousel: FC<{ posts: PostFeed[] }> = ({ posts }) => {
                 <SwiperSlide key={post.id}>
                   <TrendingCard
                     likesCount={post.likesCount}
-                    text={post.text}
+                    postId={post.id}
                     title={post.title}
                     roomName={post.roomName}
                   />
