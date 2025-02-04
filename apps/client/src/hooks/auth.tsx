@@ -20,6 +20,7 @@ export const userQueryOptions = {
 export function useUser() {
   const query = useQuery(userQueryOptions);
   const user = query.data;
+  console.log(user);
 
   return user;
 }

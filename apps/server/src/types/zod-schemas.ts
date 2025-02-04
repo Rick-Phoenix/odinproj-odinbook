@@ -47,6 +47,15 @@ export const listingSchema = createSelectSchema(listings).extend({
 
 const subscriptionsSchema = createSelectSchema(roomSubs);
 
+export const userDataSchema = userSchema
+  .pick({
+    avatarUrl: true,
+    status: true,
+    createdAt: true,
+    username: true,
+  })
+  .extend({ roomSubscriptions: subscriptionsSchema });
+
 export const profileSchema = userSchema
   .pick({
     avatarUrl: true,

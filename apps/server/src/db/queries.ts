@@ -12,6 +12,16 @@ import {
   type roomsCategory,
 } from "./schema";
 
+export async function fetchUserData(userId: string) {
+  const userData = await db.query.users.findFirst({
+    where: (user, { eq }) => eq(user.id, userId),
+    with: { roomSubscriptions: true },
+    columns: { avatarUrl: true, createdAt: true, status: true, username: true },
+  });
+
+  return userData;
+}
+
 export async function emailIsNotAvailable(email: string): Promise<boolean> {
   const result = await db.query.users.findFirst({
     where: (existingUser, { eq }) => eq(existingUser.email, email),
