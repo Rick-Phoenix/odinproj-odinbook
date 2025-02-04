@@ -298,7 +298,9 @@ export const posts = pgTable(
     roomId: integer("roomId")
       .references(() => rooms.id, { onDelete: "cascade" })
       .notNull(),
-    authorId: text("authorId").references(() => users.id),
+    authorId: text("authorId")
+      .notNull()
+      .references(() => users.id),
     title: text("title").notNull(),
     text: text("text").notNull(),
     createdAt: timestamp("createdAt", { mode: "string" })

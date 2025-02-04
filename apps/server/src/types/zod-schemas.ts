@@ -30,11 +30,17 @@ export const chatSchema = createSelectSchema(chats).extend({
 
 const commentSchema = createSelectSchema(comments);
 export const likesSchema = createSelectSchema(likes);
+export const basicPostSchema = createSelectSchema(posts).extend({
+  author: z.object({
+    username: z.string(),
+    avatarUrl: z.string(),
+  }),
+});
 export const fullPostSchema = createSelectSchema(posts).extend({
   comments: z.array(commentSchema),
 });
 export const roomSchema = createSelectSchema(rooms).extend({
-  posts: z.array(fullPostSchema),
+  posts: z.array(basicPostSchema),
 });
 
 export const listingPicsSchema = createSelectSchema(listingPics);
@@ -51,7 +57,7 @@ export const userDataSchema = userSchema
     createdAt: true,
     username: true,
   })
-  .extend({ roomSubscriptions: subscriptionsSchema });
+  .extend({ roomSubscriptions: z.array(roomSchema) });
 
 export const profileSchema = userSchema
   .pick({

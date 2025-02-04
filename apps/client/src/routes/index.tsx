@@ -1,5 +1,5 @@
+import { userQueryOptions } from "@/lib/queryOptions";
 import { createFileRoute, Link, redirect } from "@tanstack/react-router";
-import { userQueryOptions } from "../hooks/auth";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async ({ context }) => {

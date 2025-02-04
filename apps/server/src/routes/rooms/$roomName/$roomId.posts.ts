@@ -7,7 +7,7 @@ import type {
   AppRouteHandler,
 } from "../../../types/app-bindings";
 import { numberParamSchema } from "../../../types/schema-helpers";
-import { roomSchema } from "../../../types/zod-schemas";
+import { basicPostSchema } from "../../../types/zod-schemas";
 import { notFoundError } from "../../../utils/customErrors";
 
 const tags = ["posts"];
@@ -24,7 +24,7 @@ export const getPosts = createRoute({
     }),
   },
   responses: {
-    [OK]: jsonContent(roomSchema, "The room with posts."),
+    [OK]: jsonContent(z.array(basicPostSchema), "The room with posts."),
     [NOT_FOUND]: notFoundError.template,
   },
 });

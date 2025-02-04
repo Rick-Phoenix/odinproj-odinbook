@@ -1,21 +1,6 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "../lib/api-client";
-
-export const userQueryOptions = {
-  queryKey: ["user"],
-  queryFn: async () => {
-    const res = await api.users.user.$get();
-    if (res.status === 401) {
-      return null;
-    }
-    if (!res.ok) {
-      throw new Error("Server Error");
-    }
-    return await res.json();
-  },
-  staleTime: Infinity,
-  gcTime: Infinity,
-};
+import { userQueryOptions } from "../lib/queryOptions";
 
 export function useUser() {
   const query = useQuery(userQueryOptions);

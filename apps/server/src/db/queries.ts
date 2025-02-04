@@ -14,10 +14,25 @@ export async function fetchUserData(userId: string) {
   const userData = await db.query.users.findFirst({
     where: (user, { eq }) => eq(user.id, userId),
     with: {
-      roomSubscriptions: { with: { room: { with: { posts: { limit: 20 } } } } },
+      roomSubscriptions: {
+        with: {
+          room: {
+            with: {
+              posts: { limit: 20 },
+            },
+          },
+        },
+        columns: {},
+      },
     },
     columns: { avatarUrl: true, createdAt: true, status: true, username: true },
   });
+
+  if (userData)
+    return {
+      ...userData,
+      roomSubscriptions: userData.roomSubscriptions.map((sub) => sub.room),
+    };
 
   return userData;
 }
@@ -187,7 +202,7 @@ export async function fetchPosts(
 ) {
   const posts = await db.query.posts.findMany({
     where: (post, { eq }) => eq(post.roomId, roomId),
-    with: { author: { columns: { username: true } } },
+    with: { author: { columns: { username: true, avatarUrl: true } } },
     limit: 20,
     offset: cursor * 20,
     orderBy: (post, { desc }) =>
@@ -203,13 +218,6 @@ export async function fetchRoom(name: string, orderBy: "time" | "likes") {
     with: {
       posts: {
         limit: 20,
-        columns: {
-          id: true,
-          likesCount: true,
-          title: true,
-          text: true,
-          createdAt: true,
-        },
         with: { author: { columns: { avatarUrl: true, username: true } } },
         orderBy: (post, { desc }) =>
           orderBy === "likes" ? desc(post.likesCount) : desc(post.createdAt),
