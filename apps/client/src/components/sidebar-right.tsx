@@ -355,11 +355,11 @@ const RoomSidebarContent = () => {
         <TableBody>
           <TableRow>
             <TableCell>Active Members:</TableCell>
-            <TableCell className="text-right">20002</TableCell>
+            <TableCell className="text-right">{room.subsCount}</TableCell>
           </TableRow>
           <TableRow>
             <TableCell>Created On:</TableCell>
-            <TableCell className="text-right">22 October 2023</TableCell>
+            <TableCell className="text-right">{`${format(new Date(room.createdAt), "MMM do y")}`}</TableCell>
           </TableRow>
         </TableBody>
       </Table>

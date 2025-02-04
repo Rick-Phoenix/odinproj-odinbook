@@ -1,8 +1,11 @@
-import { MessageCircleMore, Share } from "lucide-react";
-import { Fragment, useState, type FC } from "react";
-import { PiThumbsUpBold, PiThumbsUpFill } from "react-icons/pi";
-import ButtonGesture from "../components/motion/gestures";
-import { Button } from "../components/ui/button";
+import { MessageCircleMore } from "lucide-react";
+import { Fragment, type FC } from "react";
+import { PiThumbsUpBold } from "react-icons/pi";
+import {
+  CommentButton,
+  LikeButton,
+  ShareButton,
+} from "../components/custom/buttons";
 import { CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
@@ -127,7 +130,7 @@ const Post: FC<{ post: PostFull }> = ({ post }) => {
       <CardContent className="pt-4">{post.text}</CardContent>
       <Separator className="mt-1" />
       <div className="flex p-3">
-        <LikeButton />
+        <LikeButton postId={post.id} likesCount={post.likesCount} />
         <CommentButton />
         <ShareButton />
       </div>
@@ -146,46 +149,5 @@ const Post: FC<{ post: PostFull }> = ({ post }) => {
     </section>
   );
 };
-
-function ShareButton() {
-  return (
-    <Button variant={"ghost"} asChild className="flex-1 p-6">
-      <ButtonGesture>
-        <Share />
-        Share
-      </ButtonGesture>
-    </Button>
-  );
-}
-
-function CommentButton() {
-  return (
-    <Button variant={"ghost"} asChild className="flex-1 p-6">
-      <ButtonGesture>
-        <MessageCircleMore />
-        Comment
-      </ButtonGesture>
-    </Button>
-  );
-}
-
-function LikeButton() {
-  const [isLiked, setIsLiked] = useState(false);
-  return (
-    <Button
-      asChild
-      variant={"ghost"}
-      onClick={() => {
-        setIsLiked(!isLiked);
-      }}
-      className="w-full flex-1 justify-center p-6"
-    >
-      <ButtonGesture>
-        {isLiked ? <PiThumbsUpFill /> : <PiThumbsUpBold />}
-        Like
-      </ButtonGesture>
-    </Button>
-  );
-}
 
 export default Post;

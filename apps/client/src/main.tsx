@@ -5,11 +5,7 @@ import "vite/modulepreload-polyfill";
 
 import "./styles/index.css";
 
-import {
-  QueryClient,
-  QueryClientProvider,
-  queryOptions,
-} from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import ReactDOM from "react-dom/client";
@@ -32,19 +28,6 @@ export const queryClient = new QueryClient({
     },
   },
 });
-
-export const roomQueryOptions = (roomName: string) =>
-  queryOptions({
-    queryKey: ["room", roomName],
-    queryFn: async () => {
-      const res = await api.rooms[":roomName"].$get({ param: { roomName } });
-      const data = await res.json();
-      if ("issues" in data) {
-        throw new Error("Room not found.");
-      }
-      return data;
-    },
-  });
 
 export const chatWebSocket = wsRPC.ws.$ws();
 chatWebSocket.addEventListener("message", (e) => {

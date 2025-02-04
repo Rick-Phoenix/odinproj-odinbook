@@ -1,6 +1,9 @@
 import { api } from "./api-client";
 
+import { queryOptions } from "@tanstack/react-query";
 import { queryClient } from "../main";
+
+// USER
 
 export const userQueryOptions = {
   queryKey: ["user"],
@@ -30,3 +33,21 @@ export const userQueryOptions = {
     return userData;
   },
 };
+
+// ROOMS
+
+export const roomQueryOptions = (roomName: string) =>
+  queryOptions({
+    queryKey: ["room", roomName],
+    queryFn: async () => {
+      const res = await api.rooms[":roomName"].$get({
+        param: { roomName },
+        query: {},
+      });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("Room not found.");
+      }
+      return data;
+    },
+  });

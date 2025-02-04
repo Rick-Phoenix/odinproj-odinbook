@@ -33,16 +33,18 @@ export const likesSchema = createSelectSchema(likes);
 export const basicPostSchema = createSelectSchema(posts).extend({
   author: z.object({
     username: z.string(),
-    avatarUrl: z.string(),
   }),
+  isLiked: z.boolean(),
 });
 export const fullPostSchema = createSelectSchema(posts).extend({
   comments: z.array(commentSchema),
   room: z.object({ name: z.string() }),
   author: z.object({ username: z.string() }),
+  isLiked: z.boolean(),
 });
 export const roomSchema = createSelectSchema(rooms).extend({
   posts: z.array(basicPostSchema),
+  isSubscribed: z.boolean(),
 });
 
 export const listingPicsSchema = createSelectSchema(listingPics);

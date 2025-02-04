@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { useMutation } from "@tanstack/react-query";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { title } from "radashi";
-import { useState } from "react";
+import { useState, type FC } from "react";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
 import { PostPreview } from "../../../../components/custom/post-preview";
 import ButtonGesture from "../../../../components/motion/gestures";
@@ -21,8 +22,7 @@ import {
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
 import { api } from "../../../../lib/api-client";
-import { roomQueryOptions } from "../../../../main";
-import { lorem2par } from "../../../../utils/lorem";
+import { roomQueryOptions } from "../../../../lib/queryOptions";
 
 export const Route = createFileRoute("/_app/rooms/$roomName/")({
   component: RouteComponent,
@@ -31,13 +31,20 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
     const room = await c.context.queryClient.fetchQuery(
       roomQueryOptions(roomName),
     );
-    console.log(room);
     return room;
   },
 });
 
 function RouteComponent() {
-  const { name, avatar } = Route.useLoaderData();
+  const { roomName } = Route.useParams();
+  const {
+    name,
+    avatar,
+    posts,
+    isSubscribed,
+    id: roomId,
+  } = Route.useLoaderData();
+
   return (
     <InsetScrollArea>
       <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
@@ -45,32 +52,60 @@ function RouteComponent() {
           <Avatar className="h-full w-auto">
             <AvatarImage src={avatar} alt={`${name} avatar`} />
           </Avatar>
-          <div className="text-center text-2xl font-semibold">
+          <Link
+            to="/rooms/$roomName"
+            params={{ roomName }}
+            className="text-center text-2xl font-semibold hover:underline"
+          >
             r/{title(name)}
-          </div>
-          <SubscribeButton />
+          </Link>
+          <SubscribeButton roomId={roomId} isSubscribed={isSubscribed} />
         </header>
-        <PostPreview title={lorem2par} text={lorem2par} roomName={name} />
-        <PostPreview title={lorem2par} text={lorem2par} roomName={name} />
-        <PostPreview title={lorem2par} text={lorem2par} roomName={name} />
-        <PostPreview title={lorem2par} text={lorem2par} roomName={name} />
+        {posts.map((post) => (
+          <PostPreview
+            author={post.author.username}
+            createdAt={post.createdAt}
+            likesCount={post.likesCount}
+            postId={post.id}
+            roomName={roomName}
+            text={post.text}
+            title={post.title}
+            key={post.id}
+          />
+        ))}
       </section>
     </InsetScrollArea>
   );
 }
 
-const SubscribeButton = () => {
-  const [isSubscribed, setIsSubcribed] = useState(false);
+const SubscribeButton: FC<{ isSubscribed: boolean; roomId: number }> = ({
+  isSubscribed,
+  roomId,
+}) => {
+  const [userIsSubscribed, setUserIsSubscribed] = useState(isSubscribed);
 
-  const handleSubscribe = async () => {
-    if (!isSubscribed) {
-      await api.rooms[":roomId"].subscribe.$post({ param: { roomId: 1 } });
-    }
-    setIsSubcribed(!isSubscribed);
-  };
+  const subscribeMutation = useMutation({
+    mutationKey: ["subscription", roomId],
+    mutationFn: async () => {
+      const action = !userIsSubscribed ? "add" : "remove";
+      const res = await api.rooms[":roomId"].subscribe.$post({
+        param: { roomId },
+        query: { action },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error("Could not register the like. Try again later.");
+      }
+      return data;
+    },
+    onSuccess: () => {
+      setUserIsSubscribed((old) => !old);
+    },
+  });
+
   return (
     <>
-      {isSubscribed ? (
+      {userIsSubscribed ? (
         <Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -101,7 +136,7 @@ const SubscribeButton = () => {
               <DialogClose asChild>
                 <Button
                   variant={"destructive"}
-                  onClick={handleSubscribe}
+                  onClick={() => subscribeMutation.mutate()}
                   size={"lg"}
                 >
                   Continue
@@ -111,7 +146,7 @@ const SubscribeButton = () => {
           </DialogContent>
         </Dialog>
       ) : (
-        <Button asChild size={"lg"} onClick={handleSubscribe}>
+        <Button asChild size={"lg"} onClick={() => subscribeMutation.mutate()}>
           <ButtonGesture>Subscribe</ButtonGesture>
         </Button>
       )}

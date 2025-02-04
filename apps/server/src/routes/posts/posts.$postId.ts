@@ -9,6 +9,7 @@ import type {
 import { numberParamSchema } from "../../types/schema-helpers";
 import { fullPostSchema } from "../../types/zod-schemas";
 import { notFoundError } from "../../utils/customErrors";
+import { getUserId } from "../../utils/getters";
 
 const tags = ["posts"];
 
@@ -29,9 +30,9 @@ export const getPostHandler: AppRouteHandler<
   typeof getPost,
   AppBindingsWithUser
 > = async (c) => {
+  const userId = getUserId(c);
   const { postId } = c.req.valid("param");
-
-  const post = await fetchPost(postId);
+  const post = await fetchPost(userId, postId);
   if (!post) return c.json(notFoundError.content, NOT_FOUND);
   return c.json(post, OK);
 };

@@ -48,6 +48,8 @@ function RouteComponent() {
           postId={post.id}
           roomName={post.roomName}
           likesCount={post.likesCount}
+          author={post.author.username}
+          createdAt={post.createdAt}
         />
       ))}
     </InsetScrollArea>
@@ -107,9 +109,8 @@ const TrendingCarousel: FC<{ posts: PostFeed[] }> = ({ posts }) => {
               setIsVisible(!isVisible);
             }}
           >
-            {isVisible ? "Hide" : "Show"}
+            {isVisible ? "Hide" : "Show"} Trending
           </DropdownMenuItem>
-          <DropdownMenuItem>All Trending</DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
       <AnimatePresence initial={false}>

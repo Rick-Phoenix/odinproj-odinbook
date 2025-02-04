@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm";
-import { lowercase } from "../utils/db-methods";
+import { isLiked, isSubscribed, lowercase } from "../utils/db-methods";
 import db from "./dbConfig";
 import {
   chatInstances,
@@ -19,8 +19,13 @@ export async function fetchUserData(userId: string) {
         with: {
           room: {
             with: {
-              posts: { limit: 20 },
+              posts: {
+                limit: 20,
+                with: { author: { columns: { username: true } } },
+                extras: () => isLiked(userId),
+              },
             },
+            extras: () => isSubscribed(userId),
           },
         },
         columns: {},
@@ -183,7 +188,7 @@ export async function findOrCreateChat(
   return findOrCreateChat(userId, contactUsername);
 }
 
-export async function fetchPost(postId: number) {
+export async function fetchPost(userId: string, postId: number) {
   const post = await db.query.posts.findFirst({
     where(post, { eq }) {
       return eq(post.id, postId);
@@ -193,6 +198,7 @@ export async function fetchPost(postId: number) {
       room: { columns: { name: true } },
       author: { columns: { username: true } },
     },
+    extras: () => isLiked(userId),
   });
 
   return post;
@@ -202,34 +208,48 @@ export async function addSubscription(userId: string, roomId: number) {
   await db.insert(roomSubs).values({ userId, roomId }).onConflictDoNothing();
 }
 
+export async function removeSubscription(userId: string, roomId: number) {
+  await db
+    .delete(roomSubs)
+    .where(and(eq(roomSubs.roomId, roomId), eq(roomSubs.userId, userId)));
+}
+
 export async function fetchPosts(
+  userId: string,
   roomId: number,
   cursor: number,
   orderBy: "likes" | "time"
 ) {
   const posts = await db.query.posts.findMany({
     where: (post, { eq }) => eq(post.roomId, roomId),
-    with: { author: { columns: { username: true, avatarUrl: true } } },
+    with: { author: { columns: { username: true } } },
     limit: 20,
     offset: cursor * 20,
     orderBy: (post, { desc }) =>
       orderBy === "likes" ? desc(post.likesCount) : desc(post.createdAt),
+    extras: () => isLiked(userId),
   });
 
   return posts;
 }
 
-export async function fetchRoom(name: string, orderBy: "time" | "likes") {
+export async function fetchRoom(
+  userId: string,
+  name: string,
+  orderBy: "time" | "likes"
+) {
   const room = await db.query.rooms.findFirst({
     where: (room, { eq }) => eq(lowercase(room.name), name.toLocaleLowerCase()),
     with: {
       posts: {
         limit: 20,
-        with: { author: { columns: { avatarUrl: true, username: true } } },
+        with: { author: { columns: { username: true } } },
         orderBy: (post, { desc }) =>
           orderBy === "likes" ? desc(post.likesCount) : desc(post.createdAt),
+        extras: () => isLiked(userId),
       },
     },
+    extras: (f) => ({ ...isSubscribed(userId) }),
   });
 
   return room;

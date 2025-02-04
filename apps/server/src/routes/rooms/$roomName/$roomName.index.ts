@@ -8,6 +8,7 @@ import type {
 } from "../../../types/app-bindings";
 import { roomSchema } from "../../../types/zod-schemas";
 import { notFoundError } from "../../../utils/customErrors";
+import { getUserId } from "../../../utils/getters";
 
 const tags = ["rooms"];
 
@@ -31,10 +32,11 @@ export const getRoomHandler: AppRouteHandler<
   typeof getRoom,
   AppBindingsWithUser
 > = async (c) => {
+  const userId = getUserId(c);
   const { roomName } = c.req.valid("param");
   const { orderBy } = c.req.valid("query");
 
-  const room = await fetchRoom(roomName, orderBy);
+  const room = await fetchRoom(userId, roomName, orderBy);
   if (!room) return c.json(notFoundError.content, NOT_FOUND);
   return c.json(room, OK);
 };

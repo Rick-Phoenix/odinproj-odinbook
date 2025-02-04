@@ -9,6 +9,7 @@ import type {
 import { numberParamSchema } from "../../../types/schema-helpers";
 import { basicPostSchema } from "../../../types/zod-schemas";
 import { notFoundError } from "../../../utils/customErrors";
+import { getUserId } from "../../../utils/getters";
 
 const tags = ["posts"];
 
@@ -33,10 +34,11 @@ export const getPostsHandler: AppRouteHandler<
   typeof getPosts,
   AppBindingsWithUser
 > = async (c) => {
+  const userId = getUserId(c);
   const { roomId } = c.req.valid("param");
   const { orderBy, cursor } = c.req.valid("query");
 
-  const posts = await fetchPosts(roomId, cursor, orderBy);
+  const posts = await fetchPosts(userId, roomId, cursor, orderBy);
   if (!posts) return c.json(notFoundError.content, NOT_FOUND);
   return c.json(posts, OK);
 };

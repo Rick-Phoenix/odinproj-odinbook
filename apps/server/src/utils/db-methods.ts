@@ -30,3 +30,39 @@ export const countRelation = <const T extends string>(
     [name]: rawSQL.mapWith(Number).as(name),
   } as { [Key in T]: SQL.Aliased<number> };
 };
+
+export function isLiked(userId: string) {
+  return {
+    isLiked: sql<boolean>`
+    EXISTS (
+      SELECT 1 FROM likes 
+      WHERE likes."postId" = posts.id 
+      AND likes."userId" = ${userId}
+    )
+  `.as("isLiked"),
+  };
+}
+
+export function isSubscribed(userId: string) {
+  return {
+    isSubscribed: sql<boolean>`
+    EXISTS (
+      SELECT 1 FROM "roomSubscriptions" 
+      WHERE "roomSubscriptions"."roomId" = rooms.id 
+      AND "roomSubscriptions"."userId" = ${userId}
+    )
+  `.as("isSubscribed"),
+  };
+}
+
+export function createdByUser(userId: string, roomId: number) {
+  return {
+    createdByUser: sql<boolean>`
+    EXISTS (
+      SELECT 1 FROM "rooms" 
+      WHERE rooms.id = ${roomId}
+      AND rooms."creatorId"  = ${userId}
+    )
+  `.as("createdByUser"),
+  };
+}
