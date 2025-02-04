@@ -21,11 +21,14 @@ export const PostPreview: FC<{
   roomName: string;
   text: string;
   postId: number;
-}> = ({ title, roomName, text, postId }) => {
+  likesCount: number;
+}> = ({ title, roomName, text, postId, likesCount }) => {
   return (
     <div className="flex max-h-[50%] min-h-min flex-col justify-between rounded-xl bg-muted/50">
       <CardHeader className="pb-3">
-        <CardTitle className="line-clamp-4 text-2xl">{title}</CardTitle>
+        <Link to="/rooms/$roomName/posts/$postId" params={{ roomName, postId }}>
+          <CardTitle className="line-clamp-4 text-2xl">{title}</CardTitle>
+        </Link>
         <CardDescription>
           <Link
             to="/rooms/$roomName"
@@ -40,7 +43,7 @@ export const PostPreview: FC<{
       <CardContent className="line-clamp-6">{text}</CardContent>
       <Separator className="mt-4 px-3" />
       <div className="flex p-3">
-        <LikeButton postId={postId} />
+        <LikeButton postId={postId} likesCount={likesCount} />
         <CommentButton />
         <ShareButton />
       </div>
@@ -70,8 +73,12 @@ export function CommentButton() {
   );
 }
 
-export const LikeButton: FC<{ postId: number }> = ({ postId }) => {
+export const LikeButton: FC<{ postId: number; likesCount: number }> = ({
+  postId,
+  likesCount,
+}) => {
   const [isLiked, setIsLiked] = useState(false);
+  const [likes, setLikes] = useState(likesCount);
 
   const likeMutation = useMutation({
     mutationKey: ["like", postId],
@@ -87,7 +94,10 @@ export const LikeButton: FC<{ postId: number }> = ({ postId }) => {
       }
       return data;
     },
-    onSuccess: () => setIsLiked(!isLiked),
+    onSuccess: () => {
+      setIsLiked((old) => !old);
+      setLikes((l) => (!isLiked ? l + 1 : l - 1));
+    },
   });
 
   return (
@@ -102,7 +112,7 @@ export const LikeButton: FC<{ postId: number }> = ({ postId }) => {
     >
       <ButtonGesture>
         {isLiked ? <PiThumbsUpFill /> : <PiThumbsUpBold />}
-        Like
+        {likes}
       </ButtonGesture>
     </Button>
   );
