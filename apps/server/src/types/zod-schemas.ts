@@ -38,6 +38,8 @@ export const basicPostSchema = createSelectSchema(posts).extend({
 });
 export const fullPostSchema = createSelectSchema(posts).extend({
   comments: z.array(commentSchema),
+  room: z.object({ name: z.string() }),
+  author: z.object({ username: z.string() }),
 });
 export const roomSchema = createSelectSchema(rooms).extend({
   posts: z.array(basicPostSchema),
@@ -47,8 +49,6 @@ export const listingPicsSchema = createSelectSchema(listingPics);
 export const listingSchema = createSelectSchema(listings).extend({
   pics: z.array(listingPicsSchema),
 });
-
-const subscriptionsSchema = createSelectSchema(roomSubs);
 
 export const userDataSchema = userSchema
   .pick({

@@ -182,13 +182,19 @@ export async function findOrCreateChat(
   return findOrCreateChat(userId, contactUsername);
 }
 
-export async function getPost(postId: number) {
-  return await db.query.posts.findFirst({
+export async function fetchPost(postId: number) {
+  const post = await db.query.posts.findFirst({
     where(post, { eq }) {
       return eq(post.id, postId);
     },
-    with: { comments: true },
+    with: {
+      comments: true,
+      room: { columns: { name: true } },
+      author: { columns: { username: true } },
+    },
   });
+
+  return post;
 }
 
 export async function addSubscription(userId: string, roomId: number) {
