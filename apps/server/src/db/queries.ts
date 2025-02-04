@@ -13,7 +13,9 @@ import {
 export async function fetchUserData(userId: string) {
   const userData = await db.query.users.findFirst({
     where: (user, { eq }) => eq(user.id, userId),
-    with: { roomSubscriptions: true },
+    with: {
+      roomSubscriptions: { with: { room: { with: { posts: { limit: 20 } } } } },
+    },
     columns: { avatarUrl: true, createdAt: true, status: true, username: true },
   });
 
@@ -178,12 +180,39 @@ export async function addSubscription(userId: string, roomId: number) {
   await db.insert(roomSubs).values({ userId, roomId }).onConflictDoNothing();
 }
 
-export async function fetchRoom(name: string) {
+export async function fetchPosts(
+  roomId: number,
+  cursor: number,
+  orderBy: "likes" | "time"
+) {
+  const posts = await db.query.posts.findMany({
+    where: (post, { eq }) => eq(post.roomId, roomId),
+    with: { author: { columns: { username: true } } },
+    limit: 20,
+    offset: cursor * 20,
+    orderBy: (post, { desc }) =>
+      orderBy === "likes" ? desc(post.likesCount) : desc(post.createdAt),
+  });
+
+  return posts;
+}
+
+export async function fetchRoom(name: string, orderBy: "time" | "likes") {
   const room = await db.query.rooms.findFirst({
     where: (room, { eq }) => eq(lowercase(room.name), name.toLocaleLowerCase()),
     with: {
       posts: {
-        with: { comments: true },
+        limit: 20,
+        columns: {
+          id: true,
+          likesCount: true,
+          title: true,
+          text: true,
+          createdAt: true,
+        },
+        with: { author: { columns: { avatarUrl: true, username: true } } },
+        orderBy: (post, { desc }) =>
+          orderBy === "likes" ? desc(post.likesCount) : desc(post.createdAt),
       },
     },
   });

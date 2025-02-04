@@ -254,6 +254,7 @@ export const rooms = pgTable(
   (t) => [
     uniqueIndex("uniqueRoomIndex").on(lowercase(trim(t.name))),
     index("subsCountIndex").on(t.subsCount),
+    index("roomNameIndex").on(t.name),
   ]
 );
 
@@ -305,7 +306,10 @@ export const posts = pgTable(
       .notNull(),
     likesCount: integer("likesCount").notNull().default(0),
   },
-  (t) => [index("likesCountIndex").on(t.likesCount)]
+  (t) => [
+    index("likesCountIndex").on(t.likesCount),
+    index("postsChronologicalIndex").on(t.createdAt),
+  ]
 );
 
 export const postsRelations = relations(posts, ({ one, many }) => ({
@@ -324,18 +328,24 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
 
 //
 
-export const comments = pgTable("comments", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  userId: text("userId").references(() => users.id),
-  postId: integer("postId")
-    .references(() => posts.id, { onDelete: "cascade" })
-    .notNull(),
-  text: text("text").notNull(),
-  createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
-  parentCommentId: integer("parentCommentId").references(
-    (): AnyPgColumn => comments.id
-  ),
-});
+export const comments = pgTable(
+  "comments",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    userId: text("userId").references(() => users.id),
+    postId: integer("postId")
+      .references(() => posts.id, { onDelete: "cascade" })
+      .notNull(),
+    text: text("text").notNull(),
+    createdAt: timestamp("createdAt", { mode: "string" })
+      .defaultNow()
+      .notNull(),
+    parentCommentId: integer("parentCommentId").references(
+      (): AnyPgColumn => comments.id
+    ),
+  },
+  (t) => [index("commentsChronologicalIndex").on(t.createdAt)]
+);
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({
   author: one(users, {

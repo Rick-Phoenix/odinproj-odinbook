@@ -1,13 +1,13 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { NOT_FOUND, OK } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
-import { fetchRoom } from "../../db/queries";
+import { fetchRoom } from "../../../db/queries";
 import type {
   AppBindingsWithUser,
   AppRouteHandler,
-} from "../../types/app-bindings";
-import { roomSchema } from "../../types/zod-schemas";
-import { notFoundError } from "../../utils/customErrors";
+} from "../../../types/app-bindings";
+import { roomSchema } from "../../../types/zod-schemas";
+import { notFoundError } from "../../../utils/customErrors";
 
 const tags = ["rooms"];
 
@@ -17,6 +17,9 @@ export const getRoom = createRoute({
   tags,
   request: {
     params: z.object({ roomName: z.string() }),
+    query: z.object({
+      orderBy: z.enum(["time", "likes"]).default("likes"),
+    }),
   },
   responses: {
     [OK]: jsonContent(roomSchema, "The room with posts."),
@@ -29,7 +32,9 @@ export const getRoomHandler: AppRouteHandler<
   AppBindingsWithUser
 > = async (c) => {
   const { roomName } = c.req.valid("param");
-  const room = await fetchRoom(roomName);
+  const { orderBy } = c.req.valid("query");
+
+  const room = await fetchRoom(roomName, orderBy);
   if (!room) return c.json(notFoundError.content, NOT_FOUND);
   return c.json(room, OK);
 };
