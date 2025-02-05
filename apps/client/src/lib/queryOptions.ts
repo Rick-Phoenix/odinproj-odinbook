@@ -1,7 +1,7 @@
+import { queryClient } from "../main";
 import { api } from "./api-client";
 
 import { queryOptions } from "@tanstack/react-query";
-import { queryClient } from "../main";
 
 // USER
 
@@ -13,10 +13,11 @@ export const userQueryOptions = {
       return null;
     }
     if (!res.ok) {
-      throw new Error("Server Error");
+      throw new Error("Could not fetch user.");
     }
     const data = await res.json();
     const { roomSubscriptions, ...userData } = data;
+    console.log(data, userData, roomSubscriptions);
     if (roomSubscriptions.length > 0) {
       const feed = [];
       for (const room of roomSubscriptions) {

@@ -269,14 +269,17 @@ export const roomsRelations = relations(rooms, ({ many, one }) => ({
 export const subs = pgTable("subs", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   room: text("room")
-    .references(() => rooms.name, { onDelete: "cascade" })
-    .notNull(),
-  userId: text("userId").references(() => users.id, {
-    onDelete: "cascade",
-  }),
+    .notNull()
+    .references(() => rooms.name, { onDelete: "cascade" }),
+
+  userId: text("userId")
+    .notNull()
+    .references(() => users.id, {
+      onDelete: "cascade",
+    }),
 });
 
-export const roomSubscriptionsRelations = relations(subs, ({ one }) => ({
+export const subsRelations = relations(subs, ({ one }) => ({
   user: one(users, {
     fields: [subs.userId],
     references: [users.id],
@@ -294,8 +297,8 @@ export const posts = pgTable(
   {
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
     room: text("room")
-      .references(() => rooms.name, { onDelete: "cascade" })
-      .notNull(),
+      .notNull()
+      .references(() => rooms.name, { onDelete: "cascade" }),
     authorId: text("authorId")
       .notNull()
       .references(() => users.id),

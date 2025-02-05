@@ -36,7 +36,9 @@ export function isLiked(userId: string) {
     isLiked: sql<boolean>`
     EXISTS (
       SELECT 1 FROM likes 
+      JOIN posts ON likes."postId" = posts.id
       WHERE likes."postId" = posts.id 
+
       AND likes."userId" = ${userId}
     )
   `.as("isLiked"),
@@ -47,9 +49,10 @@ export function isSubscribed(userId: string) {
   return {
     isSubscribed: sql<boolean>`
     EXISTS (
-      SELECT 1 FROM "roomSubscriptions" 
-      WHERE "roomSubscriptions"."roomId" = rooms.id 
-      AND "roomSubscriptions"."userId" = ${userId}
+      SELECT 1 FROM "subs" 
+      JOIN rooms ON subs.room = rooms.name
+      WHERE "subs"."room" = rooms.name 
+      AND "subs"."userId" = ${userId}
     )
   `.as("isSubscribed"),
   };
