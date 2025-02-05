@@ -22,10 +22,10 @@ export async function fetchUserData(userId: string) {
               posts: {
                 limit: 20,
                 with: { author: { columns: { username: true } } },
-                extras: () => isLiked(userId),
+                extras: (f) => isLiked(userId, f.id),
               },
             },
-            extras: () => isSubscribed(userId),
+            extras: (f) => isSubscribed(userId, f.name),
           },
         },
         columns: {},
@@ -198,7 +198,7 @@ export async function fetchPost(userId: string, postId: number) {
       room: { columns: { name: true } },
       author: { columns: { username: true } },
     },
-    extras: () => isLiked(userId),
+    extras: (f) => isLiked(userId, f.id),
   });
 
   return post;
@@ -227,7 +227,7 @@ export async function fetchPosts(
     offset: cursor * 20,
     orderBy: (post, { desc }) =>
       orderBy === "likes" ? desc(post.likesCount) : desc(post.createdAt),
-    extras: () => isLiked(userId),
+    extras: (f) => isLiked(userId, f.id),
   });
 
   return posts;
@@ -247,10 +247,10 @@ export async function fetchRoom(
         with: { author: { columns: { username: true } } },
         orderBy: (post, { desc }) =>
           orderBy === "likes" ? desc(post.likesCount) : desc(post.createdAt),
-        extras: () => isLiked(userId),
+        extras: (f) => isLiked(userId, f.id),
       },
     },
-    extras: (f) => ({ ...isSubscribed(userId) }),
+    extras: (f) => ({ ...isSubscribed(userId, f.name) }),
   });
 
   return room;

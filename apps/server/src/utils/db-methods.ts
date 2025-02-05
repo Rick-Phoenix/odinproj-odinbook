@@ -31,41 +31,26 @@ export const countRelation = <const T extends string>(
   } as { [Key in T]: SQL.Aliased<number> };
 };
 
-export function isLiked(userId: string) {
+export function isLiked(userId: string, postId: PgColumn) {
   return {
     isLiked: sql<boolean>`
     EXISTS (
       SELECT 1 FROM likes 
-      JOIN posts ON likes."postId" = posts.id
-      WHERE likes."postId" = posts.id 
-
+      WHERE likes."postId" = ${postId} 
       AND likes."userId" = ${userId}
     )
   `.as("isLiked"),
   };
 }
 
-export function isSubscribed(userId: string) {
+export function isSubscribed(userId: string, roomName: PgColumn) {
   return {
     isSubscribed: sql<boolean>`
     EXISTS (
       SELECT 1 FROM "subs" 
-      JOIN rooms ON subs.room = rooms.name
-      WHERE "subs"."room" = rooms.name 
+      WHERE "subs"."room" = ${roomName}
       AND "subs"."userId" = ${userId}
     )
   `.as("isSubscribed"),
-  };
-}
-
-export function createdByUser(userId: string, roomId: number) {
-  return {
-    createdByUser: sql<boolean>`
-    EXISTS (
-      SELECT 1 FROM "rooms" 
-      WHERE rooms.id = ${roomId}
-      AND rooms."creatorId"  = ${userId}
-    )
-  `.as("createdByUser"),
   };
 }
