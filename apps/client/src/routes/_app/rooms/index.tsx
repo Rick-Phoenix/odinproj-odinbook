@@ -14,7 +14,7 @@ import {
 import { createFileRoute } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useRef, useState, type FC } from "react";
+import { useState, type FC } from "react";
 import "swiper/css/scrollbar";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 
@@ -49,8 +49,6 @@ function RouteComponent() {
         : 1,
   );
 
-  const scrollAreaRef = useRef(null);
-
   const handleScroll: React.UIEventHandler<HTMLDivElement> = (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
     console.log("🚀 ~ RouteComponent ~ scrollTop:", scrollTop);
@@ -59,7 +57,7 @@ function RouteComponent() {
   };
 
   return (
-    <InsetScrollArea viewportRef={scrollAreaRef} onScroll={handleScroll}>
+    <InsetScrollArea onScroll={handleScroll}>
       <TrendingCarousel posts={trendingPosts} />
       <div className="flex h-12 items-center justify-center gap-3 rounded-xl bg-primary/80 p-1">
         <Button

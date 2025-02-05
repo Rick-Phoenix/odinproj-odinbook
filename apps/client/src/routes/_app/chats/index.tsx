@@ -1,3 +1,4 @@
+import { chatsQueryOptions } from "@/lib/chatQueries";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SquarePen } from "lucide-react";
@@ -6,7 +7,6 @@ import ChatDialog from "../../../components/custom/chat-dialog";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
-import { chatsQueryOptions } from "../../../main";
 
 export const Route = createFileRoute("/_app/chats/")({
   component: RouteComponent,

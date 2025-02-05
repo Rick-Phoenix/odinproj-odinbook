@@ -8,6 +8,7 @@ import {
   SidebarMenuButton,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
+import { cacheChat, chatsQueryOptions } from "@/lib/chatQueries";
 import {
   useMutation,
   useQueryClient,
@@ -25,7 +26,6 @@ import { title } from "radashi";
 import type { FC } from "react";
 import { useActivePage } from "../hooks/use-active-page";
 import { api, type Chat, type Room } from "../lib/api-client";
-import { cacheChat, chatsQueryOptions } from "../main";
 import ChatDialog from "./custom/chat-dialog";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import { Button } from "./ui/button";

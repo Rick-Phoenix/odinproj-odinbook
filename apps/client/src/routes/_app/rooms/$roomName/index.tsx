@@ -1,4 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
+import {
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, type FC } from "react";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
@@ -20,26 +24,72 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
-import { api, type SortingOrder } from "../../../../lib/api-client";
+import {
+  api,
+  type PostBasic,
+  type SortingOrder,
+} from "../../../../lib/api-client";
 import { roomQueryOptions } from "../../../../lib/queryOptions";
 
 export const Route = createFileRoute("/_app/rooms/$roomName/")({
   component: RouteComponent,
   validateSearch: (s) => ({ orderBy: (s.orderBy as SortingOrder) || "likes" }),
   loaderDeps: ({ search }) => search,
-  loader: async (c) => {
-    const { roomName } = c.params;
-    const room = await c.context.queryClient.fetchQuery(
-      roomQueryOptions(roomName, c.deps.orderBy),
+  loader: async ({ context: { queryClient }, params, deps: { orderBy } }) => {
+    const { roomName } = params;
+    const room = await queryClient.fetchQuery(
+      roomQueryOptions(roomName, orderBy),
     );
-    return room;
+    const initialPosts: PostBasic[] = queryClient.getQueryData([
+      "posts",
+      roomName,
+    ])!;
+    return { room, initialPosts };
   },
 });
 
 function RouteComponent() {
-  const { name: roomName, avatar, posts, isSubscribed } = Route.useLoaderData();
+  const queryClient = useQueryClient();
+  const {
+    room: { name: roomName, avatar, isSubscribed },
+    initialPosts,
+  } = Route.useLoaderData();
   const { orderBy } = Route.useSearch();
   const [sortingOrder, setSortingOrder] = useState(orderBy);
+  const postsQuery = useInfiniteQuery({
+    queryKey: ["posts", roomName, "infinite"],
+    queryFn: async (c) => {
+      const { pageParam } = c;
+      console.log("🚀 ~ queryFn: ~ pageParam:", pageParam);
+      const res = await api.rooms[":roomName"].posts.$get({
+        param: { roomName: "PC Builders" },
+        query: { orderBy: "likes", cursor: pageParam },
+      });
+      const posts = await res.json();
+      if ("issues" in posts) {
+        throw new Error("");
+      }
+      for (const post of posts) {
+        queryClient.setQueryData(["post", post.id], post);
+      }
+      return { posts, nextCursor: pageParam + 1 };
+    },
+    initialPageParam: 1,
+    getNextPageParam: (lastPage, pages) => {
+      if (lastPage.posts.length === 0) return null;
+      return lastPage.nextCursor;
+    },
+    initialData: {
+      pageParams: [1],
+      pages: [{ posts: initialPosts, nextCursor: 2 }],
+    },
+  });
+  console.log("🚀 ~ RouteComponent ~ postsQuery:", postsQuery.data);
+
+  const posts = postsQuery.data.pages.reduce((acc, next) => {
+    return acc.concat(next.posts);
+  }, [] as PostBasic[]);
+
   const sortedPosts = posts.sort((a, b) =>
     sortingOrder === "likes"
       ? b.likesCount - a.likesCount
@@ -47,8 +97,15 @@ function RouteComponent() {
         ? -1
         : 1,
   );
+
+  const handleScroll: React.UIEventHandler<HTMLDivElement> = (e) => {
+    const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+    console.log("🚀 ~ RouteComponent ~ scrollTop:", scrollTop);
+    console.log("🚀 ~ RouteComponent ~ scrollHeight:", scrollHeight);
+    console.log("🚀 ~ RouteComponent ~ clientHeight:", clientHeight);
+  };
   return (
-    <InsetScrollArea>
+    <InsetScrollArea onScroll={posts.length === 20 ? handleScroll : undefined}>
       <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
         <header className="flex h-28 w-full items-center justify-between rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
           <Avatar className="h-full w-auto">
@@ -69,7 +126,8 @@ function RouteComponent() {
             className="h-full flex-1 hover:bg-popover"
             variant={"secondary"}
             size={"lg"}
-            onClick={() => setSortingOrder("time")}
+            onClick={async () => await postsQuery.fetchNextPage()}
+            // onClick={() => setSortingOrder("time")}
             style={{
               ...(sortingOrder === "time" && {
                 backgroundColor: "hsl(var(--popover))",

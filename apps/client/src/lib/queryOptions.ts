@@ -1,7 +1,6 @@
+import { queryOptions } from "@tanstack/react-query";
 import { queryClient } from "../main";
 import { api } from "./api-client";
-
-import { queryOptions } from "@tanstack/react-query";
 
 // USER
 
@@ -20,10 +19,11 @@ export const userQueryOptions = {
     if (roomSubscriptions.length > 0) {
       const feed = [];
       for (const room of roomSubscriptions) {
-        queryClient.setQueryData(["room", room.name], room);
-        const { posts } = room;
+        const { posts, ...roomData } = room;
+        queryClient.setQueryData(["room", room.name], roomData);
+        queryClient.setQueryData(["posts", room.name], posts);
         for (const post of posts) {
-          feed.push({ ...post, roomName: room.name });
+          feed.push(post);
           queryClient.setQueryData(["post", post.id], post);
         }
       }
@@ -51,9 +51,11 @@ export const roomQueryOptions = (
       if ("issues" in data) {
         throw new Error("Room not found.");
       }
-      for (const post of data.posts) {
+      const { posts, ...roomData } = data;
+      queryClient.setQueryData(["posts", roomName], posts);
+      for (const post of posts) {
         queryClient.setQueryData(["post", post.id], post);
       }
-      return data;
+      return roomData;
     },
   });

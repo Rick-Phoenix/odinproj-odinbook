@@ -1,3 +1,4 @@
+import { chatsQueryOptions } from "@/lib/chatQueries";
 import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
@@ -12,7 +13,6 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
 import { type Chat, type Message } from "../../../lib/api-client";
-import { chatsQueryOptions } from "../../../main";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 

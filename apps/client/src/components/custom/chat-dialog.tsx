@@ -1,10 +1,10 @@
+import { cacheChat } from "@/lib/chatQueries";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { FC, ReactNode } from "react";
 import { z } from "zod";
 import { type Chat, api } from "../../lib/api-client";
-import { cacheChat } from "../../main";
 import { errorTypeGuard } from "../../utils/type-guards";
 import { Button } from "../ui/button";
 import {
