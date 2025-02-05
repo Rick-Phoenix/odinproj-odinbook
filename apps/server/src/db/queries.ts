@@ -12,7 +12,7 @@ import {
 } from "./schema";
 
 export async function fetchUserData(userId: string) {
-  const query = db.query.users.findFirst({
+  const userData = await db.query.users.findFirst({
     where: (user, { eq }) => eq(user.id, userId),
     with: {
       roomSubscriptions: {
@@ -33,10 +33,6 @@ export async function fetchUserData(userId: string) {
     },
     columns: { avatarUrl: true, createdAt: true, status: true, username: true },
   });
-
-  const userData = await query;
-
-  console.log(query.toSQL());
 
   if (userData)
     return {

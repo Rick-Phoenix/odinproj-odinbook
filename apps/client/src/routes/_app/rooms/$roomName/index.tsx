@@ -31,6 +31,7 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
     const room = await c.context.queryClient.fetchQuery(
       roomQueryOptions(roomName),
     );
+    console.log(room);
     return room;
   },
 });

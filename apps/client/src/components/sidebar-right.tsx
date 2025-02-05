@@ -339,8 +339,8 @@ const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({
 const RoomSidebarContent = () => {
   const { subSection } = useActivePage();
   const queryClient = useQueryClient();
-
   const room = queryClient.getQueryData(["room", subSection]) as Room;
+
   return (
     <>
       <div className="flex h-32 p-6 pb-0 center">

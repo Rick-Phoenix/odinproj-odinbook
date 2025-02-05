@@ -17,7 +17,6 @@ export const userQueryOptions = {
     }
     const data = await res.json();
     const { roomSubscriptions, ...userData } = data;
-    console.log(data, userData, roomSubscriptions);
     if (roomSubscriptions.length > 0) {
       const feed = [];
       for (const room of roomSubscriptions) {
