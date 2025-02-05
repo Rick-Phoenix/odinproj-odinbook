@@ -11,7 +11,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState, type FC } from "react";
@@ -34,15 +34,15 @@ export const Route = createFileRoute("/_app/rooms/")({
 
 function RouteComponent() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate({ from: Route.fullPath });
   const feed = queryClient.getQueryData(["feed"]) as PostBasic[];
   const { orderBy } = Route.useSearch();
-  const [sortingOrder, setSortingOrder] = useState(orderBy);
   const trendingPosts = feed
     .slice(0, 12)
     .sort((a, b) => b.likesCount - a.likesCount);
 
   feed.sort((a, b) =>
-    sortingOrder === "likes"
+    orderBy === "likes"
       ? b.likesCount - a.likesCount
       : new Date(b.createdAt) > new Date(a.createdAt)
         ? -1
@@ -64,9 +64,9 @@ function RouteComponent() {
           className="h-full flex-1 hover:bg-popover"
           variant={"secondary"}
           size={"lg"}
-          onClick={() => setSortingOrder("time")}
+          onClick={() => navigate({ to: ".", search: { orderBy: "time" } })}
           style={{
-            ...(sortingOrder === "time" && {
+            ...(orderBy === "time" && {
               backgroundColor: "hsl(var(--popover))",
             }),
           }}
@@ -77,9 +77,9 @@ function RouteComponent() {
           className="h-full flex-1"
           variant={"secondary"}
           size={"lg"}
-          onClick={() => setSortingOrder("likes")}
+          onClick={() => navigate({ to: ".", search: { orderBy: "likes" } })}
           style={{
-            ...(sortingOrder === "likes" && {
+            ...(orderBy === "likes" && {
               backgroundColor: "hsl(var(--popover))",
             }),
           }}

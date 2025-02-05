@@ -3,7 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState, type FC } from "react";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
 import { PostPreview } from "../../../../components/custom/post-preview";
@@ -50,12 +50,12 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
 
 function RouteComponent() {
   const queryClient = useQueryClient();
+  const navigate = useNavigate({ from: Route.fullPath });
   const {
     room: { name: roomName, avatar, isSubscribed },
     initialPosts,
   } = Route.useLoaderData();
   const { orderBy } = Route.useSearch();
-  const [sortingOrder, setSortingOrder] = useState(orderBy);
   const postsQuery = useInfiniteQuery({
     queryKey: ["posts", roomName, "infinite"],
     queryFn: async (c) => {
@@ -91,21 +91,27 @@ function RouteComponent() {
   }, [] as PostBasic[]);
 
   const sortedPosts = posts.sort((a, b) =>
-    sortingOrder === "likes"
+    orderBy === "likes"
       ? b.likesCount - a.likesCount
       : new Date(b.createdAt) > new Date(a.createdAt)
         ? -1
         : 1,
   );
 
-  const handleScroll: React.UIEventHandler<HTMLDivElement> = (e) => {
+  const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+    if (
+      scrollTop + clientHeight >= scrollHeight * 0.9 &&
+      !postsQuery.isFetching
+    ) {
+      await postsQuery.fetchNextPage();
+    }
     console.log("🚀 ~ RouteComponent ~ scrollTop:", scrollTop);
     console.log("🚀 ~ RouteComponent ~ scrollHeight:", scrollHeight);
     console.log("🚀 ~ RouteComponent ~ clientHeight:", clientHeight);
   };
   return (
-    <InsetScrollArea onScroll={posts.length === 20 ? handleScroll : undefined}>
+    <InsetScrollArea onScroll={posts.length >= 20 ? handleScroll : undefined}>
       <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
         <header className="flex h-28 w-full items-center justify-between rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
           <Avatar className="h-full w-auto">
@@ -126,10 +132,9 @@ function RouteComponent() {
             className="h-full flex-1 hover:bg-popover"
             variant={"secondary"}
             size={"lg"}
-            onClick={async () => await postsQuery.fetchNextPage()}
-            // onClick={() => setSortingOrder("time")}
+            onClick={() => navigate({ to: ".", search: { orderBy: "time" } })}
             style={{
-              ...(sortingOrder === "time" && {
+              ...(orderBy === "time" && {
                 backgroundColor: "hsl(var(--popover))",
               }),
             }}
@@ -140,9 +145,9 @@ function RouteComponent() {
             className="h-full flex-1"
             variant={"secondary"}
             size={"lg"}
-            onClick={() => setSortingOrder("likes")}
+            onClick={() => navigate({ to: ".", search: { orderBy: "likes" } })}
             style={{
-              ...(sortingOrder === "likes" && {
+              ...(orderBy === "likes" && {
                 backgroundColor: "hsl(var(--popover))",
               }),
             }}

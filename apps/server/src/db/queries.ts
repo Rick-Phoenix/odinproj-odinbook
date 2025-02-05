@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 import { isLiked, isSubscribed, lowercase } from "../utils/db-methods";
 import db from "./dbConfig";
 import {
@@ -6,8 +6,10 @@ import {
   chats,
   likes,
   messages,
+  posts,
   rooms,
   subs,
+  users,
   type roomsCategory,
 } from "./schema";
 
@@ -212,6 +214,36 @@ export async function removeSubscription(userId: string, room: string) {
   await db
     .delete(subs)
     .where(and(eq(subs.room, room), eq(subs.userId, userId)));
+}
+
+export async function fetchFeed(
+  userId: string,
+  cursor: number,
+  orderBy: "likes" | "time"
+) {
+  const userSubs = db
+    .select({ roomName: rooms.name })
+    .from(subs)
+    .innerJoin(rooms, eq(rooms.name, subs.room))
+    .where(eq(subs.userId, userId))
+    .as("user_subs");
+  const feed = await db
+
+    .select({ posts, author: users.username, ...isLiked(userId, posts.id) })
+    .from(posts)
+    .innerJoin(userSubs, eq(userSubs.roomName, posts.room))
+    .innerJoin(users, eq(users.id, posts.authorId))
+    .orderBy(
+      orderBy === "likes" ? desc(posts.likesCount) : desc(posts.createdAt)
+    )
+    .limit(20)
+    .offset(cursor * 20);
+  const parsedFeed = feed.map((i) => ({
+    ...i.posts,
+    isLiked: i.isLiked,
+    author: { username: i.author },
+  }));
+  return parsedFeed;
 }
 
 export async function fetchPosts(
