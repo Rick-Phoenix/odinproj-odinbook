@@ -25,21 +25,60 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { PostPreview } from "../../../components/custom/post-preview";
 import { Button } from "../../../components/ui/button";
 import { CardTitle } from "../../../components/ui/card";
-import type { PostBasic } from "../../../lib/api-client";
+import type { PostBasic, SortingOrder } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/rooms/")({
   component: RouteComponent,
+  validateSearch: (s) => ({ orderBy: (s.orderBy as SortingOrder) || "likes" }),
 });
 
 function RouteComponent() {
   const queryClient = useQueryClient();
   const feed = queryClient.getQueryData(["feed"]) as PostBasic[];
-  const trending = feed
-    .sort((a, b) => b.likesCount - a.likesCount)
-    .slice(0, 12);
+  const { orderBy } = Route.useSearch();
+  const [sortingOrder, setSortingOrder] = useState(orderBy);
+  const trendingPosts = feed
+    .slice(0, 12)
+    .sort((a, b) => b.likesCount - a.likesCount);
+
+  feed.sort((a, b) =>
+    sortingOrder === "likes"
+      ? b.likesCount - a.likesCount
+      : new Date(b.createdAt) > new Date(a.createdAt)
+        ? -1
+        : 1,
+  );
   return (
     <InsetScrollArea>
-      <TrendingCarousel posts={trending} />
+      <TrendingCarousel posts={trendingPosts} />
+      <div className="flex h-12 items-center justify-center gap-3 rounded-xl bg-primary/80 p-1">
+        <Button
+          className="h-full flex-1 hover:bg-popover"
+          variant={"secondary"}
+          size={"lg"}
+          onClick={() => setSortingOrder("time")}
+          style={{
+            ...(sortingOrder === "time" && {
+              backgroundColor: "hsl(var(--popover))",
+            }),
+          }}
+        >
+          Newest
+        </Button>
+        <Button
+          className="h-full flex-1"
+          variant={"secondary"}
+          size={"lg"}
+          onClick={() => setSortingOrder("likes")}
+          style={{
+            ...(sortingOrder === "likes" && {
+              backgroundColor: "hsl(var(--popover))",
+            }),
+          }}
+        >
+          Most Popular
+        </Button>
+      </div>
       {feed.map((post) => (
         <PostPreview key={post.id} post={post} />
       ))}
@@ -57,12 +96,12 @@ const TrendingCard: FC<{
     <Link
       to={"/rooms/$roomName/posts/$postId"}
       params={{ roomName, postId }}
-      className="flex aspect-video w-full rounded-xl bg-muted/50 p-4"
+      className="group flex aspect-video w-full rounded-xl bg-muted/50 p-4 hover:bg-muted"
     >
       <div className="flex h-full flex-1 flex-col justify-between">
         <div className="flex items-center justify-end gap-2 self-end">
           <div className="max-w-[10ch] truncate">{likesCount}</div>
-          <Heart className="min-w-fit" />
+          <Heart className="min-w-fit group-hover:fill-white" />
         </div>
         <div>
           <CardTitle className="line-clamp-[6] max-w-full scroll-m-20">
@@ -71,6 +110,7 @@ const TrendingCard: FC<{
           <Link
             to="/rooms/$roomName"
             params={{ roomName }}
+            search={{ orderBy: "likes" }}
             className="mt-1 line-clamp-1 text-muted-foreground"
           >
             r/{roomName}
@@ -81,7 +121,7 @@ const TrendingCard: FC<{
   );
 };
 
-const TrendingCarousel: FC<{ posts: PostFeed[] }> = ({ posts }) => {
+const TrendingCarousel: FC<{ posts: PostBasic[] }> = ({ posts }) => {
   const [isVisible, setIsVisible] = useState(true);
 
   return (
@@ -90,7 +130,7 @@ const TrendingCarousel: FC<{ posts: PostFeed[] }> = ({ posts }) => {
         <DropdownMenuTrigger asChild className="p-3">
           <Button variant={"ghost"}>
             <small className="text-sm font-medium leading-none">
-              🔥 Trending
+              🔥 Trending Posts
             </small>
           </Button>
         </DropdownMenuTrigger>
@@ -138,7 +178,6 @@ const TrendingCarousel: FC<{ posts: PostFeed[] }> = ({ posts }) => {
                 disableOnInteraction: true,
                 pauseOnMouseEnter: true,
               }}
-              centeredSlides={true}
               grabCursor={true}
               coverflowEffect={{
                 rotate: 50,
@@ -151,7 +190,7 @@ const TrendingCarousel: FC<{ posts: PostFeed[] }> = ({ posts }) => {
                     likesCount={post.likesCount}
                     postId={post.id}
                     title={post.title}
-                    roomName={post.roomName}
+                    roomName={post.room}
                   />
                 </SwiperSlide>
               ))}

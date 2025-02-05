@@ -36,13 +36,16 @@ export const userQueryOptions = {
 
 // ROOMS
 
-export const roomQueryOptions = (roomName: string) =>
+export const roomQueryOptions = (
+  roomName: string,
+  orderBy?: "likes" | "time",
+) =>
   queryOptions({
     queryKey: ["room", roomName],
     queryFn: async () => {
       const res = await api.rooms[":roomName"].$get({
         param: { roomName },
-        query: {},
+        query: { orderBy },
       });
       const data = await res.json();
       if ("issues" in data) {

@@ -31,6 +31,7 @@ export const PostPreview: FC<{
             <Link
               to="/rooms/$roomName"
               params={{ roomName }}
+              search={{ orderBy: "likes" }}
               className="my-1 line-clamp-1"
             >
               r/{roomName} | {format(new Date(createdAt), "MMM do")}
@@ -43,7 +44,7 @@ export const PostPreview: FC<{
       <Separator className="mt-4 px-3" />
       <div className="flex p-3">
         <LikeButton postId={postId} />
-        <CommentButton />
+        <CommentButton postId={postId} roomName={roomName} />
         <ShareButton />
       </div>
     </div>

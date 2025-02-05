@@ -9,5 +9,6 @@ export type Profile = z.infer<typeof schemas.profileSchema>;
 export type PostBasic = z.infer<typeof schemas.basicPostSchema>;
 export type PostFull = z.infer<typeof schemas.fullPostSchema>;
 export type Room = z.infer<typeof schemas.roomSchema>;
+export type SortingOrder = "likes" | "time";
 
 export const wsRPC = RPC("ws://localhost:5173/");

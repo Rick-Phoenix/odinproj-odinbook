@@ -12,7 +12,6 @@ export const Route = createFileRoute("/_app/rooms/$roomName/posts/$postId")({
   },
   loader: async (c) => {
     const post = c.context.queryClient.getQueryData(["post", c.params.postId]);
-    console.log(post);
     return post;
   },
 });

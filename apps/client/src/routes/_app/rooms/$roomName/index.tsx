@@ -1,6 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { title } from "radashi";
 import { useState, type FC } from "react";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
 import { PostPreview } from "../../../../components/custom/post-preview";
@@ -21,15 +20,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
-import { api } from "../../../../lib/api-client";
+import { api, type SortingOrder } from "../../../../lib/api-client";
 import { roomQueryOptions } from "../../../../lib/queryOptions";
 
 export const Route = createFileRoute("/_app/rooms/$roomName/")({
   component: RouteComponent,
+  validateSearch: (s) => ({ orderBy: (s.orderBy as SortingOrder) || "likes" }),
+  loaderDeps: ({ search }) => search,
   loader: async (c) => {
     const { roomName } = c.params;
     const room = await c.context.queryClient.fetchQuery(
-      roomQueryOptions(roomName),
+      roomQueryOptions(roomName, c.deps.orderBy),
     );
     return room;
   },
@@ -37,7 +38,15 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
 
 function RouteComponent() {
   const { name: roomName, avatar, posts, isSubscribed } = Route.useLoaderData();
-
+  const { orderBy } = Route.useSearch();
+  const [sortingOrder, setSortingOrder] = useState(orderBy);
+  const sortedPosts = posts.sort((a, b) =>
+    sortingOrder === "likes"
+      ? b.likesCount - a.likesCount
+      : new Date(b.createdAt) > new Date(a.createdAt)
+        ? -1
+        : 1,
+  );
   return (
     <InsetScrollArea>
       <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
@@ -48,13 +57,42 @@ function RouteComponent() {
           <Link
             to="/rooms/$roomName"
             params={{ roomName }}
+            search={{ orderBy: "likes" }}
             className="text-center text-2xl font-semibold hover:underline"
           >
-            r/{title(roomName)}
+            r/{roomName}
           </Link>
           <SubscribeButton roomName={roomName} isSubscribed={isSubscribed} />
         </header>
-        {posts.map((post) => (
+        <div className="flex h-12 items-center justify-center gap-3 rounded-xl bg-primary/80 p-1">
+          <Button
+            className="h-full flex-1 hover:bg-popover"
+            variant={"secondary"}
+            size={"lg"}
+            onClick={() => setSortingOrder("time")}
+            style={{
+              ...(sortingOrder === "time" && {
+                backgroundColor: "hsl(var(--popover))",
+              }),
+            }}
+          >
+            Newest
+          </Button>
+          <Button
+            className="h-full flex-1"
+            variant={"secondary"}
+            size={"lg"}
+            onClick={() => setSortingOrder("likes")}
+            style={{
+              ...(sortingOrder === "likes" && {
+                backgroundColor: "hsl(var(--popover))",
+              }),
+            }}
+          >
+            Most Popular
+          </Button>
+        </div>
+        {sortedPosts.map((post) => (
           <PostPreview post={post} key={post.id} />
         ))}
       </section>
@@ -78,7 +116,7 @@ const SubscribeButton: FC<{ isSubscribed: boolean; roomName: string }> = ({
       });
       const data = await res.json();
       if (!res.ok) {
-        throw new Error("Could not register the like. Try again later.");
+        throw new Error("Could not subscribe to the room. Try again later.");
       }
       return data;
     },

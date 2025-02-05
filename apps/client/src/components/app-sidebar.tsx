@@ -30,16 +30,6 @@ const data = {
       url: "/rooms",
       icon: Box,
       isActive: true,
-      items: [
-        {
-          title: "Popular",
-          url: "#",
-        },
-        {
-          title: "Starred",
-          url: "/rooms/starred",
-        },
-      ],
     },
     {
       title: "Chats",

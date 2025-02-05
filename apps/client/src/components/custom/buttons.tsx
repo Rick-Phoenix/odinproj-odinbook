@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
 import { MessageCircleMore, Share } from "lucide-react";
 import { type FC } from "react";
 import { PiThumbsUpBold, PiThumbsUpFill } from "react-icons/pi";
@@ -17,22 +18,28 @@ export function ShareButton() {
   );
 }
 
-export function CommentButton() {
+export const CommentButton: FC<{ roomName: string; postId: number }> = ({
+  roomName,
+  postId,
+}) => {
   return (
     <Button variant={"ghost"} asChild className="flex-1 p-6">
-      <ButtonGesture>
-        <MessageCircleMore />
-        Comment
-      </ButtonGesture>
+      <Link to="/rooms/$roomName/posts/$postId" params={{ roomName, postId }}>
+        <ButtonGesture className="flex gap-2">
+          <MessageCircleMore />
+          Comment
+        </ButtonGesture>
+      </Link>
     </Button>
   );
-}
+};
 
 export const LikeButton: FC<{
   postId: number;
 }> = ({ postId }) => {
   const queryClient = useQueryClient();
   const {
+    // @ts-expect-error (TS will see these as potentially undefined but they can't be because the page wouldn't load without the post's data)
     data: { isLiked, likesCount },
   } = useQuery({
     queryKey: ["post", postId],
