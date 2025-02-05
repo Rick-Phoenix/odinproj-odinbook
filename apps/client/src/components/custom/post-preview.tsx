@@ -2,6 +2,7 @@ import { type FC } from "react";
 
 import { Link } from "@tanstack/react-router";
 import { format } from "date-fns";
+import type { PostBasic } from "../../lib/api-client";
 import {
   CardContent,
   CardDescription,
@@ -12,14 +13,10 @@ import { Separator } from "../ui/separator";
 import { CommentButton, LikeButton, ShareButton } from "./buttons";
 
 export const PostPreview: FC<{
-  title: string;
-  roomName: string;
-  text: string;
-  postId: number;
-  likesCount: number;
-  author: string;
-  createdAt: string;
-}> = ({ title, roomName, text, postId, likesCount, author, createdAt }) => {
+  post: PostBasic;
+}> = ({
+  post: { title, room: roomName, text, id: postId, author, createdAt },
+}) => {
   return (
     <div className="flex max-h-[50%] min-h-min flex-col justify-between rounded-xl bg-muted/50">
       <CardHeader className="pb-3">
@@ -27,8 +24,8 @@ export const PostPreview: FC<{
           <CardTitle className="line-clamp-4 text-2xl">{title}</CardTitle>
         </Link>
         <div className="flex flex-col">
-          <Link to="/users/$username" params={{ username: author }}>
-            @{author}
+          <Link to="/users/$username" params={{ username: author.username }}>
+            @{author.username}
           </Link>
           <CardDescription>
             <Link
@@ -45,7 +42,7 @@ export const PostPreview: FC<{
       <CardContent className="line-clamp-6">{text}</CardContent>
       <Separator className="mt-4 px-3" />
       <div className="flex p-3">
-        <LikeButton postId={postId} likesCount={likesCount} />
+        <LikeButton postId={postId} />
         <CommentButton />
         <ShareButton />
       </div>

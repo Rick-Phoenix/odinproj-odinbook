@@ -36,11 +36,8 @@ export const basicPostSchema = createSelectSchema(posts).extend({
   }),
   isLiked: z.boolean(),
 });
-export const fullPostSchema = createSelectSchema(posts).extend({
+export const fullPostSchema = basicPostSchema.extend({
   comments: z.array(commentSchema),
-  room: z.object({ name: z.string() }),
-  author: z.object({ username: z.string() }),
-  isLiked: z.boolean(),
 });
 export const roomSchema = createSelectSchema(rooms).extend({
   posts: z.array(basicPostSchema),

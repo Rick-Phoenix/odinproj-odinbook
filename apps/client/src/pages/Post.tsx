@@ -130,7 +130,7 @@ const Post: FC<{ post: PostFull }> = ({ post }) => {
       <CardContent className="pt-4">{post.text}</CardContent>
       <Separator className="mt-1" />
       <div className="flex p-3">
-        <LikeButton postId={post.id} likesCount={post.likesCount} />
+        <LikeButton postId={post.id} />
         <CommentButton />
         <ShareButton />
       </div>

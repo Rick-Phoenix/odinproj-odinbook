@@ -31,7 +31,6 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
     const room = await c.context.queryClient.fetchQuery(
       roomQueryOptions(roomName),
     );
-    console.log(room);
     return room;
   },
 });
@@ -56,16 +55,7 @@ function RouteComponent() {
           <SubscribeButton roomName={roomName} isSubscribed={isSubscribed} />
         </header>
         {posts.map((post) => (
-          <PostPreview
-            author={post.author.username}
-            createdAt={post.createdAt}
-            likesCount={post.likesCount}
-            postId={post.id}
-            roomName={roomName}
-            text={post.text}
-            title={post.title}
-            key={post.id}
-          />
+          <PostPreview post={post} key={post.id} />
         ))}
       </section>
     </InsetScrollArea>

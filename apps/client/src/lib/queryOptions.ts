@@ -48,6 +48,9 @@ export const roomQueryOptions = (roomName: string) =>
       if ("issues" in data) {
         throw new Error("Room not found.");
       }
+      for (const post of data.posts) {
+        queryClient.setQueryData(["post", post.id], post);
+      }
       return data;
     },
   });

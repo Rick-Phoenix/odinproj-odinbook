@@ -25,7 +25,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import { PostPreview } from "../../../components/custom/post-preview";
 import { Button } from "../../../components/ui/button";
 import { CardTitle } from "../../../components/ui/card";
-import type { PostFeed } from "../../../lib/api-client";
+import type { PostBasic } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/rooms/")({
   component: RouteComponent,
@@ -33,7 +33,7 @@ export const Route = createFileRoute("/_app/rooms/")({
 
 function RouteComponent() {
   const queryClient = useQueryClient();
-  const feed = queryClient.getQueryData(["feed"]) as PostFeed[];
+  const feed = queryClient.getQueryData(["feed"]) as PostBasic[];
   const trending = feed
     .sort((a, b) => b.likesCount - a.likesCount)
     .slice(0, 12);
@@ -41,16 +41,7 @@ function RouteComponent() {
     <InsetScrollArea>
       <TrendingCarousel posts={trending} />
       {feed.map((post) => (
-        <PostPreview
-          key={post.id}
-          title={post.title}
-          text={post.text}
-          postId={post.id}
-          roomName={post.roomName}
-          likesCount={post.likesCount}
-          author={post.author.username}
-          createdAt={post.createdAt}
-        />
+        <PostPreview key={post.id} post={post} />
       ))}
     </InsetScrollArea>
   );

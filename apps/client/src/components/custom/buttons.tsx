@@ -1,8 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { MessageCircleMore, Share } from "lucide-react";
-import { type FC, useState } from "react";
+import { type FC } from "react";
 import { PiThumbsUpBold, PiThumbsUpFill } from "react-icons/pi";
-import { api } from "../../lib/api-client";
+import { api, type PostBasic } from "../../lib/api-client";
 import ButtonGesture from "../motion/gestures";
 import { Button } from "../ui/button";
 
@@ -28,12 +28,22 @@ export function CommentButton() {
   );
 }
 
-export const LikeButton: FC<{ postId: number; likesCount: number }> = ({
-  postId,
-  likesCount,
-}) => {
-  const [isLiked, setIsLiked] = useState(false);
-  const [likes, setLikes] = useState(likesCount);
+export const LikeButton: FC<{
+  postId: number;
+}> = ({ postId }) => {
+  const queryClient = useQueryClient();
+  const {
+    data: { isLiked, likesCount },
+  } = useQuery({
+    queryKey: ["post", postId],
+    queryFn: async () => {
+      const postData = queryClient.getQueryData(["post", postId]) as PostBasic;
+      if (!postData)
+        throw new Error("Error while fetching the likes for this post.");
+      const { isLiked, likesCount } = postData;
+      return { likesCount, isLiked };
+    },
+  });
 
   const likeMutation = useMutation({
     mutationKey: ["like", postId],
@@ -50,8 +60,11 @@ export const LikeButton: FC<{ postId: number; likesCount: number }> = ({
       return data;
     },
     onSuccess: () => {
-      setIsLiked((old) => !old);
-      setLikes((l) => (!isLiked ? l + 1 : l - 1));
+      queryClient.setQueryData(["post", postId], (old: PostBasic) => ({
+        ...old,
+        isLiked: !old.isLiked,
+        likesCount: old.isLiked ? old.likesCount - 1 : old.likesCount + 1,
+      }));
     },
   });
 
@@ -67,7 +80,7 @@ export const LikeButton: FC<{ postId: number; likesCount: number }> = ({
     >
       <ButtonGesture>
         {isLiked ? <PiThumbsUpFill /> : <PiThumbsUpBold />}
-        {likes}
+        {likesCount}
       </ButtonGesture>
     </Button>
   );
