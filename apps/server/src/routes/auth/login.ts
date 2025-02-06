@@ -9,12 +9,12 @@ import {
   UNPROCESSABLE_ENTITY,
 } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
+import { lowercase } from "../../db/db-methods";
 import db from "../../db/dbConfig";
 import { createSession } from "../../lib/auth";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import { loginValidationSchema, userSchema } from "../../types/zod-schemas";
 import { customError } from "../../utils/customErrors";
-import { lowercase } from "../../utils/db-methods";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
 
 const tags = ["auth"];

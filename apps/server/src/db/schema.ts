@@ -12,7 +12,7 @@ import {
   varchar,
   type AnyPgColumn,
 } from "drizzle-orm/pg-core";
-import { lowercase, trim } from "../utils/db-methods";
+import { lowercase, trim } from "./db-methods";
 
 //
 

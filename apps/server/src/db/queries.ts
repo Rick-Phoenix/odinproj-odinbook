@@ -1,5 +1,5 @@
-import { and, desc, eq } from "drizzle-orm";
-import { isLiked, isSubscribed, lowercase } from "../utils/db-methods";
+import { and, desc, eq, sql } from "drizzle-orm";
+import { isLiked, isSubscribed, lowercase } from "./db-methods";
 import db from "./dbConfig";
 import {
   chatInstances,
@@ -12,8 +12,10 @@ import {
   users,
   type roomsCategory,
 } from "./schema";
+import { postsFromUserSubs } from "./subqueries";
 
 export async function fetchUserData(userId: string) {
+  const userSubs = postsFromUserSubs(userId);
   const userData = await db.query.users.findFirst({
     where: (user, { eq }) => eq(user.id, userId),
     with: {
@@ -24,7 +26,9 @@ export async function fetchUserData(userId: string) {
               posts: {
                 limit: 20,
                 with: { author: { columns: { username: true } } },
-                extras: (f) => isLiked(userId, f.id),
+                extras: (f) => ({
+                  ...isLiked(userId, f.id),
+                }),
               },
             },
             extras: (f) => isSubscribed(userId, f.name),
@@ -33,7 +37,11 @@ export async function fetchUserData(userId: string) {
         columns: {},
       },
     },
-    columns: { avatarUrl: true, createdAt: true, status: true, username: true },
+    extras: {
+      totalFeedPosts: sql<number>`${db.$count(userSubs)}::int`
+        .mapWith(Number)
+        .as("totalFeedPosts"),
+    },
   });
 
   if (userData)
@@ -216,33 +224,45 @@ export async function removeSubscription(userId: string, room: string) {
     .where(and(eq(subs.room, room), eq(subs.userId, userId)));
 }
 
-export async function fetchFeed(
-  userId: string,
-  cursor: number,
-  orderBy: "likes" | "time"
-) {
+export async function fetchFeed(opts: {
+  userId: string;
+  cursor: number;
+  orderBy: "likes" | "time";
+}) {
+  const { userId, cursor, orderBy } = opts;
   const userSubs = db
-    .select({ roomName: rooms.name })
-    .from(subs)
-    .innerJoin(rooms, eq(rooms.name, subs.room))
-    .where(eq(subs.userId, userId))
-    .as("user_subs");
-  const feed = await db
+    .$with("user_feed")
+    .as(
+      db
+        .select({ room: rooms.name })
+        .from(subs)
+        .innerJoin(rooms, eq(rooms.name, subs.room))
+        .where(eq(subs.userId, userId))
+    );
 
-    .select({ posts, author: users.username, ...isLiked(userId, posts.id) })
-    .from(posts)
-    .innerJoin(userSubs, eq(userSubs.roomName, posts.room))
+  const userFeed = await db
+    .with(userSubs)
+    .select({
+      post: posts,
+      author: users.username,
+      ...isLiked(userId, posts.id),
+    })
+    .from(userSubs)
+    .innerJoin(posts, eq(posts.room, userSubs.room))
     .innerJoin(users, eq(users.id, posts.authorId))
+
     .orderBy(
       orderBy === "likes" ? desc(posts.likesCount) : desc(posts.createdAt)
     )
     .limit(20)
     .offset(cursor * 20);
-  const parsedFeed = feed.map((i) => ({
-    ...i.posts,
+
+  const parsedFeed = userFeed.map((i) => ({
+    ...i.post,
     isLiked: i.isLiked,
     author: { username: i.author },
   }));
+
   return parsedFeed;
 }
 

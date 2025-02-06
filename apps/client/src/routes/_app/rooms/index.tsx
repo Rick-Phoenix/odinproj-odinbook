@@ -14,34 +14,89 @@ import {
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState, type FC } from "react";
+import { useRef, useState, type FC } from "react";
 import "swiper/css/scrollbar";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 
-import { useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Autoplay, Mousewheel, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { PostPreview } from "../../../components/custom/post-preview";
 import { Button } from "../../../components/ui/button";
 import { CardTitle } from "../../../components/ui/card";
-import type { PostBasic, SortingOrder } from "../../../lib/api-client";
+import {
+  api,
+  type InitialFeed,
+  type PostBasic,
+  type SortingOrder,
+} from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/rooms/")({
   component: RouteComponent,
   validateSearch: (s) => ({ orderBy: (s.orderBy as SortingOrder) || "likes" }),
+  loaderDeps: ({ search }) => search,
+  loader: async ({ context: { queryClient }, deps: { orderBy } }) => {
+    const initialFeed = (await queryClient.getQueryData([
+      "initialFeed",
+    ])) as InitialFeed;
+    return initialFeed;
+  },
 });
 
 function RouteComponent() {
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
-  const feed = queryClient.getQueryData(["feed"]) as PostBasic[];
+  const initialFeed = Route.useLoaderData();
   const { orderBy } = Route.useSearch();
-  const trendingPosts = feed
-    .slice(0, 12)
-    .sort((a, b) => b.likesCount - a.likesCount);
 
-  feed.sort((a, b) =>
+  const feedQuery = useInfiniteQuery({
+    queryKey: ["feed", "infinite"],
+    queryFn: async (c) => {
+      const { pageParam } = c;
+      console.log("🚀 ~ queryFn: ~ pageParam:", pageParam);
+      const res = await api.posts.feed.$get({
+        query: {
+          orderBy,
+          cursor: pageParam,
+        },
+      });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("Error while fetching the posts for the main feed.");
+      }
+      for (const post of data) {
+        queryClient.setQueryData(["post", post.id], post);
+      }
+      return { posts: data, nextCursor: pageParam + 1 };
+    },
+    initialPageParam: 0,
+    getNextPageParam: (lastPage, pages) => {
+      if (lastPage.posts.length < 20) return null;
+      return lastPage.nextCursor;
+    },
+    initialData: {
+      pageParams: [0],
+      pages: [{ posts: initialFeed.posts, nextCursor: 1 }],
+    },
+    maxPages: Math.ceil(initialFeed.total / 20),
+  });
+  console.log(feedQuery.hasNextPage);
+
+  const posts = feedQuery.data.pages.reduce((acc, next) => {
+    return acc.concat(next.posts);
+  }, [] as PostBasic[]);
+  console.log("🚀 ~ posts ~ posts:", posts);
+
+  const trendingPosts =
+    orderBy === "likes"
+      ? initialFeed.posts.slice(0, 12)
+      : posts
+          .slice()
+          .sort((a, b) => b.likesCount - a.likesCount)
+          .slice(0, 12);
+
+  posts.sort((a, b) =>
     orderBy === "likes"
       ? b.likesCount - a.likesCount
       : new Date(b.createdAt) > new Date(a.createdAt)
@@ -49,11 +104,24 @@ function RouteComponent() {
         : 1,
   );
 
-  const handleScroll: React.UIEventHandler<HTMLDivElement> = (e) => {
+  const lastFetchTime = useRef<number>(null);
+
+  const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
-    console.log("🚀 ~ RouteComponent ~ scrollTop:", scrollTop);
-    console.log("🚀 ~ RouteComponent ~ scrollHeight:", scrollHeight);
-    console.log("🚀 ~ RouteComponent ~ clientHeight:", clientHeight);
+    if (
+      scrollTop + clientHeight >= scrollHeight * 0.9 &&
+      !feedQuery.isFetching &&
+      feedQuery.hasNextPage
+    ) {
+      // if (lastFetchTime.current) {
+      //   if (lastFetchTime.current - Date.now() < 2000) return;
+      // }
+      // lastFetchTime.current = Date.now();
+      await feedQuery.fetchNextPage();
+    }
+    // console.log("🚀 ~ RouteComponent ~ scrollTop:", scrollTop);
+    // console.log("🚀 ~ RouteComponent ~ scrollHeight:", scrollHeight);
+    // console.log("🚀 ~ RouteComponent ~ clientHeight:", clientHeight);
   };
 
   return (
@@ -87,7 +155,7 @@ function RouteComponent() {
           Most Popular
         </Button>
       </div>
-      {feed.map((post) => (
+      {posts.map((post) => (
         <PostPreview key={post.id} post={post} />
       ))}
     </InsetScrollArea>

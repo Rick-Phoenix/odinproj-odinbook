@@ -28,7 +28,10 @@ export const userQueryOptions = {
         }
       }
 
-      queryClient.setQueryData(["feed"], feed);
+      queryClient.setQueryData(["initialFeed"], {
+        posts: feed,
+        total: data.totalFeedPosts,
+      });
     }
     return userData;
   },

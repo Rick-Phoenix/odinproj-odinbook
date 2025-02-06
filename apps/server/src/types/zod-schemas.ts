@@ -39,6 +39,8 @@ export const basicPostSchema = createSelectSchema(posts).extend({
 export const fullPostSchema = basicPostSchema.extend({
   comments: z.array(commentSchema),
 });
+export const userFeedSchema = z.array(basicPostSchema);
+
 export const roomSchema = createSelectSchema(rooms).extend({
   posts: z.array(basicPostSchema),
   isSubscribed: z.boolean(),
@@ -49,14 +51,10 @@ export const listingSchema = createSelectSchema(listings).extend({
   pics: z.array(listingPicsSchema),
 });
 
-export const userDataSchema = userSchema
-  .pick({
-    avatarUrl: true,
-    status: true,
-    createdAt: true,
-    username: true,
-  })
-  .extend({ roomSubscriptions: z.array(roomSchema) });
+export const userDataSchema = userSchema.extend({
+  roomSubscriptions: z.array(roomSchema),
+  totalFeedPosts: z.number(),
+});
 
 export const profileSchema = userSchema
   .pick({

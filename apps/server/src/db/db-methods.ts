@@ -1,8 +1,16 @@
-import { sql, type SQL } from "drizzle-orm";
+import {
+  getTableColumns,
+  getTableName,
+  sql,
+  type AnyColumn,
+  type ChangeColumnTableName,
+  type SQL,
+} from "drizzle-orm";
 import {
   PgDialect,
   type AnyPgColumn,
   type PgColumn,
+  type PgTable,
 } from "drizzle-orm/pg-core";
 
 export function lowercase(column: AnyPgColumn | SQL): SQL {
@@ -53,4 +61,30 @@ export function isSubscribed(userId: string, roomName: PgColumn) {
     )
   `.as("isSubscribed"),
   };
+}
+
+type ColumnAlias<T extends AnyColumn> = ChangeColumnTableName<T, string, "pg">;
+
+type ColumnAliases<T extends PgTable> = {
+  [K in keyof T["_"]["columns"]]: ColumnAlias<T["_"]["columns"][K]>;
+};
+
+function getTableColumnAliases<T extends PgTable>(
+  table: T,
+  keysToAlias: (keyof T["_"]["columns"])[]
+): ColumnAliases<T> {
+  const name = getTableName(table);
+  return Object.fromEntries(
+    Object.entries(getTableColumns(table)).map(([key, column]) => {
+      if (!keysToAlias.includes(key as keyof T["_"]["columns"])) {
+        return [key, column];
+      }
+      return [
+        key,
+        sql<number>`${table}.${sql.identifier(key)}`
+          .mapWith(column.mapFromDriverValue)
+          .as(`${name}_${key}`),
+      ];
+    })
+  ) as unknown as ColumnAliases<T>;
 }

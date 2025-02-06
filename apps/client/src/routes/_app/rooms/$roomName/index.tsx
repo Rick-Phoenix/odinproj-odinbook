@@ -63,25 +63,25 @@ function RouteComponent() {
       console.log("🚀 ~ queryFn: ~ pageParam:", pageParam);
       const res = await api.rooms[":roomName"].posts.$get({
         param: { roomName: "PC Builders" },
-        query: { orderBy: "likes", cursor: pageParam },
+        query: { orderBy, cursor: pageParam },
       });
       const posts = await res.json();
       if ("issues" in posts) {
-        throw new Error("");
+        throw new Error("Error while fetching the posts for this room.");
       }
       for (const post of posts) {
         queryClient.setQueryData(["post", post.id], post);
       }
       return { posts, nextCursor: pageParam + 1 };
     },
-    initialPageParam: 1,
+    initialPageParam: 0,
     getNextPageParam: (lastPage, pages) => {
-      if (lastPage.posts.length === 0) return null;
+      if (lastPage.posts.length < 20) return null;
       return lastPage.nextCursor;
     },
     initialData: {
-      pageParams: [1],
-      pages: [{ posts: initialPosts, nextCursor: 2 }],
+      pageParams: [0],
+      pages: [{ posts: initialPosts, nextCursor: 1 }],
     },
   });
   console.log("🚀 ~ RouteComponent ~ postsQuery:", postsQuery.data);
@@ -106,9 +106,9 @@ function RouteComponent() {
     ) {
       await postsQuery.fetchNextPage();
     }
-    console.log("🚀 ~ RouteComponent ~ scrollTop:", scrollTop);
-    console.log("🚀 ~ RouteComponent ~ scrollHeight:", scrollHeight);
-    console.log("🚀 ~ RouteComponent ~ clientHeight:", clientHeight);
+    // console.log("🚀 ~ RouteComponent ~ scrollTop:", scrollTop);
+    // console.log("🚀 ~ RouteComponent ~ scrollHeight:", scrollHeight);
+    // console.log("🚀 ~ RouteComponent ~ clientHeight:", clientHeight);
   };
   return (
     <InsetScrollArea onScroll={posts.length >= 20 ? handleScroll : undefined}>

@@ -3,12 +3,12 @@ import { encodeHexLowerCase } from "@oslojs/encoding";
 import { eq } from "drizzle-orm";
 import { getCookie } from "hono/cookie";
 import { CONFLICT, UNAUTHORIZED } from "stoker/http-status-codes";
+import { entryExists } from "../db/db-methods";
 import db from "../db/dbConfig";
 import { sessions, users } from "../db/schema";
 import { invalidateSession } from "../lib/auth";
 import type { AppContext, AppMiddleware } from "../types/app-bindings";
 import { alreadyLoggedError } from "../utils/customErrors";
-import { entryExists } from "../utils/db-methods";
 
 export const protectRoute: AppMiddleware = async (c, next) => {
   if (c.req.path.startsWith("/api/auth")) return await next();

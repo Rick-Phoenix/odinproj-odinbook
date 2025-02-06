@@ -14,7 +14,7 @@ import { getUserId } from "../../utils/getters";
 const tags = ["posts"];
 
 export const getPost = createRoute({
-  path: "/{postId}",
+  path: "/post/{postId}",
   method: "get",
   tags,
   request: {
