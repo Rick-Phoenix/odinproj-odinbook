@@ -21,7 +21,7 @@ export const getFeed = createRoute({
   request: {
     query: z.object({
       orderBy: z.enum(["time", "likes"]).default("likes"),
-      cursor: numberParamSchema.default(0),
+      cursor: numberParamSchema,
     }),
   },
   responses: {

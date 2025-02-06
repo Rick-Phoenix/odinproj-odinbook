@@ -69,7 +69,7 @@ type ColumnAliases<T extends PgTable> = {
   [K in keyof T["_"]["columns"]]: ColumnAlias<T["_"]["columns"][K]>;
 };
 
-function getTableColumnAliases<T extends PgTable>(
+export function getTableColumnAliases<T extends PgTable>(
   table: T,
   keysToAlias: (keyof T["_"]["columns"])[]
 ): ColumnAliases<T> {

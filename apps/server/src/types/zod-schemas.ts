@@ -31,20 +31,19 @@ export const chatSchema = createSelectSchema(chats).extend({
 const commentSchema = createSelectSchema(comments);
 export const likesSchema = createSelectSchema(likes);
 export const basicPostSchema = createSelectSchema(posts).extend({
-  author: z.object({
-    username: z.string(),
-  }),
+  author: z.string(),
   isLiked: z.boolean(),
 });
+export type BasicPost = z.infer<typeof basicPostSchema>;
 export const fullPostSchema = basicPostSchema.extend({
   comments: z.array(commentSchema),
 });
 export const userFeedSchema = z.array(basicPostSchema);
 
 export const roomSchema = createSelectSchema(rooms).extend({
-  posts: z.array(basicPostSchema),
   isSubscribed: z.boolean(),
 });
+export type RoomData = z.infer<typeof roomSchema>;
 
 export const listingPicsSchema = createSelectSchema(listingPics);
 export const listingSchema = createSelectSchema(listings).extend({

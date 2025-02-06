@@ -40,6 +40,7 @@ export const Route = createFileRoute("/_app/rooms/")({
     const initialFeed = (await queryClient.getQueryData([
       "initialFeed",
     ])) as InitialFeed;
+    console.log(initialFeed.posts);
     return initialFeed;
   },
 });
@@ -72,14 +73,16 @@ function RouteComponent() {
     },
     initialPageParam: 0,
     getNextPageParam: (lastPage, pages) => {
-      if (lastPage.posts.length < 20) return null;
+      // const maxPages = Math.ceil(initialFeed.total / 20);
+      // console.log("🚀 ~ RouteComponent ~ maxPages:", maxPages);
+      console.log(lastPage.nextCursor);
+      // if (lastPage.nextCursor > initialFeed.total / 20 - 1) return null;
       return lastPage.nextCursor;
     },
     initialData: {
       pageParams: [0],
       pages: [{ posts: initialFeed.posts, nextCursor: 1 }],
     },
-    maxPages: Math.ceil(initialFeed.total / 20),
   });
   console.log(feedQuery.hasNextPage);
 

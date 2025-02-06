@@ -12,43 +12,22 @@ import {
   users,
   type roomsCategory,
 } from "./schema";
-import { postsFromUserSubs } from "./subqueries";
+import { subbedRoomsWithPosts, totalPostsFromUserSubs } from "./subqueries";
 
-export async function fetchUserData(userId: string) {
-  const userSubs = postsFromUserSubs(userId);
+export async function fetchUserData(
+  userId: string,
+  orderBy: "likesCount" | "createdAt" = "likesCount"
+) {
+  const totalPostsFromSubs = totalPostsFromUserSubs(userId);
   const userData = await db.query.users.findFirst({
     where: (user, { eq }) => eq(user.id, userId),
-    with: {
-      roomSubscriptions: {
-        with: {
-          room: {
-            with: {
-              posts: {
-                limit: 20,
-                with: { author: { columns: { username: true } } },
-                extras: (f) => ({
-                  ...isLiked(userId, f.id),
-                }),
-              },
-            },
-            extras: (f) => isSubscribed(userId, f.name),
-          },
-        },
-        columns: {},
-      },
-    },
     extras: {
-      totalFeedPosts: sql<number>`${db.$count(userSubs)}::int`
+      totalFeedPosts: sql<number>`${db.$count(totalPostsFromSubs)}::int`
         .mapWith(Number)
         .as("totalFeedPosts"),
+      ...subbedRoomsWithPosts(userId, orderBy),
     },
   });
-
-  if (userData)
-    return {
-      ...userData,
-      roomSubscriptions: userData.roomSubscriptions.map((sub) => sub.room),
-    };
 
   return userData;
 }

@@ -279,7 +279,7 @@ export const subs = pgTable("subs", {
     }),
 });
 
-export const subsRelations = relations(subs, ({ one }) => ({
+export const Relations = relations(subs, ({ one }) => ({
   user: one(users, {
     fields: [subs.userId],
     references: [users.id],
