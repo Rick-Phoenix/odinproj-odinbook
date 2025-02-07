@@ -74,6 +74,27 @@ export const initialFeedQuery = (userId: string) => {
     ORDER BY posts."likesCount" DESC
     LIMIT 20
   ),
+    combined_posts AS (
+    SELECT * FROM recent_posts
+    UNION ALL
+    SELECT * FROM liked_posts
+  ),
+  unique_posts AS (
+    SELECT * FROM (
+      SELECT DISTINCT ON (id) 
+        id, 
+        room, 
+        title, 
+        text, 
+        "createdAt", 
+        "likesCount", 
+        author, 
+        isLiked
+      FROM combined_posts
+      ORDER BY id 
+    ) AS unique_posts
+    ORDER BY "likesCount" DESC  
+  ),
   rooms_json AS (
     SELECT
       jsonb_agg(
@@ -100,20 +121,16 @@ export const initialFeedQuery = (userId: string) => {
   posts_json AS (
     SELECT 
       jsonb_agg(jsonb_build_object(
-        'id', posts.id,
-        'author', posts.author,
-        'title', posts.title,
-        'text', posts.text,
-        'createdAt', posts."createdAt",
-        'likesCount', posts."likesCount",
-        'room', posts.room,
-        'isLiked', posts.isLiked
+        'id', unique_posts.id,
+        'author', unique_posts.author,
+        'title', unique_posts.title,
+        'text', unique_posts.text,
+        'createdAt', unique_posts."createdAt",
+        'likesCount', unique_posts."likesCount",
+        'room', unique_posts.room,
+        'isLiked', unique_posts.isLiked
       )) AS posts
-    FROM (
-      SELECT * FROM recent_posts
-      UNION ALL
-      SELECT * FROM liked_posts
-    ) AS posts
+    FROM unique_posts 
   )
 SELECT
   jsonb_build_object('rooms', rooms_json.rooms, 'posts', posts_json.posts) AS result

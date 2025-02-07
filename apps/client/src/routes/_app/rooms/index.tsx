@@ -38,11 +38,11 @@ export const Route = createFileRoute("/_app/rooms/")({
     orderBy: (s.orderBy as SortingOrder) || "likesCount",
   }),
   loaderDeps: ({ search }) => search,
-  loader: async ({ context: { queryClient }, deps: { orderBy } }) => {
+  loader: async ({ context: { queryClient } }) => {
     const initialFeed = (await queryClient.getQueryData([
       "initialFeed",
     ])) as InitialFeed;
-    console.log(initialFeed.posts);
+    console.log("🚀 ~ loader: ~ initialFeed:", initialFeed);
     return initialFeed;
   },
 });

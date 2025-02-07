@@ -1,6 +1,5 @@
 import { sql } from "drizzle-orm";
 import type { BasicPost } from "../types/zod-schemas";
-import db from "./dbConfig";
 
 const roomPostsQuery = (
   userId: string,
@@ -66,6 +65,27 @@ const roomPostsQuery = (
     ORDER BY posts."likesCount" DESC
     LIMIT 20
   ),
+    combined_posts AS (
+    SELECT * FROM recent_posts
+    UNION ALL
+    SELECT * FROM liked_posts
+  ),
+  unique_posts AS (
+    SELECT * FROM (
+      SELECT DISTINCT ON (id) 
+        id, 
+        room, 
+        title, 
+        text, 
+        "createdAt", 
+        "likesCount", 
+        author, 
+        isLiked
+      FROM combined_posts
+      ORDER BY id 
+    ) AS unique_posts
+    ORDER BY "likesCount" DESC  
+  ),
   rooms_json AS (
     SELECT
       jsonb_agg(
@@ -92,20 +112,16 @@ const roomPostsQuery = (
   posts_json AS (
     SELECT 
       jsonb_agg(jsonb_build_object(
-        'id', posts.id,
-        'author', posts.author,
-        'title', posts.title,
-        'text', posts.text,
-        'createdAt', posts."createdAt",
-        'likesCount', posts."likesCount",
-        'room', posts.room,
-        'isLiked', posts.isLiked
+        'id', unique_posts.id,
+        'author', unique_posts.author,
+        'title', unique_posts.title,
+        'text', unique_posts.text,
+        'createdAt', unique_posts."createdAt",
+        'likesCount', unique_posts."likesCount",
+        'room', unique_posts.room,
+        'isLiked', unique_posts.isLiked
       )) AS posts
-    FROM (
-      SELECT * FROM recent_posts
-      UNION ALL
-      SELECT * FROM liked_posts
-    ) AS posts
+    FROM unique_posts 
   )
 SELECT
   jsonb_build_object('rooms', rooms_json.rooms, 'posts', posts_json.posts) AS result
@@ -114,12 +130,12 @@ FROM
   posts_json)`;
 };
 
-const t = await db.execute(
-  roomPostsQuery(
-    "967186cc-80df-4bf4-80f1-93e7892db2cb",
-    "PC Builders",
-    "createdAt",
-    0
-  )
-);
-console.log("🚀 ~ t:", t.rows[0].result);
+// const t = await db.execute(
+//   roomPostsQuery(
+//     "967186cc-80df-4bf4-80f1-93e7892db2cb",
+//     "PC Builders",
+//     "createdAt",
+//     0
+//   )
+// );
+// console.log("🚀 ~ t:", t.rows[0].result);
