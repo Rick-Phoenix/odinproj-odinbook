@@ -44,9 +44,8 @@ export const roomSchema = createSelectSchema(rooms).extend({
   isSubscribed: z.boolean(),
 });
 export const roomWithPostsSchema = roomSchema.extend({
-  posts: z.array(
-    basicPostSchema.extend({ author: z.object({ username: z.string() }) })
-  ),
+  posts: z.array(basicPostSchema),
+  totalPosts: z.number(),
 });
 export type RoomData = z.infer<typeof roomSchema>;
 

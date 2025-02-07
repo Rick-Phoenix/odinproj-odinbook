@@ -14,7 +14,7 @@ import {
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useRef, useState, type FC } from "react";
+import { useState, type FC } from "react";
 import "swiper/css/scrollbar";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 
@@ -60,8 +60,8 @@ function RouteComponent() {
       const res = await api.posts.feed.$get({
         query: {
           orderBy,
-          cursorLikes: pageParam.likes,
-          cursorTime: pageParam.time,
+          cursorLikes: pageParam.likes!,
+          cursorTime: pageParam.time!,
         },
       });
       const data = await res.json();
@@ -92,14 +92,12 @@ function RouteComponent() {
       pageParams: [initialCursor],
       pages: [{ posts: initialPosts, cursor: initialCursor }],
     },
+    enabled: totalPosts > 0,
   });
-
-  console.log(feedQuery.data.pages);
 
   const posts = feedQuery.data.pages.reduce((acc, next) => {
     return acc.concat(next.posts);
   }, [] as PostBasic[]);
-  console.log("🚀 ~ posts ~ posts:", posts);
 
   const allTrendingPosts = queryClient.getQueryData([
     "initialFeed",
@@ -107,25 +105,15 @@ function RouteComponent() {
   ]) as InitialFeed;
   const mostTrendingPosts = allTrendingPosts.posts.slice(0, 12);
 
-  const lastFetchTime = useRef<number>(null);
-
   const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
-    console.log(feedQuery.hasNextPage);
     if (
       scrollTop + clientHeight >= scrollHeight * 0.9 &&
       !feedQuery.isFetching &&
       feedQuery.hasNextPage
     ) {
-      // if (lastFetchTime.current) {
-      //   if (lastFetchTime.current - Date.now() < 2000) return;
-      // }
-      // lastFetchTime.current = Date.now();
       await feedQuery.fetchNextPage();
     }
-    // console.log("🚀 ~ RouteComponent ~ scrollTop:", scrollTop);
-    // console.log("🚀 ~ RouteComponent ~ scrollHeight:", scrollHeight);
-    // console.log("🚀 ~ RouteComponent ~ clientHeight:", clientHeight);
   };
 
   return (

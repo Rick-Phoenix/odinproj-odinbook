@@ -22,8 +22,9 @@ export const userQueryOptions = {
     const initialFeedTrending: PostBasic[] = [];
     const initialFeedNewest: PostBasic[] = [];
     for (const room of rooms) {
-      queryClient.setQueryData(["room", room.name], room);
+      queryClient.setQueryData(["userSub", room.name], room);
     }
+
     posts.forEach((post, i) => {
       if (i < 20) initialFeedTrending.push(post);
       else initialFeedNewest.push(post);
@@ -37,7 +38,7 @@ export const userQueryOptions = {
 
     queryClient.setQueryData(["initialFeed", "createdAt"], {
       posts: initialFeedNewest.sort((a, b) =>
-        new Date(b.createdAt) > new Date(a.createdAt) ? -1 : 1,
+        new Date(b.createdAt) > new Date(a.createdAt) ? 1 : -1,
       ),
       total: data.totalFeedPosts,
     });
@@ -63,13 +64,11 @@ export const roomQueryOptions = (
       if ("issues" in data) {
         throw new Error("Room not found.");
       }
-      const { posts, ...roomData } = data;
-      queryClient.setQueryData(["posts", roomName], (old: PostBasic[]) =>
-        old ? [...old, ...posts] : [...posts],
-      );
-      for (const post of posts) {
+
+      for (const post of data.posts) {
         queryClient.setQueryData(["post", post.id], post);
       }
-      return roomData;
+
+      return data;
     },
   });

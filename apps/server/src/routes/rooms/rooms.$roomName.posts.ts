@@ -21,7 +21,8 @@ export const getPosts = createRoute({
     params: z.object({ roomName: z.string() }),
     query: z.object({
       orderBy: z.enum(["likesCount", "createdAt"]).default("likesCount"),
-      cursor: numberParamSchema,
+      cursorLikes: numberParamSchema,
+      cursorTime: z.string(),
     }),
   },
   responses: {
@@ -39,9 +40,15 @@ export const getPostsHandler: AppRouteHandler<
 > = async (c) => {
   const userId = getUserId(c);
   const { roomName } = c.req.valid("param");
-  const { orderBy, cursor } = c.req.valid("query");
+  const { orderBy, cursorTime, cursorLikes } = c.req.valid("query");
 
-  const posts = await fetchPosts(userId, roomName, orderBy, cursor);
+  const posts = await fetchPosts(
+    userId,
+    roomName,
+    orderBy,
+    cursorLikes,
+    cursorTime
+  );
   if (!posts) return c.json(notFoundError.content, NOT_FOUND);
   return c.json(posts, OK);
 };

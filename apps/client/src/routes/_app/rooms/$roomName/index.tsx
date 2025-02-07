@@ -42,11 +42,9 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
     const room = await queryClient.fetchQuery(
       roomQueryOptions(roomName, orderBy),
     );
-    const initialPosts: PostBasic[] = queryClient.getQueryData([
-      "posts",
-      roomName,
-    ])!;
-    return { room, initialPosts };
+    console.log("🚀 ~ loader: ~ room:", room);
+
+    return room;
   },
 });
 
@@ -54,63 +52,74 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
   const {
-    room: { name: roomName, avatar, isSubscribed },
-    initialPosts,
+    name: roomName,
+    avatar,
+    isSubscribed,
+    posts: initialPosts,
+    totalPosts,
   } = Route.useLoaderData();
   const { orderBy } = Route.useSearch();
+  const initialCursor = {
+    time: initialPosts.at(-1)?.createdAt,
+    likes: initialPosts.at(-1)?.likesCount,
+  };
+
   const postsQuery = useInfiniteQuery({
-    queryKey: ["posts", roomName, "infinite"],
+    queryKey: ["posts", roomName, orderBy],
     queryFn: async (c) => {
       const { pageParam } = c;
-      console.log("🚀 ~ queryFn: ~ pageParam:", pageParam);
+
       const res = await api.rooms[":roomName"].posts.$get({
-        param: { roomName: "PC Builders" },
-        query: { orderBy, cursor: pageParam },
+        param: { roomName },
+        query: {
+          orderBy,
+          cursorLikes: pageParam.likes!,
+          cursorTime: pageParam.time!,
+        },
       });
       const posts = await res.json();
       if ("issues" in posts) {
         throw new Error("Error while fetching the posts for this room.");
       }
-      for (const post of posts) {
+
+      if (posts.length === 0) return { posts: [], cursor: null };
+
+      for (const post of posts)
         queryClient.setQueryData(["post", post.id], post);
-      }
-      return { posts, nextCursor: pageParam + 1 };
+
+      const cursor = {
+        time: posts.at(-1)?.createdAt,
+        likes: posts.at(-1)?.likesCount,
+      };
+
+      return { posts, cursor };
     },
-    initialPageParam: 0,
+    initialPageParam: initialCursor,
     getNextPageParam: (lastPage, pages) => {
-      if (lastPage.posts.length < 20) return null;
-      return lastPage.nextCursor;
+      if (pages.length >= Math.ceil(totalPosts / 20)) return null;
+      return lastPage.cursor;
     },
     initialData: {
-      pageParams: [0],
-      pages: [{ posts: initialPosts, nextCursor: 1 }],
+      pageParams: [initialCursor],
+      pages: [{ posts: initialPosts, cursor: initialCursor }],
     },
+    enabled: totalPosts > 0,
   });
-  console.log("🚀 ~ RouteComponent ~ postsQuery:", postsQuery.data);
+  console.log("🚀 ~ RouteComponent ~ postsQuery:", postsQuery.data.pages);
 
   const posts = postsQuery.data.pages.reduce((acc, next) => {
     return acc.concat(next.posts);
   }, [] as PostBasic[]);
 
-  const sortedPosts = posts.sort((a, b) =>
-    orderBy === "likesCount"
-      ? b.likesCount - a.likesCount
-      : new Date(b.createdAt) > new Date(a.createdAt)
-        ? -1
-        : 1,
-  );
-
   const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
     if (
       scrollTop + clientHeight >= scrollHeight * 0.9 &&
-      !postsQuery.isFetching
+      !postsQuery.isFetching &&
+      postsQuery.hasNextPage
     ) {
       await postsQuery.fetchNextPage();
     }
-    // console.log("🚀 ~ RouteComponent ~ scrollTop:", scrollTop);
-    // console.log("🚀 ~ RouteComponent ~ scrollHeight:", scrollHeight);
-    // console.log("🚀 ~ RouteComponent ~ clientHeight:", clientHeight);
   };
   return (
     <InsetScrollArea onScroll={posts.length >= 20 ? handleScroll : undefined}>
@@ -161,7 +170,7 @@ function RouteComponent() {
             Most Popular
           </Button>
         </div>
-        {sortedPosts.map((post) => (
+        {posts.map((post) => (
           <PostPreview post={post} key={post.id} />
         ))}
       </section>

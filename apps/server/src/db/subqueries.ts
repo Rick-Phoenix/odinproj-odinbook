@@ -14,6 +14,14 @@ export const totalPostsFromUserSubs = (userId: string) =>
     .where(eq(subs.userId, userId))
     .as("user_subs_posts");
 
+export const totalPostsFromRoom = (room: string) =>
+  db
+    .select()
+    .from(posts)
+    .innerJoin(rooms, eq(rooms.name, posts.room))
+    .where(eq(rooms.name, room))
+    .as("room_posts");
+
 export const initialFeedQuery = (userId: string) => {
   return {
     subsContent: sql<{ rooms: RoomData[]; posts: BasicPost[] }>`(WITH

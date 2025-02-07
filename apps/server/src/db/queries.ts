@@ -13,7 +13,11 @@ import {
   users,
   type roomsCategory,
 } from "./schema";
-import { initialFeedQuery, totalPostsFromUserSubs } from "./subqueries";
+import {
+  initialFeedQuery,
+  totalPostsFromRoom,
+  totalPostsFromUserSubs,
+} from "./subqueries";
 
 export async function fetchUserData(userId: string) {
   const totalPostsFromSubs = totalPostsFromUserSubs(userId);
@@ -257,7 +261,8 @@ export const fetchPosts = async (
   userId: string,
   room: string,
   orderBy: "likesCount" | "createdAt" = "likesCount",
-  cursor: number = 0
+  cursorLikes: number,
+  cursorTime: string
 ) => {
   const orderByColumns = {
     createdAt: sql.raw(`"createdAt"`),
@@ -284,8 +289,19 @@ export const fetchPosts = async (
 FROM
   posts
 WHERE
-  posts.room = ${room} ORDER BY posts."${safeOrderBy}" DESC
-LIMIT 20 OFFSET ${cursor * 20}::int`
+  posts.room = ${room} AND posts.${
+    orderBy === "likesCount"
+      ? sql.raw(
+          `"likesCount" <= ${cursorLikes} AND posts."createdAt" < '${cursorTime}'`
+        )
+      : sql.raw(`"createdAt" < '${cursorTime}'`)
+  } 
+    ORDER BY posts.${safeOrderBy} DESC, ${
+      orderBy === "likesCount"
+        ? sql.raw(`"createdAt" DESC`)
+        : sql.raw(`"likesCount" DESC`)
+    }
+LIMIT 20`
   );
 
   return posts;
@@ -305,13 +321,27 @@ export async function fetchRoom(
         with: { author: { columns: { username: true } } },
         orderBy: (post, { desc }) =>
           orderBy === "likesCount"
-            ? desc(post.likesCount)
-            : desc(post.createdAt),
+            ? [desc(post.likesCount), desc(post.createdAt)]
+            : [desc(post.createdAt), desc(post.likesCount)],
         extras: (f) => isLiked(userId, f.id),
       },
     },
-    extras: (f) => ({ ...isSubscribed(userId, f.name) }),
+    extras: (f) => ({
+      ...isSubscribed(userId, f.name),
+      totalPosts: sql<number>`${db.$count(totalPostsFromRoom(roomName))}::int`
+        .mapWith(Number)
+        .as("totalPosts"),
+    }),
   });
+
+  if (room)
+    return {
+      ...room,
+      posts: room.posts.map((post) => ({
+        ...post,
+        author: post.author.username,
+      })),
+    };
 
   return room;
 }
