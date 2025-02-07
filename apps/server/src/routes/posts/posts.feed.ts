@@ -20,7 +20,7 @@ export const getFeed = createRoute({
   tags,
   request: {
     query: z.object({
-      orderBy: z.enum(["time", "likes"]).default("likes"),
+      orderBy: z.enum(["createdAt", "likesCount"]).default("likesCount"),
       cursor: numberParamSchema,
     }),
   },
@@ -37,6 +37,6 @@ export const getFeedHandler: AppRouteHandler<
 > = async (c) => {
   const userId = getUserId(c);
   const { orderBy, cursor } = c.req.valid("query");
-  const posts = await fetchFeed({ userId, cursor, orderBy });
+  const posts = await fetchFeed(userId, cursor, orderBy);
   return c.json(posts, OK);
 };

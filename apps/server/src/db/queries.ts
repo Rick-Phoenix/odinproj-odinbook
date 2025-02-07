@@ -1,4 +1,5 @@
 import { and, desc, eq, sql } from "drizzle-orm";
+import type { BasicPost } from "../types/zod-schemas";
 import { isLiked, isSubscribed, lowercase } from "./db-methods";
 import db from "./dbConfig";
 import {
@@ -190,6 +191,8 @@ export async function fetchPost(userId: string, postId: number) {
     extras: (f) => isLiked(userId, f.id),
   });
 
+  if (post) return { ...post, author: post.author.username };
+
   return post;
 }
 
@@ -203,12 +206,11 @@ export async function removeSubscription(userId: string, room: string) {
     .where(and(eq(subs.room, room), eq(subs.userId, userId)));
 }
 
-export async function fetchFeed(opts: {
-  userId: string;
-  cursor: number;
-  orderBy: "likes" | "time";
-}) {
-  const { userId, cursor, orderBy } = opts;
+export async function fetchFeed(
+  userId: string,
+  cursor: number,
+  orderBy: "likesCount" | "createdAt" = "likesCount"
+) {
   const userSubs = db
     .$with("user_feed")
     .as(
@@ -231,7 +233,7 @@ export async function fetchFeed(opts: {
     .innerJoin(users, eq(users.id, posts.authorId))
 
     .orderBy(
-      orderBy === "likes" ? desc(posts.likesCount) : desc(posts.createdAt)
+      orderBy === "likesCount" ? desc(posts.likesCount) : desc(posts.createdAt)
     )
     .limit(20)
     .offset(cursor * 20);
@@ -239,35 +241,54 @@ export async function fetchFeed(opts: {
   const parsedFeed = userFeed.map((i) => ({
     ...i.post,
     isLiked: i.isLiked,
-    author: { username: i.author },
+    author: i.author,
   }));
 
   return parsedFeed;
 }
 
-export async function fetchPosts(
+export const fetchPosts = async (
   userId: string,
   room: string,
-  cursor: number,
-  orderBy: "likes" | "time"
-) {
-  const posts = await db.query.posts.findMany({
-    where: (post, { eq }) => eq(post.room, room),
-    with: { author: { columns: { username: true } } },
-    limit: 20,
-    offset: cursor * 20,
-    orderBy: (post, { desc }) =>
-      orderBy === "likes" ? desc(post.likesCount) : desc(post.createdAt),
-    extras: (f) => isLiked(userId, f.id),
-  });
+  orderBy: "likesCount" | "createdAt" = "likesCount",
+  cursor: number = 0
+) => {
+  const orderByColumns = {
+    createdAt: sql.raw(`"createdAt"`),
+    likesCount: sql.raw(`"likesCount"`),
+  } as const;
+
+  const safeOrderBy = orderByColumns[orderBy] ?? orderByColumns.likesCount;
+  const { rows: posts } = await db.execute<BasicPost>(
+    sql`SELECT
+  *,
+  (
+    SELECT DISTINCT
+      username
+    FROM
+      users
+    WHERE
+      users.id = posts."authorId"
+  ) AS author, EXISTS (
+            SELECT 1
+            FROM likes
+            WHERE likes."postId" = posts.id
+            AND likes."userId" = ${userId}
+          ) AS isLiked
+FROM
+  posts
+WHERE
+  posts.room = ${room} ORDER BY posts."${safeOrderBy}" DESC
+LIMIT 20 OFFSET ${cursor * 20}::int`
+  );
 
   return posts;
-}
+};
 
 export async function fetchRoom(
   userId: string,
   roomName: string,
-  orderBy: "time" | "likes"
+  orderBy: "likesCount" | "createdAt" = "likesCount"
 ) {
   const room = await db.query.rooms.findFirst({
     where: (room, { eq }) =>
@@ -277,7 +298,9 @@ export async function fetchRoom(
         limit: 20,
         with: { author: { columns: { username: true } } },
         orderBy: (post, { desc }) =>
-          orderBy === "likes" ? desc(post.likesCount) : desc(post.createdAt),
+          orderBy === "likesCount"
+            ? desc(post.likesCount)
+            : desc(post.createdAt),
         extras: (f) => isLiked(userId, f.id),
       },
     },

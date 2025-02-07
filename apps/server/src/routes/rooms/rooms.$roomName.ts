@@ -6,7 +6,7 @@ import type {
   AppBindingsWithUser,
   AppRouteHandler,
 } from "../../types/app-bindings";
-import { roomSchema } from "../../types/zod-schemas";
+import { roomWithPostsSchema } from "../../types/zod-schemas";
 import { notFoundError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
 
@@ -19,11 +19,11 @@ export const getRoom = createRoute({
   request: {
     params: z.object({ roomName: z.string() }),
     query: z.object({
-      orderBy: z.enum(["time", "likes"]).default("likes"),
+      orderBy: z.enum(["likesCount", "createdAt"]).default("likesCount"),
     }),
   },
   responses: {
-    [OK]: jsonContent(roomSchema, "The room data with 0-20 posts."),
+    [OK]: jsonContent(roomWithPostsSchema, "The room data with 0-20 posts."),
     [NOT_FOUND]: notFoundError.template,
   },
 });

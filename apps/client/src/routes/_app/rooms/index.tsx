@@ -34,7 +34,9 @@ import {
 
 export const Route = createFileRoute("/_app/rooms/")({
   component: RouteComponent,
-  validateSearch: (s) => ({ orderBy: (s.orderBy as SortingOrder) || "likes" }),
+  validateSearch: (s) => ({
+    orderBy: (s.orderBy as SortingOrder) || "likesCount",
+  }),
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { queryClient }, deps: { orderBy } }) => {
     const initialFeed = (await queryClient.getQueryData([
@@ -92,7 +94,7 @@ function RouteComponent() {
   console.log("🚀 ~ posts ~ posts:", posts);
 
   const trendingPosts =
-    orderBy === "likes"
+    orderBy === "likesCount"
       ? initialFeed.posts.slice(0, 12)
       : posts
           .slice()
@@ -100,7 +102,7 @@ function RouteComponent() {
           .slice(0, 12);
 
   posts.sort((a, b) =>
-    orderBy === "likes"
+    orderBy === "likesCount"
       ? b.likesCount - a.likesCount
       : new Date(b.createdAt) > new Date(a.createdAt)
         ? -1
@@ -135,9 +137,11 @@ function RouteComponent() {
           className="h-full flex-1 hover:bg-popover"
           variant={"secondary"}
           size={"lg"}
-          onClick={() => navigate({ to: ".", search: { orderBy: "time" } })}
+          onClick={() =>
+            navigate({ to: ".", search: { orderBy: "createdAt" } })
+          }
           style={{
-            ...(orderBy === "time" && {
+            ...(orderBy === "createdAt" && {
               backgroundColor: "hsl(var(--popover))",
             }),
           }}
@@ -148,9 +152,11 @@ function RouteComponent() {
           className="h-full flex-1"
           variant={"secondary"}
           size={"lg"}
-          onClick={() => navigate({ to: ".", search: { orderBy: "likes" } })}
+          onClick={() =>
+            navigate({ to: ".", search: { orderBy: "likesCount" } })
+          }
           style={{
-            ...(orderBy === "likes" && {
+            ...(orderBy === "likesCount" && {
               backgroundColor: "hsl(var(--popover))",
             }),
           }}
@@ -189,7 +195,7 @@ const TrendingCard: FC<{
           <Link
             to="/rooms/$roomName"
             params={{ roomName }}
-            search={{ orderBy: "likes" }}
+            search={{ orderBy: "likesCount" }}
             className="mt-1 line-clamp-1 text-muted-foreground"
           >
             r/{roomName}

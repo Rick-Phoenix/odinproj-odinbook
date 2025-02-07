@@ -13,6 +13,6 @@ export interface InitialFeed {
   posts: PostBasic[];
   total: number;
 }
-export type SortingOrder = "likes" | "time";
+export type SortingOrder = "likesCount" | "createdAt";
 
 export const wsRPC = RPC("ws://localhost:5173/");

@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { queryClient } from "../main";
-import { api } from "./api-client";
+import { api, type PostBasic } from "./api-client";
 
 // USER
 
@@ -15,24 +15,28 @@ export const userQueryOptions = {
       throw new Error("Could not fetch user.");
     }
     const data = await res.json();
-    const { roomSubscriptions, ...userData } = data;
-    if (roomSubscriptions.length > 0) {
-      const feed = [];
-      for (const room of roomSubscriptions) {
-        const { posts, ...roomData } = room;
-        queryClient.setQueryData(["room", room.name], roomData);
-        queryClient.setQueryData(["posts", room.name], posts);
-        for (const post of posts) {
-          feed.push(post);
-          queryClient.setQueryData(["post", post.id], post);
-        }
-      }
-
-      queryClient.setQueryData(["initialFeed"], {
-        posts: feed,
-        total: data.totalFeedPosts,
-      });
+    const {
+      subsContent: { rooms, posts },
+      ...userData
+    } = data;
+    const feed = [];
+    for (const room of rooms) {
+      queryClient.setQueryData(["room", room.name], room);
     }
+    for (const post of posts) {
+      feed.push(post);
+      queryClient.setQueryData(
+        ["posts", post.room],
+        (old: PostBasic[] | undefined) => (old ? [...old, post] : [post]),
+      );
+      queryClient.setQueryData(["post", post.id], post);
+    }
+
+    queryClient.setQueryData(["initialFeed"], {
+      posts: feed,
+      total: data.totalFeedPosts,
+    });
+
     return userData;
   },
 };
@@ -41,7 +45,7 @@ export const userQueryOptions = {
 
 export const roomQueryOptions = (
   roomName: string,
-  orderBy?: "likes" | "time",
+  orderBy: "likesCount" | "createdAt" = "likesCount",
 ) =>
   queryOptions({
     queryKey: ["room", roomName],
@@ -55,7 +59,9 @@ export const roomQueryOptions = (
         throw new Error("Room not found.");
       }
       const { posts, ...roomData } = data;
-      queryClient.setQueryData(["posts", roomName], posts);
+      queryClient.setQueryData(["posts", roomName], (old: PostBasic[]) =>
+        old ? [...old, ...posts] : [...posts],
+      );
       for (const post of posts) {
         queryClient.setQueryData(["post", post.id], post);
       }

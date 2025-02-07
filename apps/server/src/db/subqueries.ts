@@ -18,6 +18,12 @@ export const subbedRoomsWithPosts = (
   userId: string,
   orderBy: "likesCount" | "createdAt" = "likesCount"
 ) => {
+  const orderByColumns = {
+    createdAt: sql.raw(`"createdAt"`),
+    likesCount: sql.raw(`"likesCount"`),
+  } as const;
+
+  const safeOrderBy = orderByColumns[orderBy] ?? orderByColumns.likesCount;
   return {
     subsContent: sql<{ rooms: RoomData[]; posts: BasicPost[] }>`(WITH
   user_subs AS (
@@ -63,7 +69,7 @@ export const subbedRoomsWithPosts = (
           user_subs
       )
     ORDER BY
-      posts."${sql.raw(orderBy)}" DESC
+      posts."${safeOrderBy}" DESC
     LIMIT
       20
   ),

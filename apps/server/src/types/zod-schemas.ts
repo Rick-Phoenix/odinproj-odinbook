@@ -43,6 +43,11 @@ export const userFeedSchema = z.array(basicPostSchema);
 export const roomSchema = createSelectSchema(rooms).extend({
   isSubscribed: z.boolean(),
 });
+export const roomWithPostsSchema = roomSchema.extend({
+  posts: z.array(
+    basicPostSchema.extend({ author: z.object({ username: z.string() }) })
+  ),
+});
 export type RoomData = z.infer<typeof roomSchema>;
 
 export const listingPicsSchema = createSelectSchema(listingPics);
@@ -51,7 +56,10 @@ export const listingSchema = createSelectSchema(listings).extend({
 });
 
 export const userDataSchema = userSchema.extend({
-  roomSubscriptions: z.array(roomSchema),
+  subsContent: z.object({
+    rooms: z.array(roomSchema),
+    posts: z.array(basicPostSchema),
+  }),
   totalFeedPosts: z.number(),
 });
 
