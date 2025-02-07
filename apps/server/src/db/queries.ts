@@ -1,4 +1,4 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, lt, lte, sql } from "drizzle-orm";
 import type { BasicPost } from "../types/zod-schemas";
 import { isLiked, isSubscribed, lowercase } from "./db-methods";
 import db from "./dbConfig";
@@ -205,7 +205,8 @@ export async function removeSubscription(userId: string, room: string) {
 
 export async function fetchFeed(
   userId: string,
-  cursor: number,
+  cursorLikes: number,
+  cursorTime: string,
   orderBy: "likesCount" | "createdAt" = "likesCount"
 ) {
   const userSubs = db
@@ -228,12 +229,20 @@ export async function fetchFeed(
     .from(userSubs)
     .innerJoin(posts, eq(posts.room, userSubs.room))
     .innerJoin(users, eq(users.id, posts.authorId))
-
-    .orderBy(
-      orderBy === "likesCount" ? desc(posts.likesCount) : desc(posts.createdAt)
+    .where(
+      orderBy === "likesCount"
+        ? and(
+            lte(posts.likesCount, cursorLikes),
+            lt(posts.createdAt, cursorTime)
+          )
+        : lt(posts.createdAt, cursorTime)
     )
-    .limit(20)
-    .offset(cursor * 20);
+    .orderBy(
+      ...(orderBy === "likesCount"
+        ? [desc(posts.likesCount), desc(posts.createdAt)]
+        : [desc(posts.createdAt), desc(posts.likesCount)])
+    )
+    .limit(20);
 
   const parsedFeed = userFeed.map((i) => ({
     ...i.post,

@@ -21,7 +21,8 @@ export const getFeed = createRoute({
   request: {
     query: z.object({
       orderBy: z.enum(["createdAt", "likesCount"]).default("likesCount"),
-      cursor: numberParamSchema,
+      cursorTime: z.string(),
+      cursorLikes: numberParamSchema,
     }),
   },
   responses: {
@@ -36,7 +37,8 @@ export const getFeedHandler: AppRouteHandler<
   AppBindingsWithUser
 > = async (c) => {
   const userId = getUserId(c);
-  const { orderBy, cursor } = c.req.valid("query");
-  const posts = await fetchFeed(userId, cursor, orderBy);
+  const query = c.req.valid("query");
+  const { cursorLikes, cursorTime, orderBy } = query;
+  const posts = await fetchFeed(userId, cursorLikes, cursorTime, orderBy);
   return c.json(posts, OK);
 };

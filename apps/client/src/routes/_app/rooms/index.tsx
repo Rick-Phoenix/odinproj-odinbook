@@ -38,30 +38,30 @@ export const Route = createFileRoute("/_app/rooms/")({
     orderBy: (s.orderBy as SortingOrder) || "likesCount",
   }),
   loaderDeps: ({ search }) => search,
-  loader: async ({ context: { queryClient } }) => {
-    const initialFeed = (await queryClient.getQueryData([
-      "initialFeed",
-    ])) as InitialFeed;
-    console.log("🚀 ~ loader: ~ initialFeed:", initialFeed);
-    return initialFeed;
-  },
 });
 
 function RouteComponent() {
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
-  const initialFeed = Route.useLoaderData();
   const { orderBy } = Route.useSearch();
+  const { posts: initialPosts, total: totalPosts } = queryClient.getQueryData([
+    "initialFeed",
+    orderBy,
+  ]) as InitialFeed;
+  const initialCursor = {
+    time: initialPosts.at(-1)?.createdAt,
+    likes: initialPosts.at(-1)?.likesCount,
+  };
 
   const feedQuery = useInfiniteQuery({
-    queryKey: ["feed", "infinite"],
+    queryKey: ["feed", orderBy],
     queryFn: async (c) => {
       const { pageParam } = c;
-      console.log("🚀 ~ queryFn: ~ pageParam:", pageParam);
       const res = await api.posts.feed.$get({
         query: {
           orderBy,
-          cursor: pageParam,
+          cursorLikes: pageParam.likes,
+          cursorTime: pageParam.time,
         },
       });
       const data = await res.json();
@@ -71,45 +71,47 @@ function RouteComponent() {
       for (const post of data) {
         queryClient.setQueryData(["post", post.id], post);
       }
-      return { posts: data, nextCursor: pageParam + 1 };
+
+      if (data.length === 0) return { posts: [], cursor: null };
+      const cursor = {
+        time: data.at(-1)?.createdAt,
+        likes: data.at(-1)?.likesCount,
+      };
+
+      return {
+        posts: data,
+        cursor,
+      };
     },
-    initialPageParam: 0,
+    initialPageParam: initialCursor,
     getNextPageParam: (lastPage, pages) => {
-      // const maxPages = Math.ceil(initialFeed.total / 20);
-      // console.log("🚀 ~ RouteComponent ~ maxPages:", maxPages);
-      console.log(lastPage.nextCursor);
-      // if (lastPage.nextCursor > initialFeed.total / 20 - 1) return null;
-      return lastPage.nextCursor;
+      if (pages.length >= Math.ceil(totalPosts / 20)) return null;
+      return lastPage.cursor;
     },
     initialData: {
-      pageParams: [0],
-      pages: [{ posts: initialFeed.posts, nextCursor: 1 }],
+      pageParams: [initialCursor],
+      pages: [{ posts: initialPosts, cursor: initialCursor }],
     },
   });
-  console.log(feedQuery.hasNextPage);
+
+  console.log(feedQuery.data.pages);
 
   const posts = feedQuery.data.pages.reduce((acc, next) => {
     return acc.concat(next.posts);
   }, [] as PostBasic[]);
   console.log("🚀 ~ posts ~ posts:", posts);
 
-  const trendingPosts = initialFeed.posts
-    .slice()
-    .sort((a, b) => b.likesCount - a.likesCount)
-    .slice(0, 12);
-
-  posts.sort((a, b) =>
-    orderBy === "likesCount"
-      ? b.likesCount - a.likesCount
-      : new Date(b.createdAt) > new Date(a.createdAt)
-        ? -1
-        : 1,
-  );
+  const allTrendingPosts = queryClient.getQueryData([
+    "initialFeed",
+    "likesCount",
+  ]) as InitialFeed;
+  const mostTrendingPosts = allTrendingPosts.posts.slice(0, 12);
 
   const lastFetchTime = useRef<number>(null);
 
   const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
+    console.log(feedQuery.hasNextPage);
     if (
       scrollTop + clientHeight >= scrollHeight * 0.9 &&
       !feedQuery.isFetching &&
@@ -128,7 +130,7 @@ function RouteComponent() {
 
   return (
     <InsetScrollArea onScroll={handleScroll}>
-      <TrendingCarousel posts={trendingPosts} />
+      <TrendingCarousel posts={mostTrendingPosts} />
       <div className="flex h-12 items-center justify-center gap-3 rounded-xl bg-primary/80 p-1">
         <Button
           className="h-full flex-1 hover:bg-popover"

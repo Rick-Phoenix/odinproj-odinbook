@@ -93,7 +93,7 @@ export const initialFeedQuery = (userId: string) => {
       FROM combined_posts
       ORDER BY id 
     ) AS unique_posts
-    ORDER BY "likesCount" DESC  
+    ORDER BY "likesCount" DESC, "createdAt" DESC
   ),
   rooms_json AS (
     SELECT

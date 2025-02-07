@@ -19,21 +19,26 @@ export const userQueryOptions = {
       subsContent: { rooms, posts },
       ...userData
     } = data;
-    const feed = [];
+    const initialFeedTrending: PostBasic[] = [];
+    const initialFeedNewest: PostBasic[] = [];
     for (const room of rooms) {
       queryClient.setQueryData(["room", room.name], room);
     }
-    for (const post of posts) {
-      feed.push(post);
-      queryClient.setQueryData(
-        ["posts", post.room],
-        (old: PostBasic[] | undefined) => (old ? [...old, post] : [post]),
-      );
+    posts.forEach((post, i) => {
+      if (i < 20) initialFeedTrending.push(post);
+      else initialFeedNewest.push(post);
       queryClient.setQueryData(["post", post.id], post);
-    }
+    });
 
-    queryClient.setQueryData(["initialFeed"], {
-      posts: feed,
+    queryClient.setQueryData(["initialFeed", "likesCount"], {
+      posts: initialFeedTrending,
+      total: data.totalFeedPosts,
+    });
+
+    queryClient.setQueryData(["initialFeed", "createdAt"], {
+      posts: initialFeedNewest.sort((a, b) =>
+        new Date(b.createdAt) > new Date(a.createdAt) ? -1 : 1,
+      ),
       total: data.totalFeedPosts,
     });
 
