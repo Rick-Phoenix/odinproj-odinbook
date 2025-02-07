@@ -24,14 +24,14 @@ export const PostPreview: FC<{
           <CardTitle className="line-clamp-4 text-2xl">{title}</CardTitle>
         </Link>
         <div className="flex flex-col">
-          <Link to="/users/$username" params={{ username: author.username }}>
-            @{author.username}
+          <Link to="/users/$username" params={{ username: author }}>
+            @{author}
           </Link>
           <CardDescription>
             <Link
               to="/rooms/$roomName"
               params={{ roomName }}
-              search={{ orderBy: "likes" }}
+              search={{ orderBy: "likesCount" }}
               className="my-1 line-clamp-1"
             >
               r/{roomName} | {format(new Date(createdAt), "MMM do")}

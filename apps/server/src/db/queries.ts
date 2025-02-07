@@ -13,12 +13,9 @@ import {
   users,
   type roomsCategory,
 } from "./schema";
-import { subbedRoomsWithPosts, totalPostsFromUserSubs } from "./subqueries";
+import { initialFeedQuery, totalPostsFromUserSubs } from "./subqueries";
 
-export async function fetchUserData(
-  userId: string,
-  orderBy: "likesCount" | "createdAt" = "likesCount"
-) {
+export async function fetchUserData(userId: string) {
   const totalPostsFromSubs = totalPostsFromUserSubs(userId);
   const userData = await db.query.users.findFirst({
     where: (user, { eq }) => eq(user.id, userId),
@@ -26,7 +23,7 @@ export async function fetchUserData(
       totalFeedPosts: sql<number>`${db.$count(totalPostsFromSubs)}::int`
         .mapWith(Number)
         .as("totalFeedPosts"),
-      ...subbedRoomsWithPosts(userId, orderBy),
+      ...initialFeedQuery(userId),
     },
   });
 

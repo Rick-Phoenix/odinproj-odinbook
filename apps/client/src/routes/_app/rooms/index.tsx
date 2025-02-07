@@ -93,13 +93,10 @@ function RouteComponent() {
   }, [] as PostBasic[]);
   console.log("🚀 ~ posts ~ posts:", posts);
 
-  const trendingPosts =
-    orderBy === "likesCount"
-      ? initialFeed.posts.slice(0, 12)
-      : posts
-          .slice()
-          .sort((a, b) => b.likesCount - a.likesCount)
-          .slice(0, 12);
+  const trendingPosts = initialFeed.posts
+    .slice()
+    .sort((a, b) => b.likesCount - a.likesCount)
+    .slice(0, 12);
 
   posts.sort((a, b) =>
     orderBy === "likesCount"

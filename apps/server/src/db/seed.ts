@@ -8,33 +8,110 @@ const roomPostsQuery = (
   orderBy: "likesCount" | "createdAt" = "likesCount",
   cursor: number
 ) => {
-  const orderByColumns = {
-    createdAt: sql.raw(`"createdAt"`),
-    likesCount: sql.raw(`"likesCount"`),
-  } as const;
-
-  const safeOrderBy = orderByColumns[orderBy] ?? orderByColumns.createdAt;
-
-  return sql<BasicPost[]>`SELECT
-  *,
-  (
+  return sql<BasicPost[]>`(WITH
+  user_subs AS (
     SELECT DISTINCT
-      username
+      rooms.name,
+      rooms."createdAt",
+      rooms.category,
+      rooms.avatar,
+      rooms.description,
+      rooms."subsCount",
+      users.id,
+      users.username
     FROM
-      users
+      subs
+      INNER JOIN rooms ON subs.room = rooms.name
+      INNER JOIN users ON subs."userId" = users.id
     WHERE
-      users.id = posts."authorId"
-  ) AS author, EXISTS (
-            SELECT 1
-            FROM likes
-            WHERE likes."postId" = posts.id
-            AND likes."userId" = ${userId}
-          ) AS isLiked
+      users.id = ${userId}
+  ),
+  recent_posts AS (
+    SELECT 
+      posts.id,
+      posts.room,
+      posts.title,
+      posts.text,
+      posts."createdAt",
+      posts."likesCount",
+      users.username AS author,
+      EXISTS (
+        SELECT 1 FROM likes 
+        WHERE likes."postId" = posts.id 
+        AND likes."userId" = ${userId}
+      ) AS isLiked
+    FROM posts
+    LEFT JOIN users ON posts."authorId" = users.id
+    WHERE posts.room IN (SELECT name FROM user_subs)
+    ORDER BY posts."createdAt" DESC
+    LIMIT 20
+  ),
+   liked_posts AS (
+    SELECT 
+      posts.id,
+      posts.room,
+      posts.title,
+      posts.text,
+      posts."createdAt",
+      posts."likesCount",
+      users.username AS author,
+      EXISTS (
+        SELECT 1 FROM likes 
+        WHERE likes."postId" = posts.id 
+        AND likes."userId" = ${userId}
+      ) AS isLiked
+    FROM posts
+    LEFT JOIN users ON posts."authorId" = users.id
+    WHERE posts.room IN (SELECT name FROM user_subs)
+    ORDER BY posts."likesCount" DESC
+    LIMIT 20
+  ),
+  rooms_json AS (
+    SELECT
+      jsonb_agg(
+        jsonb_build_object(
+          'name',
+          user_subs.name,
+          'createdAt',
+          user_subs."createdAt",
+          'category',
+          user_subs.category,
+          'avatar',
+          user_subs.avatar,
+          'description',
+          user_subs.description,
+          'subsCount',
+          user_subs."subsCount",
+          'isSubscribed',
+          'true'::boolean
+        )
+      ) AS rooms
+    FROM
+      user_subs 
+  ),
+  posts_json AS (
+    SELECT 
+      jsonb_agg(jsonb_build_object(
+        'id', posts.id,
+        'author', posts.author,
+        'title', posts.title,
+        'text', posts.text,
+        'createdAt', posts."createdAt",
+        'likesCount', posts."likesCount",
+        'room', posts.room,
+        'isLiked', posts.isLiked
+      )) AS posts
+    FROM (
+      SELECT * FROM recent_posts
+      UNION ALL
+      SELECT * FROM liked_posts
+    ) AS posts
+  )
+SELECT
+  jsonb_build_object('rooms', rooms_json.rooms, 'posts', posts_json.posts) AS result
 FROM
-  posts
-WHERE
-  posts.room = ${room} ORDER BY posts.${safeOrderBy} DESC
-LIMIT 20 OFFSET ${cursor * 20}::int`;
+  rooms_json,
+  posts_json)`;
 };
 
 const t = await db.execute(
@@ -45,4 +122,4 @@ const t = await db.execute(
     0
   )
 );
-console.log("🚀 ~ t:", t.rows);
+console.log("🚀 ~ t:", t.rows[0].result);

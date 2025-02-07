@@ -14,16 +14,7 @@ export const totalPostsFromUserSubs = (userId: string) =>
     .where(eq(subs.userId, userId))
     .as("user_subs_posts");
 
-export const subbedRoomsWithPosts = (
-  userId: string,
-  orderBy: "likesCount" | "createdAt" = "likesCount"
-) => {
-  const orderByColumns = {
-    createdAt: sql.raw(`"createdAt"`),
-    likesCount: sql.raw(`"likesCount"`),
-  } as const;
-
-  const safeOrderBy = orderByColumns[orderBy] ?? orderByColumns.likesCount;
+export const initialFeedQuery = (userId: string) => {
   return {
     subsContent: sql<{ rooms: RoomData[]; posts: BasicPost[] }>`(WITH
   user_subs AS (
@@ -43,8 +34,8 @@ export const subbedRoomsWithPosts = (
     WHERE
       users.id = ${userId}
   ),
-  limited_posts AS (
-    SELECT
+  recent_posts AS (
+    SELECT 
       posts.id,
       posts.room,
       posts.title,
@@ -53,25 +44,35 @@ export const subbedRoomsWithPosts = (
       posts."likesCount",
       users.username AS author,
       EXISTS (
-            SELECT 1
-            FROM likes
-            WHERE likes."postId" = posts.id
-            AND likes."userId" = ${userId}
-          ) AS isLiked
-    FROM
-      posts
-      LEFT JOIN users ON posts."authorId" = users.id
-    WHERE
-      posts.room IN (
-        SELECT
-          name
-        FROM
-          user_subs
-      )
-    ORDER BY
-      posts."${safeOrderBy}" DESC
-    LIMIT
-      20
+        SELECT 1 FROM likes 
+        WHERE likes."postId" = posts.id 
+        AND likes."userId" = ${userId}
+      ) AS isLiked
+    FROM posts
+    LEFT JOIN users ON posts."authorId" = users.id
+    WHERE posts.room IN (SELECT name FROM user_subs)
+    ORDER BY posts."createdAt" DESC
+    LIMIT 20
+  ),
+   liked_posts AS (
+    SELECT 
+      posts.id,
+      posts.room,
+      posts.title,
+      posts.text,
+      posts."createdAt",
+      posts."likesCount",
+      users.username AS author,
+      EXISTS (
+        SELECT 1 FROM likes 
+        WHERE likes."postId" = posts.id 
+        AND likes."userId" = ${userId}
+      ) AS isLiked
+    FROM posts
+    LEFT JOIN users ON posts."authorId" = users.id
+    WHERE posts.room IN (SELECT name FROM user_subs)
+    ORDER BY posts."likesCount" DESC
+    LIMIT 20
   ),
   rooms_json AS (
     SELECT
@@ -97,27 +98,22 @@ export const subbedRoomsWithPosts = (
       user_subs 
   ),
   posts_json AS (
-    SELECT
-      jsonb_agg(
-        jsonb_build_object(
-          'id',
-          limited_posts.id,
-          'author',
-          limited_posts.author,
-          'title',
-          limited_posts.title,
-          'text',
-          limited_posts.text,
-          'createdAt',
-          limited_posts."createdAt",
-          'likesCount',
-          limited_posts."likesCount",
-          'isLiked', 
-          limited_posts.isLiked
-        )
-      ) AS posts
-    FROM
-      limited_posts
+    SELECT 
+      jsonb_agg(jsonb_build_object(
+        'id', posts.id,
+        'author', posts.author,
+        'title', posts.title,
+        'text', posts.text,
+        'createdAt', posts."createdAt",
+        'likesCount', posts."likesCount",
+        'room', posts.room,
+        'isLiked', posts.isLiked
+      )) AS posts
+    FROM (
+      SELECT * FROM recent_posts
+      UNION ALL
+      SELECT * FROM liked_posts
+    ) AS posts
   )
 SELECT
   jsonb_build_object('rooms', rooms_json.rooms, 'posts', posts_json.posts) AS result
