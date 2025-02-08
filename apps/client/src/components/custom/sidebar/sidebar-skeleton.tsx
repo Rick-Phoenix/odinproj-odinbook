@@ -2,7 +2,7 @@ import {
   SidebarMenu,
   SidebarMenuItem,
   SidebarMenuSkeleton,
-} from "../ui/sidebar";
+} from "../../ui/sidebar";
 
 export default function SidebarSkeleton() {
   return (

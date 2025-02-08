@@ -1,38 +1,35 @@
-import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
+import { useSuspenseQuery } from "@tanstack/react-query";
+import {
+  Link,
+  useLocation,
+  useParams,
+  useSearch,
+} from "@tanstack/react-router";
 import { format } from "date-fns";
-import { Table } from "lucide-react";
 import type { FC } from "react";
 import { useActivePage } from "../../../hooks/use-active-page";
-import type { Room } from "../../../lib/api-client";
+import { roomQueryOptions } from "../../../lib/queryOptions";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { SidebarMenuButton, SidebarSeparator } from "../../ui/sidebar";
-import { TableBody, TableCell, TableRow } from "../../ui/table";
+import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
+import CreateRoomDialog from "./create-room-dialog";
 
 const RoomsIndexSidebarContent = () => {
   const { mainSection, subSection, activePage } = useActivePage();
+
   return (
     <>
       {activePage === mainSection && (
         <>
           <div className="p-4">
-            <h4 className="text-center text-lg font-semibold">
+            <CreateRoomDialog />
+
+            <SidebarSeparator className="mx-0" />
+            <h4 className="mt-2 text-center text-lg font-semibold">
               Suggested Rooms
             </h4>
 
             <ul className="flex flex-col justify-center gap-2 pt-6">
-              <SuggestedRoom
-                roomAvatar="https://github.com/shadcn.png"
-                roomName="cats"
-              />
-              <SuggestedRoom
-                roomAvatar="https://github.com/shadcn.png"
-                roomName="cats"
-              />
-              <SuggestedRoom
-                roomAvatar="https://github.com/shadcn.png"
-                roomName="cats"
-              />
               <SuggestedRoom
                 roomAvatar="https://github.com/shadcn.png"
                 roomName="cats"
@@ -91,9 +88,11 @@ const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({
 };
 
 const RoomSidebarContent = () => {
-  const { subSection } = useActivePage();
-  const queryClient = useQueryClient();
-  const room = queryClient.getQueryData(["room", subSection]) as Room;
+  const { roomName } = useParams({ from: "/_app/rooms/$roomName/" });
+  const { orderBy } = useSearch({ from: "/_app/rooms/$roomName/" });
+  const { data: room } = useSuspenseQuery(roomQueryOptions(roomName, orderBy));
+  const loc = useLocation();
+  console.log("🚀 ~ RoomSidebarContent ~ loc:", loc);
 
   return (
     <>

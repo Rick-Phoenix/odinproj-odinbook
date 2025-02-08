@@ -1,6 +1,8 @@
 import { createRoute } from "@hono/zod-openapi";
+import { encodeBase64 } from "@oslojs/encoding";
+import { v2 as cloudinary } from "cloudinary";
 import { CONFLICT, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
-import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
+import { jsonContent } from "stoker/openapi/helpers";
 import { insertRoom } from "../../db/queries";
 import type {
   AppBindingsWithUser,
@@ -23,7 +25,13 @@ export const createRoom = createRoute({
   method: "post",
   tags,
   request: {
-    body: jsonContentRequired(insertRoomSchema, "The data for the room."),
+    body: {
+      content: {
+        "multipart/form-data": {
+          schema: insertRoomSchema,
+        },
+      },
+    },
   },
   responses: {
     [OK]: jsonContent(roomSchema, "The created room."),
@@ -37,8 +45,26 @@ export const createRoomHandler: AppRouteHandler<
   AppBindingsWithUser
 > = async (c) => {
   const userId = getUserId(c);
-  const { name, category } = c.req.valid("json");
-  const room = await insertRoom(userId, name, category);
+  const { name, category } = c.req.valid("form");
+  const parseBody = await c.req.parseBody();
+  const avatar = parseBody["avatar"] as File;
+  let avatarUrl;
+
+  if (avatar) {
+    const file = await avatar.arrayBuffer();
+    const fileBuffer = Buffer.from(file);
+    const base64 = encodeBase64(fileBuffer);
+    const upload = await cloudinary.uploader.upload(
+      `data:${avatar.type};base64,${base64}`,
+      {
+        folder: "Nexus",
+        public_id: `room-avatar-${name}`,
+        resource_type: "image",
+      }
+    );
+    avatarUrl = upload.secure_url;
+  }
+  const room = await insertRoom(userId, name, category, avatarUrl);
   if (room === undefined) return c.json(roomExistsError.content, CONFLICT);
   return c.json({ ...room, isSubscribed: true }, OK);
 };

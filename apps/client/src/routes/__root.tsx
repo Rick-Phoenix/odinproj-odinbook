@@ -5,6 +5,7 @@ import {
   Link,
   Outlet,
 } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { TbSpaces } from "react-icons/tb";
 
 export interface RouterAppContext {
@@ -28,7 +29,7 @@ function Root() {
       </header>
       <hr />
       <Outlet />
-      {/* <TanStackRouterDevtools /> */}
+      <TanStackRouterDevtools />
     </>
   );
 }

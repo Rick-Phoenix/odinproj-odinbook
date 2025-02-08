@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
-import { queryClient } from "../main";
 import { api, type PostBasic } from "./api-client";
+import { queryClient } from "./queries/queryClient";
 
 // USER
 

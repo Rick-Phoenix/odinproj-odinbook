@@ -218,7 +218,7 @@ export const listingPicsRelations = relations(listingPics, ({ one }) => ({
 
 //
 
-const roomsCategories = [
+export const roomCategoriesArray = [
   "Pets",
   "Computers",
   "Gaming",
@@ -230,8 +230,11 @@ const roomsCategories = [
   "Travel",
   "Art",
 ] as const;
-export type roomsCategory = (typeof roomsCategories)[number];
-export const roomsCategoriesEnum = pgEnum("roomCategories", roomsCategories);
+export type RoomCategories = (typeof roomCategoriesArray)[number];
+export const roomsCategoriesEnum = pgEnum(
+  "roomCategories",
+  roomCategoriesArray
+);
 
 export const rooms = pgTable(
   "rooms",

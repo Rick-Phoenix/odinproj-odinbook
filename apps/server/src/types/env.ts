@@ -1,6 +1,6 @@
+import { z } from "@hono/zod-openapi";
 import { config } from "dotenv";
 import { expand } from "dotenv-expand";
-import { z } from "@hono/zod-openapi";
 
 expand(config());
 
@@ -13,6 +13,9 @@ const EnvSchema = z.object({
   GITHUB_CLIENT_SECRET: z.string(),
   GITHUB_CALLBACK_URI: z.string(),
   SESSION_ENCRYPTION_KEY: z.string(),
+  CLOUDINARY_CLOUD_NAME: z.string(),
+  CLOUDINARY_API_KEY: z.string(),
+  CLOUDINARY_API_SECRET: z.string(),
 });
 
 let env: env;

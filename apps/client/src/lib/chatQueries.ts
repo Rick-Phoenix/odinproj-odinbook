@@ -1,5 +1,5 @@
-import { queryClient } from "../main";
 import { api, type Chat, wsRPC } from "./api-client";
+import { queryClient } from "./queries/queryClient";
 
 export const chatsQueryOptions = {
   queryKey: ["chats"],

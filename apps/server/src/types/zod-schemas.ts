@@ -8,6 +8,7 @@ import {
   listings,
   messages,
   posts,
+  roomCategoriesArray,
   rooms,
   sessions,
   subs,
@@ -131,11 +132,21 @@ export const loginValidationSchema = insertUserSchema.pick({
   password: true,
 });
 
-export const insertRoomSchema = createInsertSchema(rooms)
-  .pick({ category: true, name: true, description: true })
-  .extend({
-    name: z.string().max(20, "The name cannot be longer than 20 characters."),
-  });
+export const insertRoomSchema = z.object({
+  name: z.string().max(20, "The name cannot be longer than 20 characters."),
+  description: z
+    .string()
+    .max(150, "The description cannot be longer than 150 characters."),
+  category: z.enum(roomCategoriesArray),
+  avatar: z
+    .instanceof(File)
+    .refine(
+      (file) => file.size <= 30000,
+      "The avatar cannot be larger than 3 megabytes."
+    )
+    .optional(),
+});
+export { roomCategoriesArray } from "../db/schema";
 
 export const insertPostSchema = createInsertSchema(posts)
   .omit({ createdAt: true, id: true, authorId: true })

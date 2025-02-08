@@ -11,7 +11,7 @@ import {
   rooms,
   subs,
   users,
-  type roomsCategory,
+  type RoomCategories,
 } from "./schema";
 import {
   initialFeedQuery,
@@ -349,11 +349,12 @@ export async function fetchRoom(
 export async function insertRoom(
   userId: string,
   name: string,
-  category: roomsCategory
+  category: RoomCategories,
+  avatar?: string
 ) {
   const [room] = await db
     .insert(rooms)
-    .values({ creatorId: userId, name, category })
+    .values({ creatorId: userId, name, category, avatar })
     .onConflictDoNothing()
     .returning();
   return room as typeof room | undefined;

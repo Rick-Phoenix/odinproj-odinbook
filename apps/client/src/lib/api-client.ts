@@ -9,6 +9,8 @@ export type Profile = z.infer<typeof schemas.profileSchema>;
 export type PostBasic = z.infer<typeof schemas.basicPostSchema>;
 export type PostFull = z.infer<typeof schemas.fullPostSchema>;
 export type Room = z.infer<typeof schemas.roomSchema>;
+export type RoomInputs = z.infer<typeof schemas.insertRoomSchema>;
+export const roomCategories = schemas.roomCategoriesArray;
 export interface InitialFeed {
   posts: PostBasic[];
   total: number;

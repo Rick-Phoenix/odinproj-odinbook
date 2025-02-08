@@ -8,12 +8,13 @@ import { title } from "radashi";
 import * as React from "react";
 import { useActivePage } from "../../../hooks/use-active-page";
 import { ScrollArea } from "../../ui/scroll-area";
+import { Skeleton } from "../../ui/skeleton";
 import ChatsSidebarContent from "./sidebar-right-chats";
 import MarketplaceSidebarContent from "./sidebar-right-marketplace";
 import UserProfileSidebarContent from "./sidebar-right-profiles";
 import RoomsIndexSidebarContent from "./sidebar-right-rooms";
 
-export function SidebarRight({
+export default function SidebarRight({
   ...props
 }: React.ComponentProps<typeof Sidebar>) {
   const { mainSection } = useActivePage();
@@ -28,10 +29,12 @@ export function SidebarRight({
       </SidebarHeader>
       <ScrollArea className="[&_.scrollbar]:bg-muted-foreground/20">
         <SidebarContent>
-          {mainSection === "rooms" && <RoomsIndexSidebarContent />}
-          {mainSection === "chats" && <ChatsSidebarContent />}
-          {mainSection === "marketplace" && <MarketplaceSidebarContent />}
-          {mainSection === "users" && <UserProfileSidebarContent />}
+          <Skeleton>
+            {mainSection === "rooms" && <RoomsIndexSidebarContent />}
+            {mainSection === "chats" && <ChatsSidebarContent />}
+            {mainSection === "marketplace" && <MarketplaceSidebarContent />}
+            {mainSection === "users" && <UserProfileSidebarContent />}
+          </Skeleton>
           <SidebarSeparator className="mx-0" />
         </SidebarContent>
       </ScrollArea>
