@@ -348,9 +348,7 @@ const RoomSidebarContent = () => {
           <AvatarImage src={room.avatar} alt={`${room.name} avatar`} />
         </Avatar>
       </div>
-      <div className="p-4 text-center text-lg font-semibold">
-        r/{title(room.name)}
-      </div>
+      <div className="p-4 text-center text-lg font-semibold">r/{room.name}</div>
       <Table className="w-full">
         <TableBody>
           <TableRow>

@@ -14,7 +14,7 @@ import {
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
-import { useState, type FC } from "react";
+import { useEffect, useRef, useState, type FC } from "react";
 import "swiper/css/scrollbar";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 
@@ -31,6 +31,10 @@ import {
   type PostBasic,
   type SortingOrder,
 } from "../../../lib/api-client";
+import {
+  throttleAsync,
+  type ThrottledFunction,
+} from "../../../utils/async-throttle";
 
 export const Route = createFileRoute("/_app/rooms/")({
   component: RouteComponent,
@@ -105,14 +109,28 @@ function RouteComponent() {
   ]) as InitialFeed;
   const mostTrendingPosts = allTrendingPosts.posts.slice(0, 12);
 
+  const throttledScrollFetch = useRef<ThrottledFunction>(null);
+  useEffect(() => {
+    throttledScrollFetch.current = throttleAsync(
+      feedQuery.fetchNextPage,
+      3000,
+      true,
+    );
+    return () =>
+      throttledScrollFetch.current
+        ? throttledScrollFetch.current.cancel()
+        : void null;
+  }, [orderBy]);
+
   const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
     if (
       scrollTop + clientHeight >= scrollHeight * 0.9 &&
       !feedQuery.isFetching &&
-      feedQuery.hasNextPage
+      feedQuery.hasNextPage &&
+      throttledScrollFetch.current
     ) {
-      await feedQuery.fetchNextPage();
+      await throttledScrollFetch.current();
     }
   };
 

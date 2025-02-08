@@ -4,7 +4,7 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState, type FC } from "react";
+import { useEffect, useRef, useState, type FC } from "react";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
 import { PostPreview } from "../../../../components/custom/post-preview";
 import ButtonGesture from "../../../../components/motion/gestures";
@@ -30,6 +30,10 @@ import {
   type SortingOrder,
 } from "../../../../lib/api-client";
 import { roomQueryOptions } from "../../../../lib/queryOptions";
+import {
+  throttleAsync,
+  type ThrottledFunction,
+} from "../../../../utils/async-throttle";
 
 export const Route = createFileRoute("/_app/rooms/$roomName/")({
   component: RouteComponent,
@@ -111,14 +115,28 @@ function RouteComponent() {
     return acc.concat(next.posts);
   }, [] as PostBasic[]);
 
+  const throttledScrollFetch = useRef<ThrottledFunction>(null);
+  useEffect(() => {
+    throttledScrollFetch.current = throttleAsync(
+      postsQuery.fetchNextPage,
+      3000,
+      true,
+    );
+    return () =>
+      throttledScrollFetch.current
+        ? throttledScrollFetch.current.cancel()
+        : void null;
+  }, [orderBy]);
+
   const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
     if (
       scrollTop + clientHeight >= scrollHeight * 0.9 &&
       !postsQuery.isFetching &&
-      postsQuery.hasNextPage
+      postsQuery.hasNextPage &&
+      throttledScrollFetch.current
     ) {
-      await postsQuery.fetchNextPage();
+      await throttledScrollFetch.current();
     }
   };
   return (
