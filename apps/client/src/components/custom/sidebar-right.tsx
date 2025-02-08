@@ -24,13 +24,13 @@ import { format } from "date-fns";
 import { MessageSquare, Plus } from "lucide-react";
 import { title } from "radashi";
 import type { FC } from "react";
-import { useActivePage } from "../hooks/use-active-page";
-import { api, type Chat, type Room } from "../lib/api-client";
-import ChatDialog from "./custom/chat-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { Button } from "./ui/button";
-import { ScrollArea } from "./ui/scroll-area";
-import { Table, TableBody, TableCell, TableRow } from "./ui/table";
+import { useActivePage } from "../../hooks/use-active-page";
+import { api, type Chat, type Room } from "../../lib/api-client";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
+import { ScrollArea } from "../ui/scroll-area";
+import { Table, TableBody, TableCell, TableRow } from "../ui/table";
+import ChatDialog from "./chat-dialog";
 
 export function SidebarRight({
   ...props
