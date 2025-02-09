@@ -24,6 +24,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
+import { useUser } from "../../../../hooks/auth";
 import {
   api,
   type PostBasic,
@@ -46,22 +47,23 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
     const room = await queryClient.fetchQuery(
       roomQueryOptions(roomName, orderBy),
     );
-    console.log("🚀 ~ loader: ~ room:", room);
-
     return room;
   },
 });
 
 function RouteComponent() {
   const queryClient = useQueryClient();
+  const { id: userId } = useUser()!;
   const navigate = useNavigate({ from: Route.fullPath });
   const {
     name: roomName,
     avatar,
     isSubscribed,
     posts: initialPosts,
+    creatorId,
     totalPosts,
   } = Route.useLoaderData();
+  const userIsCreator = userId === creatorId;
   const { orderBy } = Route.useSearch();
   const initialCursor = {
     time: initialPosts.at(-1)?.createdAt,
@@ -109,7 +111,6 @@ function RouteComponent() {
     },
     enabled: totalPosts > 0,
   });
-  console.log("🚀 ~ RouteComponent ~ postsQuery:", postsQuery.data.pages);
 
   const posts = postsQuery.data.pages.reduce((acc, next) => {
     return acc.concat(next.posts);
@@ -154,7 +155,11 @@ function RouteComponent() {
           >
             r/{roomName}
           </Link>
-          <SubscribeButton roomName={roomName} isSubscribed={isSubscribed} />
+          <SubscribeButton
+            roomName={roomName}
+            isSubscribed={isSubscribed}
+            userIsCreator={userIsCreator}
+          />
         </header>
         <div className="flex h-12 items-center justify-center gap-3 rounded-xl bg-primary/80 p-1">
           <Button
@@ -196,12 +201,12 @@ function RouteComponent() {
   );
 }
 
-const SubscribeButton: FC<{ isSubscribed: boolean; roomName: string }> = ({
-  isSubscribed,
-  roomName,
-}) => {
+const SubscribeButton: FC<{
+  isSubscribed: boolean;
+  roomName: string;
+  userIsCreator: boolean;
+}> = ({ isSubscribed, roomName, userIsCreator }) => {
   const [userIsSubscribed, setUserIsSubscribed] = useState(isSubscribed);
-
   const subscribeMutation = useMutation({
     mutationKey: ["subscription", roomName],
     mutationFn: async () => {
@@ -223,7 +228,11 @@ const SubscribeButton: FC<{ isSubscribed: boolean; roomName: string }> = ({
 
   return (
     <>
-      {userIsSubscribed ? (
+      {userIsCreator ? (
+        <Button size={"lg"} variant={"outline"}>
+          Subscribed
+        </Button>
+      ) : userIsSubscribed ? (
         <Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
