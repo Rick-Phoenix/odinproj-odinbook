@@ -24,7 +24,11 @@ export const totalPostsFromRoom = (room: string) =>
 
 export const initialFeedQuery = (userId: string) => {
   return {
-    subsContent: sql<{ rooms: RoomData[]; posts: BasicPost[] }>`(WITH
+    subsContent: sql<{
+      rooms: RoomData[];
+      posts: BasicPost[];
+      suggestedRooms: RoomData[];
+    }>`(WITH
   user_subs AS (
     SELECT DISTINCT
       rooms.name,
@@ -103,6 +107,15 @@ export const initialFeedQuery = (userId: string) => {
     ) AS unique_posts
     ORDER BY "likesCount" DESC, "createdAt" DESC
   ),
+  suggested_rooms AS (
+    SELECT * FROM rooms r WHERE r.category IN (SELECT r.category
+    FROM subs s
+    JOIN rooms r ON s.room = r.name
+    WHERE s."userId" = ${userId}
+    GROUP BY r.category
+    ORDER BY COUNT(*) DESC
+    LIMIT 1) ORDER BY r."subsCount" DESC LIMIT 5
+  ),
   rooms_json AS (
     SELECT
       jsonb_agg(
@@ -126,6 +139,29 @@ export const initialFeedQuery = (userId: string) => {
     FROM
       user_subs 
   ),
+  suggested_rooms_json AS (
+    SELECT
+      jsonb_agg(
+        jsonb_build_object(
+          'name',
+          suggested_rooms.name,
+          'createdAt',
+          suggested_rooms."createdAt",
+          'category',
+          suggested_rooms.category,
+          'avatar',
+          suggested_rooms.avatar,
+          'description',
+          suggested_rooms.description,
+          'subsCount',
+          suggested_rooms."subsCount",
+          'isSubscribed',
+          'true'::boolean
+        )
+      ) AS suggested_rooms
+    FROM
+      suggested_rooms 
+  ),
   posts_json AS (
     SELECT 
       jsonb_agg(jsonb_build_object(
@@ -141,9 +177,11 @@ export const initialFeedQuery = (userId: string) => {
     FROM unique_posts 
   )
 SELECT
-  jsonb_build_object('rooms', rooms_json.rooms, 'posts', posts_json.posts) AS result
+  jsonb_build_object('rooms', rooms_json.rooms, 'posts', posts_json.posts, 'suggestedRooms', suggested_rooms_json.suggested_rooms) AS result
 FROM
   rooms_json,
-  posts_json)`.as("subsContent"),
+  posts_json,
+  suggested_rooms_json
+  )`.as("subsContent"),
   };
 };

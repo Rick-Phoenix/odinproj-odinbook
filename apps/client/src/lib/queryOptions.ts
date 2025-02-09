@@ -16,7 +16,7 @@ export const userQueryOptions = {
     }
     const data = await res.json();
     const {
-      subsContent: { rooms, posts },
+      subsContent: { rooms, posts, suggestedRooms },
       ...userData
     } = data;
     const initialFeedTrending: PostBasic[] = [];
@@ -24,6 +24,7 @@ export const userQueryOptions = {
     for (const room of rooms) {
       queryClient.setQueryData(["userSub", room.name], room);
     }
+    queryClient.setQueryData(["suggestedRooms"], suggestedRooms);
 
     posts.forEach((post, i) => {
       if (i < 20) initialFeedTrending.push(post);

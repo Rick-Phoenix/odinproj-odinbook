@@ -8,7 +8,7 @@ import {
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { TbSpaces } from "react-icons/tb";
 
-export interface RouterAppContext {
+interface RouterAppContext {
   queryClient: QueryClient;
   user: User | null | undefined;
 }

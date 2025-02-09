@@ -58,6 +58,7 @@ export const listingSchema = createSelectSchema(listings).extend({
 export const userDataSchema = userSchema.extend({
   subsContent: z.object({
     rooms: z.array(roomSchema),
+    suggestedRooms: z.array(roomSchema),
     posts: z.array(basicPostSchema),
   }),
   totalFeedPosts: z.number(),

@@ -1,4 +1,4 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
 import {
   Link,
   useLocation,
@@ -8,6 +8,7 @@ import {
 import { format } from "date-fns";
 import type { FC } from "react";
 import { useActivePage } from "../../../hooks/use-active-page";
+import type { Room } from "../../../lib/api-client";
 import { roomQueryOptions } from "../../../lib/queryOptions";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { SidebarMenuButton, SidebarSeparator } from "../../ui/sidebar";
@@ -16,28 +17,27 @@ import CreateRoomDialog from "./create-room-dialog";
 
 const RoomsIndexSidebarContent = () => {
   const { mainSection, subSection, activePage } = useActivePage();
-
+  const queryClient = useQueryClient();
+  const suggestedRooms = queryClient.getQueryData(["suggestedRooms"]) as Room[];
   return (
     <>
       {activePage === mainSection && (
         <>
           <div className="p-4">
             <CreateRoomDialog />
-
             <SidebarSeparator className="mx-0" />
             <h4 className="mt-2 text-center text-lg font-semibold">
               Suggested Rooms
             </h4>
 
             <ul className="flex flex-col justify-center gap-2 pt-6">
-              <SuggestedRoom
-                roomAvatar="https://github.com/shadcn.png"
-                roomName="cats"
-              />
-              <SuggestedRoom
-                roomAvatar="https://github.com/shadcn.png"
-                roomName="cats"
-              />
+              {suggestedRooms.map((room) => (
+                <SuggestedRoom
+                  key={room.name}
+                  roomAvatar={room.avatar}
+                  roomName={room.name}
+                />
+              ))}
             </ul>
           </div>
           <SidebarSeparator className="mx-0" />
@@ -75,6 +75,7 @@ const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({
           className="flex items-center justify-between gap-2"
           to="/rooms/$roomName"
           params={{ roomName }}
+          search={{ orderBy: "likesCount" }}
         >
           <Avatar>
             <AvatarImage src={roomAvatar} alt={roomName} />
