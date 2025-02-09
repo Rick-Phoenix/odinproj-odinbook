@@ -159,6 +159,14 @@ export const marketplaceCategories = [
 ] as const;
 export const categoryEnum = pgEnum("mktCategories", marketplaceCategories);
 
+export const itemConditions = [
+  "New",
+  "Used",
+  "As new",
+  "Spare parts only",
+] as const;
+export const itemConditionsEnum = pgEnum("itemConditions", itemConditions);
+
 export const listings = pgTable("listings", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   sellerId: text("sellerId")
@@ -169,12 +177,17 @@ export const listings = pgTable("listings", {
   price: integer("price").notNull(),
   location: text("location").notNull(),
   sold: boolean("sold").notNull().default(false),
+  condition: itemConditionsEnum().notNull(),
   category: categoryEnum().notNull(),
   createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
+  picUrl: text("picUrl")
+    .notNull()
+    .default(
+      "https://res.cloudinary.com/dqjizh49f/image/upload/v1738602566/Nexus/foq8r5a5lczqphdexyy3.jpg"
+    ),
 });
 
 export const listingsRelations = relations(listings, ({ many, one }) => ({
-  pics: many(listingPics),
   seller: one(users, {
     fields: [listings.sellerId],
     references: [users.id],
@@ -195,24 +208,6 @@ export const savedListingsRelations = relations(savedListings, ({ one }) => ({
   user: one(users, {
     fields: [savedListings.userId],
     references: [users.id],
-  }),
-}));
-
-//
-
-export const listingPics = pgTable("listingPics", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  listingId: integer("listingId")
-    .references(() => listings.id, { onDelete: "cascade" })
-    .notNull(),
-  url: text("url").notNull(),
-  isThumbnail: boolean("isThumbnail").notNull().default(false),
-});
-
-export const listingPicsRelations = relations(listingPics, ({ one }) => ({
-  listing: one(listings, {
-    fields: [listingPics.listingId],
-    references: [listings.id],
   }),
 }));
 

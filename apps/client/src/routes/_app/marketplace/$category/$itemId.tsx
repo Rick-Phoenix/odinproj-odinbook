@@ -1,9 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { format } from "date-fns";
 import { Flag } from "lucide-react";
 import { PiStar } from "react-icons/pi";
-import "swiper/css/navigation";
-import { Navigation } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
 import { Button } from "../../../../components/ui/button";
 import {
@@ -17,35 +15,35 @@ import {
   TableCell,
   TableRow,
 } from "../../../../components/ui/table";
+import { listingsQueryOptions } from "../../../../lib/queryOptions";
 
 export const Route = createFileRoute("/_app/marketplace/$category/$itemId")({
   component: RouteComponent,
+  params: { parse: ({ category, itemId }) => ({ category, itemId: +itemId }) },
+  loader: async (c) => {
+    const listing = await c.context.queryClient.fetchQuery(
+      listingsQueryOptions(c.params.itemId),
+    );
+    return listing;
+  },
 });
 
 function RouteComponent() {
+  const listing = Route.useLoaderData();
   return (
     <InsetScrollArea>
       <section className="grid min-h-[75vh] max-w-full grid-cols-1 grid-rows-[auto_1fr] rounded-xl bg-muted/50">
         <h2 className="scroll-m-20 border-b p-5 text-center text-3xl font-semibold tracking-tight first:mt-0">
-          Promotions
+          {listing.title}
         </h2>
         <div className="grid grid-cols-1 grid-rows-[auto_1fr] justify-center gap-x-8 p-8 xl:grid-cols-[auto_1fr] xl:grid-rows-1">
           <div className="flex flex-col items-center gap-5">
             <div className="grid max-h-full w-full min-w-0 max-w-80 justify-center [--swiper-navigation-color:hsl(var(--primary))] [&_.swiper]:max-w-full">
-              <Swiper
-                modules={[Navigation]}
-                navigation={true}
-                slidesPerView={1}
-                spaceBetween={20}
-              >
-                <SwiperSlide>
-                  <div className="size-80 rounded-lg bg-white"></div>
-                </SwiperSlide>
-              </Swiper>
+              <img src={listing.picUrl} alt={listing.title} />
             </div>
             <div className="flex w-full flex-col items-center gap-5">
-              <h2 className="text-2xl">Camera</h2>
-              <h2 className="text-2xl">$200</h2>
+              <h2 className="text-2xl">{listing.title}</h2>
+              <h2 className="text-2xl">${listing.price}</h2>
               <Table className="w-full *:text-xl">
                 <TableBody>
                   <TableRow>
@@ -71,11 +69,15 @@ function RouteComponent() {
                   </TableRow>
                   <TableRow>
                     <TableCell>Listed On</TableCell>
-                    <TableCell className="text-right">Today 10AM</TableCell>
+                    <TableCell className="text-right">
+                      {format(new Date(listing.createdAt), "HHH mm do")}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Location</TableCell>
-                    <TableCell className="text-right">London</TableCell>
+                    <TableCell className="text-right">
+                      {listing.location}
+                    </TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -104,53 +106,7 @@ function RouteComponent() {
             </div>
           </div>
           <div className="flex size-full flex-col gap-10 p-2 pt-0">
-            <div className="text-lg">
-              Anim in mollit culpa irure reprehenderit anim culpa. Ullamco
-              labore mollit voluptate id labore id adipisicing ex. Eiusmod do
-              ullamco est non ut proident elit in do Lorem ad cillum enim esse.
-              Quis laboris voluptate dolore cillum eu sunt cupidatat deserunt.
-              Dolore labore aute deserunt eu culpa sint minim non officia minim
-              deserunt nulla. Laboris eu quis ipsum cupidatat voluptate aliqua.
-              Consectetur nostrud aliquip nisi commodo eiusmod laborum amet
-              aliquip veniam. Anim in mollit culpa irure reprehenderit anim
-              culpa. Ullamco labore mollit voluptate id labore id adipisicing
-              ex. Eiusmod do ullamco est non ut proident elit in do Lorem ad
-              cillum enim esse. Quis laboris voluptate dolore cillum eu sunt
-              cupidatat deserunt. Dolore labore aute deserunt eu culpa sint
-              minim non officia minim deserunt nulla. Laboris eu quis ipsum
-              cupidatat voluptate aliqua. Consectetur nostrud aliquip nisi
-              commodo eiusmod laborum amet aliquip veniam. aliquip veniam. Anim
-              in mollit culpa irure reprehenderit anim culpa. Ullamco labore
-              mollit voluptate id labore id adipisicing ex. Eiusmod do ullamco
-              est non ut proident elit in do Lorem ad cillum enim esse. Quis
-              laboris voluptate dolore cillum eu sunt cupidatat deserunt. Dolore
-              labore aute deserunt eu culpa sint minim non officia minim
-              deserunt nulla. Laboris eu quis ipsum cupidatat voluptate aliqua.
-              Consectetur nostrud aliquip nisi commodo eiusmod laborum amet
-              cupidatat deserunt. Dolore labore aute deserunt eu culpa sint
-              minim non officia minim deserunt nulla. Laboris eu quis ipsum
-              cupidatat voluptate aliqua. Consectetur nostrud aliquip nisi
-              commodo eiusmod laborum amet aliquip veniam. aliquip veniam. Anim
-              in mollit culpa irure reprehenderit anim culpa. Ullamco labore
-              mollit voluptate id labore id adipisicing ex. Eiusmod do ullamco
-              est non ut proident elit in do Lorem ad cillum enim esse. Quis
-              laboris voluptate dolore cillum eu sunt cupidatat deserunt. Dolore
-              labore aute deserunt eu culpa sint minim non officia minim
-              deserunt nulla. Laboris eu quis ipsum cupidatat voluptate aliqua.
-              Consectetur nostrud aliquip nisi commodo eiusmod laborum amet
-              cupidatat deserunt. Dolore labore aute deserunt eu culpa sint
-              minim non officia minim deserunt nulla. Laboris eu quis ipsum
-              cupidatat voluptate aliqua. Consectetur nostrud aliquip nisi
-              commodo eiusmod laborum amet aliquip veniam. aliquip veniam. Anim
-              in mollit culpa irure reprehenderit anim culpa. Ullamco labore
-              mollit voluptate id labore id adipisicing ex. Eiusmod do ullamco
-              est non ut proident elit in do Lorem ad cillum enim esse. Quis
-              laboris voluptate dolore cillum eu sunt cupidatat deserunt. Dolore
-              labore aute deserunt eu culpa sint minim non officia minim
-              deserunt nulla. Laboris eu quis ipsum cupidatat voluptate aliqua.
-              Consectetur nostrud aliquip nisi commodo eiusmod laborum amet
-              aliquip veniam.
-            </div>
+            <div className="text-lg">{listing.description}</div>
           </div>
         </div>
       </section>

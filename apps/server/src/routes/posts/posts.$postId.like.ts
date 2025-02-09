@@ -7,7 +7,7 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { numberParamSchema } from "../../types/schema-helpers";
-import { badRequestError } from "../../utils/customErrors";
+import { internalServerError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
 
 const tags = ["posts", "likes"];
@@ -22,7 +22,7 @@ export const registerLike = createRoute({
   },
   responses: {
     [OK]: jsonContent(z.string(), "A confirmation message."),
-    [BAD_REQUEST]: badRequestError.template,
+    [BAD_REQUEST]: internalServerError.template,
   },
 });
 

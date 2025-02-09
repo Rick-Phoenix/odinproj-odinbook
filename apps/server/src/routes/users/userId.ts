@@ -7,7 +7,7 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { profileSchema } from "../../types/zod-schemas";
-import { badRequestError } from "../../utils/customErrors";
+import { internalServerError } from "../../utils/customErrors";
 
 const tags = ["users"];
 
@@ -22,7 +22,7 @@ export const getUserProfile = createRoute({
   },
   responses: {
     [OK]: jsonContent(profileSchema, "The user's profile."),
-    [BAD_REQUEST]: badRequestError.template,
+    [BAD_REQUEST]: internalServerError.template,
   },
 });
 
@@ -32,6 +32,6 @@ export const getUserProfileHandler: AppRouteHandler<
 > = async (c) => {
   const { username } = c.req.valid("param");
   const profile = await fetchUserProfile(username);
-  if (!profile) return c.json(badRequestError.content, BAD_REQUEST);
+  if (!profile) return c.json(internalServerError.content, BAD_REQUEST);
   return c.json(profile, OK);
 };

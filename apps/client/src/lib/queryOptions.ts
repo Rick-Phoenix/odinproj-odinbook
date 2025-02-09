@@ -89,3 +89,21 @@ export const postQueryOptions = (postId: number) => {
     },
   });
 };
+
+// LISTINGS
+
+export const listingsQueryOptions = (itemId: number) => {
+  return queryOptions({
+    queryKey: ["listings", itemId],
+    queryFn: async () => {
+      const res = await api.market.listings[":itemId"].$get({
+        param: { itemId },
+      });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("Listing not found.");
+      }
+      return data;
+    },
+  });
+};

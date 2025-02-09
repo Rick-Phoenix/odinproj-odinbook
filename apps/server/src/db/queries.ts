@@ -1,12 +1,11 @@
 import { and, desc, eq, getTableColumns, lt, lte, sql } from "drizzle-orm";
 import type { BasicPost, ListingInputs } from "../types/zod-schemas";
-import { isLiked, isSubscribed, lowercase } from "./db-methods";
+import { lowercase, withCTEColumns } from "./db-methods";
 import db from "./dbConfig";
 import {
   chatInstances,
   chats,
   likes,
-  listingPics,
   listings,
   messages,
   posts,
@@ -17,6 +16,8 @@ import {
 } from "./schema";
 import {
   initialFeedQuery,
+  isLiked,
+  isSubscribed,
   totalPostsFromRoom,
   totalPostsFromUserSubs,
 } from "./subqueries";
@@ -82,7 +83,7 @@ export async function fetchUserProfile(username: string) {
         columns: { text: true, title: true, id: true, createdAt: true },
         with: { room: { columns: { name: true } } },
       },
-      listingsCreated: { with: { pics: true } },
+      listingsCreated: true,
       roomSubscriptions: true,
     },
   });
@@ -431,14 +432,25 @@ export async function removeLike(userId: string, postId: number) {
 export async function insertListing(
   inputs: { sellerId: string } & ListingInputs
 ) {
-  const [listing] = await db.insert(listings).values(inputs).returning();
-  if (!listing) return false;
-  const picsInput = inputs.pics.map(({ url, isThumbnail }) => ({
-    url,
-    isThumbnail,
-    listingId: listing.id,
-  }));
-  const pics = await db.insert(listingPics).values(picsInput).returning();
+  const insertQuery = db
+    .$with("inserted_listing")
+    .as(db.insert(listings).values(inputs).returning());
+  const [listing] = await db
+    .with(insertQuery)
+    .select({
+      ...withCTEColumns(listings, insertQuery),
+      seller: users.username,
+    })
+    .from(insertQuery)
+    .innerJoin(users, eq(users.id, insertQuery.sellerId));
+  return listing;
+}
 
-  return { listing, pics };
+export async function fetchListing(id: number) {
+  const listing = await db.query.listings.findFirst({
+    where: (listing, { eq }) => eq(listing.id, id),
+    with: { seller: { columns: { avatarUrl: true, username: true } } },
+  });
+
+  return listing;
 }

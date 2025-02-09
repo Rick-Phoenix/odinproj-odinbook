@@ -12,7 +12,7 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { chatSchema } from "../../types/zod-schemas";
-import { badRequestError, customError } from "../../utils/customErrors";
+import { customError, internalServerError } from "../../utils/customErrors";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
 
 const tags = ["chats"];
@@ -26,7 +26,7 @@ export const getChats = createRoute({
       z.array(chatSchema).or(z.array(z.any()).length(0)),
       "The requested chats."
     ),
-    [BAD_REQUEST]: badRequestError.template,
+    [BAD_REQUEST]: internalServerError.template,
   },
 });
 
@@ -36,7 +36,7 @@ export const chatsIndexHandler: AppRouteHandler<
 > = async (c) => {
   const { id: userId } = c.var.user;
   const chats = await getUserChats(userId);
-  if (!chats) return c.json(badRequestError.content, BAD_REQUEST);
+  if (!chats) return c.json(internalServerError.content, BAD_REQUEST);
   return c.json(chats, OK);
 };
 
@@ -63,7 +63,7 @@ export const createChat = createRoute({
   responses: {
     [OK]: jsonContent(chatSchema, "The new chat."),
     [NOT_FOUND]: noUserError.template,
-    [BAD_REQUEST]: badRequestError.template,
+    [BAD_REQUEST]: internalServerError.template,
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(
       z.object({
         contactUsername: z.string(),

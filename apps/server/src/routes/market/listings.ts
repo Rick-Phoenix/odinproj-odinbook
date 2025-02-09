@@ -1,11 +1,19 @@
 import { createRoute } from "@hono/zod-openapi";
-import { OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
+import { encodeBase64 } from "@oslojs/encoding";
+import { v2 as cloudinary } from "cloudinary";
+import {
+  INTERNAL_SERVER_ERROR,
+  OK,
+  UNPROCESSABLE_ENTITY,
+} from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
+import { insertListing } from "../../db/queries";
 import type {
   AppBindingsWithUser,
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { insertListingSchema, listingSchema } from "../../types/zod-schemas";
+import { internalServerError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
 
@@ -27,6 +35,7 @@ export const createListing = createRoute({
   responses: {
     [OK]: jsonContent(listingSchema, "The newly created listing."),
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(insertListingSchema),
+    [INTERNAL_SERVER_ERROR]: internalServerError.template,
   },
 });
 
@@ -35,6 +44,30 @@ export const createListingHandler: AppRouteHandler<
   AppBindingsWithUser
 > = async (c) => {
   const userId = getUserId(c);
-  const reqBody = c.req.valid("form");
-  return c.json("OK", OK);
+  const { pic, ...inputs } = c.req.valid("form");
+  let picUrl;
+
+  if (pic) {
+    const file = await pic.arrayBuffer();
+    const fileBuffer = Buffer.from(file);
+    const base64 = encodeBase64(fileBuffer);
+    const upload = await cloudinary.uploader.upload(
+      `data:${pic.type};base64,${base64}`,
+      {
+        folder: "Nexus",
+        public_id: pic.name,
+        resource_type: "image",
+      }
+    );
+    picUrl = upload.secure_url;
+  }
+
+  const listing = await insertListing({
+    sellerId: userId,
+    ...inputs,
+    picUrl,
+  });
+  if (!listing)
+    return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
+  return c.json(listing, OK);
 };

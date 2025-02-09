@@ -2,6 +2,7 @@ import { z } from "@hono/zod-openapi";
 import {
   BAD_REQUEST,
   CONFLICT,
+  INTERNAL_SERVER_ERROR,
   NOT_FOUND,
   UNAUTHORIZED,
 } from "stoker/http-status-codes";
@@ -71,6 +72,13 @@ export const badRequestError = customError(
     message: "Invalid request.",
   },
   BAD_REQUEST
+);
+
+export const internalServerError = customError(
+  {
+    message: "Internal Server Error.",
+  },
+  INTERNAL_SERVER_ERROR
 );
 
 export const notFoundError = customError({ message: "Not Found." }, NOT_FOUND);

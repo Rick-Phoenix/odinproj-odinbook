@@ -16,7 +16,7 @@ import {
   insertMessageSchema,
   messagesSchema,
 } from "../../types/zod-schemas";
-import { badRequestError } from "../../utils/customErrors";
+import { internalServerError } from "../../utils/customErrors";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
 
 const tags = ["chats"];
@@ -32,7 +32,7 @@ export const getChat = createRoute({
   },
   responses: {
     [OK]: jsonContent(chatSchema, "The requested chat."),
-    [BAD_REQUEST]: badRequestError.template,
+    [BAD_REQUEST]: internalServerError.template,
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(
       z.object({
         chatId: numberParamSchema,
@@ -48,7 +48,7 @@ export const getChatHandler: AppRouteHandler<
   const { chatId } = c.req.valid("param");
   const { id: userId } = c.var.user;
   const chat = await getSingleChat(userId, chatId);
-  if (!chat) return c.json(badRequestError.content, BAD_REQUEST);
+  if (!chat) return c.json(internalServerError.content, BAD_REQUEST);
   return c.json(chat, OK);
 };
 
@@ -64,7 +64,7 @@ export const postMessage = createRoute({
   },
   responses: {
     [OK]: jsonContent(messagesSchema, "The message sent."),
-    [BAD_REQUEST]: badRequestError.template,
+    [BAD_REQUEST]: internalServerError.template,
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(
       z.object({
         chatId: numberParamSchema,
@@ -81,6 +81,6 @@ export const postMessageHandler: AppRouteHandler<
   const { text } = c.req.valid("json");
   const { id: userId } = c.var.user;
   const message = await registerMessage(chatId, userId, text);
-  if (!message) return c.json(badRequestError.content, BAD_REQUEST);
+  if (!message) return c.json(internalServerError.content, BAD_REQUEST);
   return c.json(message, OK);
 };

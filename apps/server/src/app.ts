@@ -16,7 +16,7 @@ const app = createApp();
 // Global Middleware
 app.use(csrf());
 app.use(registerUser);
-app.use("/api/rooms", async (c, next) => {
+app.use(async (c, next) => {
   cloudinary.config({
     api_key: env.CLOUDINARY_API_KEY,
     api_secret: env.CLOUDINARY_API_SECRET,

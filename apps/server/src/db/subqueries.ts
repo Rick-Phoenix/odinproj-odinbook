@@ -1,4 +1,5 @@
 import { eq, sql } from "drizzle-orm";
+import type { PgColumn } from "drizzle-orm/pg-core";
 import type { BasicPost, RoomData } from "../types/zod-schemas";
 import db from "./dbConfig";
 import { posts, rooms, subs } from "./schema";
@@ -185,3 +186,26 @@ FROM
   )`.as("subsContent"),
   };
 };
+export function isLiked(userId: string, postId: PgColumn) {
+  return {
+    isLiked: sql<boolean>`
+    EXISTS (
+      SELECT 1 FROM likes 
+      WHERE likes."postId" = ${postId} 
+      AND likes."userId" = ${userId}
+    )
+  `.as("isLiked"),
+  };
+}
+
+export function isSubscribed(userId: string, roomName: PgColumn) {
+  return {
+    isSubscribed: sql<boolean>`
+    EXISTS (
+      SELECT 1 FROM "subs" 
+      WHERE "subs"."room" = ${roomName}
+      AND "subs"."userId" = ${userId}
+    )
+  `.as("isSubscribed"),
+  };
+}

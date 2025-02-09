@@ -3,8 +3,8 @@ import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 import {
   chats,
   comments,
+  itemConditions,
   likes,
-  listingPics,
   listings,
   marketplaceCategories,
   messages,
@@ -51,9 +51,11 @@ export const roomWithPostsSchema = roomSchema.extend({
 });
 export type RoomData = z.infer<typeof roomSchema>;
 
-export const listingPicsSchema = createSelectSchema(listingPics);
 export const listingSchema = createSelectSchema(listings).extend({
-  pics: z.array(listingPicsSchema),
+  seller: z.object({
+    avatarUrl: z.string(),
+    username: z.string(),
+  }),
 });
 
 export const userDataSchema = userSchema.extend({
@@ -177,34 +179,35 @@ export const insertSubscriptionSchema = createInsertSchema(subs).omit({
   id: true,
 });
 
-export { marketplaceCategories } from "../db/schema";
+export { itemConditions, marketplaceCategories } from "../db/schema";
 export const insertListingSchema = z.object({
   title: z.string().min(10, "The title must be at least 10 characters long."),
   description: z
     .string()
     .max(250, "The description cannot be longer than 250 characters."),
-  price: z.number().min(1, "Price cannot be less than $1."),
+  price: z.coerce
+    .number()
+    .min(1, "Price cannot be less than $1.")
+    .transform((n) => {
+      const stringNum = n.toString().split("");
+      let i = 0;
+      while (i < stringNum.length && stringNum[i] === "0") i++;
+      return Number(stringNum.slice(i).join(""));
+    }),
   location: z.string(),
   category: z.enum(marketplaceCategories),
-  pics: z
-    .array(
-      z.object({
-        image: z
-          .instanceof(File)
-          .refine(
-            (file) => file.size <= 30000,
-            "Pictures cannot be larger than 3 megabytes each."
-          ),
-        isThumbnail: z.boolean().optional().default(false),
-      })
+  condition: z.enum(itemConditions),
+  pic: z
+    .instanceof(File)
+    .refine(
+      (file) => file.size <= 30000,
+      "The picture cannot be larger than 3 megabytes."
     )
-    .max(3, "Cannot update more than 3 pictures per listing.")
     .optional(),
 });
-export type ListingInputs = Omit<
-  z.infer<typeof insertListingSchema>,
-  "pics"
-> & { pics: { url: string; isThumbnail: boolean }[] };
+export type ListingInputs = Omit<z.infer<typeof insertListingSchema>, "pic"> & {
+  picUrl: string | undefined;
+};
 
 export const insertMessageSchema = z.object({
   text: z.string().min(1).max(1000),

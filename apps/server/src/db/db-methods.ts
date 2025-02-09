@@ -5,6 +5,8 @@ import {
   type AnyColumn,
   type ChangeColumnTableName,
   type SQL,
+  type Subquery,
+  type Table,
 } from "drizzle-orm";
 import {
   PgDialect,
@@ -39,28 +41,20 @@ export const countRelation = <const T extends string>(
   } as { [Key in T]: SQL.Aliased<number> };
 };
 
-export function isLiked(userId: string, postId: PgColumn) {
-  return {
-    isLiked: sql<boolean>`
-    EXISTS (
-      SELECT 1 FROM likes 
-      WHERE likes."postId" = ${postId} 
-      AND likes."userId" = ${userId}
-    )
-  `.as("isLiked"),
-  };
-}
+export function withCTEColumns<
+  TTable extends Table,
+  TCte extends Subquery & { [K in keyof TTable["_"]["columns"]]: PgColumn },
+>(table: TTable, cte: TCte) {
+  type ColumnKeys = keyof TTable["_"]["columns"];
 
-export function isSubscribed(userId: string, roomName: PgColumn) {
-  return {
-    isSubscribed: sql<boolean>`
-    EXISTS (
-      SELECT 1 FROM "subs" 
-      WHERE "subs"."room" = ${roomName}
-      AND "subs"."userId" = ${userId}
-    )
-  `.as("isSubscribed"),
-  };
+  return Object.keys(getTableColumns(table)).reduce(
+    (acc, columnName) => {
+      const key = columnName as ColumnKeys;
+      acc[key] = cte[key];
+      return acc;
+    },
+    {} as { [K in ColumnKeys]: TCte[K] }
+  );
 }
 
 type ColumnAlias<T extends AnyColumn> = ChangeColumnTableName<T, string, "pg">;
@@ -82,6 +76,7 @@ export function getTableColumnAliases<T extends PgTable>(
       return [
         key,
         sql<number>`${table}.${sql.identifier(key)}`
+          // eslint-disable-next-line @typescript-eslint/unbound-method
           .mapWith(column.mapFromDriverValue)
           .as(`${name}_${key}`),
       ];
