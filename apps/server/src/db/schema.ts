@@ -149,7 +149,7 @@ export const messagesRelations = relations(messages, ({ one }) => ({
 
 //
 
-const mktCategories = [
+export const marketplaceCategories = [
   "Technology",
   "Motors",
   "Clothing",
@@ -157,7 +157,7 @@ const mktCategories = [
   "Collectibles",
   "Sport",
 ] as const;
-export const categoryEnum = pgEnum("mktCategories", mktCategories);
+export const categoryEnum = pgEnum("mktCategories", marketplaceCategories);
 
 export const listings = pgTable("listings", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),

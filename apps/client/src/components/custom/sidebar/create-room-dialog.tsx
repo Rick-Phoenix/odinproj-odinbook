@@ -168,6 +168,7 @@ export default function CreateRoomDialog() {
                         name={field.name}
                         type="file"
                         accept="image/png, image/jpeg"
+                        multiple={true}
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           form.setFieldValue("avatar", file);

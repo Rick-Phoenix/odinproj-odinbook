@@ -1,11 +1,13 @@
 import { and, desc, eq, getTableColumns, lt, lte, sql } from "drizzle-orm";
-import type { BasicPost } from "../types/zod-schemas";
+import type { BasicPost, ListingInputs } from "../types/zod-schemas";
 import { isLiked, isSubscribed, lowercase } from "./db-methods";
 import db from "./dbConfig";
 import {
   chatInstances,
   chats,
   likes,
+  listingPics,
+  listings,
   messages,
   posts,
   rooms,
@@ -209,8 +211,6 @@ export async function insertPost(
     .values({ authorId, room, title, text })
     .returning({
       ...getTableColumns(posts),
-      // isLiked: sql<boolean>`true`,
-      // author: sql<string>`${authorUsername}`,
     });
 
   if (post) return { ...post, isLiked: true, author: authorUsername };
@@ -426,4 +426,19 @@ export async function removeLike(userId: string, postId: number) {
   return await db
     .delete(likes)
     .where(and(eq(likes.userId, userId), eq(likes.postId, postId)));
+}
+
+export async function insertListing(
+  inputs: { sellerId: string } & ListingInputs
+) {
+  const [listing] = await db.insert(listings).values(inputs).returning();
+  if (!listing) return false;
+  const picsInput = inputs.pics.map(({ url, isThumbnail }) => ({
+    url,
+    isThumbnail,
+    listingId: listing.id,
+  }));
+  const pics = await db.insert(listingPics).values(picsInput).returning();
+
+  return { listing, pics };
 }

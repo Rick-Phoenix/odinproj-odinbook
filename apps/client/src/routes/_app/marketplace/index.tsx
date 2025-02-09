@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-
+import { HandCoins } from "lucide-react";
 import { motion, useSpring, useTransform } from "motion/react";
 import { type FC, type MouseEvent, type MouseEventHandler } from "react";
 import {
@@ -9,12 +9,6 @@ import {
   Pagination,
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-
-import "swiper/css";
-import "swiper/css/effect-coverflow";
-import "swiper/css/pagination";
-
-import { HandCoins } from "lucide-react";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 import { Button } from "../../../components/ui/button";
 
@@ -189,7 +183,7 @@ const PromotionItem: FC<{ price: number; name: string }> = ({
       params={{ category: "foo", itemId: "1" }}
       className="flex flex-col items-center gap-5 rounded-xl border-background bg-muted-foreground/30 p-6 py-8"
     >
-      <div className="size-64 bg-white"></div>
+      <div className="aspect-square h-full w-full bg-white"></div>
       <h4 className="line-clamp-2 scroll-m-20 text-2xl font-semibold tracking-tight">
         {name}
       </h4>

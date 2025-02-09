@@ -29,6 +29,7 @@ import { Label } from "../../ui/label";
 import { SidebarMenuButton, SidebarSeparator } from "../../ui/sidebar";
 import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
 import CreateRoomDialog from "./create-room-dialog";
+import SidebarSkeleton from "./sidebar-skeleton";
 
 const RoomsIndexSidebarContent = () => {
   const { mainSection, subSection, activePage } = useActivePage();
@@ -107,6 +108,7 @@ const RoomSidebarContent = () => {
   const queryClient = useQueryClient();
   const { subSection: roomName } = useActivePage();
   const room = queryClient.getQueryData(["room", roomName]) as Room;
+  if (!room) return <SidebarSkeleton />;
   return (
     <>
       <div className="flex h-32 p-6 pb-0 center">

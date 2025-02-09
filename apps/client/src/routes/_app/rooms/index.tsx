@@ -1,27 +1,17 @@
-// @ts-expect-error
-import "swiper/css";
-// @ts-expect-error
-import "swiper/css/effect-coverflow";
-// @ts-expect-error
-import "swiper/css/pagination";
-// @ts-expect-error
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState, type FC } from "react";
-import "swiper/css/scrollbar";
-import InsetScrollArea from "../../../components/custom/inset-scrollarea";
-
-import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "@tanstack/react-router";
 import { Autoplay, Mousewheel, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 import { PostPreview } from "../../../components/custom/post-preview";
 import { Button } from "../../../components/ui/button";
 import { CardTitle } from "../../../components/ui/card";

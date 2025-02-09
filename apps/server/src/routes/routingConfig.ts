@@ -8,6 +8,7 @@ import { chatRouter } from "./chats/chatsRouter";
 import { roomsRouter } from "./rooms/roomsRouter";
 import { userRouter } from "./users/usersRouter";
 import { postsRouter } from './posts/postsRouter';
+import { marketRouter } from './market/marketRouter';
 
 const app = createRouter();
 
@@ -51,7 +52,7 @@ export function registerApiRoutes(app: AppOpenAPI) {
     .route("/auth", authRouter)
     .route("/users", userRouter)
     .route("/chats", chatRouter)
-    .route("/rooms", roomsRouter).route("/posts", postsRouter);
+    .route("/rooms", roomsRouter).route("/posts", postsRouter).route("/market", marketRouter);
 }
 
 export const apiRoutes = registerApiRoutes(app);
