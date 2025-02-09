@@ -1,7 +1,6 @@
 import { useParams } from "@tanstack/react-router";
-import { Table } from "lucide-react";
 import { Avatar, AvatarImage } from "../../ui/avatar";
-import { TableBody, TableCell, TableRow } from "../../ui/table";
+import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
 
 const MarketplaceSidebarContent = () => {
   const { itemId } = useParams({ strict: false });

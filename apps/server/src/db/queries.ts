@@ -1,4 +1,4 @@
-import { and, desc, eq, lt, lte, sql } from "drizzle-orm";
+import { and, desc, eq, getTableColumns, lt, lte, sql } from "drizzle-orm";
 import type { BasicPost } from "../types/zod-schemas";
 import { isLiked, isSubscribed, lowercase } from "./db-methods";
 import db from "./dbConfig";
@@ -193,6 +193,27 @@ export async function fetchPost(userId: string, postId: number) {
   });
 
   if (post) return { ...post, author: post.author.username };
+
+  return post;
+}
+
+export async function insertPost(
+  authorId: string,
+  authorUsername: string,
+  room: string,
+  title: string,
+  text: string
+) {
+  const [post] = await db
+    .insert(posts)
+    .values({ authorId, room, title, text })
+    .returning({
+      ...getTableColumns(posts),
+      // isLiked: sql<boolean>`true`,
+      // author: sql<string>`${authorUsername}`,
+    });
+
+  if (post) return { ...post, isLiked: true, author: authorUsername };
 
   return post;
 }

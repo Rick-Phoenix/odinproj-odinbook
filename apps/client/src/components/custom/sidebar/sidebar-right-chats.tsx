@@ -54,7 +54,9 @@ const ChatsSidebarContent = () => {
 };
 
 const ChatSidebarContent = () => {
-  const { chatId } = useParams({ from: "/_app/chats/$chatId" });
+  const { chatId } = useParams({
+    from: "/_app/chats/$chatId",
+  });
   const {
     data: { contact },
   } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });

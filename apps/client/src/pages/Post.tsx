@@ -9,7 +9,7 @@ import {
 import { CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
-import type { PostFull } from "../lib/api-client";
+import type { PostBasic, PostFull } from "../lib/api-client";
 
 interface Comment {
   text: string;
@@ -120,7 +120,7 @@ function renderComments(
   });
 }
 
-const Post: FC<{ post: PostFull }> = ({ post }) => {
+const Post: FC<{ post: PostFull | PostBasic }> = ({ post }) => {
   return (
     <section className="min-h-svh overflow-x-auto rounded-xl bg-muted/50">
       <CardHeader>

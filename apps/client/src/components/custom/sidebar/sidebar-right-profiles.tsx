@@ -1,13 +1,13 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLoaderData, useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
-import { MessageSquare, Table } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { api, type Chat } from "../../../lib/api-client";
 import { cacheChat, chatsQueryOptions } from "../../../lib/chatQueries";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { SidebarMenu } from "../../ui/sidebar";
-import { TableBody, TableCell, TableRow } from "../../ui/table";
+import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
 
 const UserProfileSidebarContent = () => {
   const profile = useLoaderData({ from: "/_app/users/$username" });

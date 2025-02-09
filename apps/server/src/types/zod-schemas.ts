@@ -149,18 +149,16 @@ export const insertRoomSchema = z.object({
 });
 export { roomCategoriesArray } from "../db/schema";
 
-export const insertPostSchema = createInsertSchema(posts)
-  .omit({ createdAt: true, id: true, authorId: true })
-  .extend({
-    title: z
-      .string()
-      .min(20, "The post's title must be at least 20 characters long.")
-      .max(100, "The title cannot be longer than 100 characters."),
-    text: z
-      .string()
-      .min(20, "The post's content must be at least 20 characters long.")
-      .max(200, "The post's content cannot be longer than 200 characters."),
-  });
+export const insertPostSchema = z.object({
+  title: z
+    .string()
+    .min(20, "The post's title must be at least 20 characters long.")
+    .max(100, "The title cannot be longer than 100 characters."),
+  text: z
+    .string()
+    .min(20, "The post's content must be at least 20 characters long.")
+    .max(200, "The post's content cannot be longer than 200 characters."),
+});
 
 export const insertCommentSchema = createInsertSchema(comments)
   .omit({ createdAt: true, id: true, userId: true })

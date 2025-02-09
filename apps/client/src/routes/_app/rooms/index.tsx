@@ -172,6 +172,9 @@ function RouteComponent() {
       {posts.map((post) => (
         <PostPreview key={post.id} post={post} />
       ))}
+      <div className="text-center text-sm italic text-muted-foreground">
+        Hungry for more? Subscribe to more rooms to get more posts in your feed.
+      </div>
     </InsetScrollArea>
   );
 }

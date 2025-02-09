@@ -73,3 +73,19 @@ export const roomQueryOptions = (
       return data;
     },
   });
+
+// POSTS
+
+export const postQueryOptions = (postId: number) => {
+  return queryOptions({
+    queryKey: ["post", postId],
+    queryFn: async () => {
+      const res = await api.posts[":postId"].$get({ param: { postId } });
+      const post = await res.json();
+      if ("issues" in post) {
+        throw new Error("Post not found.");
+      }
+      return post;
+    },
+  });
+};
