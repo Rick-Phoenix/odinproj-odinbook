@@ -9,16 +9,16 @@ import {
 import { CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
-import type { PostFull } from "../lib/api-client";
+import type { Comment, PostFull } from "../lib/api-client";
 
-interface Comment {
+interface CommentOld {
   text: string;
-  sub?: Comments;
+  sub?: CommentsOld;
 }
 
-type Comments = Comment[];
+type CommentsOld = CommentOld[];
 
-const comments: Comments = [
+const comments: CommentsOld = [
   { text: " base 1", sub: [{ text: "1- 1" }] },
   { text: " 2" },
   { text: " 3" },
@@ -69,7 +69,7 @@ Est duis excepteur reprehenderit non quis pariatur id minim cupidatat velit. Id 
 ];
 
 function renderComments(
-  comments: Comments,
+  comments: CommentsOld,
   startingRow: number,
   startingColumn: number,
 ) {
@@ -120,7 +120,34 @@ function renderComments(
   });
 }
 
+function nestComments(comments: Comment[]) {
+  const nestMap = new Map<number, Comment[]>();
+  const rootComments = [] as Comment[];
+  comments.forEach((c) => {
+    if (c.parentCommentId) {
+      const parId = c.parentCommentId;
+      const relMapEntry = nestMap.get(parId);
+      relMapEntry ? relMapEntry.push(c) : nestMap.set(parId, [c]);
+    } else rootComments.push(c);
+  });
+
+  function recursive(c: Comment) {
+    const children = nestMap.get(c.id);
+    if (children) {
+      c.children = children;
+      children.forEach(recursive);
+    }
+    return c;
+  }
+
+  rootComments.forEach(recursive);
+  return rootComments;
+}
+
 const Post: FC<{ post: PostFull }> = ({ post }) => {
+  const nestedComments = nestComments(post.comments);
+  console.log("🚀 ~ nestedComments:", nestedComments);
+
   return (
     <section className="min-h-svh overflow-x-auto rounded-xl bg-muted/50">
       <CardHeader>
