@@ -49,7 +49,8 @@ export const getListingsHandler: AppRouteHandler<
   AppBindingsWithUser
 > = async (c) => {
   const { category, orderBy } = c.req.valid("query");
-  const listings = await fetchListingsByCategory(category, orderBy);
+  const userId = getUserId(c);
+  const listings = await fetchListingsByCategory(userId, category, orderBy);
   return c.json(listings, OK);
 };
 
@@ -67,7 +68,10 @@ export const createListing = createRoute({
     },
   },
   responses: {
-    [OK]: jsonContent(listingSchema, "The newly created listing."),
+    [OK]: jsonContent(
+      listingSchema.omit({ isSaved: true }),
+      "The newly created listing."
+    ),
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(insertListingSchema),
     [INTERNAL_SERVER_ERROR]: internalServerError.template,
   },

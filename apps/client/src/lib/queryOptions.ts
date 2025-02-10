@@ -17,6 +17,8 @@ export const userQueryOptions = {
     const data = await res.json();
     const {
       subsContent: { rooms, posts, suggestedRooms },
+      listingsCreated,
+      listingsSaved,
       ...userData
     } = data;
     const initialFeedTrending: PostBasic[] = [];
@@ -43,6 +45,9 @@ export const userQueryOptions = {
       ),
       total: data.totalFeedPosts,
     });
+
+    queryClient.setQueryData(["listingsCreated"], listingsCreated);
+    queryClient.setQueryData(["listingsSaved"], listingsSaved);
 
     return userData;
   },

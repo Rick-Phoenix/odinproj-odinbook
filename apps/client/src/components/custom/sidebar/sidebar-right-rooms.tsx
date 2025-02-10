@@ -6,6 +6,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Plus } from "lucide-react";
 import { useState, type FC } from "react";
+import { useUser } from "../../../hooks/auth";
 import { useActivePage } from "../../../hooks/use-active-page";
 import { api, type Room } from "../../../lib/api-client";
 import {
@@ -33,6 +34,13 @@ import SidebarSkeleton from "./sidebar-skeleton";
 
 const RoomsIndexSidebarContent = () => {
   const { mainSection, subSection, activePage } = useActivePage();
+  const {
+    createdAt,
+    totalLikes,
+    totalPosts,
+    totalRoomsCreated,
+    totalListings,
+  } = useUser()!;
   const queryClient = useQueryClient();
   const suggestedRooms = queryClient.getQueryData(["suggestedRooms"]) as Room[];
   return (
@@ -64,11 +72,27 @@ const RoomsIndexSidebarContent = () => {
             <TableBody>
               <TableRow>
                 <TableCell>Member since:</TableCell>
-                <TableCell className="text-right">Jan 10 2025</TableCell>
+                <TableCell className="text-right">
+                  {format(new Date(createdAt), "dd MMM y")}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Total likes:</TableCell>
-                <TableCell className="text-right">32</TableCell>
+                <TableCell className="text-right">{totalLikes}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Total posts:</TableCell>
+                <TableCell className="text-right">{totalPosts}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Total rooms created:</TableCell>
+                <TableCell className="text-right">
+                  {totalRoomsCreated}
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Total listings created:</TableCell>
+                <TableCell className="text-right">{totalListings}</TableCell>
               </TableRow>
             </TableBody>
           </Table>

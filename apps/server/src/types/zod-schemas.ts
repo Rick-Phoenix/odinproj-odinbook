@@ -53,6 +53,7 @@ export type RoomData = z.infer<typeof roomSchema>;
 
 export const listingSchema = createSelectSchema(listings).extend({
   seller: z.string(),
+  isSaved: z.boolean(),
 });
 
 export const userDataSchema = userSchema.extend({
@@ -62,6 +63,12 @@ export const userDataSchema = userSchema.extend({
     posts: z.array(basicPostSchema),
   }),
   totalFeedPosts: z.number(),
+  totalLikes: z.number(),
+  totalPosts: z.number(),
+  totalRoomsCreated: z.number(),
+  totalListings: z.number(),
+  listingsCreated: z.array(listingSchema),
+  listingsSaved: z.array(listingSchema),
 });
 
 export const profileSchema = userSchema
@@ -184,7 +191,10 @@ export const insertListingSchema = z.object({
     .max(250, "The description cannot be longer than 250 characters."),
   price: z.coerce
     .number()
+    .positive()
+    .int()
     .min(1, "Price cannot be less than $1.")
+    .max(300000, "Price cannot be more than 300000")
     .transform((n) => {
       const stringNum = n.toString().split("");
       let i = 0;

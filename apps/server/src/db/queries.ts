@@ -10,6 +10,7 @@ import {
   messages,
   posts,
   rooms,
+  savedListings,
   subs,
   users,
   type MarketplaceCategory,
@@ -18,21 +19,30 @@ import {
 import {
   initialFeedQuery,
   isLiked,
+  isSaved,
   isSubscribed,
   totalPostsFromRoom,
   totalPostsFromUserSubs,
+  userStats,
 } from "./subqueries";
 
 export async function fetchUserData(userId: string) {
   const totalPostsFromSubs = totalPostsFromUserSubs(userId);
   const userData = await db.query.users.findFirst({
     where: (user, { eq }) => eq(user.id, userId),
-    extras: {
+    with: {
+      listingsCreated: {
+        where: (f, { eq }) => eq(f.sold, false),
+      },
+      listingsSaved: true,
+    },
+    extras: (f) => ({
       totalFeedPosts: sql<number>`${db.$count(totalPostsFromSubs)}::int`
         .mapWith(Number)
         .as("totalFeedPosts"),
       ...initialFeedQuery(userId),
-    },
+      ...userStats(userId),
+    }),
   });
 
   return userData;
@@ -65,8 +75,8 @@ export async function findUserByUsername(username: string) {
   });
 }
 
-export async function fetchUserProfile(username: string) {
-  return await db.query.users.findFirst({
+export async function fetchUserProfile(userId: string, username: string) {
+  const profile = await db.query.users.findFirst({
     where(user, { eq }) {
       return eq(lowercase(user.username), username.toLocaleLowerCase());
     },
@@ -84,10 +94,17 @@ export async function fetchUserProfile(username: string) {
         columns: { text: true, title: true, id: true, createdAt: true },
         with: { room: { columns: { name: true } } },
       },
-      listingsCreated: true,
+      listingsCreated: {
+        extras: (f) => ({
+          ...isSaved(userId, f.id),
+          seller: sql<string>`${username}`.as("seller"),
+        }),
+      },
       roomSubscriptions: true,
     },
   });
+
+  return profile;
 }
 
 export async function getUserChats(userId: string) {
@@ -441,15 +458,20 @@ export async function insertListing(
     .select({
       ...withCTEColumns(listings, insertQuery),
       seller: users.username,
+      isSaved: sql<boolean>`${false}`,
     })
     .from(insertQuery)
     .innerJoin(users, eq(users.id, insertQuery.sellerId));
   return listing;
 }
 
-export async function fetchListing(id: number) {
+export async function fetchListing(userId: string, id: number) {
   const [listing] = await db
-    .select({ ...getTableColumns(listings), seller: users.username })
+    .select({
+      ...getTableColumns(listings),
+      seller: users.username,
+      ...isSaved(userId, listings.id),
+    })
     .from(listings)
     .innerJoin(users, eq(listings.sellerId, users.id))
     .where(eq(listings.id, id));
@@ -458,11 +480,16 @@ export async function fetchListing(id: number) {
 }
 
 export async function fetchListingsByCategory(
+  userId: string,
   category: MarketplaceCategory,
   orderBy: "cheapest" | "mostRecent"
 ) {
   const listingsByCategory = await db
-    .select({ ...getTableColumns(listings), seller: users.username })
+    .select({
+      ...getTableColumns(listings),
+      seller: users.username,
+      ...isSaved(userId, listings.id),
+    })
     .from(listings)
     .innerJoin(users, eq(listings.sellerId, users.id))
     .where(eq(listings.category, category))
@@ -470,4 +497,19 @@ export async function fetchListingsByCategory(
       orderBy === "cheapest" ? asc(listings.price) : desc(listings.createdAt)
     );
   return listingsByCategory;
+}
+
+export async function insertSavedListing(userId: string, listingId: number) {
+  await db.insert(savedListings).values({ userId, listingId });
+}
+
+export async function deleteSavedListing(userId: string, listingId: number) {
+  await db
+    .delete(savedListings)
+    .where(
+      and(
+        eq(savedListings.userId, userId),
+        eq(savedListings.listingId, listingId)
+      )
+    );
 }

@@ -43,7 +43,6 @@ const CreateListingDialog = () => {
     validators: {
       onSubmit: schemas.insertListingSchema,
       onSubmitAsync: async ({ value }) => {
-        console.log(value);
         try {
           await handleCreateListing.mutateAsync(value);
           return null;
@@ -129,99 +128,127 @@ const CreateListingDialog = () => {
                 }}
               ></form.Field>
             </div>
-            <div className="grid gap-2">
-              <form.Field
-                name="price"
-                children={(field) => {
-                  return (
-                    <>
-                      <Label htmlFor={field.name}>Price</Label>
-                      <Input
-                        name={field.name}
-                        type="number"
-                        value={field.state.value}
-                        placeholder="Price"
-                        onChange={(e) =>
-                          field.handleChange(e.target.valueAsNumber)
-                        }
-                        required
-                      />
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
-                    </>
-                  );
-                }}
-              ></form.Field>
+            <div className="flex justify-between gap-2">
+              <div className="grid gap-2">
+                <form.Field
+                  name="price"
+                  children={(field) => {
+                    return (
+                      <>
+                        <Label htmlFor={field.name}>Price</Label>
+                        <Input
+                          name={field.name}
+                          type="number"
+                          value={field.state.value}
+                          placeholder="Price"
+                          min={1}
+                          max={300000}
+                          onChange={(e) =>
+                            field.handleChange(e.target.valueAsNumber)
+                          }
+                          required
+                        />
+                        {field.state.meta.isTouched &&
+                          formatFormErrors(field.state.meta.errors)}
+                      </>
+                    );
+                  }}
+                ></form.Field>
+              </div>
+              <div className="grid flex-1 gap-2">
+                <form.Field
+                  name="location"
+                  children={(field) => {
+                    return (
+                      <>
+                        <Label htmlFor={field.name}>Location</Label>
+                        <Input
+                          name={field.name}
+                          type="text"
+                          value={field.state.value}
+                          placeholder="Location"
+                          onChange={(e) => field.handleChange(e.target.value)}
+                          required
+                        />
+                        {field.state.meta.isTouched &&
+                          formatFormErrors(field.state.meta.errors)}
+                      </>
+                    );
+                  }}
+                ></form.Field>
+              </div>
             </div>
-            <div className="grid gap-2">
-              <form.Field
-                name="category"
-                children={(field) => {
-                  return (
-                    <>
-                      <Label htmlFor={field.name}>Category</Label>
-                      <Select
-                        name={field.name}
-                        value={field.state.value}
-                        onValueChange={(e) =>
-                          field.handleChange(
-                            e as (typeof schemas.marketplaceCategories)[number],
-                          )
-                        }
-                        required
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {schemas.marketplaceCategories.map((cat, i) => (
-                            <SelectItem key={i} value={cat}>
-                              {cat}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
-                    </>
-                  );
-                }}
-              ></form.Field>
-            </div>
-            <div className="grid gap-2">
-              <form.Field
-                name="condition"
-                children={(field) => {
-                  return (
-                    <>
-                      <Label htmlFor={field.name}>Condition</Label>
-                      <Select
-                        name={field.name}
-                        value={field.state.value}
-                        onValueChange={(e) =>
-                          field.handleChange(
-                            e as (typeof schemas.itemConditions)[number],
-                          )
-                        }
-                        required
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {schemas.itemConditions.map((cond, i) => (
-                            <SelectItem key={i} value={cond}>
-                              {cond}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
-                    </>
-                  );
-                }}
-              ></form.Field>
+            <div className="flex justify-between gap-2">
+              <div className="grid flex-1 gap-2">
+                <form.Field
+                  name="category"
+                  children={(field) => {
+                    return (
+                      <>
+                        <Label htmlFor={field.name}>Category</Label>
+                        <Select
+                          name={field.name}
+                          value={field.state.value}
+                          onValueChange={(e) =>
+                            field.handleChange(
+                              e as (typeof schemas.marketplaceCategories)[number],
+                            )
+                          }
+                          required
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {schemas.marketplaceCategories.map((cat, i) => (
+                              <SelectItem key={i} value={cat}>
+                                {cat}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {field.state.meta.isTouched &&
+                          formatFormErrors(field.state.meta.errors)}
+                      </>
+                    );
+                  }}
+                ></form.Field>
+              </div>
+              <div className="grid flex-1 gap-2">
+                <form.Field
+                  name="condition"
+                  children={(field) => {
+                    return (
+                      <>
+                        <Label htmlFor={field.name}>Condition</Label>
+                        <Select
+                          name={field.name}
+                          value={field.state.value}
+                          onValueChange={(e) =>
+                            field.handleChange(
+                              e as (typeof schemas.itemConditions)[number],
+                            )
+                          }
+                          required
+                        >
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {schemas.itemConditions.map((cond, i) => (
+                              <SelectItem key={i} value={cond}>
+                                {cond}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        {field.state.meta.isTouched &&
+                          formatFormErrors(field.state.meta.errors)}
+                      </>
+                    );
+                  }}
+                ></form.Field>
+              </div>
             </div>
             <div className="grid gap-2">
               <form.Field

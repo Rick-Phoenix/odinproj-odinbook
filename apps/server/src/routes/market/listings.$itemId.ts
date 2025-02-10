@@ -9,6 +9,7 @@ import type {
 import { numberParamSchema } from "../../types/schema-helpers";
 import { listingSchema } from "../../types/zod-schemas";
 import { notFoundError } from "../../utils/customErrors";
+import { getUserId } from "../../utils/getters";
 
 const tags = ["market"];
 
@@ -29,8 +30,10 @@ export const itemIdHandler: AppRouteHandler<
   typeof itemId,
   AppBindingsWithUser
 > = async (c) => {
+  const userId = getUserId(c);
   const { itemId } = c.req.valid("param");
-  const listing = await fetchListing(itemId);
+  const listing = await fetchListing(userId, itemId);
+  console.log("🚀 ~ >= ~ listing:", listing);
   if (!listing) return c.json(notFoundError.content, NOT_FOUND);
   return c.json(listing, OK);
 };

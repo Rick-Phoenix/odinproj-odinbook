@@ -1,8 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { format } from "date-fns";
-import { Flag } from "lucide-react";
-import { PiStar } from "react-icons/pi";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
+import SaveListingButton from "../../../../components/custom/save-listing-button";
 import { Button } from "../../../../components/ui/button";
 import {
   Popover,
@@ -15,6 +14,7 @@ import {
   TableCell,
   TableRow,
 } from "../../../../components/ui/table";
+import { useUser } from "../../../../hooks/auth";
 import { listingQueryOptions } from "../../../../lib/queryOptions";
 
 export const Route = createFileRoute("/_app/marketplace/$category/$itemId")({
@@ -30,6 +30,7 @@ export const Route = createFileRoute("/_app/marketplace/$category/$itemId")({
 
 function RouteComponent() {
   const listing = Route.useLoaderData();
+  const { username } = useUser()!;
   return (
     <InsetScrollArea>
       <section className="grid min-h-[75vh] max-w-full grid-cols-1 grid-rows-[auto_1fr] rounded-xl bg-muted/50">
@@ -70,7 +71,7 @@ function RouteComponent() {
                   <TableRow>
                     <TableCell>Listed On</TableCell>
                     <TableCell className="text-right">
-                      {format(new Date(listing.createdAt), "HHH mm do")}
+                      {format(new Date(listing.createdAt), "dd MMM y")}
                     </TableCell>
                   </TableRow>
                   <TableRow>
@@ -87,22 +88,9 @@ function RouteComponent() {
               <Button>Contact</Button>
             </div>
             <div className="mt-2 flex gap-3">
-              <Button
-                variant={"ghost"}
-                size={"icon"}
-                className="rounded-full p-6 [&_svg]:size-6"
-                title="Save"
-              >
-                <PiStar />
-              </Button>
-              <Button
-                size={"icon"}
-                variant={"ghost"}
-                className="rounded-full p-6 [&_svg]:size-6"
-                title="Report"
-              >
-                <Flag />
-              </Button>
+              {listing.seller !== username && (
+                <SaveListingButton listing={listing} />
+              )}
             </div>
           </div>
           <div className="flex size-full flex-col gap-10 p-2 pt-0">

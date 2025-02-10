@@ -1,9 +1,11 @@
 import { useParams } from "@tanstack/react-router";
+import { useUser } from "../../../hooks/auth";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
 
 const MarketplaceSidebarContent = () => {
   const { itemId } = useParams({ strict: false });
+  const { listingsCreated } = useUser()!;
   return (
     <>
       {!itemId && (
@@ -12,11 +14,9 @@ const MarketplaceSidebarContent = () => {
             <TableBody>
               <TableRow>
                 <TableCell>Active Listings:</TableCell>
-                <TableCell className="text-right">0</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Saved Items:</TableCell>
-                <TableCell className="text-right">0</TableCell>
+                <TableCell className="text-right">
+                  {listingsCreated.length}
+                </TableCell>
               </TableRow>
             </TableBody>
           </Table>

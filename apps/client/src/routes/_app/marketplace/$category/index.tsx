@@ -43,6 +43,7 @@ function RouteComponent() {
             category={lis.category}
             location={lis.location}
             createdAt={lis.createdAt}
+            picUrl={lis.picUrl}
           />
         ))}
       </section>
@@ -57,7 +58,8 @@ const ItemListing: FC<{
   id: number;
   location: string;
   createdAt: string;
-}> = ({ price, title, category, id, location, createdAt }) => {
+  picUrl: string;
+}> = ({ price, title, category, id, location, createdAt, picUrl }) => {
   return (
     <Link
       to="/marketplace/$category/$itemId"
@@ -65,15 +67,15 @@ const ItemListing: FC<{
       className="group size-full p-4"
     >
       <div className="grid grid-cols-[auto_1fr] grid-rows-1 rounded-lg bg-muted">
-        <div className="justify-self-center p-4">
-          <div className="size-64 rounded-lg bg-white"></div>
+        <div className="min-w-24 justify-self-center p-4">
+          <img src={picUrl} className="aspect-square object-contain" />
         </div>
         <div className="grid h-full grid-cols-1 grid-rows-[auto_auto_1fr] items-start gap-3 p-8 pt-4">
-          <span className="text-4xl font-semibold group-hover:underline">
+          <span className="break-words text-4xl font-semibold group-hover:underline">
             {title}
           </span>
           <span className="text-accent-foreground">
-            {location} | {format(new Date(createdAt), "MM")}
+            {location} | {format(new Date(createdAt), "dd MMM y")}
           </span>
           <span className="pt-6 text-3xl font-semibold">${price}</span>
         </div>

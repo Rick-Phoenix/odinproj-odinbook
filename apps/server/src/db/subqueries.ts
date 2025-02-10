@@ -2,7 +2,7 @@ import { eq, sql } from "drizzle-orm";
 import type { PgColumn } from "drizzle-orm/pg-core";
 import type { BasicPost, RoomData } from "../types/zod-schemas";
 import db from "./dbConfig";
-import { posts, rooms, subs } from "./schema";
+import { likes, listings, posts, rooms, subs } from "./schema";
 
 export const totalPostsFromUserSubs = (userId: string) =>
   db
@@ -15,6 +15,42 @@ export const totalPostsFromUserSubs = (userId: string) =>
     .where(eq(subs.userId, userId))
     .as("user_subs_posts");
 
+export const userStats = (userId: string) => {
+  const likesQuery = db
+    .select()
+    .from(likes)
+    .where(eq(likes.userId, userId))
+    .as("totalLikes");
+  const postsQuery = db
+    .select()
+    .from(posts)
+    .where(eq(posts.authorId, userId))
+    .as("totalPosts");
+  const roomsQuery = db
+    .select()
+    .from(rooms)
+    .where(eq(rooms.creatorId, userId))
+    .as("totalRooms");
+  const listingsQuery = db
+    .select()
+    .from(listings)
+    .where(eq(listings.sellerId, userId))
+    .as("totalListings");
+  return {
+    totalLikes: sql<number>`${db.$count(likesQuery)}::int`
+      .mapWith(Number)
+      .as("totalLikes"),
+    totalPosts: sql<number>`${db.$count(postsQuery)}::int`
+      .mapWith(Number)
+      .as("totalPosts"),
+    totalRoomsCreated: sql<number>`${db.$count(roomsQuery)}::int`
+      .mapWith(Number)
+      .as("totalRoomsCreated"),
+    totalListings: sql<number>`${db.$count(listingsQuery)}::int`
+      .mapWith(Number)
+      .as("totalListings"),
+  };
+};
 export const totalPostsFromRoom = (room: string) =>
   db
     .select()
@@ -186,6 +222,7 @@ FROM
   )`.as("subsContent"),
   };
 };
+
 export function isLiked(userId: string, postId: PgColumn) {
   return {
     isLiked: sql<boolean>`
@@ -195,6 +232,18 @@ export function isLiked(userId: string, postId: PgColumn) {
       AND likes."userId" = ${userId}
     )
   `.as("isLiked"),
+  };
+}
+
+export function isSaved(userId: string, listingId: PgColumn) {
+  return {
+    isSaved: sql<boolean>`
+    EXISTS (
+      SELECT 1 FROM "savedListings" 
+      WHERE "listingId" = ${listingId} 
+      AND "userId" = ${userId}
+    )
+  `.as("isSaved"),
   };
 }
 

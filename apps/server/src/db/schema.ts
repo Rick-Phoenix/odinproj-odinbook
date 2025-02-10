@@ -195,15 +195,19 @@ export const listingsRelations = relations(listings, ({ many, one }) => ({
   }),
 }));
 
-export const savedListings = pgTable("savedListings", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  userId: text("userId")
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
-  listingId: integer("listingId")
-    .notNull()
-    .references(() => listings.id),
-});
+export const savedListings = pgTable(
+  "savedListings",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    userId: text("userId")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    listingId: integer("listingId")
+      .notNull()
+      .references(() => listings.id),
+  },
+  (t) => [uniqueIndex("uniqueUserSavedListingIndex").on(t.listingId, t.userId)]
+);
 
 export const savedListingsRelations = relations(savedListings, ({ one }) => ({
   user: one(users, {

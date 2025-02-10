@@ -8,6 +8,7 @@ import type {
 } from "../../types/app-bindings";
 import { profileSchema } from "../../types/zod-schemas";
 import { internalServerError } from "../../utils/customErrors";
+import { getUserId } from "../../utils/getters";
 
 const tags = ["users"];
 
@@ -31,7 +32,8 @@ export const getUserProfileHandler: AppRouteHandler<
   AppBindingsWithUser
 > = async (c) => {
   const { username } = c.req.valid("param");
-  const profile = await fetchUserProfile(username);
+  const userId = getUserId(c);
+  const profile = await fetchUserProfile(userId, username);
   if (!profile) return c.json(internalServerError.content, BAD_REQUEST);
   return c.json(profile, OK);
 };
