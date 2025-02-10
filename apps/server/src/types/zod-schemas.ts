@@ -52,10 +52,7 @@ export const roomWithPostsSchema = roomSchema.extend({
 export type RoomData = z.infer<typeof roomSchema>;
 
 export const listingSchema = createSelectSchema(listings).extend({
-  seller: z.object({
-    avatarUrl: z.string(),
-    username: z.string(),
-  }),
+  seller: z.string(),
 });
 
 export const userDataSchema = userSchema.extend({

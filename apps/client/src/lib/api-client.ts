@@ -17,5 +17,7 @@ export interface InitialFeed {
 }
 export type SortingOrder = "likesCount" | "createdAt";
 export type ListingInputs = z.infer<typeof schemas.insertListingSchema>;
+export type Listing = z.infer<typeof schemas.listingSchema>;
+export type ListingCategory = (typeof schemas.marketplaceCategories)[number];
 
 export const wsRPC = RPC("ws://localhost:5173/");

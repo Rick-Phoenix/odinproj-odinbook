@@ -1,4 +1,4 @@
-import { createRoute } from "@hono/zod-openapi";
+import { createRoute, z } from "@hono/zod-openapi";
 import { encodeBase64 } from "@oslojs/encoding";
 import { v2 as cloudinary } from "cloudinary";
 import {
@@ -7,17 +7,51 @@ import {
   UNPROCESSABLE_ENTITY,
 } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
-import { insertListing } from "../../db/queries";
+import { fetchListingsByCategory, insertListing } from "../../db/queries";
 import type {
   AppBindingsWithUser,
   AppRouteHandler,
 } from "../../types/app-bindings";
-import { insertListingSchema, listingSchema } from "../../types/zod-schemas";
+import {
+  insertListingSchema,
+  listingSchema,
+  marketplaceCategories,
+} from "../../types/zod-schemas";
 import { internalServerError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
 
 const tags = ["market"];
+
+const queryInputs = z.object({
+  category: z.enum(marketplaceCategories),
+  orderBy: z.enum(["cheapest", "mostRecent"]),
+});
+
+export const getListings = createRoute({
+  path: "/listings",
+  method: "get",
+  tags,
+  request: {
+    query: queryInputs,
+  },
+  responses: {
+    [OK]: jsonContent(
+      z.array(listingSchema),
+      "The listings belonging to the selected category."
+    ),
+    [UNPROCESSABLE_ENTITY]: inputErrorResponse(queryInputs),
+  },
+});
+
+export const getListingsHandler: AppRouteHandler<
+  typeof getListings,
+  AppBindingsWithUser
+> = async (c) => {
+  const { category, orderBy } = c.req.valid("query");
+  const listings = await fetchListingsByCategory(category, orderBy);
+  return c.json(listings, OK);
+};
 
 export const createListing = createRoute({
   path: "/listings",

@@ -157,6 +157,7 @@ export const marketplaceCategories = [
   "Collectibles",
   "Sport",
 ] as const;
+export type MarketplaceCategory = (typeof marketplaceCategories)[number];
 export const categoryEnum = pgEnum("mktCategories", marketplaceCategories);
 
 export const itemConditions = [

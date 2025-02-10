@@ -1,4 +1,4 @@
-import { and, desc, eq, getTableColumns, lt, lte, sql } from "drizzle-orm";
+import { and, asc, desc, eq, getTableColumns, lt, lte, sql } from "drizzle-orm";
 import type { BasicPost, ListingInputs } from "../types/zod-schemas";
 import { lowercase, withCTEColumns } from "./db-methods";
 import db from "./dbConfig";
@@ -12,6 +12,7 @@ import {
   rooms,
   subs,
   users,
+  type MarketplaceCategory,
   type RoomCategories,
 } from "./schema";
 import {
@@ -447,10 +448,26 @@ export async function insertListing(
 }
 
 export async function fetchListing(id: number) {
-  const listing = await db.query.listings.findFirst({
-    where: (listing, { eq }) => eq(listing.id, id),
-    with: { seller: { columns: { avatarUrl: true, username: true } } },
-  });
+  const [listing] = await db
+    .select({ ...getTableColumns(listings), seller: users.username })
+    .from(listings)
+    .innerJoin(users, eq(listings.sellerId, users.id))
+    .where(eq(listings.id, id));
 
   return listing;
+}
+
+export async function fetchListingsByCategory(
+  category: MarketplaceCategory,
+  orderBy: "cheapest" | "mostRecent"
+) {
+  const listingsByCategory = await db
+    .select({ ...getTableColumns(listings), seller: users.username })
+    .from(listings)
+    .innerJoin(users, eq(listings.sellerId, users.id))
+    .where(eq(listings.category, category))
+    .orderBy(
+      orderBy === "cheapest" ? asc(listings.price) : desc(listings.createdAt)
+    );
+  return listingsByCategory;
 }

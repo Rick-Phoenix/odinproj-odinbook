@@ -1,5 +1,5 @@
 import { queryOptions } from "@tanstack/react-query";
-import { api, type PostBasic } from "./api-client";
+import { api, type ListingCategory, type PostBasic } from "./api-client";
 import { queryClient } from "./queries/queryClient";
 
 // USER
@@ -92,9 +92,9 @@ export const postQueryOptions = (postId: number) => {
 
 // LISTINGS
 
-export const listingsQueryOptions = (itemId: number) => {
+export const listingQueryOptions = (itemId: number) => {
   return queryOptions({
-    queryKey: ["listings", itemId],
+    queryKey: ["listing", itemId],
     queryFn: async () => {
       const res = await api.market.listings[":itemId"].$get({
         param: { itemId },
@@ -102,6 +102,25 @@ export const listingsQueryOptions = (itemId: number) => {
       const data = await res.json();
       if ("issues" in data) {
         throw new Error("Listing not found.");
+      }
+      return data;
+    },
+  });
+};
+
+export const listingsByCategoryQueryOptions = (
+  category: ListingCategory,
+  orderBy: "cheapest" | "mostRecent",
+) => {
+  return queryOptions({
+    queryKey: ["listings", category],
+    queryFn: async () => {
+      const res = await api.market.listings.$get({
+        query: { category, orderBy },
+      });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("Error while fetching the listings.");
       }
       return data;
     },

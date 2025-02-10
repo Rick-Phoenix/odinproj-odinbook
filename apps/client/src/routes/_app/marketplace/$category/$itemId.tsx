@@ -15,14 +15,14 @@ import {
   TableCell,
   TableRow,
 } from "../../../../components/ui/table";
-import { listingsQueryOptions } from "../../../../lib/queryOptions";
+import { listingQueryOptions } from "../../../../lib/queryOptions";
 
 export const Route = createFileRoute("/_app/marketplace/$category/$itemId")({
   component: RouteComponent,
   params: { parse: ({ category, itemId }) => ({ category, itemId: +itemId }) },
   loader: async (c) => {
     const listing = await c.context.queryClient.fetchQuery(
-      listingsQueryOptions(c.params.itemId),
+      listingQueryOptions(c.params.itemId),
     );
     return listing;
   },
