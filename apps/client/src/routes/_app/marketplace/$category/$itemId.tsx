@@ -94,7 +94,9 @@ function RouteComponent() {
             </div>
           </div>
           <div className="flex size-full flex-col gap-10 p-2 pt-0">
-            <div className="text-lg">{listing.description}</div>
+            <div className="justify-center text-center text-lg">
+              {listing.description}
+            </div>
           </div>
         </div>
       </section>

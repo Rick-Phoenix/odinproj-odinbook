@@ -97,7 +97,7 @@ export async function fetchUserProfile(userId: string, username: string) {
       listingsCreated: {
         extras: (f) => ({
           ...isSaved(userId, f.id),
-          seller: sql<string>`${username}`.as("seller"),
+          seller: sql<string>`${username}::text`.as("seller"),
         }),
       },
       roomSubscriptions: true,
@@ -207,7 +207,7 @@ export async function fetchPost(userId: string, postId: number) {
     },
     with: {
       comments: true,
-      room: { columns: { name: true } },
+      room: true,
       author: { columns: { username: true } },
     },
     extras: (f) => isLiked(userId, f.id),

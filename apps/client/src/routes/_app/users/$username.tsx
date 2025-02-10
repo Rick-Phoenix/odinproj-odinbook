@@ -8,7 +8,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../../components/ui/tabs";
-import { api } from "../../../lib/api-client";
+import { api, type Listing } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/users/$username")({
   component: RouteComponent,
@@ -86,9 +86,9 @@ function RouteComponent() {
             })}
           </TabsContent>
           <TabsContent value="marketplace">
-            <MarketplaceHistoryItem />
-            <MarketplaceHistoryItem />
-            <MarketplaceHistoryItem />
+            {listingsCreated.map((lis) => (
+              <MarketplaceHistoryItem key={lis.id} listing={lis} />
+            ))}
           </TabsContent>
         </Tabs>
       </section>
@@ -96,20 +96,26 @@ function RouteComponent() {
   );
 }
 
-const MarketplaceHistoryItem = () => {
+const MarketplaceHistoryItem: FC<{ listing: Listing }> = ({ listing }) => {
   return (
-    <div className="mt-4 grid grid-cols-[auto_1fr] grid-rows-1 rounded-lg bg-muted">
+    <Link
+      to="/marketplace/$category/$itemId"
+      params={{ itemId: listing.id, category: listing.category }}
+      className="mt-4 grid max-w-full grid-cols-[auto_1fr] grid-rows-1 items-center rounded-lg bg-muted"
+    >
       <div className="justify-self-center p-4">
-        <div className="size-40 rounded-lg bg-white"></div>
+        <img src={listing.picUrl} className="max-w-20" />
       </div>
       <div className="grid h-full grid-cols-1 grid-rows-[auto_auto_1fr] items-start gap-3 p-8 pt-4">
         <span className="text-2xl font-semibold group-hover:underline">
-          Title
+          {listing.title}
         </span>
-        <span className="text-accent-foreground">Sold/Not sold</span>
-        <span className="pt-6 text-3xl font-semibold">${100}</span>
+        <span className="text-accent-foreground">
+          {listing.sold ? "Sold" : "Available"}
+        </span>
+        <span className="pt-6 text-3xl font-semibold">${listing.price}</span>
       </div>
-    </div>
+    </Link>
   );
 };
 
@@ -120,12 +126,8 @@ const PostPreview: FC<{
   postId: number;
 }> = ({ room, title: postTitle, text, postId }) => {
   return (
-    <Link
-      to={"/rooms/$roomName/posts/$postId"}
-      params={{ postId, roomName: room }}
-      className="mt-4 flex h-fit w-full gap-8 rounded-xl bg-muted p-6 py-4 hover:bg-muted-foreground/30 hover:text-foreground"
-    >
-      <div className="grid w-full grid-cols-1 grid-rows-[auto_1fr_1fr]">
+    <div className="mt-4 flex h-fit w-full gap-8 rounded-xl bg-muted p-6 py-4 hover:bg-muted-foreground/30 hover:text-foreground">
+      <div className="grid w-full grid-cols-1 grid-rows-[auto_1fr]">
         <Link
           to={"/rooms/$roomName"}
           params={{ roomName: room }}
@@ -133,10 +135,16 @@ const PostPreview: FC<{
         >
           r/{room}
         </Link>
-        <div className="text-xl font-semibold">{postTitle}</div>
-        <div className="mt-2">{text}</div>
+        <Link
+          to={"/rooms/$roomName/posts/$postId"}
+          params={{ postId, roomName: room }}
+          className="flex flex-col justify-between"
+        >
+          <div className="text-xl font-semibold">{postTitle}</div>
+          <div className="mt-2">{text}</div>
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 };
 

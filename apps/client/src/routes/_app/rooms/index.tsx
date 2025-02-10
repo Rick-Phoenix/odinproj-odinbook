@@ -176,31 +176,31 @@ const TrendingCard: FC<{
   postId: number;
 }> = ({ likesCount, title, roomName, postId }) => {
   return (
-    <Link
-      to={"/rooms/$roomName/posts/$postId"}
-      params={{ roomName, postId }}
-      className="group flex aspect-video w-full rounded-xl bg-muted/50 p-4 hover:bg-muted"
-    >
-      <div className="flex h-full flex-1 flex-col justify-between">
-        <div className="flex items-center justify-end gap-2 self-end">
-          <div className="max-w-[10ch] truncate">{likesCount}</div>
-          <Heart className="min-w-fit group-hover:fill-white" />
-        </div>
-        <div>
+    <div className="group flex aspect-video w-full rounded-xl bg-muted/50 p-4 hover:bg-muted">
+      <div className="flex h-full flex-1 flex-col justify-end">
+        <Link
+          to={"/rooms/$roomName/posts/$postId"}
+          params={{ roomName, postId }}
+          className="flex flex-1 flex-col justify-between"
+        >
+          <div className="flex items-center justify-end gap-2 self-end">
+            <div className="max-w-[10ch] truncate">{likesCount}</div>
+            <Heart className="min-w-fit group-hover:fill-white" />
+          </div>
           <CardTitle className="line-clamp-[6] max-w-full scroll-m-20">
             {title}
           </CardTitle>
-          <Link
-            to="/rooms/$roomName"
-            params={{ roomName }}
-            search={{ orderBy: "likesCount" }}
-            className="mt-1 line-clamp-1 text-muted-foreground"
-          >
-            r/{roomName}
-          </Link>
-        </div>
+        </Link>
+        <Link
+          to="/rooms/$roomName"
+          params={{ roomName }}
+          search={{ orderBy: "likesCount" }}
+          className="mt-1 line-clamp-1 text-muted-foreground"
+        >
+          r/{roomName}
+        </Link>
       </div>
-    </Link>
+    </div>
   );
 };
 

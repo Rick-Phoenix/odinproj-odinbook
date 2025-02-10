@@ -140,7 +140,13 @@ const RoomSidebarContent = () => {
           <AvatarImage src={room.avatar} alt={`${room.name} avatar`} />
         </Avatar>
       </div>
-      <div className="p-4 text-center text-lg font-semibold">r/{room.name}</div>
+      <Link
+        to="/rooms/$roomName"
+        params={{ roomName: room.name }}
+        className="p-4 text-center text-lg font-semibold hover:underline"
+      >
+        r/{room.name}
+      </Link>
       <CreatePostDialog roomName={room.name} />
       <Table className="w-full">
         <TableBody>
@@ -197,7 +203,10 @@ const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
       return newPost;
     },
     onSuccess(data, variables, context) {
-      queryClient.setQueryData(["post", data.id], data);
+      queryClient.setQueryData(["fullPost", data.id], {
+        ...data,
+        comments: [],
+      });
       navigate({
         to: "/rooms/$roomName/posts/$postId",
         params: { roomName, postId: data.id },

@@ -4,7 +4,9 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { useEffect, useRef, useState, type FC } from "react";
+import { z } from "zod";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
 import { PostPreview } from "../../../../components/custom/post-preview";
 import ButtonGesture from "../../../../components/motion/gestures";
@@ -25,22 +27,22 @@ import {
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
 import { useUser } from "../../../../hooks/auth";
-import {
-  api,
-  type PostBasic,
-  type SortingOrder,
-} from "../../../../lib/api-client";
+import { api, type PostBasic } from "../../../../lib/api-client";
 import { roomQueryOptions } from "../../../../lib/queryOptions";
 import {
   throttleAsync,
   type ThrottledFunction,
 } from "../../../../utils/async-throttle";
 
+const searchInputs = z.object({
+  orderBy: fallback(z.enum(["likesCount", "createdAt"]), "likesCount").default(
+    "likesCount",
+  ),
+});
+
 export const Route = createFileRoute("/_app/rooms/$roomName/")({
   component: RouteComponent,
-  validateSearch: (s) => ({
-    orderBy: (s.orderBy as SortingOrder) || "likesCount",
-  }),
+  validateSearch: zodValidator(searchInputs),
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { queryClient }, params, deps: { orderBy } }) => {
     const { roomName } = params;

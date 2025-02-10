@@ -30,21 +30,22 @@ export const chatSchema = createSelectSchema(chats).extend({
   }),
 });
 
-const commentSchema = createSelectSchema(comments);
+export const commentSchema = createSelectSchema(comments);
 export const likesSchema = createSelectSchema(likes);
 export const basicPostSchema = createSelectSchema(posts).extend({
   author: z.string(),
   isLiked: z.boolean(),
 });
 export type BasicPost = z.infer<typeof basicPostSchema>;
-export const fullPostSchema = basicPostSchema.extend({
-  comments: z.array(commentSchema),
-});
-export const userFeedSchema = z.array(basicPostSchema);
-
 export const roomSchema = createSelectSchema(rooms).extend({
   isSubscribed: z.boolean(),
 });
+export const fullPostSchema = basicPostSchema.extend({
+  comments: z.array(commentSchema),
+  room: roomSchema,
+});
+export const userFeedSchema = z.array(basicPostSchema);
+
 export const roomWithPostsSchema = roomSchema.extend({
   posts: z.array(basicPostSchema),
   totalPosts: z.number(),
@@ -185,7 +186,10 @@ export const insertSubscriptionSchema = createInsertSchema(subs).omit({
 
 export { itemConditions, marketplaceCategories } from "../db/schema";
 export const insertListingSchema = z.object({
-  title: z.string().min(10, "The title must be at least 10 characters long."),
+  title: z
+    .string()
+    .min(10, "The title must be at least 10 characters long.")
+    .max(30, "The title cannot be longer than 30 characters."),
   description: z
     .string()
     .max(250, "The description cannot be longer than 250 characters."),

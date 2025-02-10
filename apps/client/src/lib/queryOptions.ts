@@ -83,13 +83,15 @@ export const roomQueryOptions = (
 
 export const postQueryOptions = (postId: number) => {
   return queryOptions({
-    queryKey: ["post", postId],
+    queryKey: ["fullPost", postId],
     queryFn: async () => {
       const res = await api.posts[":postId"].$get({ param: { postId } });
       const post = await res.json();
       if ("issues" in post) {
         throw new Error("Post not found.");
       }
+
+      queryClient.setQueryData(["room", post.room.name], post.room);
       return post;
     },
   });
