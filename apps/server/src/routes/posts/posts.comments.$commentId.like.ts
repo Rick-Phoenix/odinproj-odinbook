@@ -1,7 +1,7 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { BAD_REQUEST, OK } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
-import { insertPostLike, removePostLike } from "../../db/queries";
+import { insertCommentLike, removeCommentLike } from "../../db/queries";
 import type {
   AppBindingsWithUser,
   AppRouteHandler,
@@ -10,14 +10,14 @@ import { numberParamSchema } from "../../types/schema-helpers";
 import { internalServerError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
 
-const tags = ["posts", "likes"];
+const tags = ["posts", "comments", "likes"];
 
-export const registerLike = createRoute({
-  path: "/{postId}/like",
+export const registerCommentLike = createRoute({
+  path: "/comments/{commentId}/like",
   method: "post",
   tags,
   request: {
-    params: z.object({ postId: numberParamSchema }),
+    params: z.object({ commentId: numberParamSchema }),
     query: z.object({ action: z.enum(["add", "remove"]) }),
   },
   responses: {
@@ -26,17 +26,17 @@ export const registerLike = createRoute({
   },
 });
 
-export const registerLikeHandler: AppRouteHandler<
-  typeof registerLike,
+export const registerCommentLikeHandler: AppRouteHandler<
+  typeof registerCommentLike,
   AppBindingsWithUser
 > = async (c) => {
   const userId = getUserId(c);
-  const { postId } = c.req.valid("param");
+  const { commentId } = c.req.valid("param");
   const { action } = c.req.valid("query");
   if (action === "add") {
-    await insertPostLike(userId, postId);
+    await insertCommentLike(userId, commentId);
   } else {
-    await removePostLike(userId, postId);
+    await removeCommentLike(userId, commentId);
   }
 
   return c.json("OK", OK);

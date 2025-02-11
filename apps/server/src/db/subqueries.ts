@@ -93,9 +93,9 @@ export const initialFeedQuery = (userId: string) => {
       posts."likesCount",
       users.username AS author,
       EXISTS (
-        SELECT 1 FROM likes 
-        WHERE likes."postId" = posts.id 
-        AND likes."userId" = ${userId}
+        SELECT 1 FROM "postLikes" 
+        WHERE "postLikes"."postId" = posts.id 
+        AND "postLikes"."userId" = ${userId}
       ) AS isLiked
     FROM posts
     LEFT JOIN users ON posts."authorId" = users.id
@@ -113,9 +113,9 @@ export const initialFeedQuery = (userId: string) => {
       posts."likesCount",
       users.username AS author,
       EXISTS (
-        SELECT 1 FROM likes 
-        WHERE likes."postId" = posts.id 
-        AND likes."userId" = ${userId}
+        SELECT 1 FROM "postLikes" 
+        WHERE "postLikes"."postId" = posts.id 
+        AND "postLikes"."userId" = ${userId}
       ) AS isLiked
     FROM posts
     LEFT JOIN users ON posts."authorId" = users.id
@@ -223,13 +223,25 @@ FROM
   };
 };
 
-export function isLiked(userId: string, postId: PgColumn) {
+export function postIsLiked(userId: string, postId: PgColumn) {
   return {
     isLiked: sql<boolean>`
     EXISTS (
-      SELECT 1 FROM likes 
-      WHERE likes."postId" = ${postId} 
-      AND likes."userId" = ${userId}
+      SELECT 1 FROM "postLikes" 
+      WHERE "postLikes"."postId" = ${postId} 
+      AND "postLikes"."userId" = ${userId}
+    )
+  `.as("isLiked"),
+  };
+}
+
+export function commentIsLiked(userId: string, commentId: PgColumn) {
+  return {
+    isLiked: sql<boolean>`
+    EXISTS (
+      SELECT 1 FROM "commentLikes" 
+      WHERE "commentLikes"."commentId" = ${commentId} 
+      AND "commentLikes"."userId" = ${userId}
     )
   `.as("isLiked"),
   };

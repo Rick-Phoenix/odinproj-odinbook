@@ -92,6 +92,9 @@ export const postQueryOptions = (postId: number) => {
       }
 
       queryClient.setQueryData(["room", post.room.name], post.room);
+      for (const comment of post.comments) {
+        queryClient.setQueryData(["comment", comment.id], comment);
+      }
       return post;
     },
   });

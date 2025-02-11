@@ -1,9 +1,15 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { zodValidator } from "@tanstack/zod-adapter";
+import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import InsetScrollArea from "../../../../../components/custom/inset-scrollarea";
 import { postQueryOptions } from "../../../../../lib/queryOptions";
 import Post from "../../../../../pages/Post";
+
+const searchInputs = z.object({
+  orderBy: fallback(z.enum(["likesCount", "createdAt"]), "likesCount").default(
+    "createdAt",
+  ),
+});
 
 export const Route = createFileRoute("/_app/rooms/$roomName/posts/$postId")({
   component: RouteComponent,
@@ -12,7 +18,7 @@ export const Route = createFileRoute("/_app/rooms/$roomName/posts/$postId")({
       return { postId: +postId, roomName };
     },
   },
-  validateSearch: zodValidator(z.object({ new: z.boolean().optional() })),
+  validateSearch: zodValidator(searchInputs),
   loader: async (c) => {
     const post = c.context.queryClient.fetchQuery(
       postQueryOptions(c.params.postId),
@@ -24,10 +30,11 @@ export const Route = createFileRoute("/_app/rooms/$roomName/posts/$postId")({
 
 function RouteComponent() {
   const post = Route.useLoaderData();
+  const { orderBy } = Route.useSearch();
 
   return (
     <InsetScrollArea>
-      <Post post={post} />
+      <Post post={post} orderBy={orderBy} />
     </InsetScrollArea>
   );
 }

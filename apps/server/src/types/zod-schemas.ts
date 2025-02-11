@@ -32,6 +32,7 @@ export const chatSchema = createSelectSchema(chats).extend({
 
 export const commentSchema = createSelectSchema(comments).extend({
   author: z.object({ username: z.string(), avatarUrl: z.string() }),
+  isLiked: z.boolean(),
 });
 export const likesSchema = createSelectSchema(postLikes);
 export const basicPostSchema = createSelectSchema(posts).extend({
@@ -91,7 +92,7 @@ export const profileSchema = userSchema
             id: z.number(),
           }),
         })
-        .omit({ author: true })
+        .omit({ author: true, isLiked: true })
     ),
     posts: z.array(
       z.object({

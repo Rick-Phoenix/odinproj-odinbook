@@ -5,6 +5,7 @@ import db from "./dbConfig";
 import {
   chatInstances,
   chats,
+  commentLikes,
   comments,
   listings,
   messages,
@@ -18,10 +19,11 @@ import {
   type RoomCategories,
 } from "./schema";
 import {
+  commentIsLiked,
   initialFeedQuery,
-  isLiked,
   isSaved,
   isSubscribed,
+  postIsLiked,
   totalPostsFromRoom,
   totalPostsFromUserSubs,
   userStats,
@@ -209,11 +211,12 @@ export async function fetchPost(userId: string, postId: number) {
     with: {
       comments: {
         with: { author: { columns: { avatarUrl: true, username: true } } },
+        extras: (f) => commentIsLiked(userId, f.id),
       },
       room: { extras: (f) => ({ ...isSubscribed(userId, f.name) }) },
       author: { columns: { username: true } },
     },
-    extras: (f) => isLiked(userId, f.id),
+    extras: (f) => postIsLiked(userId, f.id),
   });
 
   if (post) return { ...post, author: post.author.username };
@@ -271,7 +274,7 @@ export async function fetchFeed(
     .select({
       post: posts,
       author: users.username,
-      ...isLiked(userId, posts.id),
+      ...postIsLiked(userId, posts.id),
     })
     .from(userSubs)
     .innerJoin(posts, eq(posts.room, userSubs.room))
@@ -366,7 +369,7 @@ export async function fetchRoom(
           orderBy === "likesCount"
             ? [desc(post.likesCount), desc(post.createdAt)]
             : [desc(post.createdAt), desc(post.likesCount)],
-        extras: (f) => isLiked(userId, f.id),
+        extras: (f) => postIsLiked(userId, f.id),
       },
     },
     extras: (f) => ({
@@ -440,14 +443,29 @@ export async function registerMessage(
   return message;
 }
 
-export async function insertLike(userId: string, postId: number) {
+export async function insertPostLike(userId: string, postId: number) {
   return await db.insert(postLikes).values({ userId, postId });
 }
 
-export async function removeLike(userId: string, postId: number) {
+export async function removePostLike(userId: string, postId: number) {
   return await db
     .delete(postLikes)
     .where(and(eq(postLikes.userId, userId), eq(postLikes.postId, postId)));
+}
+
+export async function insertCommentLike(userId: string, commentId: number) {
+  return await db.insert(commentLikes).values({ userId, commentId });
+}
+
+export async function removeCommentLike(userId: string, commentId: number) {
+  return await db
+    .delete(commentLikes)
+    .where(
+      and(
+        eq(commentLikes.userId, userId),
+        eq(commentLikes.commentId, commentId)
+      )
+    );
 }
 
 export async function insertListing(
@@ -527,5 +545,5 @@ export async function insertComment(
     .insert(comments)
     .values({ userId, postId, text, parentCommentId })
     .returning();
-  return comment;
+  return { ...comment, isLiked: true };
 }

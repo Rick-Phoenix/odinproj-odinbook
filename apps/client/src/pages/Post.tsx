@@ -56,9 +56,20 @@ function nestComments(comments: Comment[]) {
   return rootComments;
 }
 
-const Post: FC<{ post: PostFull }> = ({ post }) => {
+const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({
+  post,
+  orderBy,
+}) => {
   const [rootComments, setRootComments] = useState(nestComments(post.comments));
-
+  const sortedComments = rootComments
+    .slice()
+    .sort((a, b) =>
+      orderBy === "likesCount"
+        ? b.likesCount - a.likesCount
+        : new Date(a.createdAt) > new Date(b.createdAt)
+          ? -1
+          : 1,
+    );
   return (
     <section className="min-h-svh overflow-x-auto rounded-xl bg-muted/50">
       <CardHeader>
@@ -81,7 +92,7 @@ const Post: FC<{ post: PostFull }> = ({ post }) => {
       <div className="p-6">
         <div className="py-6">Comments</div>
         <div className="grid grid-cols-[2.5rem_1fr] items-center">
-          {renderComments(rootComments, 1, 1)}
+          {renderComments(sortedComments, 1, 1)}
         </div>
       </div>
     </section>

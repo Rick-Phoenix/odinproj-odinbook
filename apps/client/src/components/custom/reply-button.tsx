@@ -63,7 +63,7 @@ const ReplyButton: FC<{
       {!isReplying ? (
         <Button
           variant={"ghost"}
-          className="flex w-fit items-center gap-2 rounded-xl"
+          className="flex w-fit items-center gap-2 rounded-3xl p-6"
           onClick={() => setIsReplying(true)}
         >
           <MessageCircleMore /> Reply
@@ -71,7 +71,7 @@ const ReplyButton: FC<{
       ) : (
         <>
           <form
-            className="flex items-center"
+            className="flex flex-1 items-center"
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -92,7 +92,7 @@ const ReplyButton: FC<{
               children={(field) => (
                 <>
                   <Input
-                    className="text-md rounded-l-none rounded-r-none border-x-0"
+                    className="text-md w-20 flex-1 rounded-l-none rounded-r-none border-x-0"
                     name={field.name}
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}

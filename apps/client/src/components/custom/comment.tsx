@@ -6,6 +6,7 @@ import type { Comment } from "../../lib/api-client";
 import { renderComments } from "../../pages/Post";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
+import CommentLikeButton from "./comment-like-button";
 import ReplyButton from "./reply-button";
 
 const PostComment: FC<{
@@ -123,11 +124,18 @@ const PostComment: FC<{
 
       <div className="col-start-2 row-start-2 flex flex-col gap-2 pt-4">
         <div className="pl-4">{c.text}</div>
-        <ReplyButton
-          parentCommentId={c.id}
-          postId={c.postId}
-          setChildren={setChildren}
-        />
+        <div className="flex gap-2">
+          <CommentLikeButton
+            commentId={c.id}
+            initialIsLiked={c.isLiked}
+            initialLikeCount={c.likesCount}
+          />
+          <ReplyButton
+            parentCommentId={c.id}
+            postId={c.postId}
+            setChildren={setChildren}
+          />
+        </div>
       </div>
 
       {children && renderComments(children, 3, 2)}
