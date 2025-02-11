@@ -36,6 +36,7 @@
     "@tanstack/zod-adapter": "^1.101.0",
     "@tanstack/zod-form-adapter": "^0.41.1",
     "class-variance-authority": "^0.7.1",
+    "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "drizzle-orm": "^0.38.3",

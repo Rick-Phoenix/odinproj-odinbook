@@ -19,21 +19,12 @@ export function renderComments(
     const row = startingRow + i;
     const children = c?.children;
     const gridClassName = `col-start-${startingColumn} row-start-${row} grid grid-cols-[auto_1fr] items-center ${startingColumn !== 1 || row !== 1 ? "pt-8" : " "} ${startingColumn === 1 ? "col-end-3" : " "}`;
-    let separatorRowEnd = children ? children.length + 3 : 3;
-    if (i === arr.length - 1) separatorRowEnd--;
-    const separatorRowEndClass = `row-end-${separatorRowEnd}`;
-    const separatorHeight =
-      i === arr.length - 1 && !children
-        ? "min-h-0"
-        : "min-h-[calc(100%+4.5rem)]";
-    const separatorClass = `col-start-1 row-start-2 ${separatorRowEndClass} ${separatorHeight} justify-self-center`;
     const isLast = i === arr.length - 1;
     return (
       <PostComment
         key={c.id}
         c={c}
         gridClassName={gridClassName}
-        isNested={startingColumn > 1}
         initialChildren={children}
         isLast={isLast}
       />

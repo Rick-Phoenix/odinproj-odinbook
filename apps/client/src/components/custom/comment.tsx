@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { format } from "date-fns";
-import { useState, type FC } from "react";
+import { useState, type FC, type MouseEventHandler } from "react";
 import type { Comment } from "../../lib/api-client";
 import { renderComments } from "../../pages/Post";
 import { Separator } from "../ui/separator";
@@ -9,24 +9,54 @@ import ReplyButton from "./reply-button";
 const PostComment: FC<{
   c: Comment;
   gridClassName: string;
-  isNested: boolean;
   initialChildren?: Comment[];
   isLast: boolean;
-}> = ({ c, gridClassName, isNested, initialChildren, isLast }) => {
+}> = ({ c, gridClassName, initialChildren, isLast }) => {
   const [children, setChildren] = useState(initialChildren || []);
+  const isNested = c.parentCommentId !== null;
+
   let separatorRowEnd = children.length ? children.length + 3 : 3;
-  if (isLast) separatorRowEnd--;
+  if (isLast || !isNested) separatorRowEnd--;
   const separatorRowEndClass = `row-end-${separatorRowEnd}`;
   const separatorHeight =
-    isLast && !children.length ? "min-h-0" : "min-h-[calc(100%+4.5rem)]";
-  const separatorClass = `col-start-1 row-start-2 ${separatorRowEndClass} ${separatorHeight} justify-self-center`;
+    isLast && !children.length ? "h-0" : "h-[calc(100%+4.5rem)]";
+  const separatorClass = `w-full flex justify-center col-start-1 row-start-2 ${separatorRowEndClass} ${separatorHeight} ${c.id} justify-self-center group/sep `;
+
+  const connectorClass = `absolute connector -left-[1.27rem] top-[calc(-50%+1rem)] h-6 w-5 rounded-xl rounded-r-none rounded-t-none border-b 
+  border-l bg-transparent`;
+
+  const highlightConnectors: MouseEventHandler = (e) => {
+    children.forEach((ch) => {
+      const nodes = document.querySelectorAll(`#connector-${c.id}`);
+      nodes.forEach((node) => {
+        if (node instanceof HTMLElement) {
+          node.classList.add("active");
+        }
+      });
+    });
+  };
+
+  const removeHighlightConnectors: MouseEventHandler = (e) => {
+    children.forEach((ch) => {
+      const nodes = document.querySelectorAll(`#connector-${c.id}`);
+      nodes.forEach((node) => {
+        if (node instanceof HTMLElement) {
+          node.classList.remove("active");
+        }
+      });
+    });
+  };
+
   return (
     <div className={gridClassName}>
       <div
         className={`relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground`}
       >
         {isNested && (
-          <span className="absolute -left-[1.27rem] top-[calc(-50%+1rem)] h-6 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent" />
+          <span
+            className={connectorClass}
+            id={`connector-${c.parentCommentId}`}
+          />
         )}
         <Link to="/users/$username" params={{ username: c.author.username }}>
           <img src={c.author.avatarUrl} className="rounded-full" />
@@ -41,7 +71,16 @@ const PostComment: FC<{
         <div>{format(new Date(c.createdAt), "dd MMM y | HH:MM")}</div>
       </div>
 
-      <Separator orientation="vertical" className={separatorClass} />
+      <div
+        className={separatorClass}
+        onMouseEnter={highlightConnectors}
+        onMouseLeave={removeHighlightConnectors}
+      >
+        <Separator
+          orientation="vertical"
+          className="group-hover/sep:bg-white"
+        />
+      </div>
 
       <div className="col-start-2 row-start-2 flex flex-col gap-2 pt-4">
         <div className="pl-4">{c.text}</div>
