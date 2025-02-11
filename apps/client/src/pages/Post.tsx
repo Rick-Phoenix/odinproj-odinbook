@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { useState, type FC } from "react";
 import {
   CommentButton,
@@ -6,7 +7,14 @@ import {
 } from "../components/custom/buttons";
 import PostComment from "../components/custom/comment";
 import CommentInput from "../components/custom/comment-input";
+import { Button } from "../components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../components/ui/dropdown-menu";
 import { Separator } from "../components/ui/separator";
 import type { Comment, PostFull } from "../lib/api-client";
 
@@ -70,6 +78,7 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({
           ? -1
           : 1,
     );
+
   return (
     <section className="min-h-svh overflow-x-auto rounded-xl bg-muted/50">
       <CardHeader>
@@ -90,7 +99,26 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({
       <Separator className="mt-1" />
 
       <div className="p-6">
-        <div className="py-6">Comments</div>
+        <div className="flex items-center gap-3 py-6">
+          <span>Comments</span>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant={"secondary"}>Sort</Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="flex flex-col text-center *:flex *:w-full *:justify-center">
+              <DropdownMenuItem asChild>
+                <Link to="." search={{ orderBy: "createdAt" }}>
+                  ✨ New
+                </Link>
+              </DropdownMenuItem>
+              <DropdownMenuItem asChild>
+                <Link to="." search={{ orderBy: "likesCount" }}>
+                  🚀 Popular
+                </Link>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
         <div className="grid grid-cols-[2.5rem_1fr] items-center">
           {renderComments(sortedComments, 1, 1)}
         </div>
