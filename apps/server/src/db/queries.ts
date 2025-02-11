@@ -6,9 +6,9 @@ import {
   chatInstances,
   chats,
   comments,
-  likes,
   listings,
   messages,
+  postLikes,
   posts,
   rooms,
   savedListings,
@@ -441,13 +441,13 @@ export async function registerMessage(
 }
 
 export async function insertLike(userId: string, postId: number) {
-  return await db.insert(likes).values({ userId, postId });
+  return await db.insert(postLikes).values({ userId, postId });
 }
 
 export async function removeLike(userId: string, postId: number) {
   return await db
-    .delete(likes)
-    .where(and(eq(likes.userId, userId), eq(likes.postId, postId)));
+    .delete(postLikes)
+    .where(and(eq(postLikes.userId, userId), eq(postLikes.postId, postId)));
 }
 
 export async function insertListing(

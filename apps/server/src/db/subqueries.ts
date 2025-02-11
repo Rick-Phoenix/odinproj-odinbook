@@ -2,7 +2,7 @@ import { eq, sql } from "drizzle-orm";
 import type { PgColumn } from "drizzle-orm/pg-core";
 import type { BasicPost, RoomData } from "../types/zod-schemas";
 import db from "./dbConfig";
-import { likes, listings, posts, rooms, subs } from "./schema";
+import { listings, postLikes, posts, rooms, subs } from "./schema";
 
 export const totalPostsFromUserSubs = (userId: string) =>
   db
@@ -18,8 +18,8 @@ export const totalPostsFromUserSubs = (userId: string) =>
 export const userStats = (userId: string) => {
   const likesQuery = db
     .select()
-    .from(likes)
-    .where(eq(likes.userId, userId))
+    .from(postLikes)
+    .where(eq(postLikes.userId, userId))
     .as("totalLikes");
   const postsQuery = db
     .select()

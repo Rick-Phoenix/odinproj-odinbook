@@ -1,12 +1,12 @@
-import { type FC } from "react";
+import { useState, type FC } from "react";
 import {
   CommentButton,
   LikeButton,
   ShareButton,
 } from "../components/custom/buttons";
 import PostComment from "../components/custom/comment";
+import CommentInput from "../components/custom/comment-input";
 import { CardContent, CardHeader, CardTitle } from "../components/ui/card";
-import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
 import type { Comment, PostFull } from "../lib/api-client";
 
@@ -57,8 +57,7 @@ function nestComments(comments: Comment[]) {
 }
 
 const Post: FC<{ post: PostFull }> = ({ post }) => {
-  const nestedComments = nestComments(post.comments);
-  console.log(nestedComments);
+  const [rootComments, setRootComments] = useState(nestComments(post.comments));
 
   return (
     <section className="min-h-svh overflow-x-auto rounded-xl bg-muted/50">
@@ -75,14 +74,14 @@ const Post: FC<{ post: PostFull }> = ({ post }) => {
       </div>
       <Separator className="mt-1" />
       <div className="my-4 p-6">
-        <Input placeholder="Write a comment..." />
+        <CommentInput setRootComments={setRootComments} postId={post.id} />
       </div>
       <Separator className="mt-1" />
 
       <div className="p-6">
         <div className="py-6">Comments</div>
         <div className="grid grid-cols-[2.5rem_1fr] items-center">
-          {renderComments(nestedComments, 1, 1)}
+          {renderComments(rootComments, 1, 1)}
         </div>
       </div>
     </section>

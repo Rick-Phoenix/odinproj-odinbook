@@ -4,10 +4,10 @@ import {
   chats,
   comments,
   itemConditions,
-  likes,
   listings,
   marketplaceCategories,
   messages,
+  postLikes,
   posts,
   roomCategoriesArray,
   rooms,
@@ -33,7 +33,7 @@ export const chatSchema = createSelectSchema(chats).extend({
 export const commentSchema = createSelectSchema(comments).extend({
   author: z.object({ username: z.string(), avatarUrl: z.string() }),
 });
-export const likesSchema = createSelectSchema(likes);
+export const likesSchema = createSelectSchema(postLikes);
 export const basicPostSchema = createSelectSchema(posts).extend({
   author: z.string(),
   isLiked: z.boolean(),
@@ -180,7 +180,7 @@ export const insertCommentSchema = createInsertSchema(comments)
       .max(200, "A comment cannot be longer than 200 characters."),
   });
 
-export const insertLikeSchema = createInsertSchema(likes).pick({
+export const insertLikeSchema = createInsertSchema(postLikes).pick({
   postId: true,
 });
 

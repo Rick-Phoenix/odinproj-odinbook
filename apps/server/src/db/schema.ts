@@ -49,7 +49,7 @@ export const userRelations = relations(users, ({ many }) => ({
   comments: many(comments),
   roomsCreated: many(rooms),
   roomSubscriptions: many(subs),
-  likes: many(likes),
+  likes: many(postLikes),
   listingsCreated: many(listings),
   listingsSaved: many(savedListings),
   sessions: many(sessions),
@@ -329,7 +329,7 @@ export const postsRelations = relations(posts, ({ one, many }) => ({
     fields: [posts.room],
     references: [rooms.name],
   }),
-  likes: many(likes),
+  likes: many(postLikes),
 }));
 
 //
@@ -351,6 +351,7 @@ export const comments = pgTable(
     parentCommentId: integer("parentCommentId").references(
       (): AnyPgColumn => comments.id
     ),
+    likesCount: integer("likesCount").notNull().default(0),
   },
   (t) => [index("commentsChronologicalIndex").on(t.createdAt)]
 );
@@ -364,36 +365,32 @@ export const commentsRelations = relations(comments, ({ one, many }) => ({
     fields: [comments.postId],
     references: [posts.id],
   }),
-  replies: many(commentReplies, { relationName: "parentComment" }),
   parentComment: one(comments, {
     fields: [comments.parentCommentId],
     references: [comments.id],
   }),
 }));
 
-export const commentReplies = pgTable("commentReplies", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  commentId: integer("commentId").references(() => comments.id),
-  replyId: integer("replyId").references(() => comments.id),
-});
-
-export const commentRepliesRelations = relations(commentReplies, ({ one }) => ({
-  comment: one(comments, {
-    relationName: "parentComment",
-    fields: [commentReplies.commentId],
-    references: [comments.id],
-  }),
-  reply: one(comments, {
-    relationName: "reply",
-    fields: [commentReplies.replyId],
-    references: [comments.id],
-  }),
-}));
+export const commentLikes = pgTable(
+  "commentLikes",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    userId: text("userId").references(() => users.id, {
+      onDelete: "cascade",
+    }),
+    commentId: integer("commentId")
+      .references(() => comments.id, { onDelete: "cascade" })
+      .notNull(),
+  },
+  (table) => [
+    uniqueIndex("uniqueUserCommentLike").on(table.userId, table.commentId),
+  ]
+);
 
 //
 
-export const likes = pgTable(
-  "likes",
+export const postLikes = pgTable(
+  "postLikes",
   {
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
     userId: text("userId").references(() => users.id, {
@@ -406,13 +403,13 @@ export const likes = pgTable(
   (table) => [uniqueIndex("uniqueUserPostLike").on(table.userId, table.postId)]
 );
 
-export const likesRelations = relations(likes, ({ one }) => ({
+export const likesRelations = relations(postLikes, ({ one }) => ({
   user: one(users, {
-    fields: [likes.userId],
+    fields: [postLikes.userId],
     references: [users.id],
   }),
   post: one(posts, {
-    fields: [likes.postId],
+    fields: [postLikes.postId],
     references: [posts.id],
   }),
 }));
