@@ -3,16 +3,17 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { MessageCircleMore, Send } from "lucide-react";
 import { useState, type FC } from "react";
-import { api } from "../../lib/api-client";
+import { api, type Comment } from "../../lib/api-client";
 import { singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
-const ReplyButton: FC<{ parentCommentId: number; postId: number }> = ({
-  parentCommentId,
-  postId,
-}) => {
+const ReplyButton: FC<{
+  parentCommentId: number;
+  postId: number;
+  setChildren: React.Dispatch<React.SetStateAction<Comment[]>>;
+}> = ({ parentCommentId, postId, setChildren }) => {
   const [isReplying, setIsReplying] = useState(false);
 
   const form = useForm({
@@ -51,6 +52,10 @@ const ReplyButton: FC<{ parentCommentId: number; postId: number }> = ({
     },
     onSuccess(data, variables, context) {
       setIsReplying(false);
+      setChildren((old) => {
+        console.log(old);
+        return [...old, data];
+      });
     },
   });
 

@@ -1,18 +1,16 @@
-import { Link } from "@tanstack/react-router";
-import { format } from "date-fns";
-import { Fragment, type FC } from "react";
+import { type FC } from "react";
 import {
   CommentButton,
   LikeButton,
   ShareButton,
 } from "../components/custom/buttons";
-import ReplyButton from "../components/custom/reply-button";
+import PostComment from "../components/custom/comment";
 import { CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import { Input } from "../components/ui/input";
 import { Separator } from "../components/ui/separator";
 import type { Comment, PostFull } from "../lib/api-client";
 
-function renderComments(
+export function renderComments(
   comments: Comment[],
   startingRow: number,
   startingColumn: number,
@@ -30,43 +28,14 @@ function renderComments(
         : "min-h-[calc(100%+4.5rem)]";
     const separatorClass = `col-start-1 row-start-2 ${separatorRowEndClass} ${separatorHeight} justify-self-center`;
     return (
-      <Fragment key={c.id}>
-        <div className={gridClassName}>
-          <div
-            className={`relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground`}
-          >
-            {startingColumn > 1 && (
-              <span className="absolute -left-[1.27rem] top-[calc(-50%+1rem)] h-6 w-5 rounded-xl rounded-r-none rounded-t-none border-b border-l bg-transparent" />
-            )}
-            <Link
-              to="/users/$username"
-              params={{ username: c.author.username }}
-            >
-              <img src={c.author.avatarUrl} className="rounded-full" />
-            </Link>
-          </div>
-          <div className="col-start-2 row-start-1 flex flex-col pl-4">
-            <div className="flex gap-4">
-              <Link
-                to="/users/$username"
-                params={{ username: c.author.username }}
-              >
-                {c.author.username}
-              </Link>
-            </div>
-            <div>{format(new Date(c.createdAt), "dd MMM y | HH:MM")}</div>
-          </div>
-
-          <Separator orientation="vertical" className={separatorClass} />
-
-          <div className="col-start-2 row-start-2 flex flex-col gap-2 pt-4">
-            <div className="pl-4">{c.text}</div>
-            <ReplyButton parentCommentId={c.id} postId={c.postId} />
-          </div>
-
-          {children && renderComments(children, 3, 2)}
-        </div>
-      </Fragment>
+      <PostComment
+        key={c.id}
+        c={c}
+        gridClassName={gridClassName}
+        isNested={startingColumn > 1}
+        separatorClass={separatorClass}
+        initialChildren={children}
+      />
     );
   });
 }
