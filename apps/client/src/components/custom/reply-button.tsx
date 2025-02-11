@@ -1,0 +1,118 @@
+import { schemas } from "@nexus/shared-schemas";
+import { useForm } from "@tanstack/react-form";
+import { useMutation } from "@tanstack/react-query";
+import { MessageCircleMore, Send } from "lucide-react";
+import { useState, type FC } from "react";
+import { api } from "../../lib/api-client";
+import { singleErrorsAdapter } from "../../utils/form-utils";
+import { errorTypeGuard } from "../../utils/type-guards";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+
+const ReplyButton: FC<{ parentCommentId: number; postId: number }> = ({
+  parentCommentId,
+  postId,
+}) => {
+  const [isReplying, setIsReplying] = useState(false);
+
+  const form = useForm({
+    defaultValues: {
+      text: "",
+    },
+    validators: {
+      onSubmitAsync: async ({ value }) => {
+        try {
+          await handleReply.mutateAsync(value);
+          return null;
+        } catch (error) {
+          if (errorTypeGuard(error)) return error.message;
+        }
+      },
+      onSubmit: schemas.insertCommentSchema.pick({ text: true }),
+    },
+    validatorAdapter: singleErrorsAdapter,
+    onSubmit() {
+      form.reset();
+    },
+  });
+
+  const handleReply = useMutation({
+    mutationKey: ["commentReply", parentCommentId],
+    mutationFn: async (v: { text: string }) => {
+      const res = await api.posts[":postId"].comments.$post({
+        param: { postId },
+        json: { parentCommentId, text: v.text },
+      });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("An error occurred while replying to this comment.");
+      }
+      return data;
+    },
+    onSuccess(data, variables, context) {
+      setIsReplying(false);
+    },
+  });
+
+  return (
+    <>
+      {!isReplying ? (
+        <Button
+          variant={"ghost"}
+          className="flex w-fit items-center gap-2 rounded-xl"
+          onClick={() => setIsReplying(true)}
+        >
+          <MessageCircleMore /> Reply
+        </Button>
+      ) : (
+        <>
+          <form
+            className="flex items-center"
+            onSubmit={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              form.handleSubmit();
+            }}
+          >
+            <form.Field
+              name="text"
+              children={(field) => (
+                <>
+                  <Input
+                    className="text-md rounded-l-xl rounded-r-none border-r-0 p-8"
+                    name={field.name}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="Write a reply"
+                    required
+                  />
+                </>
+              )}
+            ></form.Field>
+
+            <form.Subscribe
+              selector={(state) => [
+                state.canSubmit,
+                state.isSubmitting,
+                state.isTouched,
+              ]}
+              children={([canSubmit, isSubmitting, isTouched]) => (
+                <Button
+                  type="submit"
+                  aria-disabled={!canSubmit || isSubmitting || !isTouched}
+                  disabled={!canSubmit || isSubmitting || !isTouched}
+                  variant={"ghost"}
+                  className="aspect-square h-full rounded-l-none rounded-r-xl border border-l-0 hover:bg-muted-foreground/30 focus:bg-muted-foreground/30"
+                >
+                  <Send />
+                </Button>
+              )}
+            />
+          </form>
+        </>
+      )}
+    </>
+  );
+};
+
+export default ReplyButton;

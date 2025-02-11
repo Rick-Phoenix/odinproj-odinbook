@@ -30,7 +30,9 @@ export const chatSchema = createSelectSchema(chats).extend({
   }),
 });
 
-export const commentSchema = createSelectSchema(comments);
+export const commentSchema = createSelectSchema(comments).extend({
+  author: z.object({ username: z.string(), avatarUrl: z.string() }),
+});
 export const likesSchema = createSelectSchema(likes);
 export const basicPostSchema = createSelectSchema(posts).extend({
   author: z.string(),
@@ -81,13 +83,15 @@ export const profileSchema = userSchema
   })
   .extend({
     comments: z.array(
-      commentSchema.extend({
-        post: z.object({
-          title: z.string(),
-          room: z.object({ name: z.string() }),
-          id: z.number(),
-        }),
-      })
+      commentSchema
+        .extend({
+          post: z.object({
+            title: z.string(),
+            room: z.object({ name: z.string() }),
+            id: z.number(),
+          }),
+        })
+        .omit({ author: true })
     ),
     posts: z.array(
       z.object({

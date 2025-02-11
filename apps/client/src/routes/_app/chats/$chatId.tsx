@@ -147,7 +147,7 @@ const Chat: FC<{
             children={(field) => (
               <>
                 <Input
-                  className="textm-md rounded-l-xl rounded-r-none border-r-0 p-8"
+                  className="text-md rounded-l-xl rounded-r-none border-r-0 p-8"
                   name={field.name}
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}

@@ -338,7 +338,9 @@ export const comments = pgTable(
   "comments",
   {
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-    userId: text("userId").references(() => users.id),
+    userId: text("userId")
+      .notNull()
+      .references(() => users.id),
     postId: integer("postId")
       .references(() => posts.id, { onDelete: "cascade" })
       .notNull(),

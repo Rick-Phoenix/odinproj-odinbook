@@ -5,6 +5,7 @@ import db from "./dbConfig";
 import {
   chatInstances,
   chats,
+  comments,
   likes,
   listings,
   messages,
@@ -206,8 +207,10 @@ export async function fetchPost(userId: string, postId: number) {
       return eq(post.id, postId);
     },
     with: {
-      comments: true,
-      room: true,
+      comments: {
+        with: { author: { columns: { avatarUrl: true, username: true } } },
+      },
+      room: { extras: (f) => ({ ...isSubscribed(userId, f.name) }) },
       author: { columns: { username: true } },
     },
     extras: (f) => isLiked(userId, f.id),
@@ -512,4 +515,17 @@ export async function deleteSavedListing(userId: string, listingId: number) {
         eq(savedListings.listingId, listingId)
       )
     );
+}
+
+export async function insertComment(
+  userId: string,
+  postId: number,
+  text: string,
+  parentCommentId?: number
+) {
+  const [comment] = await db
+    .insert(comments)
+    .values({ userId, postId, text, parentCommentId })
+    .returning();
+  return comment;
 }
