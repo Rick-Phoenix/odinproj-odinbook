@@ -1,7 +1,7 @@
 import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-import { MessageCircleMore, Send } from "lucide-react";
+import { MessageCircleMore, Send, X } from "lucide-react";
 import { useState, type FC } from "react";
 import { api, type Comment } from "../../lib/api-client";
 import { singleErrorsAdapter } from "../../utils/form-utils";
@@ -53,7 +53,6 @@ const ReplyButton: FC<{
     onSuccess(data, variables, context) {
       setIsReplying(false);
       setChildren((old) => {
-        console.log(old);
         return [...old, data];
       });
     },
@@ -79,12 +78,21 @@ const ReplyButton: FC<{
               form.handleSubmit();
             }}
           >
+            <Button
+              variant={"ghost"}
+              type="button"
+              title="Cancel"
+              onClick={() => setIsReplying(false)}
+              className="aspect-square rounded-l-xl rounded-r-none border border-r-0 py-0 hover:bg-muted-foreground/30 focus:bg-muted-foreground/30"
+            >
+              <X />
+            </Button>
             <form.Field
               name="text"
               children={(field) => (
                 <>
                   <Input
-                    className="text-md rounded-l-xl rounded-r-none border-r-0 p-8"
+                    className="text-md rounded-l-none rounded-r-none border-x-0"
                     name={field.name}
                     value={field.state.value}
                     onChange={(e) => field.handleChange(e.target.value)}
@@ -104,10 +112,11 @@ const ReplyButton: FC<{
               children={([canSubmit, isSubmitting, isTouched]) => (
                 <Button
                   type="submit"
+                  title="Send"
                   aria-disabled={!canSubmit || isSubmitting || !isTouched}
                   disabled={!canSubmit || isSubmitting || !isTouched}
                   variant={"ghost"}
-                  className="aspect-square h-full rounded-l-none rounded-r-xl border border-l-0 hover:bg-muted-foreground/30 focus:bg-muted-foreground/30"
+                  className="aspect-square rounded-l-none rounded-r-xl border border-l-0 hover:bg-muted-foreground/30 focus:bg-muted-foreground/30"
                 >
                   <Send />
                 </Button>
