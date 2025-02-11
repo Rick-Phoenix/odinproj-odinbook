@@ -10,11 +10,16 @@ const PostComment: FC<{
   c: Comment;
   gridClassName: string;
   isNested: boolean;
-  separatorClass: string;
   initialChildren?: Comment[];
-}> = ({ c, gridClassName, isNested, separatorClass, initialChildren }) => {
+  isLast: boolean;
+}> = ({ c, gridClassName, isNested, initialChildren, isLast }) => {
   const [children, setChildren] = useState(initialChildren || []);
-
+  let separatorRowEnd = children.length ? children.length + 3 : 3;
+  if (isLast) separatorRowEnd--;
+  const separatorRowEndClass = `row-end-${separatorRowEnd}`;
+  const separatorHeight =
+    isLast && !children.length ? "min-h-0" : "min-h-[calc(100%+4.5rem)]";
+  const separatorClass = `col-start-1 row-start-2 ${separatorRowEndClass} ${separatorHeight} justify-self-center`;
   return (
     <div className={gridClassName}>
       <div
