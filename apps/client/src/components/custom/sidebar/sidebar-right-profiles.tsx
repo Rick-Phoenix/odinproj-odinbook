@@ -1,17 +1,25 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useLoaderData, useNavigate } from "@tanstack/react-router";
+import { useNavigate, useParams } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { MessageSquare } from "lucide-react";
-import { api, type Chat } from "../../../lib/api-client";
+import { api, type Chat, type Profile } from "../../../lib/api-client";
 import { cacheChat, chatsQueryOptions } from "../../../lib/chatQueries";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { SidebarMenu } from "../../ui/sidebar";
 import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
+import SidebarSkeleton from "./sidebar-skeleton";
 
 const UserProfileSidebarContent = () => {
-  const profile = useLoaderData({ from: "/_app/users/$username" });
   const queryClient = useQueryClient();
+  const profileParams = useParams({
+    from: "/_app/users/$username",
+    shouldThrow: false,
+  });
+  const profile = queryClient.getQueryData([
+    "profile",
+    profileParams?.username,
+  ]) as Profile | undefined;
   const nav = useNavigate();
   const createChat = useMutation({
     mutationKey: ["chat"],
@@ -30,6 +38,8 @@ const UserProfileSidebarContent = () => {
       nav({ to: "/chats/$chatId", params: { chatId: data.id } });
     },
   });
+
+  if (!profile) return <SidebarSkeleton />;
 
   const handleSendMessage = async () => {
     const chats = await queryClient.fetchQuery(chatsQueryOptions);

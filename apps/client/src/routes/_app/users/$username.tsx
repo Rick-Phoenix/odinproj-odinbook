@@ -158,11 +158,7 @@ const CommentPreview: FC<{
   postId: number;
 }> = ({ room, postTitle, text, postId }) => {
   return (
-    <Link
-      to={"/rooms/$roomName/posts/$postId"}
-      params={{ postId, roomName: room }}
-      className="mt-4 flex h-fit w-full gap-8 rounded-xl bg-muted p-6 py-4 hover:bg-muted-foreground/30 hover:text-foreground"
-    >
+    <div className="mt-4 flex h-fit w-full gap-8 rounded-xl bg-muted p-6 py-4 hover:bg-muted-foreground/30 hover:text-foreground">
       <div className="grid w-full auto-rows-min grid-cols-1">
         <div className="flex gap-2">
           <Link
@@ -173,10 +169,16 @@ const CommentPreview: FC<{
             r/{room}
           </Link>
           <div> | </div>
-          <div className="text-l font-semibold">{postTitle}</div>
+          <Link
+            to={"/rooms/$roomName/posts/$postId"}
+            params={{ postId, roomName: room }}
+            className="text-l font-semibold"
+          >
+            {postTitle}
+          </Link>
         </div>
         <div className="mt-2">{text}</div>
       </div>
-    </Link>
+    </div>
   );
 };

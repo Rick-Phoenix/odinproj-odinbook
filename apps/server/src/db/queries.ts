@@ -1,4 +1,14 @@
-import { and, asc, desc, eq, getTableColumns, lt, lte, sql } from "drizzle-orm";
+import {
+  and,
+  asc,
+  desc,
+  eq,
+  getTableColumns,
+  lt,
+  lte,
+  ne,
+  sql,
+} from "drizzle-orm";
 import type { BasicPost, ListingInputs } from "../types/zod-schemas";
 import { lowercase, withCTEColumns } from "./db-methods";
 import db from "./dbConfig";
@@ -547,7 +557,7 @@ export async function fetchSuggestedListings(
       })
       .from(listings)
       .innerJoin(users, eq(listings.sellerId, users.id))
-      .where(eq(listings.sold, false))
+      .where(and(ne(listings.sellerId, userId), eq(listings.sold, false)))
       .limit(10);
   } else {
     suggestedListings = await db
@@ -558,7 +568,13 @@ export async function fetchSuggestedListings(
       })
       .from(listings)
       .innerJoin(users, eq(listings.sellerId, users.id))
-      .where(and(eq(listings.sold, false), eq(listings.category, category)))
+      .where(
+        and(
+          eq(listings.sold, false),
+          eq(listings.category, category),
+          ne(listings.sellerId, userId)
+        )
+      )
       .limit(10);
   }
   return suggestedListings;

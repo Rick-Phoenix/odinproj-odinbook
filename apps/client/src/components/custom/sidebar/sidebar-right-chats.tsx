@@ -8,6 +8,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { SidebarMenu, SidebarMenuButton } from "../../ui/sidebar";
 import ChatDialog from "../chat-dialog";
+import SidebarSkeleton from "./sidebar-skeleton";
 
 const ChatsSidebarContent = () => {
   const { subSection, mainSection, activePage } = useActivePage();
@@ -54,12 +55,16 @@ const ChatsSidebarContent = () => {
 };
 
 const ChatSidebarContent = () => {
-  const { chatId } = useParams({
+  const chatParams = useParams({
     from: "/_app/chats/$chatId",
+    shouldThrow: false,
   });
+  const chatId = chatParams?.chatId;
   const {
     data: { contact },
   } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
+
+  if (!contact) return <SidebarSkeleton />;
 
   return (
     <>

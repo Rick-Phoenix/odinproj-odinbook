@@ -151,7 +151,8 @@ export const initialFeedQuery = (userId: string) => {
     WHERE s."userId" = ${userId}
     GROUP BY r.category
     ORDER BY COUNT(*) DESC
-    LIMIT 1) ORDER BY r."subsCount" DESC LIMIT 5
+    LIMIT 1) AND r.name NOT IN (SELECT name FROM user_subs) 
+    ORDER BY r."subsCount" DESC LIMIT 5
   ),
   rooms_json AS (
     SELECT

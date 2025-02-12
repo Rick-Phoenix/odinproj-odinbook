@@ -39,7 +39,7 @@ export default function InsetHeader() {
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild>
                     <Link to={mainSection + "/" + subSection}>
-                      <BreadcrumbPage>{subSection}</BreadcrumbPage>
+                      <BreadcrumbPage>{title(subSection)}</BreadcrumbPage>
                     </Link>
                   </BreadcrumbLink>
                 </BreadcrumbItem>

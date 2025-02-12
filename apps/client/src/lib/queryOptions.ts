@@ -15,7 +15,6 @@ export const userQueryOptions = {
       throw new Error("Could not fetch user.");
     }
     const data = await res.json();
-    console.log("🚀 ~ queryFn: ~ data:", data);
     const {
       subsContent: { rooms, posts, suggestedRooms },
       listingsCreated,

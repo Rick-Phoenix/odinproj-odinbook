@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 
-import { Link } from "@tanstack/react-router";
+import { Link, useParams } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { type FC } from "react";
 import { useUser } from "../../../hooks/auth";
@@ -111,7 +111,15 @@ const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({
 
 const RoomSidebarContent = () => {
   const queryClient = useQueryClient();
-  const { subSection: roomName } = useActivePage();
+  const roomsIndexParam = useParams({
+    from: "/_app/rooms/$roomName/",
+    shouldThrow: false,
+  });
+  const roomPostParam = useParams({
+    from: "/_app/rooms/$roomName/posts/$postId",
+    shouldThrow: false,
+  });
+  const roomName = roomsIndexParam?.roomName || roomPostParam?.roomName!;
   const room: Room | undefined =
     queryClient.getQueryData(["room", roomName]) ||
     queryClient.getQueryData(["roomPreview", roomName]);

@@ -1,18 +1,7 @@
-import {
-  Box,
-  Frame,
-  LifeBuoy,
-  Map,
-  MessagesSquare,
-  PieChart,
-  Send,
-  Settings2,
-  Store,
-} from "lucide-react";
+import { Box, MessagesSquare, Settings2, Store } from "lucide-react";
 import * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
-import { NavSecondary } from "@/components/nav-secondary";
 import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -23,7 +12,6 @@ import {
 } from "@/components/ui/sidebar";
 import CreatePostSidebarDialog from "./custom/CreatePostSidebarDialog";
 import CreateRoomDialog from "./custom/sidebar/create-room-dialog";
-import { Skeleton } from "./ui/skeleton";
 
 const data = {
   navMain: [
@@ -62,53 +50,6 @@ const data = {
       title: "Settings",
       url: "#",
       icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
-          url: "#",
-        },
-      ],
-    },
-  ],
-  navSecondary: [
-    {
-      title: "Support",
-      url: "#",
-      icon: LifeBuoy,
-    },
-    {
-      title: "Feedback",
-      url: "#",
-      icon: Send,
-    },
-  ],
-  projects: [
-    {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
-    },
-    {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
-    },
-    {
-      name: "Travel",
-      url: "#",
-      icon: Map,
     },
   ],
 };
@@ -116,19 +57,16 @@ const data = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar variant="inset" {...props}>
-      <Skeleton queryKey={["user"]} className="bg-sidebar-background/50">
-        <SidebarHeader>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <NavUser />
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarHeader>
-        <SidebarContent>
-          <NavMain items={data.navMain} />
-          <NavSecondary items={data.navSecondary} className="mt-auto" />
-        </SidebarContent>
-      </Skeleton>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <NavUser />
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent>
+        <NavMain items={data.navMain} />
+      </SidebarContent>
     </Sidebar>
   );
 }
