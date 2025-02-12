@@ -44,6 +44,7 @@ function RouteComponent() {
             location={lis.location}
             createdAt={lis.createdAt}
             picUrl={lis.picUrl}
+            condition={lis.condition}
           />
         ))}
       </section>
@@ -59,25 +60,38 @@ const ItemListing: FC<{
   location: string;
   createdAt: string;
   picUrl: string;
-}> = ({ price, title, category, id, location, createdAt, picUrl }) => {
+  condition: string;
+}> = ({
+  price,
+  title,
+  category,
+  id,
+  location,
+  createdAt,
+  picUrl,
+  condition,
+}) => {
   return (
     <Link
       to="/marketplace/$category/$itemId"
       params={{ category, itemId: id }}
       className="group size-full p-4"
     >
-      <div className="grid grid-cols-[auto_1fr] grid-rows-1 rounded-lg bg-muted">
-        <div className="min-w-24 justify-self-center p-4">
+      <div className="grid h-48 grid-cols-[auto_1fr] grid-rows-1 items-center rounded-lg bg-muted p-3">
+        <div className="size-36 justify-self-center p-4">
           <img src={picUrl} className="aspect-square object-contain" />
         </div>
-        <div className="grid h-full grid-cols-1 grid-rows-[auto_auto_1fr] items-start gap-3 p-8 pt-4">
-          <span className="break-words text-4xl font-semibold group-hover:underline">
-            {title}
-          </span>
-          <span className="text-accent-foreground">
-            {location} | {format(new Date(createdAt), "dd MMM y")}
-          </span>
-          <span className="pt-6 text-3xl font-semibold">${price}</span>
+        <div className="flex h-full flex-col justify-between gap-3 p-8 pt-4">
+          <div className="flex flex-col">
+            <span className="break-normal text-2xl font-semibold group-hover:underline">
+              {title}
+            </span>
+            <span className="text-accent-foreground">{condition}</span>
+            <span className="text-accent-foreground">
+              {location} | {format(new Date(createdAt), "dd MMM y")}
+            </span>
+          </div>
+          <span className="text-xl font-semibold">${price}</span>
         </div>
       </div>
     </Link>

@@ -17,8 +17,8 @@ const PostComment: FC<{
 }> = ({ c, gridClassName, initialChildren, isLast }) => {
   const [children, setChildren] = useState(initialChildren || []);
   const [isFolded, setIsFolded] = useState(false);
-  const isNested = c.parentCommentId !== null;
 
+  const isNested = c.parentCommentId !== null;
   let separatorRowEnd = children.length ? children.length + 3 : 3;
   if (isLast || !isNested) separatorRowEnd--;
   const separatorRowEndClass = `row-end-${separatorRowEnd}`;
@@ -81,7 +81,9 @@ const PostComment: FC<{
               {c.author.username}
             </Link>
           </div>
-          <div>{format(new Date(c.createdAt), "dd MMM y | HH:MM")}</div>
+          <div className="text-sm">
+            {format(new Date(c.createdAt), "dd MMM y | HH:MM")}
+          </div>
         </div>
       </div>
     );
@@ -107,7 +109,9 @@ const PostComment: FC<{
             {c.author.username}
           </Link>
         </div>
-        <div>{format(new Date(c.createdAt), "dd MMM y | HH:MM")}</div>
+        <div className="text-sm">
+          {format(new Date(c.createdAt), "dd MMM y | HH:MM")}
+        </div>
       </div>
 
       <div

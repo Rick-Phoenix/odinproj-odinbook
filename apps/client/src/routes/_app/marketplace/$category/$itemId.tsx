@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
 import SaveListingButton from "../../../../components/custom/save-listing-button";
@@ -15,6 +16,8 @@ import {
   TableRow,
 } from "../../../../components/ui/table";
 import { useUser } from "../../../../hooks/auth";
+import { api, type Chat } from "../../../../lib/api-client";
+import { cacheChat, chatsQueryOptions } from "../../../../lib/chatQueries";
 import { listingQueryOptions } from "../../../../lib/queryOptions";
 
 export const Route = createFileRoute("/_app/marketplace/$category/$itemId")({
@@ -31,6 +34,36 @@ export const Route = createFileRoute("/_app/marketplace/$category/$itemId")({
 function RouteComponent() {
   const listing = Route.useLoaderData();
   const { username } = useUser()!;
+
+  const queryClient = useQueryClient();
+  const nav = useNavigate();
+  const createChat = useMutation({
+    mutationKey: ["chat"],
+    mutationFn: async (v: { contactUsername: string }) => {
+      const { contactUsername } = v;
+      const res = await api.chats.$post({ json: { contactUsername } });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error(data.issues[0].message);
+      }
+      return data;
+    },
+    onSuccess(data) {
+      queryClient.setQueryData(["chats"], (old: Chat[]) => [...old, data]);
+      cacheChat(data);
+      nav({ to: "/chats/$chatId", params: { chatId: data.id } });
+    },
+  });
+
+  const handleSendMessage = async () => {
+    const chats = await queryClient.fetchQuery(chatsQueryOptions);
+    const existingChat = chats.find(
+      (chat) => chat.contact.username === listing.seller,
+    );
+    if (existingChat)
+      return nav({ to: "/chats/$chatId", params: { chatId: existingChat.id } });
+    createChat.mutate({ contactUsername: listing.seller });
+  };
   return (
     <InsetScrollArea>
       <section className="grid min-h-[75vh] max-w-full grid-cols-1 grid-rows-[auto_1fr] rounded-xl bg-muted/50">
@@ -53,12 +86,17 @@ function RouteComponent() {
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button variant="link" className="p-0 text-xl">
-                            Seller
+                            {listing.seller}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-fit">
                           <Button variant={"ghost"} asChild>
-                            <Link to="/">View seller's profile</Link>
+                            <Link
+                              to="/users/$username"
+                              params={{ username: listing.seller }}
+                            >
+                              View seller's profile
+                            </Link>
                           </Button>
                         </PopoverContent>
                       </Popover>
@@ -66,7 +104,9 @@ function RouteComponent() {
                   </TableRow>
                   <TableRow>
                     <TableCell>Item's conditions</TableCell>
-                    <TableCell className="text-right">New</TableCell>
+                    <TableCell className="text-right">
+                      {listing.condition}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Listed On</TableCell>
@@ -85,7 +125,7 @@ function RouteComponent() {
             </div>
             <div className="mt-2 flex gap-3">
               <Button>Buy</Button>
-              <Button>Contact</Button>
+              <Button onClick={handleSendMessage}>Contact</Button>
             </div>
             <div className="mt-2 flex gap-3">
               {listing.seller !== username && (

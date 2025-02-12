@@ -131,7 +131,9 @@ const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({
 const RoomSidebarContent = () => {
   const queryClient = useQueryClient();
   const { subSection: roomName } = useActivePage();
-  const room = queryClient.getQueryData(["room", roomName]) as Room;
+  const room: Room | undefined =
+    queryClient.getQueryData(["room", roomName]) ||
+    queryClient.getQueryData(["roomPreview", roomName]);
   if (!room) return <SidebarSkeleton />;
   return (
     <>

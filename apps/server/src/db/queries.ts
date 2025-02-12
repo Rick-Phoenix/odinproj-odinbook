@@ -37,7 +37,7 @@ export async function fetchUserData(userId: string) {
       listingsCreated: {
         where: (f, { eq }) => eq(f.sold, false),
       },
-      listingsSaved: true,
+      listingsSaved: { with: { listing: true } },
     },
     extras: (f) => ({
       totalFeedPosts: sql<number>`${db.$count(totalPostsFromSubs)}::int`

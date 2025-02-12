@@ -21,6 +21,7 @@ export const userQueryOptions = {
       listingsSaved,
       ...userData
     } = data;
+
     const initialFeedTrending: PostBasic[] = [];
     const initialFeedNewest: PostBasic[] = [];
     for (const room of rooms) {
@@ -47,7 +48,10 @@ export const userQueryOptions = {
     });
 
     queryClient.setQueryData(["listingsCreated"], listingsCreated);
-    queryClient.setQueryData(["listingsSaved"], listingsSaved);
+    queryClient.setQueryData(
+      ["listingsSaved"],
+      listingsSaved.map((list) => list.listing),
+    );
 
     return userData;
   },
@@ -91,10 +95,8 @@ export const postQueryOptions = (postId: number) => {
         throw new Error("Post not found.");
       }
 
-      queryClient.setQueryData(["room", post.room.name], post.room);
-      for (const comment of post.comments) {
-        queryClient.setQueryData(["comment", comment.id], comment);
-      }
+      queryClient.setQueryData(["roomPreview", post.room.name], post.room);
+
       return post;
     },
   });

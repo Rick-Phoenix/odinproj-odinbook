@@ -193,6 +193,7 @@ export const listingsRelations = relations(listings, ({ many, one }) => ({
     fields: [listings.sellerId],
     references: [users.id],
   }),
+  saved: many(savedListings),
 }));
 
 export const savedListings = pgTable(
@@ -213,6 +214,10 @@ export const savedListingsRelations = relations(savedListings, ({ one }) => ({
   user: one(users, {
     fields: [savedListings.userId],
     references: [users.id],
+  }),
+  listing: one(listings, {
+    fields: [savedListings.listingId],
+    references: [listings.id],
   }),
 }));
 

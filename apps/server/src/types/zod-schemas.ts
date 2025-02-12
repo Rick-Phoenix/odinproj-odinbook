@@ -72,7 +72,7 @@ export const userDataSchema = userSchema.extend({
   totalRoomsCreated: z.number(),
   totalListings: z.number(),
   listingsCreated: z.array(listingSchema),
-  listingsSaved: z.array(listingSchema),
+  listingsSaved: z.array(z.object({ listing: listingSchema })),
 });
 
 export const profileSchema = userSchema

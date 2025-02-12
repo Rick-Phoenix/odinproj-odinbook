@@ -2,7 +2,7 @@ import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { Send } from "lucide-react";
-import { type FC } from "react";
+import { type FC, type RefObject } from "react";
 import { api, type Comment } from "../../lib/api-client";
 import { singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
@@ -12,7 +12,8 @@ import { Input } from "../ui/input";
 const CommentInput: FC<{
   postId: number;
   setRootComments: React.Dispatch<React.SetStateAction<Comment[]>>;
-}> = ({ postId, setRootComments }) => {
+  ref: RefObject<HTMLInputElement | null>;
+}> = ({ postId, setRootComments, ref }) => {
   const form = useForm({
     defaultValues: {
       text: "",
@@ -74,6 +75,7 @@ const CommentInput: FC<{
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 placeholder="Write a comment"
+                ref={ref}
                 required
               />
             </>

@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { MessageCircleMore, Share } from "lucide-react";
-import { type FC } from "react";
+import { type FC, type MouseEventHandler } from "react";
 import { PiThumbsUpBold, PiThumbsUpFill } from "react-icons/pi";
 import { api, type PostBasic } from "../../lib/api-client";
 import ButtonGesture from "../motion/gestures";
@@ -18,12 +18,13 @@ export function ShareButton() {
   );
 }
 
-export const CommentButton: FC<{ roomName: string; postId: number }> = ({
-  roomName,
-  postId,
-}) => {
+export const CommentButton: FC<{
+  roomName: string;
+  postId: number;
+  onClick?: MouseEventHandler;
+}> = ({ roomName, postId, onClick }) => {
   return (
-    <Button variant={"ghost"} asChild className="flex-1 p-6">
+    <Button variant={"ghost"} asChild className="flex-1 p-6" onClick={onClick}>
       <Link to="/rooms/$roomName/posts/$postId" params={{ roomName, postId }}>
         <ButtonGesture className="flex gap-2">
           <MessageCircleMore />

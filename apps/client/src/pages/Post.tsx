@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { useState, type FC } from "react";
+import { useRef, useState, type FC, type MouseEventHandler } from "react";
 import {
   CommentButton,
   LikeButton,
@@ -79,6 +79,15 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({
           : 1,
     );
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const focusInput: MouseEventHandler = (e) => {
+    if (inputRef.current) {
+      inputRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+      inputRef.current.focus();
+    }
+  };
+
   return (
     <section className="min-h-svh overflow-x-auto rounded-xl bg-muted/50">
       <CardHeader>
@@ -89,17 +98,25 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({
       <Separator className="mt-1" />
       <div className="flex p-3">
         <LikeButton postId={post.id} />
-        <CommentButton roomName={post.room.name} postId={post.id} />
+        <CommentButton
+          roomName={post.room.name}
+          postId={post.id}
+          onClick={focusInput}
+        />
         <ShareButton />
       </div>
       <Separator className="mt-1" />
       <div className="my-4 p-6">
-        <CommentInput setRootComments={setRootComments} postId={post.id} />
+        <CommentInput
+          ref={inputRef}
+          setRootComments={setRootComments}
+          postId={post.id}
+        />
       </div>
       <Separator className="mt-1" />
 
       <div className="p-6">
-        <div className="flex items-center gap-3 py-6">
+        <div className="flex items-center gap-5 py-6">
           <span>Comments</span>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
