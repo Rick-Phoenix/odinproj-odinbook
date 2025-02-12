@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 import ListingPreview from "../../../components/custom/ListingPreview";
-import SaveListingButton from "../../../components/custom/save-listing-button";
+import SaveListingButton from "../../../components/custom/SaveListingButton";
 import type { Listing } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/marketplace/savedListings")({

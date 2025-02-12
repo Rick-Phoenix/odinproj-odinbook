@@ -9,8 +9,8 @@ import {
   Pagination,
 } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import CreateListingDialog from "../../../components/custom/CreateListingDialog";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
-import CreateListingDialog from "../../../components/custom/listing-dialog";
 import {
   api,
   type Listing,

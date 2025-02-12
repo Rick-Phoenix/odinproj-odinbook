@@ -1,4 +1,4 @@
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
 import type { Listing } from "../../../lib/api-client";
 import { Avatar, AvatarImage } from "../../ui/avatar";
@@ -13,13 +13,16 @@ const MarketplaceSidebarContent = () => {
   const { itemId } = useParams({ strict: false });
   const queryClient = useQueryClient();
 
-  const listingsCreated = queryClient.getQueryData([
-    "listingsCreated",
-  ]) as Listing[];
+  const { data: listingsCreated } = useQuery<Listing[]>({
+    queryKey: ["listingsCreated"],
+    initialData: [],
+  });
 
-  const listingsSaved = queryClient.getQueryData([
-    "listingsSaved",
-  ]) as Listing[];
+  const { data: listingsSaved } = useQuery<Listing[]>({
+    queryKey: ["listingsSaved"],
+    initialData: [],
+  });
+
   if (!itemId)
     return (
       <>

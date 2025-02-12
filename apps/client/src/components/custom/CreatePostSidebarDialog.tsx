@@ -93,7 +93,7 @@ export const CreatePostSidebarDialog = () => {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <SidebarMenuSubButton asChild className="w-full cursor-pointer">
-          <DialogTrigger>Create a post</DialogTrigger>
+          <DialogTrigger>Create Post</DialogTrigger>
         </SidebarMenuSubButton>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">

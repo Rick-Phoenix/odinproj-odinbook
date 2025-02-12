@@ -579,6 +579,19 @@ export async function deleteSavedListing(userId: string, listingId: number) {
     );
 }
 
+export async function removeListing(userId: string, listingId: number) {
+  await db
+    .delete(listings)
+    .where(and(eq(listings.sellerId, userId), eq(listings.id, listingId)));
+}
+
+export async function updateListing(userId: string, listingId: number) {
+  await db
+    .update(listings)
+    .set({ sold: true })
+    .where(and(eq(listings.sellerId, userId), eq(listings.id, listingId)));
+}
+
 export async function insertComment(
   userId: string,
   postId: number,

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
-import SaveListingButton from "../../../../components/custom/save-listing-button";
+import SaveListingButton from "../../../../components/custom/SaveListingButton";
 import { Button } from "../../../../components/ui/button";
 import {
   Popover,
@@ -125,19 +125,17 @@ function RouteComponent() {
             </div>
             {listing.sold ? (
               <div className="italic">This item has been sold.</div>
-            ) : (
+            ) : listing.seller !== username ? (
               <>
                 <div className="mt-2 flex gap-3">
                   <Button>Buy</Button>
                   <Button onClick={handleSendMessage}>Contact</Button>
                 </div>
                 <div className="mt-2 flex gap-3">
-                  {listing.seller !== username && (
-                    <SaveListingButton listing={listing} />
-                  )}
+                  <SaveListingButton listing={listing} />
                 </div>
               </>
-            )}
+            ) : null}
           </div>
           <div className="flex size-full flex-col gap-10 p-2 pt-0">
             <div className="justify-center text-center text-lg">

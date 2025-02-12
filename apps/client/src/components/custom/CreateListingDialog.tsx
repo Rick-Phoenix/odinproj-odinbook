@@ -3,7 +3,7 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { HandCoins } from "lucide-react";
-import { api, type ListingInputs } from "../../lib/api-client";
+import { api, type Listing, type ListingInputs } from "../../lib/api-client";
 import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
 import { Button } from "../ui/button";
@@ -77,6 +77,10 @@ const CreateListingDialog = () => {
     },
     onSuccess(data, variables, context) {
       queryClient.setQueryData(["listing", data.id], data);
+      queryClient.setQueryData(["listingsCreated"], (old: Listing[]) => [
+        ...old,
+        data,
+      ]);
       navigate({
         to: "/marketplace/$category/$itemId",
         params: { category: data.category, itemId: data.id },

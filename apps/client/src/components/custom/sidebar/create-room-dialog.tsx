@@ -89,11 +89,11 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
     <Dialog>
       {inSidebar ? (
         <SidebarMenuSubButton asChild className="w-full cursor-pointer">
-          <DialogTrigger>Create a Room</DialogTrigger>
+          <DialogTrigger>Create Room</DialogTrigger>
         </SidebarMenuSubButton>
       ) : (
         <Button size={"lg"} asChild className="mb-3 h-12 w-full cursor-pointer">
-          <DialogTrigger>Create a Room</DialogTrigger>
+          <DialogTrigger>Create Room</DialogTrigger>
         </Button>
       )}
       <DialogContent>
