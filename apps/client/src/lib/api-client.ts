@@ -22,5 +22,13 @@ export type ListingCategory = (typeof schemas.marketplaceCategories)[number];
 export type Comment = z.infer<typeof schemas.commentSchema> & {
   children?: Comment[];
 };
+export type LikeData = { isLiked: boolean; likesCount: number };
+
+const userDataWithoutExtras = schemas.userDataSchema.omit({
+  subsContent: true,
+  listingsCreated: true,
+  listingsSaved: true,
+});
+export type User = z.infer<typeof userDataWithoutExtras>;
 
 export const wsRPC = RPC("ws://localhost:5173/");

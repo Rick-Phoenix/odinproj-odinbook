@@ -1,12 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { useRef, useState, type FC, type MouseEventHandler } from "react";
-import {
-  CommentButton,
-  LikeButton,
-  ShareButton,
-} from "../components/custom/buttons";
+import { CommentButton, ShareButton } from "../components/custom/buttons";
 import PostComment from "../components/custom/comment";
 import CommentInput from "../components/custom/comment-input";
+import PostLikeButton from "../components/custom/PostLikeButton";
 import { Button } from "../components/ui/button";
 import { CardContent, CardHeader, CardTitle } from "../components/ui/card";
 import {
@@ -97,7 +94,7 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({
       <CardContent className="pt-4">{post.text}</CardContent>
       <Separator className="mt-1" />
       <div className="flex p-3">
-        <LikeButton postId={post.id} />
+        <PostLikeButton postId={post.id} />
         <CommentButton
           roomName={post.room.name}
           postId={post.id}

@@ -10,12 +10,22 @@ import {
   CardTitle,
 } from "../ui/card";
 import { Separator } from "../ui/separator";
-import { CommentButton, LikeButton, ShareButton } from "./buttons";
+import { CommentButton, ShareButton } from "./buttons";
+import PostLikeButton from "./PostLikeButton";
 
 export const PostPreview: FC<{
   post: PostBasic;
 }> = ({
-  post: { title, room: roomName, text, id: postId, author, createdAt },
+  post: {
+    title,
+    room: roomName,
+    text,
+    id: postId,
+    author,
+    createdAt,
+    isLiked,
+    likesCount,
+  },
 }) => {
   return (
     <div className="flex max-h-[50%] min-h-min flex-col justify-between rounded-xl bg-muted/50">
@@ -43,7 +53,7 @@ export const PostPreview: FC<{
       <CardContent className="line-clamp-6">{text}</CardContent>
       <Separator className="mt-4 px-3" />
       <div className="flex p-3">
-        <LikeButton postId={postId} />
+        <PostLikeButton postId={postId} />
         <CommentButton postId={postId} roomName={roomName} />
         <ShareButton />
       </div>

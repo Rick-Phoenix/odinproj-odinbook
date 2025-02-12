@@ -123,15 +123,21 @@ function RouteComponent() {
                 </TableBody>
               </Table>
             </div>
-            <div className="mt-2 flex gap-3">
-              <Button>Buy</Button>
-              <Button onClick={handleSendMessage}>Contact</Button>
-            </div>
-            <div className="mt-2 flex gap-3">
-              {listing.seller !== username && (
-                <SaveListingButton listing={listing} />
-              )}
-            </div>
+            {listing.sold ? (
+              <div className="italic">This item has been sold.</div>
+            ) : (
+              <>
+                <div className="mt-2 flex gap-3">
+                  <Button>Buy</Button>
+                  <Button onClick={handleSendMessage}>Contact</Button>
+                </div>
+                <div className="mt-2 flex gap-3">
+                  {listing.seller !== username && (
+                    <SaveListingButton listing={listing} />
+                  )}
+                </div>
+              </>
+            )}
           </div>
           <div className="flex size-full flex-col gap-10 p-2 pt-0">
             <div className="justify-center text-center text-lg">

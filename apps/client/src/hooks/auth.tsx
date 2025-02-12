@@ -5,7 +5,6 @@ import { userQueryOptions } from "../lib/queryOptions";
 export function useUser() {
   const query = useQuery(userQueryOptions);
   const user = query.data;
-
   return user;
 }
 export function useSuspenseUser() {

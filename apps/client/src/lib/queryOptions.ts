@@ -15,6 +15,7 @@ export const userQueryOptions = {
       throw new Error("Could not fetch user.");
     }
     const data = await res.json();
+    console.log("🚀 ~ queryFn: ~ data:", data);
     const {
       subsContent: { rooms, posts, suggestedRooms },
       listingsCreated,
@@ -24,15 +25,24 @@ export const userQueryOptions = {
 
     const initialFeedTrending: PostBasic[] = [];
     const initialFeedNewest: PostBasic[] = [];
+
     for (const room of rooms) {
-      queryClient.setQueryData(["userSub", room.name], room);
+      queryClient.setQueryData(["roomPreview", room.name], room);
+      queryClient.setQueryData(["roomSubs"], (old: string[] | undefined) =>
+        !old ? [room.name] : [...old, room.name],
+      );
     }
+
     queryClient.setQueryData(["suggestedRooms"], suggestedRooms);
 
     posts.forEach((post, i) => {
       if (i < 20) initialFeedTrending.push(post);
       else initialFeedNewest.push(post);
       queryClient.setQueryData(["post", post.id], post);
+      queryClient.setQueryData(["postLikes", post.id], {
+        isLiked: post.isLiked,
+        likesCount: post.likesCount,
+      });
     });
 
     queryClient.setQueryData(["initialFeed", "likesCount"], {
@@ -87,7 +97,7 @@ export const roomQueryOptions = (
 
 export const postQueryOptions = (postId: number) => {
   return queryOptions({
-    queryKey: ["fullPost", postId],
+    queryKey: ["postFull", postId],
     queryFn: async () => {
       const res = await api.posts[":postId"].$get({ param: { postId } });
       const post = await res.json();
@@ -95,6 +105,10 @@ export const postQueryOptions = (postId: number) => {
         throw new Error("Post not found.");
       }
 
+      queryClient.setQueryData(["postLikes", post.id], {
+        isLiked: post.isLiked,
+        likesCount: post.likesCount,
+      });
       queryClient.setQueryData(["roomPreview", post.room.name], post.room);
 
       return post;
@@ -108,7 +122,7 @@ export const listingQueryOptions = (itemId: number) => {
   return queryOptions({
     queryKey: ["listing", itemId],
     queryFn: async () => {
-      const res = await api.market.listings[":itemId"].$get({
+      const res = await api.market.listings.listing[":itemId"].$get({
         param: { itemId },
       });
       const data = await res.json();

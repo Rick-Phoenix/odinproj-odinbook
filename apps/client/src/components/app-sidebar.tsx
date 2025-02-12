@@ -21,6 +21,8 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import CreatePostSidebarDialog from "./custom/CreatePostSidebarDialog";
+import CreateRoomDialog from "./custom/sidebar/create-room-dialog";
 import { Skeleton } from "./ui/skeleton";
 
 const data = {
@@ -30,6 +32,10 @@ const data = {
       url: "/rooms",
       icon: Box,
       isActive: true,
+      items: [
+        { title: "Create A Room", url: <CreateRoomDialog inSidebar={true} /> },
+        { title: "room", url: <CreatePostSidebarDialog /> },
+      ],
     },
     {
       title: "Chats",
@@ -43,20 +49,12 @@ const data = {
       icon: Store,
       items: [
         {
-          title: "Introduction",
-          url: "#",
+          title: "My Listings",
+          url: "/marketplace/myListings",
         },
         {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
+          title: "Saved Listings",
+          url: "/marketplace/savedListings",
         },
       ],
     },

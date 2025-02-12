@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { format } from "date-fns";
 import type { FC } from "react";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
@@ -29,15 +30,8 @@ export const Route = createFileRoute("/_app/users/$username")({
 });
 
 function RouteComponent() {
-  const {
-    username,
-    avatarUrl,
-    comments,
-    createdAt,
-    listingsCreated,
-    posts,
-    status,
-  } = Route.useLoaderData();
+  const { username, avatarUrl, comments, listingsCreated, posts } =
+    Route.useLoaderData();
 
   const postingHistory = [...comments, ...posts].sort((a, b) => {
     const d1 = new Date(a.createdAt);
@@ -87,6 +81,7 @@ function RouteComponent() {
           </TabsContent>
           <TabsContent value="marketplace">
             {listingsCreated.map((lis) => (
+              // <ListingPreview key={lis.id} listing={lis} />
               <MarketplaceHistoryItem key={lis.id} listing={lis} />
             ))}
           </TabsContent>
@@ -100,20 +95,28 @@ const MarketplaceHistoryItem: FC<{ listing: Listing }> = ({ listing }) => {
   return (
     <Link
       to="/marketplace/$category/$itemId"
-      params={{ itemId: listing.id, category: listing.category }}
-      className="mt-4 grid max-w-full grid-cols-[auto_1fr] grid-rows-1 items-center rounded-lg bg-muted"
+      params={{ category: listing.category, itemId: listing.id }}
+      className="group size-full p-4"
     >
-      <div className="justify-self-center p-4">
-        <img src={listing.picUrl} className="max-w-20" />
-      </div>
-      <div className="grid h-full grid-cols-1 grid-rows-[auto_auto_1fr] items-start gap-3 p-8 pt-4">
-        <span className="text-2xl font-semibold group-hover:underline">
-          {listing.title}
-        </span>
-        <span className="text-accent-foreground">
-          {listing.sold ? "Sold" : "Available"}
-        </span>
-        <span className="pt-6 text-3xl font-semibold">${listing.price}</span>
+      <div
+        className={`flex h-48 items-center gap-4 rounded-lg bg-muted p-4 ${listing.sold ? "line-through" : ""}`}
+      >
+        <div className="size-36 justify-self-center p-4">
+          <img src={listing.picUrl} className="aspect-square object-contain" />
+        </div>
+        <div className="flex h-full flex-col justify-center gap-3">
+          <div className="flex flex-col">
+            <span className="break-normal text-2xl font-semibold group-hover:underline">
+              {listing.title}
+            </span>
+            <span className="text-accent-foreground">{listing.condition}</span>
+            <span className="text-accent-foreground">
+              {listing.location} |{" "}
+              {format(new Date(listing.createdAt), "dd MMM y")}
+            </span>
+          </div>
+          <span className="text-xl font-semibold">${listing.price}</span>
+        </div>
       </div>
     </Link>
   );

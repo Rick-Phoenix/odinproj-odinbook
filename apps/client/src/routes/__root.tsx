@@ -1,4 +1,3 @@
-import type { User } from "@nexus/shared-schemas";
 import type { QueryClient } from "@tanstack/react-query";
 import {
   createRootRouteWithContext,
@@ -7,6 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { TbSpaces } from "react-icons/tb";
+import type { User } from "../lib/api-client";
 
 interface RouterAppContext {
   queryClient: QueryClient;

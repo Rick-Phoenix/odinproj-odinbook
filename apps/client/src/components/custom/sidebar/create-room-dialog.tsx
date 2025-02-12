@@ -2,6 +2,7 @@ import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
+import type { FC } from "react";
 import { api, roomCategories, type RoomInputs } from "../../../lib/api-client";
 import {
   formatFormErrors,
@@ -27,8 +28,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../../ui/select";
+import { SidebarMenuSubButton } from "../../ui/sidebar";
 
-export default function CreateRoomDialog() {
+const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
   const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
@@ -85,9 +87,15 @@ export default function CreateRoomDialog() {
   });
   return (
     <Dialog>
-      <Button size={"lg"} asChild className="mb-3 h-12 w-full cursor-pointer">
-        <DialogTrigger>Create a Room</DialogTrigger>
-      </Button>
+      {inSidebar ? (
+        <SidebarMenuSubButton asChild className="w-full cursor-pointer">
+          <DialogTrigger>Create a Room</DialogTrigger>
+        </SidebarMenuSubButton>
+      ) : (
+        <Button size={"lg"} asChild className="mb-3 h-12 w-full cursor-pointer">
+          <DialogTrigger>Create a Room</DialogTrigger>
+        </Button>
+      )}
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create a new Room</DialogTitle>
@@ -136,7 +144,11 @@ export default function CreateRoomDialog() {
                       <Select
                         name={field.name}
                         value={field.state.value}
-                        onValueChange={(e) => field.handleChange(e)}
+                        onValueChange={(e) =>
+                          field.handleChange(
+                            e as (typeof schemas.roomCategoriesArray)[number],
+                          )
+                        }
                         required
                       >
                         <SelectTrigger className="w-[180px]">
@@ -239,4 +251,6 @@ export default function CreateRoomDialog() {
       </DialogContent>
     </Dialog>
   );
-}
+};
+
+export default CreateRoomDialog;

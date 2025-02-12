@@ -187,7 +187,7 @@ function RouteComponent() {
               navigate({ to: ".", search: { orderBy: "likesCount" } })
             }
             style={{
-              ...(orderBy === "createdAt" && {
+              ...(orderBy === "likesCount" && {
                 backgroundColor: "hsl(var(--popover))",
               }),
             }}
@@ -209,6 +209,7 @@ const SubscribeButton: FC<{
   userIsCreator: boolean;
 }> = ({ isSubscribed, roomName, userIsCreator }) => {
   const [userIsSubscribed, setUserIsSubscribed] = useState(isSubscribed);
+  const queryClient = useQueryClient();
   const subscribeMutation = useMutation({
     mutationKey: ["subscription", roomName],
     mutationFn: async () => {
@@ -224,6 +225,11 @@ const SubscribeButton: FC<{
       return data;
     },
     onSuccess: () => {
+      queryClient.setQueryData(["roomSubs"], (old: string[]) =>
+        isSubscribed
+          ? old.filter((room) => room !== roomName)
+          : [...old, roomName],
+      );
       setUserIsSubscribed((old) => !old);
     },
   });

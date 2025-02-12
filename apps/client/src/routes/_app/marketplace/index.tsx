@@ -11,25 +11,36 @@ import {
 import { Swiper, SwiperSlide } from "swiper/react";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 import CreateListingDialog from "../../../components/custom/listing-dialog";
-import type { ListingCategory } from "../../../lib/api-client";
+import {
+  api,
+  type Listing,
+  type ListingCategory,
+} from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/marketplace/")({
   component: RouteComponent,
+  loader: async (c) => {
+    const { favoriteListingsCategory } = c.context.user!;
+    const res = await api.market.listings.suggested.$get({
+      query: { category: favoriteListingsCategory || undefined },
+    });
+    const data = await res.json();
+    if ("issues" in data) {
+      throw new Error("Error while fetching suggested listings.");
+    }
+    return data;
+  },
 });
 
 function RouteComponent() {
-  const listings = Array.from({ length: 10 }, () => ({
-    id: 1,
-    title: "Example",
-    price: 100,
-  }));
+  const suggestedListings = Route.useLoaderData();
   return (
     <InsetScrollArea>
       <section className="flex min-h-svh max-w-full flex-col items-center rounded-xl bg-muted/50">
         <h2 className="scroll-m-20 border-b p-5 text-center text-3xl font-semibold tracking-tight first:mt-0">
           Marketplace
         </h2>
-        <OffersCarousel listings={listings} />
+        <SuggestedListingsCarousel listings={suggestedListings} />
         <div className="flex h-40 w-full items-center justify-center p-8">
           <CreateListingDialog />
         </div>
@@ -48,7 +59,7 @@ function RouteComponent() {
 
 const CategoryCard: React.FC<
   React.ComponentProps<"button"> & { category: ListingCategory }
-> = ({ category, children, ...props }) => {
+> = ({ category, children }) => {
   const cardRotation = 15;
   const cardScale = 1.05;
 
@@ -116,8 +127,8 @@ const CategoryCard: React.FC<
   );
 };
 
-const OffersCarousel: FC<{
-  listings: { title: string; id: number; price: number }[];
+const SuggestedListingsCarousel: FC<{
+  listings: Listing[];
 }> = ({ listings }) => {
   return (
     <>
@@ -161,11 +172,7 @@ const OffersCarousel: FC<{
           {listings.map((lis, i) => {
             return (
               <SwiperSlide key={i}>
-                <PromotionItem
-                  price={lis.price}
-                  id={lis.id}
-                  title={lis.title}
-                />
+                <SuggestedListing listing={lis} />
               </SwiperSlide>
             );
           })}
@@ -175,23 +182,21 @@ const OffersCarousel: FC<{
   );
 };
 
-const PromotionItem: FC<{ price: number; title: string; id: number }> = ({
-  price,
-  title,
-  id,
-}) => {
+const SuggestedListing: FC<{ listing: Listing }> = ({ listing }) => {
   return (
     <Link
       to={"/marketplace/$category/$itemId"}
-      params={{ category: "foo", itemId: id }}
-      className="flex flex-col items-center gap-5 rounded-xl border-background bg-muted-foreground/30 p-6 py-8"
+      params={{ category: listing.category, itemId: listing.id }}
+      className="flex flex-col items-center gap-5 rounded-xl border border-primary bg-secondary p-6 py-10 text-center hover:underline"
     >
-      <div className="aspect-square h-full w-full bg-white"></div>
+      <div className="aspect-square h-full w-full">
+        <img src={listing.picUrl} />
+      </div>
       <h4 className="line-clamp-2 scroll-m-20 text-2xl font-semibold tracking-tight">
-        {title}
+        {listing.title}
       </h4>
       <h4 className="max-w-[6ch] text-center text-xl font-semibold leading-7">
-        ${price}
+        ${listing.price}
       </h4>
     </Link>
   );

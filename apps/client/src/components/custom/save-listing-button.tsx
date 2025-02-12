@@ -4,7 +4,10 @@ import { PiStar, PiStarFill } from "react-icons/pi";
 import { api, type Listing } from "../../lib/api-client";
 import { Button } from "../ui/button";
 
-const SaveListingButton: FC<{ listing: Listing }> = ({ listing }) => {
+const SaveListingButton: FC<{ listing: Listing; inPreview?: boolean }> = ({
+  listing,
+  inPreview,
+}) => {
   const [isSaved, setIsSaved] = useState(listing.isSaved);
   const queryClient = useQueryClient();
   const handleSaveListing = useMutation({
@@ -30,15 +33,18 @@ const SaveListingButton: FC<{ listing: Listing }> = ({ listing }) => {
       setIsSaved((old) => !old);
     },
   });
+  const className = inPreview
+    ? "rounded-full p-6 [&_svg]:size-8 hover:bg-muted-foreground/50"
+    : "rounded-full p-6 [&_svg]:size-6";
   return (
     <Button
       variant={"ghost"}
-      className="rounded-full p-6 [&_svg]:size-6"
+      className={className}
       title="Save"
       disabled={handleSaveListing.isPending}
       onClick={() => handleSaveListing.mutate()}
     >
-      {isSaved ? <PiStarFill /> : <PiStar />} Save
+      {isSaved ? <PiStarFill /> : <PiStar />} {!inPreview && "Save"}
     </Button>
   );
 };

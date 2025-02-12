@@ -14,7 +14,7 @@ import { getUserId } from "../../utils/getters";
 const tags = ["market"];
 
 export const itemId = createRoute({
-  path: "/listings/{itemId}",
+  path: "/listings/listing/{itemId}",
   method: "get",
   tags,
   request: {
@@ -33,7 +33,6 @@ export const itemIdHandler: AppRouteHandler<
   const userId = getUserId(c);
   const { itemId } = c.req.valid("param");
   const listing = await fetchListing(userId, itemId);
-  console.log("🚀 ~ >= ~ listing:", listing);
   if (!listing) return c.json(notFoundError.content, NOT_FOUND);
   return c.json(listing, OK);
 };

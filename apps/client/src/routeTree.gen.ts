@@ -19,6 +19,8 @@ import { Route as AppRoomsIndexImport } from './routes/_app/rooms/index'
 import { Route as AppMarketplaceIndexImport } from './routes/_app/marketplace/index'
 import { Route as AppChatsIndexImport } from './routes/_app/chats/index'
 import { Route as AppUsersUsernameImport } from './routes/_app/users/$username'
+import { Route as AppMarketplaceSavedListingsImport } from './routes/_app/marketplace/savedListings'
+import { Route as AppMarketplaceMyListingsImport } from './routes/_app/marketplace/myListings'
 import { Route as AppChatsChatIdImport } from './routes/_app/chats/$chatId'
 import { Route as AppRoomsRoomNameIndexImport } from './routes/_app/rooms/$roomName/index'
 import { Route as AppMarketplaceCategoryIndexImport } from './routes/_app/marketplace/$category/index'
@@ -71,6 +73,19 @@ const AppChatsIndexRoute = AppChatsIndexImport.update({
 const AppUsersUsernameRoute = AppUsersUsernameImport.update({
   id: '/users/$username',
   path: '/users/$username',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppMarketplaceSavedListingsRoute =
+  AppMarketplaceSavedListingsImport.update({
+    id: '/marketplace/savedListings',
+    path: '/marketplace/savedListings',
+    getParentRoute: () => AppRoute,
+  } as any)
+
+const AppMarketplaceMyListingsRoute = AppMarketplaceMyListingsImport.update({
+  id: '/marketplace/myListings',
+  path: '/marketplace/myListings',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -146,6 +161,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppChatsChatIdImport
       parentRoute: typeof AppImport
     }
+    '/_app/marketplace/myListings': {
+      id: '/_app/marketplace/myListings'
+      path: '/marketplace/myListings'
+      fullPath: '/marketplace/myListings'
+      preLoaderRoute: typeof AppMarketplaceMyListingsImport
+      parentRoute: typeof AppImport
+    }
+    '/_app/marketplace/savedListings': {
+      id: '/_app/marketplace/savedListings'
+      path: '/marketplace/savedListings'
+      fullPath: '/marketplace/savedListings'
+      preLoaderRoute: typeof AppMarketplaceSavedListingsImport
+      parentRoute: typeof AppImport
+    }
     '/_app/users/$username': {
       id: '/_app/users/$username'
       path: '/users/$username'
@@ -209,6 +238,8 @@ declare module '@tanstack/react-router' {
 
 interface AppRouteChildren {
   AppChatsChatIdRoute: typeof AppChatsChatIdRoute
+  AppMarketplaceMyListingsRoute: typeof AppMarketplaceMyListingsRoute
+  AppMarketplaceSavedListingsRoute: typeof AppMarketplaceSavedListingsRoute
   AppUsersUsernameRoute: typeof AppUsersUsernameRoute
   AppChatsIndexRoute: typeof AppChatsIndexRoute
   AppMarketplaceIndexRoute: typeof AppMarketplaceIndexRoute
@@ -221,6 +252,8 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppChatsChatIdRoute: AppChatsChatIdRoute,
+  AppMarketplaceMyListingsRoute: AppMarketplaceMyListingsRoute,
+  AppMarketplaceSavedListingsRoute: AppMarketplaceSavedListingsRoute,
   AppUsersUsernameRoute: AppUsersUsernameRoute,
   AppChatsIndexRoute: AppChatsIndexRoute,
   AppMarketplaceIndexRoute: AppMarketplaceIndexRoute,
@@ -239,6 +272,8 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/chats/$chatId': typeof AppChatsChatIdRoute
+  '/marketplace/myListings': typeof AppMarketplaceMyListingsRoute
+  '/marketplace/savedListings': typeof AppMarketplaceSavedListingsRoute
   '/users/$username': typeof AppUsersUsernameRoute
   '/chats': typeof AppChatsIndexRoute
   '/marketplace': typeof AppMarketplaceIndexRoute
@@ -255,6 +290,8 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/chats/$chatId': typeof AppChatsChatIdRoute
+  '/marketplace/myListings': typeof AppMarketplaceMyListingsRoute
+  '/marketplace/savedListings': typeof AppMarketplaceSavedListingsRoute
   '/users/$username': typeof AppUsersUsernameRoute
   '/chats': typeof AppChatsIndexRoute
   '/marketplace': typeof AppMarketplaceIndexRoute
@@ -272,6 +309,8 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/_app/chats/$chatId': typeof AppChatsChatIdRoute
+  '/_app/marketplace/myListings': typeof AppMarketplaceMyListingsRoute
+  '/_app/marketplace/savedListings': typeof AppMarketplaceSavedListingsRoute
   '/_app/users/$username': typeof AppUsersUsernameRoute
   '/_app/chats/': typeof AppChatsIndexRoute
   '/_app/marketplace/': typeof AppMarketplaceIndexRoute
@@ -290,6 +329,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/chats/$chatId'
+    | '/marketplace/myListings'
+    | '/marketplace/savedListings'
     | '/users/$username'
     | '/chats'
     | '/marketplace'
@@ -305,6 +346,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/chats/$chatId'
+    | '/marketplace/myListings'
+    | '/marketplace/savedListings'
     | '/users/$username'
     | '/chats'
     | '/marketplace'
@@ -320,6 +363,8 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/_app/chats/$chatId'
+    | '/_app/marketplace/myListings'
+    | '/_app/marketplace/savedListings'
     | '/_app/users/$username'
     | '/_app/chats/'
     | '/_app/marketplace/'
@@ -368,6 +413,8 @@ export const routeTree = rootRoute
       "filePath": "_app.tsx",
       "children": [
         "/_app/chats/$chatId",
+        "/_app/marketplace/myListings",
+        "/_app/marketplace/savedListings",
         "/_app/users/$username",
         "/_app/chats/",
         "/_app/marketplace/",
@@ -386,6 +433,14 @@ export const routeTree = rootRoute
     },
     "/_app/chats/$chatId": {
       "filePath": "_app/chats/$chatId.tsx",
+      "parent": "/_app"
+    },
+    "/_app/marketplace/myListings": {
+      "filePath": "_app/marketplace/myListings.tsx",
+      "parent": "/_app"
+    },
+    "/_app/marketplace/savedListings": {
+      "filePath": "_app/marketplace/savedListings.tsx",
       "parent": "/_app"
     },
     "/_app/users/$username": {

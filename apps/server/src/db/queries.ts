@@ -37,7 +37,11 @@ export async function fetchUserData(userId: string) {
       listingsCreated: {
         where: (f, { eq }) => eq(f.sold, false),
       },
-      listingsSaved: { with: { listing: true } },
+      listingsSaved: {
+        with: {
+          listing: { extras: { isSaved: sql<boolean>`true`.as("isSaved") } },
+        },
+      },
     },
     extras: (f) => ({
       totalFeedPosts: sql<number>`${db.$count(totalPostsFromSubs)}::int`
@@ -45,6 +49,15 @@ export async function fetchUserData(userId: string) {
         .as("totalFeedPosts"),
       ...initialFeedQuery(userId),
       ...userStats(userId),
+      favoriteListingsCategory: sql<string>`(
+    SELECT lis.category
+    FROM "savedListings" s
+    JOIN listings lis ON s."listingId" = lis.id
+    WHERE s."userId" = ${userId}
+    GROUP BY lis.category
+    ORDER BY COUNT(*) DESC
+    LIMIT 1
+  )`.as("favorite_listings_category"),
     }),
   });
 
@@ -513,11 +526,42 @@ export async function fetchListingsByCategory(
     })
     .from(listings)
     .innerJoin(users, eq(listings.sellerId, users.id))
-    .where(eq(listings.category, category))
+    .where(and(eq(listings.sold, false), eq(listings.category, category)))
     .orderBy(
       orderBy === "cheapest" ? asc(listings.price) : desc(listings.createdAt)
     );
   return listingsByCategory;
+}
+
+export async function fetchSuggestedListings(
+  userId: string,
+  category: MarketplaceCategory | undefined
+) {
+  let suggestedListings;
+  if (!category) {
+    suggestedListings = await db
+      .select({
+        ...getTableColumns(listings),
+        seller: users.username,
+        ...isSaved(userId, listings.id),
+      })
+      .from(listings)
+      .innerJoin(users, eq(listings.sellerId, users.id))
+      .where(eq(listings.sold, false))
+      .limit(10);
+  } else {
+    suggestedListings = await db
+      .select({
+        ...getTableColumns(listings),
+        seller: users.username,
+        ...isSaved(userId, listings.id),
+      })
+      .from(listings)
+      .innerJoin(users, eq(listings.sellerId, users.id))
+      .where(and(eq(listings.sold, false), eq(listings.category, category)))
+      .limit(10);
+  }
+  return suggestedListings;
 }
 
 export async function insertSavedListing(userId: string, listingId: number) {

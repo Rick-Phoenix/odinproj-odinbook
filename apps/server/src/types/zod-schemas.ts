@@ -73,6 +73,7 @@ export const userDataSchema = userSchema.extend({
   totalListings: z.number(),
   listingsCreated: z.array(listingSchema),
   listingsSaved: z.array(z.object({ listing: listingSchema })),
+  favoriteListingsCategory: z.enum(marketplaceCategories).nullable(),
 });
 
 export const profileSchema = userSchema
