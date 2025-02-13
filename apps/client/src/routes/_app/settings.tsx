@@ -1,3 +1,4 @@
+import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -29,10 +30,7 @@ function RouteComponent() {
         </h2>
         <div className="flex w-full justify-between gap-20 p-5">
           <div className="flex flex-1 flex-col gap-8">
-            <div className="flex size-full flex-col gap-2">
-              <h2 className="text-lg font-semibold">Status</h2>
-              <Textarea defaultValue={user.status || ""} />
-            </div>
+            <StatusEdit />
             <div className="flex size-full flex-col gap-4">
               <h2 className="border-b-2 text-lg font-semibold">
                 Change Password
@@ -67,6 +65,114 @@ function RouteComponent() {
   );
 }
 
+const StatusEdit = () => {
+  const { status } = useUser()!;
+  const queryClient = useQueryClient();
+
+  const form = useForm({
+    defaultValues: {
+      status: status || "",
+    },
+    validators: {
+      onChange: schemas.updateStatusSchema,
+      onSubmitAsync: async ({ value }) => {
+        try {
+          await handleStatusUpdate.mutateAsync(value);
+          return null;
+        } catch (error) {
+          if (errorTypeGuard(error)) return error.message;
+        }
+      },
+    },
+    validatorAdapter: singleErrorsAdapter,
+  });
+
+  const handleStatusUpdate = useMutation({
+    mutationKey: ["userStatus"],
+    mutationFn: async (value: { status: string }) => {
+      const res = await api.users.edit.status.$post({
+        json: { status: value.status },
+      });
+      const resData = await res.json();
+      if ("issues" in resData) {
+        throw new Error(resData.issues[0].message);
+      }
+      return resData;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["user"], (old: User) => ({
+        ...old,
+        status: data.newStatus,
+      }));
+      form.reset();
+    },
+  });
+  return (
+    <form
+      className="flex size-full flex-col gap-2"
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
+      <div className="flex flex-col gap-2">
+        <div className="grid gap-2">
+          <form.Field
+            name="status"
+            children={(field) => {
+              return (
+                <>
+                  <Label htmlFor={field.name} className="text-lg font-semibold">
+                    Status
+                  </Label>
+                  <Textarea
+                    name={field.name}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    required
+                  />
+                  {field.state.meta.isTouched &&
+                    formatFormErrors(field.state.meta.errors)}
+                </>
+              );
+            }}
+          ></form.Field>
+        </div>
+        <form.Subscribe
+          selector={(state) => [
+            state.canSubmit,
+            state.isSubmitting,
+            state.isTouched,
+          ]}
+          children={([canSubmit, isSubmitting, isTouched]) => {
+            return (
+              <Button
+                type="submit"
+                disabled={!canSubmit || !isTouched || isSubmitting}
+                size={"sm"}
+                className="w-fit rounded-xl"
+              >
+                Submit
+              </Button>
+            );
+          }}
+        />
+        <form.Subscribe
+          selector={(state) => [state.errorMap]}
+          children={([errorMap]) =>
+            errorMap.onSubmit ? (
+              <div>
+                <em>{errorMap.onSubmit?.toString()}</em>
+              </div>
+            ) : null
+          }
+        />
+      </div>
+    </form>
+  );
+};
+
 const ProfilePictureEdit = () => {
   const { avatarUrl } = useUser()!;
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -99,7 +205,7 @@ const ProfilePictureEdit = () => {
   });
 
   const handleAvatarUpdate = useMutation({
-    mutationKey: ["userProfile"],
+    mutationKey: ["userAvatar"],
     mutationFn: async (value: { avatar: File }) => {
       const res = await api.users.edit.avatar.$post({
         form: {

@@ -629,3 +629,12 @@ export async function updateUserAvatar(userId: string, avatarUrl: string) {
     .returning({ newAvatarUrl: users.avatarUrl });
   return avatar;
 }
+
+export async function updateUserStatus(userId: string, status: string) {
+  const [newStatus] = await db
+    .update(users)
+    .set({ status })
+    .where(eq(users.id, userId))
+    .returning({ newStatus: users.status });
+  return newStatus;
+}

@@ -5,9 +5,11 @@ import {
   modifyUserProfile,
   modifyUserProfileHandler,
 } from "./users.edit.avatar";
+import { modifyUserStatus, modifyUserStatusHandler } from "./users.edit.status";
 import { user, userHandler } from "./users.user";
 
 export const userRouter = createRouter<AppBindingsWithUser>()
   .openapi(user, userHandler)
   .openapi(getUserProfile, getUserProfileHandler)
-  .openapi(modifyUserProfile, modifyUserProfileHandler);
+  .openapi(modifyUserProfile, modifyUserProfileHandler)
+  .openapi(modifyUserStatus, modifyUserStatusHandler);
