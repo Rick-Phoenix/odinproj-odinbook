@@ -1,5 +1,6 @@
 import { createRouter } from "../../lib/create-app";
 import type { AppBindingsWithUser } from "../../types/app-bindings";
+import { modifyUserPassword, modifyUserPasswordHandler } from "./password";
 import { getUserProfile, getUserProfileHandler } from "./users.$username";
 import {
   modifyUserProfile,
@@ -12,4 +13,5 @@ export const userRouter = createRouter<AppBindingsWithUser>()
   .openapi(user, userHandler)
   .openapi(getUserProfile, getUserProfileHandler)
   .openapi(modifyUserProfile, modifyUserProfileHandler)
-  .openapi(modifyUserStatus, modifyUserStatusHandler);
+  .openapi(modifyUserStatus, modifyUserStatusHandler)
+  .openapi(modifyUserPassword, modifyUserPasswordHandler);

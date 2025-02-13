@@ -10,6 +10,7 @@ import {
   sql,
 } from "drizzle-orm";
 import type { BasicPost, ListingInputs } from "../types/zod-schemas";
+import { hashPassword } from "../utils/password";
 import { lowercase, withCTEColumns } from "./db-methods";
 import db from "./dbConfig";
 import {
@@ -23,6 +24,7 @@ import {
   posts,
   rooms,
   savedListings,
+  sessions,
   subs,
   users,
   type MarketplaceCategory,
@@ -637,4 +639,22 @@ export async function updateUserStatus(userId: string, status: string) {
     .where(eq(users.id, userId))
     .returning({ newStatus: users.status });
   return newStatus;
+}
+
+export async function updateUserPassword(
+  userId: string,
+  sessionId: string,
+  password: string
+) {
+  const hash = await hashPassword(password);
+  const [{ newHash }] = await db
+    .update(users)
+    .set({ hash })
+    .where(eq(users.id, userId))
+    .returning({ newHash: users.hash });
+  if (!newHash) return false;
+  const invalidateSessions = await db
+    .delete(sessions)
+    .where(and(eq(sessions.userId, userId), ne(sessions.id, sessionId)));
+  return true;
 }

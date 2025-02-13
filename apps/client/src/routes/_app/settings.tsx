@@ -31,20 +31,7 @@ function RouteComponent() {
         <div className="flex w-full justify-between gap-20 p-5">
           <div className="flex flex-1 flex-col gap-8">
             <StatusEdit />
-            <div className="flex size-full flex-col gap-4">
-              <h2 className="border-b-2 text-lg font-semibold">
-                Change Password
-              </h2>
-              <Label htmlFor="oldpw">Old Password</Label>
-              <Input name="oldpw" type="password" />
-              <Label htmlFor="newpw">New Password</Label>
-              <Input name="newpw" type="password" />
-              <Label htmlFor="pwconfirm">Confirm New Password</Label>
-              <Input name="pwconfirm" type="password" />
-              <Button className="w-fit rounded-xl" size={"sm"}>
-                Submit
-              </Button>
-            </div>
+            <PasswordEdit />
             <div className="flex size-full flex-col gap-2">
               <h2 className="mb-1 w-fit border-b-2 font-semibold text-red-800">
                 Delete Account
@@ -65,9 +52,156 @@ function RouteComponent() {
   );
 }
 
+const PasswordEdit = () => {
+  const { toast } = useToast();
+  const form = useForm({
+    defaultValues: {
+      oldPassword: "",
+      newPassword: "",
+      passConfirm: "",
+    },
+    validators: {
+      onSubmit: schemas.updatePasswordSchema,
+      onSubmitAsync: async ({ value }) => {
+        try {
+          await handlePasswordChange.mutateAsync(value);
+          return null;
+        } catch (error) {
+          if (errorTypeGuard(error)) return error.message;
+        }
+      },
+    },
+    validatorAdapter: singleErrorsAdapter,
+  });
+
+  const handlePasswordChange = useMutation({
+    mutationKey: ["userPassword"],
+    mutationFn: async (value: {
+      oldPassword: string;
+      newPassword: string;
+      passConfirm: string;
+    }) => {
+      const res = await api.users.edit.password.$post({
+        json: { ...value },
+      });
+      const resData = await res.json();
+      if (typeof resData !== "string" && "issues" in resData) {
+        throw new Error(resData.issues[0].message);
+      }
+      return resData;
+    },
+    onSuccess: () => {
+      toast({ title: "Password changed successfully.", duration: 4000 });
+      form.reset();
+    },
+  });
+  return (
+    <form
+      className="flex size-full flex-col gap-4"
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
+      <h2 className="border-b-2 text-lg font-semibold">Change Password</h2>
+
+      <div className="flex flex-col gap-2">
+        <div className="grid gap-2">
+          <form.Field
+            name="oldPassword"
+            children={(field) => {
+              return (
+                <>
+                  <Label htmlFor={field.name}>Old Password</Label>
+                  <Input
+                    name={field.name}
+                    type="password"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    required
+                  />
+                </>
+              );
+            }}
+          ></form.Field>
+        </div>
+        <div className="grid gap-2">
+          <form.Field
+            name="newPassword"
+            children={(field) => {
+              return (
+                <>
+                  <Label htmlFor={field.name}>New Password</Label>
+                  <Input
+                    name={field.name}
+                    type="password"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    required
+                  />
+                </>
+              );
+            }}
+          ></form.Field>
+        </div>{" "}
+        <div className="grid gap-2">
+          <form.Field
+            name="passConfirm"
+            children={(field) => {
+              return (
+                <>
+                  <Label htmlFor={field.name}>Confirm New Password</Label>
+                  <Input
+                    name={field.name}
+                    type="password"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    required
+                  />
+                </>
+              );
+            }}
+          ></form.Field>
+        </div>
+        <form.Subscribe
+          selector={(state) => [
+            state.canSubmit,
+            state.isSubmitting,
+            state.isTouched,
+          ]}
+          children={([canSubmit, isSubmitting, isTouched]) => {
+            return (
+              <Button
+                type="submit"
+                disabled={!canSubmit || !isTouched || isSubmitting}
+                size={"sm"}
+                className="w-fit rounded-xl"
+              >
+                Submit
+              </Button>
+            );
+          }}
+        />
+        <form.Subscribe
+          selector={(state) => [state.errorMap]}
+          children={([errorMap]) =>
+            errorMap.onSubmit ? (
+              <div>
+                <em>{errorMap.onSubmit?.toString()}</em>
+              </div>
+            ) : null
+          }
+        />
+      </div>
+    </form>
+  );
+};
+
 const StatusEdit = () => {
   const { status } = useUser()!;
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const form = useForm({
     defaultValues: {
@@ -105,6 +239,7 @@ const StatusEdit = () => {
         status: data.newStatus,
       }));
       form.reset();
+      toast({ title: "Status changed successfully.", duration: 4000 });
     },
   });
   return (
@@ -153,7 +288,7 @@ const StatusEdit = () => {
                 size={"sm"}
                 className="w-fit rounded-xl"
               >
-                Submit
+                Change Status
               </Button>
             );
           }}
@@ -223,7 +358,7 @@ const ProfilePictureEdit = () => {
         ...user,
         avatarUrl: data.newAvatarUrl,
       })),
-        toast({ title: "Profile Picture Updated.", duration: 2000 });
+        toast({ title: "Profile Picture Updated.", duration: 4000 });
     },
   });
 

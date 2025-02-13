@@ -248,7 +248,9 @@ export const rooms = pgTable(
     createdAt: timestamp("createdAt", { mode: "string" })
       .defaultNow()
       .notNull(),
-    creatorId: text("creatorId").references(() => users.id),
+    creatorId: text("creatorId").references(() => users.id, {
+      onDelete: "cascade",
+    }),
     category: roomsCategoriesEnum().notNull(),
     avatar: text("avatar")
       .notNull()
@@ -309,7 +311,7 @@ export const posts = pgTable(
       .references(() => rooms.name, { onDelete: "cascade" }),
     authorId: text("authorId")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
     text: text("text").notNull(),
     createdAt: timestamp("createdAt", { mode: "string" })
@@ -345,7 +347,7 @@ export const comments = pgTable(
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
     userId: text("userId")
       .notNull()
-      .references(() => users.id),
+      .references(() => users.id, { onDelete: "cascade" }),
     postId: integer("postId")
       .references(() => posts.id, { onDelete: "cascade" })
       .notNull(),

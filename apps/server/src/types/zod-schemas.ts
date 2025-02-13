@@ -245,13 +245,24 @@ export const updateAvatarSchema = z.object({
     ),
 });
 
-export const updatePasswordSchema = z.object({
-  newpw: z
-    .string()
-    .min(8, "Password must be at least 8 characters long.")
-    .regex(
-      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ .%^&*-]).{8,}$/,
-      "Password must contain at least one uppercase letter, one lowercase letter, a number and a special character."
-    )
-    .max(255, "Password cannot be longer than 255 characters."),
-});
+export const passwordSchema = z
+  .string()
+  .min(8, "The password must be at least 8 characters long.")
+  .regex(
+    /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ .%^&*-]).{8,}$/,
+    "The password must contain at least one uppercase letter, one lowercase letter, a number and a special character."
+  )
+  .max(255, "The password cannot be longer than 255 characters.");
+
+export const updatePasswordSchema = z
+  .object({
+    oldPassword: z
+      .string()
+      .refine((v) => passwordSchema.safeParse(v).success, "Invalid password."),
+    newPassword: passwordSchema,
+    passConfirm: z.string(),
+  })
+  .refine(
+    ({ newPassword, passConfirm }) => newPassword === passConfirm,
+    "The passwords do not coincide."
+  );
