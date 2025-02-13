@@ -42,7 +42,6 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
     validators: {
       onChange: schemas.insertRoomSchema,
       onSubmitAsync: async ({ value }) => {
-        console.log(value);
         try {
           await handleCreateRoom.mutateAsync(value);
           return null;
@@ -78,7 +77,6 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
         },
       });
       const resData = await res.json();
-      console.log(resData);
       if ("issues" in resData) {
         throw new Error(resData.issues[0].message);
       }
@@ -180,7 +178,6 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
                         name={field.name}
                         type="file"
                         accept="image/png, image/jpeg"
-                        multiple={true}
                         onChange={(e) => {
                           const file = e.target.files?.[0];
                           form.setFieldValue("avatar", file);

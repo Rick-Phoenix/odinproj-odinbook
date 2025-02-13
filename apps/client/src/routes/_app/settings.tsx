@@ -1,0 +1,188 @@
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createFileRoute } from "@tanstack/react-router";
+import { Pencil } from "lucide-react";
+import { useRef } from "react";
+import InsetScrollArea from "../../components/custom/inset-scrollarea";
+import { Button } from "../../components/ui/button";
+import { Input } from "../../components/ui/input";
+import { Label } from "../../components/ui/label";
+import { Textarea } from "../../components/ui/textarea";
+import { useUser } from "../../hooks/auth";
+import { useToast } from "../../hooks/use-toast";
+import { api, type User } from "../../lib/api-client";
+import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
+import { errorTypeGuard } from "../../utils/type-guards";
+
+export const Route = createFileRoute("/_app/settings")({
+  component: RouteComponent,
+});
+
+function RouteComponent() {
+  const user = useUser()!;
+
+  return (
+    <InsetScrollArea>
+      <section className="flex min-h-[75svh] max-w-full flex-col rounded-xl bg-muted/50">
+        <h2 className="mb-3 w-full scroll-m-20 border-b p-5 text-center text-3xl font-semibold tracking-tight first:mt-0">
+          Settings
+        </h2>
+        <div className="flex w-full justify-between gap-20 p-5">
+          <div className="flex flex-1 flex-col gap-8">
+            <div className="flex size-full flex-col gap-2">
+              <h2 className="text-lg font-semibold">Status</h2>
+              <Textarea defaultValue={user.status || ""} />
+            </div>
+            <div className="flex size-full flex-col gap-4">
+              <h2 className="border-b-2 text-lg font-semibold">
+                Change Password
+              </h2>
+              <Label htmlFor="oldpw">Old Password</Label>
+              <Input name="oldpw" type="password" />
+              <Label htmlFor="newpw">New Password</Label>
+              <Input name="newpw" type="password" />
+              <Label htmlFor="pwconfirm">Confirm New Password</Label>
+              <Input name="pwconfirm" type="password" />
+              <Button className="w-fit rounded-xl" size={"sm"}>
+                Submit
+              </Button>
+            </div>
+            <div className="flex size-full flex-col gap-2">
+              <h2 className="mb-1 w-fit border-b-2 font-semibold text-red-800">
+                Delete Account
+              </h2>
+              <Button
+                variant={"destructive"}
+                size={"sm"}
+                className="w-fit rounded-xl px-3"
+              >
+                Delete
+              </Button>
+            </div>
+          </div>
+          <ProfilePictureEdit />
+        </div>
+      </section>
+    </InsetScrollArea>
+  );
+}
+
+const ProfilePictureEdit = () => {
+  const { avatarUrl } = useUser()!;
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+
+  const handleImageUpload = () => {
+    fileInputRef.current?.click();
+  };
+
+  const form = useForm({
+    defaultValues: {
+      avatar: undefined as any as File | undefined,
+    },
+    validators: {
+      onSubmitAsync: async ({ value }) => {
+        if (!value.avatar) return "";
+        if (!(value.avatar instanceof File)) return "Invalid file format.";
+        if (value.avatar.size > 1000000)
+          return "The profile picture must be 1 megabyte or smaller.";
+        try {
+          await handleAvatarUpdate.mutateAsync(value as { avatar: File });
+          return null;
+        } catch (error) {
+          if (errorTypeGuard(error)) return error.message;
+        }
+      },
+    },
+    validatorAdapter: singleErrorsAdapter,
+  });
+
+  const handleAvatarUpdate = useMutation({
+    mutationKey: ["userProfile"],
+    mutationFn: async (value: { avatar: File }) => {
+      const res = await api.users.edit.avatar.$post({
+        form: {
+          avatar: value.avatar,
+        },
+      });
+      const resData = await res.json();
+      if ("issues" in resData) {
+        throw new Error(resData.issues[0].message);
+      }
+      return resData;
+    },
+    onSuccess: (data) => {
+      queryClient.setQueryData(["user"], (user: User) => ({
+        ...user,
+        avatarUrl: data.newAvatarUrl,
+      })),
+        toast({ title: "Profile Picture Updated.", duration: 2000 });
+    },
+  });
+
+  return (
+    <>
+      <form
+        className="relative flex h-fit flex-col gap-2 text-center"
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <div className="relative flex h-fit flex-col gap-2 text-center">
+          <h2 className="text-lg font-semibold">Profile Picture</h2>
+          <img src={avatarUrl} className="size-44 rounded-full" />
+          <Button
+            size={"sm"}
+            type="button"
+            className="absolute bottom-0 left-2 w-fit rounded-xl px-2"
+            onClick={handleImageUpload}
+          >
+            <Pencil /> Edit
+          </Button>
+        </div>
+        <div className="flex flex-col gap-6">
+          <div className="grid gap-2">
+            <form.Field
+              name="avatar"
+              children={(field) => {
+                return (
+                  <>
+                    <Input
+                      ref={fileInputRef}
+                      name={field.name}
+                      type="file"
+                      accept="image/png, image/jpeg"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          form.setFieldValue("avatar", file);
+                          form.handleSubmit();
+                        }
+                      }}
+                    />
+                    {field.state.meta.isTouched &&
+                      formatFormErrors(field.state.meta.errors)}
+                  </>
+                );
+              }}
+            ></form.Field>
+          </div>
+        </div>
+        <form.Subscribe
+          selector={(state) => [state.errorMap]}
+          children={([errorMap]) =>
+            errorMap.onSubmit ? (
+              <div className="max-w-44 break-normal">
+                <em>{errorMap.onSubmit?.toString()}</em>
+              </div>
+            ) : null
+          }
+        />
+      </form>
+    </>
+  );
+};

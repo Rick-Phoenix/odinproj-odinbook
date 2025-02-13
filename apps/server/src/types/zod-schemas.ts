@@ -217,8 +217,8 @@ export const insertListingSchema = z.object({
   pic: z
     .instanceof(File)
     .refine(
-      (file) => file.size <= 30000,
-      "The picture cannot be larger than 3 megabytes."
+      (file) => file.size <= 1000000,
+      "The picture cannot be larger than one megabyte."
     )
     .optional(),
 });
@@ -228,4 +228,30 @@ export type ListingInputs = Omit<z.infer<typeof insertListingSchema>, "pic"> & {
 
 export const insertMessageSchema = z.object({
   text: z.string().min(1).max(1000),
+});
+
+export const updateStatusSchema = z.object({
+  status: z
+    .string()
+    .max(100, "The status cannot be longer than 100 characters."),
+});
+
+export const updateAvatarSchema = z.object({
+  avatar: z
+    .instanceof(File)
+    .refine(
+      (file) => file.size <= 1000000,
+      "The profile picture cannot be larger than 1 megabyte."
+    ),
+});
+
+export const updatePasswordSchema = z.object({
+  newpw: z
+    .string()
+    .min(8, "Password must be at least 8 characters long.")
+    .regex(
+      /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$ .%^&*-]).{8,}$/,
+      "Password must contain at least one uppercase letter, one lowercase letter, a number and a special character."
+    )
+    .max(255, "Password cannot be longer than 255 characters."),
 });

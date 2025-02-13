@@ -620,3 +620,12 @@ export async function insertComment(
     .returning();
   return { ...comment, isLiked: true };
 }
+
+export async function updateUserAvatar(userId: string, avatarUrl: string) {
+  const [avatar] = await db
+    .update(users)
+    .set({ avatarUrl })
+    .where(eq(users.id, userId))
+    .returning({ newAvatarUrl: users.avatarUrl });
+  return avatar;
+}
