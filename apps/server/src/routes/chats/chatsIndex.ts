@@ -12,8 +12,8 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { chatSchema } from "../../types/zod-schemas";
-import { customError, internalServerError } from "../../utils/customErrors";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
+import { customError, internalServerError } from "../../utils/response-schemas";
 
 const tags = ["chats"];
 

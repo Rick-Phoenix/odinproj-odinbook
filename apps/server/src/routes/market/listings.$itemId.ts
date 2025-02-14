@@ -8,8 +8,8 @@ import type {
 } from "../../types/app-bindings";
 import { numberParamSchema } from "../../types/schema-helpers";
 import { listingSchema } from "../../types/zod-schemas";
-import { notFoundError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
+import { notFoundError } from "../../utils/response-schemas";
 
 const tags = ["market"];
 

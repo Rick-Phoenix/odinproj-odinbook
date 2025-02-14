@@ -14,11 +14,11 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { updateAvatarSchema } from "../../types/zod-schemas";
+import { inputErrorResponse } from "../../utils/inputErrorResponse";
 import {
   accessDeniedError,
   internalServerError,
-} from "../../utils/customErrors";
-import { inputErrorResponse } from "../../utils/inputErrorResponse";
+} from "../../utils/response-schemas";
 
 const tags = ["users"];
 

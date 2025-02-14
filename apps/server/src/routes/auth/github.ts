@@ -1,4 +1,4 @@
-import { internalServerError } from "@/utils/customErrors";
+import { internalServerError } from "@/utils/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
 import { encodeBase64 } from "@oslojs/encoding";
 import { webcrypto } from "crypto";

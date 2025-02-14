@@ -128,7 +128,6 @@ function RouteComponent() {
             ) : listing.seller !== username ? (
               <>
                 <div className="mt-2 flex gap-3">
-                  <Button>Buy</Button>
                   <Button onClick={handleSendMessage}>Contact</Button>
                 </div>
                 <div className="mt-2 flex gap-3">

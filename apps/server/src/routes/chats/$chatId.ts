@@ -16,8 +16,8 @@ import {
   insertMessageSchema,
   messagesSchema,
 } from "../../types/zod-schemas";
-import { internalServerError } from "../../utils/customErrors";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
+import { internalServerError } from "../../utils/response-schemas";
 
 const tags = ["chats"];
 

@@ -7,7 +7,7 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { userDataSchema } from "../../types/zod-schemas";
-import { accessDeniedError } from "../../utils/customErrors";
+import { accessDeniedError } from "../../utils/response-schemas";
 
 const tags = ["users"];
 

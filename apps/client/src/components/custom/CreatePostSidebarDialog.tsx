@@ -98,7 +98,9 @@ export const CreatePostSidebarDialog = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         {!subs?.length ? (
-          <div>You must subscribe to a room before creating a post.</div>
+          <div className="p-1 italic">
+            You must subscribe to a room before creating a post.
+          </div>
         ) : (
           <>
             <DialogHeader>

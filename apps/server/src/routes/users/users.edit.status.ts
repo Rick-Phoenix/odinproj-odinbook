@@ -7,8 +7,8 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { updateStatusSchema } from "../../types/zod-schemas";
-import { internalServerError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
+import { internalServerError } from "../../utils/response-schemas";
 
 const tags = ["users"];
 

@@ -7,13 +7,14 @@ export const chatsQueryOptions = {
     const res = await api.chats.$get();
     const data = await res.json();
     if ("issues" in data) throw Error("Server Error");
-    if (data.length > 0)
+    if (data.length)
       for (const chat of data) {
         cacheChat(chat);
       }
     return data;
   },
 };
+
 export function cacheChat(chat: Chat) {
   queryClient.setMutationDefaults(["chat", chat.id], {
     mutationFn: async ({ text }: { text: string }) => {
@@ -59,5 +60,6 @@ chatWebSocket.addEventListener("message", (e) => {
   queryClient.invalidateQueries({
     queryKey: ["chat", chatId],
     exact: true,
+    refetchType: "all",
   });
 });

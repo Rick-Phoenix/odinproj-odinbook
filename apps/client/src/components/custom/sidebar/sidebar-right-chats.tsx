@@ -1,30 +1,25 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { Link, useParams } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
-import { useActivePage } from "../../../hooks/use-active-page";
-import type { Chat } from "../../../lib/api-client";
 import { chatsQueryOptions } from "../../../lib/chatQueries";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { SidebarMenu, SidebarMenuButton } from "../../ui/sidebar";
-import ChatDialog from "../chat-dialog";
-import SidebarSkeleton from "./sidebar-skeleton";
+import CreateChatDialog from "../CreateChatDialog";
 
 const ChatsSidebarContent = () => {
-  const { subSection, mainSection, activePage } = useActivePage();
   const { data: chats } = useSuspenseQuery(chatsQueryOptions);
 
-  if (subSection) return <ChatSidebarContent />;
   return (
     <>
-      {mainSection === activePage && (
+      {
         <SidebarMenu>
-          <ChatDialog>
+          <CreateChatDialog>
             <Button variant={"outline"} size={"lg"} className="[&_svg]:size-5">
               <Plus />
               <span>Create Chat</span>
             </Button>
-          </ChatDialog>
+          </CreateChatDialog>
 
           <ul className="flex flex-col justify-center gap-2 pt-6">
             {chats.map((chat) => (
@@ -49,42 +44,9 @@ const ChatsSidebarContent = () => {
             ))}
           </ul>
         </SidebarMenu>
-      )}
+      }
     </>
   );
 };
 
-const ChatSidebarContent = () => {
-  const chatParams = useParams({
-    from: "/_app/chats/$chatId",
-    shouldThrow: false,
-  });
-  const chatId = chatParams?.chatId;
-  const {
-    data: { contact },
-  } = useSuspenseQuery<Chat>({ queryKey: ["chat", chatId] });
-
-  if (!contact) return <SidebarSkeleton />;
-
-  return (
-    <>
-      <div className="flex h-32 p-6 pb-0 center">
-        <Avatar className="h-full w-auto">
-          <AvatarImage
-            src={contact.avatarUrl}
-            alt={`${contact.username} profile picture`}
-          />
-        </Avatar>
-      </div>
-      <div className="p-4 text-center text-lg font-semibold">
-        {contact.username}
-      </div>
-      <Button className="mx-2" variant={"outline"} asChild>
-        <Link to={"/users/$username"} params={{ username: contact.username }}>
-          View Profile
-        </Link>
-      </Button>
-    </>
-  );
-};
 export default ChatsSidebarContent;

@@ -25,24 +25,28 @@ export const userQueryOptions = {
     const initialFeedTrending: PostBasic[] = [];
     const initialFeedNewest: PostBasic[] = [];
 
-    for (const room of rooms) {
-      queryClient.setQueryData(["roomPreview", room.name], room);
-      queryClient.setQueryData(["roomSubs"], (old: string[] | undefined) =>
-        !old ? [room.name] : [...old, room.name],
-      );
+    if (rooms) {
+      for (const room of rooms) {
+        queryClient.setQueryData(["roomPreview", room.name], room);
+        queryClient.setQueryData(["roomSubs"], (old: string[] | undefined) =>
+          !old ? [room.name] : [...old, room.name],
+        );
+      }
     }
 
     queryClient.setQueryData(["suggestedRooms"], suggestedRooms);
 
-    posts.forEach((post, i) => {
-      if (i < 20) initialFeedTrending.push(post);
-      else initialFeedNewest.push(post);
-      queryClient.setQueryData(["post", post.id], post);
-      queryClient.setQueryData(["postLikes", post.id], {
-        isLiked: post.isLiked,
-        likesCount: post.likesCount,
+    if (posts) {
+      posts.forEach((post, i) => {
+        if (i < 20) initialFeedTrending.push(post);
+        else initialFeedNewest.push(post);
+        queryClient.setQueryData(["post", post.id], post);
+        queryClient.setQueryData(["postLikes", post.id], {
+          isLiked: post.isLiked,
+          likesCount: post.likesCount,
+        });
       });
-    });
+    }
 
     queryClient.setQueryData(["initialFeed", "likesCount"], {
       posts: initialFeedTrending,

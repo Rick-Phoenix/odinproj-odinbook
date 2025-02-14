@@ -14,13 +14,13 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { updatePasswordSchema } from "../../types/zod-schemas";
+import { inputErrorResponse } from "../../utils/inputErrorResponse";
+import { verifyPasswordHash } from "../../utils/password";
 import {
   accessDeniedError,
   customError,
   internalServerError,
-} from "../../utils/customErrors";
-import { inputErrorResponse } from "../../utils/inputErrorResponse";
-import { verifyPasswordHash } from "../../utils/password";
+} from "../../utils/response-schemas";
 
 const tags = ["users"];
 

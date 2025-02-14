@@ -6,6 +6,7 @@ import {
   postMessage,
   postMessageHandler,
 } from "./$chatId";
+import { removeChat, removeChatHandler } from "./chats.delete";
 import {
   chatsIndexHandler,
   createChat,
@@ -17,4 +18,5 @@ export const chatRouter = createRouter<AppBindingsWithUser>()
   .openapi(getChats, chatsIndexHandler)
   .openapi(postMessage, postMessageHandler)
   .openapi(getChat, getChatHandler)
-  .openapi(createChat, createChatHandler);
+  .openapi(createChat, createChatHandler)
+  .openapi(removeChat, removeChatHandler);

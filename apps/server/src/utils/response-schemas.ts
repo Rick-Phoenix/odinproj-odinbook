@@ -82,3 +82,15 @@ export const internalServerError = customError(
 );
 
 export const notFoundError = customError({ message: "Not Found." }, NOT_FOUND);
+
+export const okResponse = {
+  template: {
+    content: {
+      "application/json": {
+        schema: z.object({ success: z.literal(true) }),
+      },
+    },
+    description: "A confirmation message.",
+  },
+  content: { success: true } as const,
+};

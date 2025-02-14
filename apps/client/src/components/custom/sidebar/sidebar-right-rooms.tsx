@@ -23,7 +23,8 @@ const RoomsIndexSidebarContent = () => {
     totalListings,
   } = useUser()!;
   const queryClient = useQueryClient();
-  const suggestedRooms = queryClient.getQueryData(["suggestedRooms"]) as Room[];
+  const suggestedRooms =
+    (queryClient.getQueryData(["suggestedRooms"]) as Room[]) || null;
   return (
     <>
       {activePage === mainSection && (
@@ -36,13 +37,14 @@ const RoomsIndexSidebarContent = () => {
             </h4>
 
             <ul className="flex flex-col justify-center gap-2 pt-6">
-              {suggestedRooms.map((room) => (
-                <SuggestedRoom
-                  key={room.name}
-                  roomAvatar={room.avatar}
-                  roomName={room.name}
-                />
-              ))}
+              {suggestedRooms &&
+                suggestedRooms.map((room) => (
+                  <SuggestedRoom
+                    key={room.name}
+                    roomAvatar={room.avatar}
+                    roomName={room.name}
+                  />
+                ))}
             </ul>
           </div>
           <SidebarSeparator className="mx-0" />

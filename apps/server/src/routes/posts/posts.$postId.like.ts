@@ -7,8 +7,8 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { numberParamSchema } from "../../types/schema-helpers";
-import { internalServerError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
+import { internalServerError } from "../../utils/response-schemas";
 
 const tags = ["posts", "likes"];
 

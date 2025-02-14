@@ -8,7 +8,7 @@ import db from "../db/dbConfig";
 import { sessions, users } from "../db/schema";
 import { invalidateSession } from "../lib/auth";
 import type { AppContext, AppMiddleware } from "../types/app-bindings";
-import { alreadyLoggedError } from "../utils/customErrors";
+import { alreadyLoggedError } from "../utils/response-schemas";
 
 export const protectRoute: AppMiddleware = async (c, next) => {
   if (c.req.path.startsWith("/api/auth")) return await next();

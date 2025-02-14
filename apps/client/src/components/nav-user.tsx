@@ -1,19 +1,11 @@
 "use client";
 
-import {
-  BadgeCheck,
-  Bell,
-  ChevronsUpDown,
-  CreditCard,
-  LogOut,
-  Sparkles,
-} from "lucide-react";
+import { ChevronsUpDown, LogOut, SquareUserRound } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
@@ -64,45 +56,16 @@ export function NavUser() {
                 params={{ username: user?.username }}
                 className="flex items-center gap-2 px-1 py-1.5 text-left text-sm"
               >
-                <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage
-                    src={user?.avatarUrl || "/avatar/shadcn"}
-                    alt={user?.username || "no user"}
-                  />
-                  <AvatarFallback className="rounded-lg">NX</AvatarFallback>
-                </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-semibold">
-                    {user?.username || "nouser"}
+                  <span className="flex items-center gap-2 truncate font-semibold">
+                    <SquareUserRound /> View Profile
                   </span>
-                  <span className="truncate text-xs">
-                    {user?.email || "noemail"}
-                  </span>
+                  {user.email && (
+                    <span className="truncate text-xs">{user.email}</span>
+                  )}
                 </div>
               </Link>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <BadgeCheck />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem onClick={handleLogout}>
               <LogOut />

@@ -10,9 +10,9 @@ import type {
   AppBindingsWithUser,
   AppRouteHandler,
 } from "../../types/app-bindings";
-import { internalServerError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
+import { internalServerError } from "../../utils/response-schemas";
 
 const tags = ["market"];
 

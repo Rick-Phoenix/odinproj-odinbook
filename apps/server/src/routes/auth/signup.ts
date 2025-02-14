@@ -1,4 +1,4 @@
-import { alreadyLoggedError } from "@/utils/customErrors";
+import { alreadyLoggedError } from "@/utils/response-schemas";
 import { createRoute } from "@hono/zod-openapi";
 import { webcrypto } from "crypto";
 import {
@@ -13,9 +13,9 @@ import { users } from "../../db/schema";
 import { createSession } from "../../lib/auth";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import { insertUserSchema, userSchema } from "../../types/zod-schemas";
-import { customError } from "../../utils/customErrors";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
 import { hashPassword } from "../../utils/password";
+import { customError } from "../../utils/response-schemas";
 
 const tags = ["auth"];
 

@@ -3,7 +3,7 @@ import { OK, UNAUTHORIZED } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { invalidateSession } from "../../lib/auth";
 import type { AppRouteHandler } from "../../types/app-bindings";
-import { customError } from "../../utils/customErrors";
+import { customError } from "../../utils/response-schemas";
 
 const tags = ["auth"];
 

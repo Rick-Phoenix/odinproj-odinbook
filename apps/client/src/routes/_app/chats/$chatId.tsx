@@ -99,7 +99,7 @@ const Chat: FC<{
     const scrollArea = viewportRef.current!;
     scrollArea.scroll({ behavior: "instant", top: scrollArea.scrollHeight });
     inputRef.current!.focus();
-  }, []);
+  }, [chatId]);
 
   return (
     <StaticInset>

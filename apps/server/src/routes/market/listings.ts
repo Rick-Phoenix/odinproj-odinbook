@@ -17,9 +17,9 @@ import {
   listingSchema,
   marketplaceCategories,
 } from "../../types/zod-schemas";
-import { internalServerError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
+import { internalServerError } from "../../utils/response-schemas";
 
 const tags = ["market"];
 

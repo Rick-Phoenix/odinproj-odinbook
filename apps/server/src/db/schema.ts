@@ -79,6 +79,9 @@ export const chatInstances = pgTable(
     chatId: integer("chatId")
       .references(() => chats.id, { onDelete: "cascade" })
       .notNull(),
+    createdAt: timestamp("createdAt", { mode: "string" })
+      .defaultNow()
+      .notNull(),
   },
   (t) => [
     primaryKey({

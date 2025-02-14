@@ -9,9 +9,9 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { insertRoomSchema, roomSchema } from "../../types/zod-schemas";
-import { customError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
+import { customError } from "../../utils/response-schemas";
 
 const tags = ["rooms"];
 

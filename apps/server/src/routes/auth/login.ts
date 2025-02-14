@@ -1,4 +1,4 @@
-import { alreadyLoggedError } from "@/utils/customErrors";
+import { alreadyLoggedError } from "@/utils/response-schemas";
 import { createRoute } from "@hono/zod-openapi";
 import { verifySync } from "@node-rs/argon2";
 import {
@@ -14,8 +14,8 @@ import db from "../../db/dbConfig";
 import { createSession } from "../../lib/auth";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import { loginValidationSchema, userSchema } from "../../types/zod-schemas";
-import { customError } from "../../utils/customErrors";
 import { inputErrorResponse } from "../../utils/inputErrorResponse";
+import { customError } from "../../utils/response-schemas";
 
 const tags = ["auth"];
 

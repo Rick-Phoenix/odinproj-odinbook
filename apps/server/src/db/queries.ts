@@ -145,6 +145,7 @@ export async function getUserChats(userId: string) {
       chat: { with: { messages: true } },
     },
     columns: {},
+    orderBy: (f) => desc(f.createdAt),
   });
 
   if (chats.length === 0) return chats;
@@ -653,8 +654,19 @@ export async function updateUserPassword(
     .where(eq(users.id, userId))
     .returning({ newHash: users.hash });
   if (!newHash) return false;
-  const invalidateSessions = await db
+  await db
     .delete(sessions)
     .where(and(eq(sessions.userId, userId), ne(sessions.id, sessionId)));
+  return true;
+}
+
+export async function deleteChat(userId: string, chatId: number) {
+  const query = await db
+    .delete(chatInstances)
+    .where(
+      and(eq(chatInstances.chatId, chatId), eq(chatInstances.ownerId, userId))
+    );
+  if (!query.rowCount) return false;
+
   return true;
 }

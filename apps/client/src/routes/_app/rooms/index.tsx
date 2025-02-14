@@ -47,6 +47,8 @@ function RouteComponent() {
     likes: initialPosts.at(-1)?.likesCount,
   };
 
+  console.log(totalPosts);
+
   const feedQuery = useInfiniteQuery({
     queryKey: ["feed", orderBy],
     queryFn: async (c) => {

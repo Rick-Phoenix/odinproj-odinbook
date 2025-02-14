@@ -1,12 +1,30 @@
 import { chatsQueryOptions } from "@/lib/chatQueries";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SquarePen } from "lucide-react";
-import type { FC } from "react";
-import ChatDialog from "../../../components/custom/chat-dialog";
+import { type FC } from "react";
+import CreateChatDialog from "../../../components/custom/CreateChatDialog";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../../../components/ui/alert-dialog";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "../../../components/ui/context-menu";
+import { useReactiveQueries } from "../../../hooks/useReactiveQueries";
+import { api, type Chat } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/chats/")({
   component: RouteComponent,
@@ -16,13 +34,21 @@ export const Route = createFileRoute("/_app/chats/")({
 });
 
 function RouteComponent() {
-  const { data: chats } = useSuspenseQuery(chatsQueryOptions);
+  const chats = useReactiveQueries(["chat"]);
+  const sortedChats = chats
+    .map((tup) => tup[1] as Chat)
+    .sort((a, b) => {
+      const lastMessageA = a.messages.at(-1)?.createdAt || 0;
+      const lastMessageB = b.messages.at(-1)?.createdAt || 0;
+      return new Date(lastMessageA) > new Date(lastMessageB) ? -1 : 1;
+    });
+
   return (
     <InsetScrollArea>
       <section className="grid min-h-[75vh] max-w-full flex-1 grid-cols-1 grid-rows-6 gap-4 rounded-xl bg-muted/50 p-4">
         <header className="flex h-28 w-full items-center justify-between rounded-xl bg-muted-foreground/30 p-8 hover:text-foreground">
           <h2 className="text-3xl font-semibold">Chats</h2>
-          <ChatDialog>
+          <CreateChatDialog>
             <Button
               variant={"ghost"}
               size={"icon"}
@@ -31,18 +57,19 @@ function RouteComponent() {
             >
               <SquarePen />
             </Button>
-          </ChatDialog>
+          </CreateChatDialog>
         </header>
-        {chats.length > 0 &&
-          chats.map((chat) => (
-            <ChatPreview
-              key={chat.id}
-              contactName={chat.contact.username}
-              contactAvatar={chat.contact.avatarUrl}
-              lastMessage={chat.messages.at(-1)?.text}
-              chatId={chat.id}
-            />
-          ))}
+        {sortedChats.length
+          ? sortedChats.map((chat) => (
+              <ChatPreview
+                key={chat.id}
+                contactName={chat.contact.username}
+                contactAvatar={chat.contact.avatarUrl}
+                lastMessage={chat.messages.at(-1)?.text}
+                chatId={chat.id}
+              />
+            ))
+          : null}
       </section>
     </InsetScrollArea>
   );
@@ -54,24 +81,71 @@ const ChatPreview: FC<{
   lastMessage: string | undefined;
   chatId: number;
 }> = ({ contactName, contactAvatar, lastMessage, chatId }) => {
+  const queryClient = useQueryClient();
+  const handleDelete = useMutation({
+    mutationKey: ["chatDelete", chatId],
+    mutationFn: async () => {
+      const res = await api.chats.delete[":chatId"].$delete({
+        param: { chatId },
+      });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("Could not delete this chat.");
+      }
+      return data;
+    },
+    onSuccess: () => {
+      queryClient.removeQueries({ queryKey: ["chat", chatId], exact: true });
+      queryClient.setQueryData(["chats"], (old: Chat[]) =>
+        old.filter((chat) => chat.id !== chatId),
+      );
+    },
+  });
   return (
-    <Link
-      to={"/chats/$chatId"}
-      params={{ chatId }}
-      className="flex h-28 w-full items-center justify-between gap-8 rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
-    >
-      <Avatar className="h-full w-auto">
-        <AvatarImage
-          src={contactAvatar}
-          alt={`${contactName} profile picture`}
-        />
-      </Avatar>
-      <div className="flex w-1/2 flex-col items-end gap-3">
-        <div className="text-lg font-semibold">{contactName}</div>
-        <div className="line-clamp-1 text-end font-semibold text-muted-foreground">
-          {lastMessage}
-        </div>
-      </div>
-    </Link>
+    <AlertDialog>
+      <ContextMenu modal={false}>
+        <ContextMenuTrigger asChild>
+          <Link
+            to={"/chats/$chatId"}
+            params={{ chatId }}
+            className="flex h-28 w-full items-center justify-between gap-8 rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
+          >
+            <Avatar className="h-full w-auto">
+              <AvatarImage
+                src={contactAvatar}
+                alt={`${contactName} profile picture`}
+              />
+            </Avatar>
+            <div className="flex w-1/2 flex-col items-end gap-3">
+              <div className="text-lg font-semibold">{contactName}</div>
+              <div className="line-clamp-1 text-end font-semibold text-muted-foreground">
+                {lastMessage}
+              </div>
+            </div>
+          </Link>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <AlertDialogTrigger asChild>
+            <ContextMenuItem>Delete</ContextMenuItem>
+          </AlertDialogTrigger>
+        </ContextMenuContent>
+      </ContextMenu>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
+            Are you sure you want to delete this chat?
+          </AlertDialogTitle>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => handleDelete.mutate()}
+            className="bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
+          >
+            Continue
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };

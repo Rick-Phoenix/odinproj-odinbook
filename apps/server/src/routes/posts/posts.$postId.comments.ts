@@ -8,7 +8,7 @@ import type {
 } from "../../types/app-bindings";
 import { numberParamSchema } from "../../types/schema-helpers";
 import { commentSchema } from "../../types/zod-schemas";
-import { internalServerError } from "../../utils/customErrors";
+import { internalServerError } from "../../utils/response-schemas";
 
 const tags = ["posts", "comments"];
 

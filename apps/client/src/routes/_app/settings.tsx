@@ -4,6 +4,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { Pencil } from "lucide-react";
 import { useRef } from "react";
+import { PiGithubLogoFill } from "react-icons/pi";
 import InsetScrollArea from "../../components/custom/inset-scrollarea";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
@@ -20,7 +21,7 @@ export const Route = createFileRoute("/_app/settings")({
 });
 
 function RouteComponent() {
-  const user = useUser()!;
+  const { username, oauthProvider } = useUser()!;
 
   return (
     <InsetScrollArea>
@@ -28,10 +29,24 @@ function RouteComponent() {
         <h2 className="mb-3 w-full scroll-m-20 border-b p-5 text-center text-3xl font-semibold tracking-tight first:mt-0">
           Settings
         </h2>
-        <div className="flex w-full justify-between gap-20 p-5">
-          <div className="flex flex-1 flex-col gap-8">
+        <div className="flex w-full flex-col justify-between gap-20 p-5 md:flex-row">
+          <div className="order-2 flex flex-1 flex-col gap-8 md:order-1">
             <StatusEdit />
-            <PasswordEdit />
+            {oauthProvider ? (
+              <div className="flex flex-col gap-2 [&_svg]:size-12">
+                <span className="border-b pb-1 font-semibold">
+                  Connected Profiles
+                </span>
+                <a
+                  href={"https://github.com/" + username}
+                  className="flex items-center gap-3 font-semibold hover:underline"
+                >
+                  <PiGithubLogoFill /> Github
+                </a>
+              </div>
+            ) : (
+              <PasswordEdit />
+            )}
             <div className="flex size-full flex-col gap-2">
               <h2 className="mb-1 w-fit border-b-2 font-semibold text-red-800">
                 Delete Account
@@ -39,7 +54,7 @@ function RouteComponent() {
               <Button
                 variant={"destructive"}
                 size={"sm"}
-                className="w-fit rounded-xl px-3"
+                className="w-fit rounded-xl"
               >
                 Delete
               </Button>
@@ -176,9 +191,9 @@ const PasswordEdit = () => {
                 type="submit"
                 disabled={!canSubmit || !isTouched || isSubmitting}
                 size={"sm"}
-                className="w-fit rounded-xl"
+                className="mt-1 w-fit rounded-xl"
               >
-                Submit
+                Change Password
               </Button>
             );
           }}
@@ -251,7 +266,7 @@ const StatusEdit = () => {
         form.handleSubmit();
       }}
     >
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-3">
         <div className="grid gap-2">
           <form.Field
             name="status"
@@ -365,24 +380,26 @@ const ProfilePictureEdit = () => {
   return (
     <>
       <form
-        className="relative flex h-fit flex-col gap-2 text-center"
+        className="relative order-1 flex h-fit flex-col gap-2 text-center md:order-2"
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
           form.handleSubmit();
         }}
       >
-        <div className="relative flex h-fit flex-col gap-2 text-center">
+        <div className="flex h-fit flex-col items-center gap-2 text-center">
           <h2 className="text-lg font-semibold">Profile Picture</h2>
-          <img src={avatarUrl} className="size-44 rounded-full" />
-          <Button
-            size={"sm"}
-            type="button"
-            className="absolute bottom-0 left-2 w-fit rounded-xl px-2"
-            onClick={handleImageUpload}
-          >
-            <Pencil /> Edit
-          </Button>
+          <div className="relative">
+            <img src={avatarUrl} className="size-44 rounded-full" />
+            <Button
+              size={"sm"}
+              type="button"
+              className="absolute bottom-0 left-2 w-fit rounded-xl px-2"
+              onClick={handleImageUpload}
+            >
+              <Pencil /> Edit
+            </Button>
+          </div>
         </div>
         <div className="flex flex-col gap-6">
           <div className="grid gap-2">

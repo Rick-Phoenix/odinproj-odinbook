@@ -7,8 +7,8 @@ import type {
   AppRouteHandler,
 } from "../../types/app-bindings";
 import { roomWithPostsSchema } from "../../types/zod-schemas";
-import { notFoundError } from "../../utils/customErrors";
 import { getUserId } from "../../utils/getters";
+import { notFoundError } from "../../utils/response-schemas";
 
 const tags = ["rooms"];
 
