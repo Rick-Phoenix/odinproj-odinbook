@@ -44,7 +44,8 @@ export const users = pgTable(
 export const userRelations = relations(users, ({ many }) => ({
   ownChats: many(chatInstances, { relationName: "chatOwner" }),
   chatsIn: many(chatInstances, { relationName: "chatContact" }),
-  messages: many(messages),
+  messagesSent: many(messages, { relationName: "messageSender" }),
+  messagesReceived: many(messages, { relationName: "messageReceiver" }),
   posts: many(posts, { relationName: "postAuthor" }),
   comments: many(comments),
   roomsCreated: many(rooms),
@@ -74,14 +75,16 @@ export const chatInstances = pgTable(
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
     contactId: text("contactId")
-      .references(() => users.id, { onDelete: "cascade" })
+      .references(() => users.id)
       .notNull(),
     chatId: integer("chatId")
-      .references(() => chats.id, { onDelete: "cascade" })
+      .references(() => chats.id)
       .notNull(),
     createdAt: timestamp("createdAt", { mode: "string" })
       .defaultNow()
       .notNull(),
+    firstMessageId: integer("firstMessageId").notNull().default(0),
+    isDeleted: boolean("isDeleted").notNull().default(false),
   },
   (t) => [
     primaryKey({
@@ -132,17 +135,22 @@ export const messages = pgTable("messages", {
   chatId: integer("chatId")
     .references(() => chats.id, { onDelete: "cascade" })
     .notNull(),
-  userId: text("userId")
-    .references(() => users.id, { onDelete: "cascade" })
-    .notNull(),
+  senderId: text("senderId").references(() => users.id),
+  receiverId: text("receiverId").references(() => users.id),
   text: text("text").notNull(),
   createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
 });
 
 export const messagesRelations = relations(messages, ({ one }) => ({
-  author: one(users, {
-    fields: [messages.userId],
+  sender: one(users, {
+    fields: [messages.senderId],
     references: [users.id],
+    relationName: "messageSender",
+  }),
+  receiver: one(users, {
+    fields: [messages.receiverId],
+    references: [users.id],
+    relationName: "messageReceiver",
   }),
   chat: one(chats, {
     fields: [messages.chatId],

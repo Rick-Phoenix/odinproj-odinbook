@@ -1,6 +1,5 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { and, eq } from "drizzle-orm";
-import { unionAll } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
 import {
   INTERNAL_SERVER_ERROR,
   OK,
@@ -8,7 +7,7 @@ import {
 } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import db from "../../db/dbConfig";
-import { chatInstances, messages } from "../../db/schema";
+import { messages } from "../../db/schema";
 import type {
   AppBindingsWithUser,
   AppRouteHandler,
@@ -37,25 +36,30 @@ export const postMessageHandler: AppRouteHandler<
   typeof postMessage,
   AppBindingsWithUser
 > = async (c) => {
-  const { text, receiver, chatId } = c.req.valid("json");
+  const { text, receiverId, chatId } = c.req.valid("json");
   const { id: userId } = c.var.user;
   if (chatId) {
-    const message = await insertMessage(chatId, userId, text);
+    const message = await insertMessage(chatId, userId, receiverId, text);
     if (!message)
       return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
     return c.json(message, OK);
   }
 
-  const newChatId = await createChatInstance(userId, receiver, text);
+  const newChatId = await createChatInstance(userId, receiverId, text);
   if (!newChatId)
     return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
   return c.json(newChatId, OK);
 };
 
-async function insertMessage(chatId: number, userId: string, text: string) {
+async function insertMessage(
+  chatId: number,
+  userId: string,
+  receiverId: string,
+  text: string
+) {
   const [message] = await db
     .insert(messages)
-    .values({ text, userId, chatId })
+    .values({ text, senderId: userId, receiverId, chatId })
     .returning({ text: messages.text });
 
   return message?.text;
@@ -66,31 +70,24 @@ async function createChatInstance(
   contactId: string,
   firstMessage: string
 ) {
-  const chatId = await db.transaction(async (tx) => {
-    const attemptedInsert = tx
-      .insert(chatInstances)
-      // @ts-expect-error Null userId is handled by the trigger in pg
-      .values({ ownerId: userId, contactId: contactId })
-      .onConflictDoNothing()
-      .returning({ chatId: chatInstances.chatId });
-    const idQuery = tx
-      .select({ chatId: chatInstances.chatId })
-      .from(chatInstances)
-      .where(
-        and(
-          eq(chatInstances.ownerId, userId),
-          eq(chatInstances.contactId, contactId)
-        )
-      );
-    const [chat] = await unionAll(idQuery, attemptedInsert);
+  const query = await db.execute<{
+    chatId: number;
+    text: string;
+  }>(sql`WITH insert_attempt AS (
+      INSERT INTO "chatInstances" ("ownerId", "contactId")
+      VALUES (${userId}, ${contactId})
+      ON CONFLICT ("ownerId", "contactId") DO NOTHING 
+      RETURNING "chatId"
+    ),
+    chat_id AS (
+      SELECT * FROM insert_attempt
+    UNION ALL
+    SELECT "chatId" FROM "chatInstances"
+    WHERE "ownerId" = ${userId} AND "contactId" = ${contactId}
+    )
+    INSERT INTO messages ("chatId", "senderId", "receiverId", "text") 
+      VALUES ((SELECT "chatId" FROM chat_id),${userId}, ${contactId}, ${firstMessage})
+      RETURNING "chatId", "text";`);
 
-    if (!chat?.chatId) return false;
-    const insertMessage = await tx
-      .insert(messages)
-      .values({ text: firstMessage, chatId: chat.chatId, userId });
-    if (!insertMessage.rowCount) return false;
-    return chat.chatId;
-  });
-
-  return chatId;
+  return query.rows[0];
 }

@@ -228,7 +228,7 @@ export type ListingInputs = Omit<z.infer<typeof insertListingSchema>, "pic"> & {
 
 export const insertMessageSchema = z.object({
   text: z.string().min(1).max(1000),
-  receiver: z.string(),
+  receiverId: z.string(),
   chatId: z.number().optional(),
 });
 

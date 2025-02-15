@@ -6,7 +6,10 @@ async function createChatInstance(
   contactId: string,
   firstMessage: string
 ) {
-  const query = await db.execute(sql`WITH insert_attempt AS (
+  const query = await db.execute<{
+    chatId: number;
+    text: string;
+  }>(sql`WITH insert_attempt AS (
       INSERT INTO "chatInstances" ("ownerId", "contactId")
       VALUES (${userId}, ${contactId})
       ON CONFLICT ("ownerId", "contactId") DO NOTHING 
@@ -18,12 +21,12 @@ async function createChatInstance(
     SELECT "chatId" FROM "chatInstances"
     WHERE "ownerId" = ${userId} AND "contactId" = ${contactId}
     )
-    INSERT INTO messages ("chatId", "userId", "text") 
-      VALUES ((SELECT "chatId" FROM chat_id),${userId}, ${firstMessage})
+    INSERT INTO messages ("chatId", "senderId", "receiverId", "text") 
+      VALUES ((SELECT "chatId" FROM chat_id),${userId}, ${contactId}, ${firstMessage})
       RETURNING "chatId", "text";`);
 
-  return query.rows;
+  return query.rows[0];
 }
 
-// const a = await createChatInstance("16", "15", "hello");
-// console.log("🚀 ~ a:", a);
+const a = await createChatInstance("16", "15", "hello");
+console.log("🚀 ~ a:", a);
