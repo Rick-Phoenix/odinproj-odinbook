@@ -87,7 +87,7 @@ export const chatInstances = pgTable(
     primaryKey({
       columns: [t.chatId, t.ownerId],
     }),
-    uniqueIndex("uniqueUserChat").on(t.ownerId, t.chatId, t.contactId),
+    uniqueIndex("uniqueChatIndex").on(t.ownerId, t.contactId),
   ]
 );
 
