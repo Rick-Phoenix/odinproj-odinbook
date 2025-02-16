@@ -85,7 +85,7 @@ const ChatPreview: FC<{
   const handleDelete = useMutation({
     mutationKey: ["chatDelete", chatId],
     mutationFn: async () => {
-      const res = await api.chats.delete[":chatId"].$delete({
+      const res = await api.chats.delete[":chatId"].$post({
         param: { chatId },
       });
       const data = await res.json();

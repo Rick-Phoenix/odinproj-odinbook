@@ -22,6 +22,7 @@ import { Route as AppChatsIndexImport } from './routes/_app/chats/index'
 import { Route as AppUsersUsernameImport } from './routes/_app/users/$username'
 import { Route as AppMarketplaceSavedListingsImport } from './routes/_app/marketplace/savedListings'
 import { Route as AppMarketplaceMyListingsImport } from './routes/_app/marketplace/myListings'
+import { Route as AppChatsNewImport } from './routes/_app/chats/new'
 import { Route as AppChatsChatIdImport } from './routes/_app/chats/$chatId'
 import { Route as AppRoomsRoomNameIndexImport } from './routes/_app/rooms/$roomName/index'
 import { Route as AppMarketplaceCategoryIndexImport } from './routes/_app/marketplace/$category/index'
@@ -93,6 +94,12 @@ const AppMarketplaceSavedListingsRoute =
 const AppMarketplaceMyListingsRoute = AppMarketplaceMyListingsImport.update({
   id: '/marketplace/myListings',
   path: '/marketplace/myListings',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppChatsNewRoute = AppChatsNewImport.update({
+  id: '/chats/new',
+  path: '/chats/new',
   getParentRoute: () => AppRoute,
 } as any)
 
@@ -175,6 +182,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppChatsChatIdImport
       parentRoute: typeof AppImport
     }
+    '/_app/chats/new': {
+      id: '/_app/chats/new'
+      path: '/chats/new'
+      fullPath: '/chats/new'
+      preLoaderRoute: typeof AppChatsNewImport
+      parentRoute: typeof AppImport
+    }
     '/_app/marketplace/myListings': {
       id: '/_app/marketplace/myListings'
       path: '/marketplace/myListings'
@@ -253,6 +267,7 @@ declare module '@tanstack/react-router' {
 interface AppRouteChildren {
   AppSettingsRoute: typeof AppSettingsRoute
   AppChatsChatIdRoute: typeof AppChatsChatIdRoute
+  AppChatsNewRoute: typeof AppChatsNewRoute
   AppMarketplaceMyListingsRoute: typeof AppMarketplaceMyListingsRoute
   AppMarketplaceSavedListingsRoute: typeof AppMarketplaceSavedListingsRoute
   AppUsersUsernameRoute: typeof AppUsersUsernameRoute
@@ -268,6 +283,7 @@ interface AppRouteChildren {
 const AppRouteChildren: AppRouteChildren = {
   AppSettingsRoute: AppSettingsRoute,
   AppChatsChatIdRoute: AppChatsChatIdRoute,
+  AppChatsNewRoute: AppChatsNewRoute,
   AppMarketplaceMyListingsRoute: AppMarketplaceMyListingsRoute,
   AppMarketplaceSavedListingsRoute: AppMarketplaceSavedListingsRoute,
   AppUsersUsernameRoute: AppUsersUsernameRoute,
@@ -289,6 +305,7 @@ export interface FileRoutesByFullPath {
   '/signup': typeof SignupRoute
   '/settings': typeof AppSettingsRoute
   '/chats/$chatId': typeof AppChatsChatIdRoute
+  '/chats/new': typeof AppChatsNewRoute
   '/marketplace/myListings': typeof AppMarketplaceMyListingsRoute
   '/marketplace/savedListings': typeof AppMarketplaceSavedListingsRoute
   '/users/$username': typeof AppUsersUsernameRoute
@@ -308,6 +325,7 @@ export interface FileRoutesByTo {
   '/signup': typeof SignupRoute
   '/settings': typeof AppSettingsRoute
   '/chats/$chatId': typeof AppChatsChatIdRoute
+  '/chats/new': typeof AppChatsNewRoute
   '/marketplace/myListings': typeof AppMarketplaceMyListingsRoute
   '/marketplace/savedListings': typeof AppMarketplaceSavedListingsRoute
   '/users/$username': typeof AppUsersUsernameRoute
@@ -328,6 +346,7 @@ export interface FileRoutesById {
   '/signup': typeof SignupRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/chats/$chatId': typeof AppChatsChatIdRoute
+  '/_app/chats/new': typeof AppChatsNewRoute
   '/_app/marketplace/myListings': typeof AppMarketplaceMyListingsRoute
   '/_app/marketplace/savedListings': typeof AppMarketplaceSavedListingsRoute
   '/_app/users/$username': typeof AppUsersUsernameRoute
@@ -349,6 +368,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/settings'
     | '/chats/$chatId'
+    | '/chats/new'
     | '/marketplace/myListings'
     | '/marketplace/savedListings'
     | '/users/$username'
@@ -367,6 +387,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/settings'
     | '/chats/$chatId'
+    | '/chats/new'
     | '/marketplace/myListings'
     | '/marketplace/savedListings'
     | '/users/$username'
@@ -385,6 +406,7 @@ export interface FileRouteTypes {
     | '/signup'
     | '/_app/settings'
     | '/_app/chats/$chatId'
+    | '/_app/chats/new'
     | '/_app/marketplace/myListings'
     | '/_app/marketplace/savedListings'
     | '/_app/users/$username'
@@ -436,6 +458,7 @@ export const routeTree = rootRoute
       "children": [
         "/_app/settings",
         "/_app/chats/$chatId",
+        "/_app/chats/new",
         "/_app/marketplace/myListings",
         "/_app/marketplace/savedListings",
         "/_app/users/$username",
@@ -460,6 +483,10 @@ export const routeTree = rootRoute
     },
     "/_app/chats/$chatId": {
       "filePath": "_app/chats/$chatId.tsx",
+      "parent": "/_app"
+    },
+    "/_app/chats/new": {
+      "filePath": "_app/chats/new.tsx",
       "parent": "/_app"
     },
     "/_app/marketplace/myListings": {

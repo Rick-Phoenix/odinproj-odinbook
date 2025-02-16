@@ -14,8 +14,6 @@ import {
 } from "drizzle-orm/pg-core";
 import { lowercase, trim } from "./db-methods";
 
-//
-
 export const users = pgTable(
   "users",
   {

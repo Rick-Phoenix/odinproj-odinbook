@@ -1,4 +1,5 @@
-import { api, type Chat, wsRPC } from "./api-client";
+import { queryOptions, type MutationOptions } from "@tanstack/react-query";
+import { api, wsRPC, type Chat } from "./api-client";
 import { queryClient } from "./queries/queryClient";
 
 export const chatsQueryOptions = {
@@ -6,7 +7,7 @@ export const chatsQueryOptions = {
   queryFn: async () => {
     const res = await api.chats.$get();
     const data = await res.json();
-    if ("issues" in data) throw Error("Server Error");
+    if ("issues" in data) throw Error("Error while loading the chats.");
     if (data.length)
       for (const chat of data) {
         cacheChat(chat);
@@ -15,33 +16,48 @@ export const chatsQueryOptions = {
   },
 };
 
-export function cacheChat(chat: Chat) {
-  queryClient.setMutationDefaults(["chat", chat.id], {
-    mutationFn: async ({ text }: { text: string }) => {
-      const res = await api.chats[":chatId"].$post({
-        param: { chatId: chat.id },
-        json: { text },
-      });
-      const resData = await res.json();
-      if ("issues" in resData) {
-        throw new Error(resData.issues[0].message);
+export const singleChatQueryOptions = (chatId: number) =>
+  queryOptions({
+    queryKey: ["chat", chatId],
+    queryFn: async () => {
+      const res = await api.chats[":chatId"].$get({ param: { chatId } });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("An error occurred while loading the chat.");
       }
-      return;
-    },
-    onSuccess: () => {
-      chatWebSocket.send(
-        JSON.stringify({ receiver: chat.contact.id, chatId: chat.id }),
-      );
-      queryClient.invalidateQueries({
-        queryKey: ["chat", chat.id],
-        exact: true,
-      });
+      cacheChat(data);
+      return data;
     },
   });
 
+type ChatMutationData = { text: string };
+type ChatMutationVariables = { text: string; receiverId: string };
+export const chatMutationOptions = (
+  chatId: number,
+): MutationOptions<ChatMutationData, Error, ChatMutationVariables> => ({
+  mutationKey: ["chat", chatId],
+  mutationFn: async (inputs: { text: string; receiverId: string }) => {
+    const { text, receiverId } = inputs;
+    const res = await api.chats.messages.$post({
+      json: { text, receiverId, chatId },
+    });
+    const resData = await res.json();
+    if ("issues" in resData || !("text" in resData)) {
+      throw new Error("An error occurred while sending a message.");
+    }
+    return resData;
+  },
+  onSuccess: (d, inputs) => {
+    chatWebSocket.send(JSON.stringify({ receiver: inputs.receiverId, chatId }));
+    queryClient.invalidateQueries({
+      queryKey: ["chat", chatId],
+      exact: true,
+    });
+  },
+});
+
+export function cacheChat(chat: Chat) {
   queryClient.setQueryDefaults(["chat", chat.id], {
-    gcTime: Infinity,
-    staleTime: Infinity,
     queryFn: async () => {
       const res = await api.chats[":chatId"].$get({
         param: { chatId: chat.id },
@@ -54,7 +70,9 @@ export function cacheChat(chat: Chat) {
 
   queryClient.setQueryData(["chat", chat.id], chat);
 }
-export const chatWebSocket = wsRPC.ws.$ws();
+
+const chatWebSocket = wsRPC.ws.$ws();
+
 chatWebSocket.addEventListener("message", (e) => {
   const chatId = +e.data;
   queryClient.invalidateQueries({

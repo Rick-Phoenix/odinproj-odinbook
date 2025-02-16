@@ -1,9 +1,9 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { MessageSquare } from "lucide-react";
-import { api, type Chat, type Profile } from "../../../lib/api-client";
-import { cacheChat, chatsQueryOptions } from "../../../lib/chatQueries";
+import { type Profile } from "../../../lib/api-client";
+import { chatsQueryOptions } from "../../../lib/chatQueries";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { SidebarMenu } from "../../ui/sidebar";
@@ -16,30 +16,14 @@ const UserProfileSidebarContent = () => {
     from: "/_app/users/$username",
     shouldThrow: false,
   });
+  const navigate = useNavigate();
+
   const profile = queryClient.getQueryData([
     "profile",
     profileParams?.username,
   ]) as Profile | undefined;
-  const nav = useNavigate();
-  const createChat = useMutation({
-    mutationKey: ["chat"],
-    mutationFn: async (v: { contactUsername: string }) => {
-      const { contactUsername } = v;
-      const res = await api.chats.$post({ json: { contactUsername } });
-      const data = await res.json();
-      if ("issues" in data) {
-        throw new Error(data.issues[0].message);
-      }
-      return data;
-    },
-    onSuccess(data) {
-      queryClient.setQueryData(["chats"], (old: Chat[]) => [...old, data]);
-      cacheChat(data);
-      nav({ to: "/chats/$chatId", params: { chatId: data.id } });
-    },
-  });
 
-  if (!profile) return <SidebarSkeleton />;
+  if (!profileParams?.username || !profile) return <SidebarSkeleton />;
 
   const handleSendMessage = async () => {
     const chats = await queryClient.fetchQuery(chatsQueryOptions);
@@ -47,8 +31,14 @@ const UserProfileSidebarContent = () => {
       (chat) => chat.contact.username === profile.username,
     );
     if (existingChat)
-      return nav({ to: "/chats/$chatId", params: { chatId: existingChat.id } });
-    createChat.mutate({ contactUsername: profile.username });
+      return navigate({
+        to: "/chats/$chatId",
+        params: { chatId: existingChat.id },
+      });
+    navigate({
+      to: "/chats/new",
+      search: { contactUsername: profile.username },
+    });
   };
   return (
     <>

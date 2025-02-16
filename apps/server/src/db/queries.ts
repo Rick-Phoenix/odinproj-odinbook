@@ -4,6 +4,7 @@ import {
   desc,
   eq,
   getTableColumns,
+  gte,
   lt,
   lte,
   ne,
@@ -15,11 +16,9 @@ import { lowercase, withCTEColumns } from "./db-methods";
 import db from "./dbConfig";
 import {
   chatInstances,
-  chats,
   commentLikes,
   comments,
   listings,
-  messages,
   postLikes,
   posts,
   rooms,
@@ -108,7 +107,13 @@ export async function fetchUserProfile(userId: string, username: string) {
     where(user, { eq }) {
       return eq(lowercase(user.username), username.toLocaleLowerCase());
     },
-    columns: { avatarUrl: true, username: true, createdAt: true, status: true },
+    columns: {
+      avatarUrl: true,
+      username: true,
+      createdAt: true,
+      status: true,
+      id: true,
+    },
     with: {
       comments: {
         with: {
@@ -137,29 +142,22 @@ export async function fetchUserProfile(userId: string, username: string) {
 
 export async function getUserChats(userId: string) {
   const chats = await db.query.chatInstances.findMany({
-    where(chat, { eq }) {
-      return eq(chat.ownerId, userId);
+    where(chat, { eq, and }) {
+      return and(eq(chat.isDeleted, false), eq(chat.ownerId, userId));
     },
     with: {
       contact: { columns: { username: true, avatarUrl: true, id: true } },
-      chat: { with: { messages: true } },
+      chat: {
+        with: {
+          messages: { where: (f) => gte(f.id, chatInstances.firstMessageId) },
+        },
+      },
     },
     columns: {},
     orderBy: (f) => desc(f.createdAt),
   });
 
-  if (chats.length === 0) return chats;
-
   return chats.map((item) => ({ contact: item.contact, ...item.chat }));
-}
-
-export async function getUserChatIds(userId: string) {
-  const chatIds = await db
-    .select({ id: chats.id })
-    .from(chatInstances)
-    .innerJoin(chats, eq(chatInstances.chatId, chats.id))
-    .where(eq(chatInstances.ownerId, userId));
-  return chatIds.map((obj) => obj.id);
 }
 
 export async function getSingleChat(userId: string, chatId: number) {
@@ -169,7 +167,11 @@ export async function getSingleChat(userId: string, chatId: number) {
     },
     with: {
       contact: { columns: { username: true, avatarUrl: true, id: true } },
-      chat: { with: { messages: true } },
+      chat: {
+        with: {
+          messages: { where: (f) => gte(f.id, chatInstances.firstMessageId) },
+        },
+      },
     },
     columns: {},
   });
@@ -177,56 +179,6 @@ export async function getSingleChat(userId: string, chatId: number) {
   if (chat) return { contact: chat.contact, ...chat.chat };
 
   return chat;
-}
-
-export async function findOrCreateChat(
-  userId: string,
-  contactUsername: string
-) {
-  const contact = await findUserByUsername(contactUsername);
-  if (!contact) return false;
-  const { id: contactId } = contact;
-  const chatInstance = await db.query.chatInstances.findFirst({
-    where(chat, { eq, and }) {
-      return and(eq(chat.ownerId, userId), eq(chat.contactId, contactId));
-    },
-    with: {
-      contact: { columns: { username: true, avatarUrl: true, id: true } },
-      chat: { with: { messages: true } },
-    },
-    columns: {},
-  });
-
-  if (chatInstance)
-    return { contact: chatInstance.contact, ...chatInstance.chat };
-
-  await db.transaction(async (tx) => {
-    const existingChat = await tx.query.chatInstances.findFirst({
-      where(inst, { eq, and }) {
-        return and(eq(inst.contactId, userId), eq(inst.ownerId, contactId));
-      },
-      columns: { chatId: true },
-    });
-    let chatId = existingChat?.chatId;
-    if (!chatId) {
-      const [{ id }] = await tx
-        .insert(chats)
-        .values({})
-        .returning({ id: chats.id });
-
-      await tx
-        .insert(chatInstances)
-        .values({ chatId: id, ownerId: contactId, contactId: userId });
-
-      chatId = id;
-    }
-
-    await tx
-      .insert(chatInstances)
-      .values({ chatId, ownerId: userId, contactId });
-  });
-
-  return findOrCreateChat(userId, contactUsername);
 }
 
 export async function fetchPost(userId: string, postId: number) {
@@ -446,27 +398,6 @@ export async function findUserByOauthCredentials(provider: string, id: number) {
       return and(eq(user.oauthProvider, provider), eq(user.oauthId, id));
     },
   });
-}
-
-export async function registerMessage(
-  chatId: number,
-  userId: string,
-  text: string
-) {
-  const validChat = await db.query.chatInstances.findFirst({
-    where(chatIns, { and, eq }) {
-      return and(eq(chatIns.chatId, chatId), eq(chatIns.ownerId, userId));
-    },
-  });
-
-  if (!validChat) return false;
-
-  const [message] = await db
-    .insert(messages)
-    .values({ text, userId, chatId })
-    .returning();
-
-  return message;
 }
 
 export async function insertPostLike(userId: string, postId: number) {

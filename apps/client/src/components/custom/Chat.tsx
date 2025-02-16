@@ -1,0 +1,178 @@
+import { schemas } from "@nexus/shared-schemas";
+import { useForm } from "@tanstack/react-form";
+import { useMutation, useSuspenseQuery } from "@tanstack/react-query";
+import { Link } from "@tanstack/react-router";
+import { format } from "date-fns";
+import { Send } from "lucide-react";
+import { title } from "radashi";
+import { type FC, useEffect, useRef } from "react";
+import type { Chat, Message } from "../../lib/api-client";
+import { chatMutationOptions } from "../../lib/chatQueries";
+import { singleErrorsAdapter } from "../../utils/form-utils";
+import { errorTypeGuard } from "../../utils/type-guards";
+import { Avatar, AvatarImage } from "../ui/avatar";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
+import { ScrollArea } from "../ui/scroll-area";
+import StaticInset from "./static-inset";
+
+export const ChatPage: FC<{
+  contactAvatar: string;
+  contactName: string;
+  messages: Message[];
+  contactId: string;
+  chatId: number;
+}> = ({ contactAvatar, contactName, messages, contactId, chatId }) => {
+  const { data: chat } = useSuspenseQuery<Chat>({
+    queryKey: ["chat", chatId],
+  });
+  const form = useForm({
+    defaultValues: {
+      text: "",
+      receiverId: contactId,
+    },
+    validators: {
+      onSubmitAsync: async ({ value }) => {
+        try {
+          await handleSendMessage.mutateAsync(value);
+          return null;
+        } catch (error) {
+          if (errorTypeGuard(error)) return error.message;
+        }
+      },
+      onSubmit: schemas.insertMessageSchema,
+    },
+    validatorAdapter: singleErrorsAdapter,
+    onSubmit() {
+      form.reset();
+    },
+  });
+
+  const handleSendMessage = useMutation(chatMutationOptions(chatId));
+
+  const viewportRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (viewportRef !== null && viewportRef.current !== null) {
+      const scrollArea = viewportRef.current!;
+      scrollArea.scroll({ behavior: "smooth", top: scrollArea.scrollHeight });
+    }
+  }, [chat]);
+
+  useEffect(() => {
+    const scrollArea = viewportRef.current!;
+    scrollArea.scroll({ behavior: "instant", top: scrollArea.scrollHeight });
+    inputRef.current!.focus();
+  }, [chatId]);
+
+  return (
+    <StaticInset>
+      <section className="flex h-full flex-col justify-between rounded-xl bg-muted/50">
+        <Link
+          to="/users/$username"
+          params={{ username: chat.contact.username }}
+          className="flex h-28 w-full items-center justify-between rounded-xl rounded-b-none bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
+        >
+          <Avatar>
+            <AvatarImage
+              src={contactAvatar}
+              alt={`${contactName} profile picture`}
+            />
+          </Avatar>
+          <div className="text-lg font-semibold">{title(contactName)}</div>
+        </Link>
+
+        <ScrollArea className="h-full w-full" viewportRef={viewportRef}>
+          <div className="grid w-full gap-8 rounded-xl p-8">
+            {messages.map((message, i, a) => {
+              const isFromUser = message.senderId !== contactId;
+              return (
+                <ChatMessage
+                  key={message.id}
+                  isFromUser={isFromUser}
+                  text={message.text}
+                  createdAt={message.createdAt}
+                />
+              );
+            })}
+          </div>
+        </ScrollArea>
+
+        <form
+          className="flex items-center"
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            form.handleSubmit();
+          }}
+        >
+          <form.Field
+            name="text"
+            children={(field) => (
+              <>
+                <Input
+                  className="text-md rounded-l-xl rounded-r-none border-r-0 p-8"
+                  name={field.name}
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  placeholder="Write a message..."
+                  ref={inputRef}
+                  required
+                />
+              </>
+            )}
+          ></form.Field>
+
+          <form.Subscribe
+            selector={(state) => [
+              state.canSubmit,
+              state.isSubmitting,
+              state.isTouched,
+            ]}
+            children={([canSubmit, isSubmitting, isTouched]) => (
+              <Button
+                type="submit"
+                aria-disabled={!canSubmit || isSubmitting || !isTouched}
+                disabled={!canSubmit || isSubmitting || !isTouched}
+                variant={"ghost"}
+                className="aspect-square h-full rounded-l-none rounded-r-xl border border-l-0 hover:bg-muted-foreground/30 focus:bg-muted-foreground/30"
+              >
+                <Send />
+              </Button>
+            )}
+          />
+        </form>
+      </section>
+    </StaticInset>
+  );
+};
+
+const ChatMessage: FC<{
+  text: string;
+  createdAt: string;
+  isFromUser: boolean;
+}> = ({ text, createdAt, isFromUser }) => {
+  const sentAt = new Date(createdAt);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+  const sentBeforeToday = sentAt < now;
+  const conditionalClasses = isFromUser
+    ? "message-user rounded-tr-none justify-self-end text-end"
+    : "message-contact rounded-tl-none";
+  const className = `${conditionalClasses} relative flex max-h-max w-fit items-end rounded-2xl bg-muted-foreground/30 p-3`;
+  return (
+    <div className={className}>
+      <div className="flex flex-col gap-1">
+        <div>{text}</div>
+        <span className="text-sm text-muted-foreground">
+          {sentBeforeToday
+            ? format(sentAt, "MMM do '|' H:mm")
+            : format(sentAt, "H:mm")}
+        </span>
+      </div>
+    </div>
+  );
+};
+
+export default ChatPage;

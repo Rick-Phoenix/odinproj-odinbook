@@ -155,3 +155,16 @@ export const listingsByCategoryQueryOptions = (
     },
   });
 };
+
+export const profileQueryOptions = (username: string) =>
+  queryOptions({
+    queryKey: ["profile", username],
+    queryFn: async () => {
+      const res = await api.users[":username"].$get({ param: { username } });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("User not found.");
+      }
+      return data;
+    },
+  });

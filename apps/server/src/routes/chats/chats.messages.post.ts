@@ -18,7 +18,7 @@ import { internalServerError } from "../../utils/response-schemas";
 
 const tags = ["chats"];
 
-export const postMessage = createRoute({
+export const sendMessage = createRoute({
   path: "/messages",
   method: "post",
   tags,
@@ -26,14 +26,20 @@ export const postMessage = createRoute({
     body: jsonContentRequired(insertMessageSchema, "The text message."),
   },
   responses: {
-    [OK]: jsonContent(z.union([z.number(), z.string()]), "The message sent."),
+    [OK]: jsonContent(
+      z.union([
+        z.object({ text: z.string() }),
+        z.object({ chatId: z.number() }),
+      ]),
+      "The message sent."
+    ),
     [INTERNAL_SERVER_ERROR]: internalServerError.template,
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(insertMessageSchema),
   },
 });
 
-export const postMessageHandler: AppRouteHandler<
-  typeof postMessage,
+export const sendMessageHandler: AppRouteHandler<
+  typeof sendMessage,
   AppBindingsWithUser
 > = async (c) => {
   const { text, receiverId, chatId } = c.req.valid("json");
@@ -42,7 +48,7 @@ export const postMessageHandler: AppRouteHandler<
     const message = await insertMessage(chatId, userId, receiverId, text);
     if (!message)
       return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
-    return c.json(message, OK);
+    return c.json({ text: message }, OK);
   }
 
   const newChatId = await createChatInstance(userId, receiverId, text);
@@ -72,8 +78,8 @@ async function createChatInstance(
 ) {
   const query = await db.execute<{
     chatId: number;
-    text: string;
-  }>(sql`WITH insert_attempt AS (
+  }>(sql`
+    WITH insert_attempt AS (
       INSERT INTO "chatInstances" ("ownerId", "contactId")
       VALUES (${userId}, ${contactId})
       ON CONFLICT ("ownerId", "contactId") DO NOTHING 
@@ -87,7 +93,7 @@ async function createChatInstance(
     )
     INSERT INTO messages ("chatId", "senderId", "receiverId", "text") 
       VALUES ((SELECT "chatId" FROM chat_id),${userId}, ${contactId}, ${firstMessage})
-      RETURNING "chatId", "text";`);
+      RETURNING "chatId";`);
 
   return query.rows[0];
 }

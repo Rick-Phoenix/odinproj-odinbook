@@ -28,5 +28,5 @@ async function createChatInstance(
   return query.rows[0];
 }
 
-const a = await createChatInstance("16", "15", "hello");
-console.log("🚀 ~ a:", a);
+//const a = await createChatInstance("16", "15", "hello");
+//console.log("🚀 ~ a:", a);

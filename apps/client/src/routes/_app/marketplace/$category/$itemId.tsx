@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
@@ -16,18 +16,16 @@ import {
   TableRow,
 } from "../../../../components/ui/table";
 import { useUser } from "../../../../hooks/auth";
-import { api, type Chat } from "../../../../lib/api-client";
-import { cacheChat, chatsQueryOptions } from "../../../../lib/chatQueries";
+import { chatsQueryOptions } from "../../../../lib/chatQueries";
 import { listingQueryOptions } from "../../../../lib/queryOptions";
 
 export const Route = createFileRoute("/_app/marketplace/$category/$itemId")({
   component: RouteComponent,
   params: { parse: ({ category, itemId }) => ({ category, itemId: +itemId }) },
   loader: async (c) => {
-    const listing = await c.context.queryClient.fetchQuery(
+    return await c.context.queryClient.fetchQuery(
       listingQueryOptions(c.params.itemId),
     );
-    return listing;
   },
 });
 
@@ -36,24 +34,7 @@ function RouteComponent() {
   const { username } = useUser()!;
 
   const queryClient = useQueryClient();
-  const nav = useNavigate();
-  const createChat = useMutation({
-    mutationKey: ["chat"],
-    mutationFn: async (v: { contactUsername: string }) => {
-      const { contactUsername } = v;
-      const res = await api.chats.$post({ json: { contactUsername } });
-      const data = await res.json();
-      if ("issues" in data) {
-        throw new Error(data.issues[0].message);
-      }
-      return data;
-    },
-    onSuccess(data) {
-      queryClient.setQueryData(["chats"], (old: Chat[]) => [...old, data]);
-      cacheChat(data);
-      nav({ to: "/chats/$chatId", params: { chatId: data.id } });
-    },
-  });
+  const navigate = useNavigate();
 
   const handleSendMessage = async () => {
     const chats = await queryClient.fetchQuery(chatsQueryOptions);
@@ -61,8 +42,11 @@ function RouteComponent() {
       (chat) => chat.contact.username === listing.seller,
     );
     if (existingChat)
-      return nav({ to: "/chats/$chatId", params: { chatId: existingChat.id } });
-    createChat.mutate({ contactUsername: listing.seller });
+      return navigate({
+        to: "/chats/$chatId",
+        params: { chatId: existingChat.id },
+      });
+    navigate({ to: "/chats/new", search: { contactUsername: listing.seller } });
   };
   return (
     <InsetScrollArea>

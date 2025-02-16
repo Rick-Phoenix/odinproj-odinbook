@@ -82,6 +82,7 @@ export const profileSchema = userSchema
     status: true,
     createdAt: true,
     username: true,
+    id: true,
   })
   .extend({
     comments: z.array(

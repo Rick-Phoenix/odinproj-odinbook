@@ -9,23 +9,16 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../../components/ui/tabs";
-import { api, type Listing } from "../../../lib/api-client";
+import { type Listing } from "../../../lib/api-client";
+import { profileQueryOptions } from "../../../lib/queryOptions";
 
 export const Route = createFileRoute("/_app/users/$username")({
   component: RouteComponent,
   loader: async (ctx) => {
     const { username } = ctx.params;
-    return await ctx.context.queryClient.ensureQueryData({
-      queryKey: ["profile", username],
-      queryFn: async () => {
-        const res = await api.users[":username"].$get({ param: { username } });
-        const data = await res.json();
-        if ("issues" in data) {
-          throw new Error("Could not fetch user.");
-        }
-        return data;
-      },
-    });
+    return await ctx.context.queryClient.fetchQuery(
+      profileQueryOptions(username),
+    );
   },
 });
 
