@@ -15,16 +15,8 @@ import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 import { PostPreview } from "../../../components/custom/post-preview";
 import { Button } from "../../../components/ui/button";
 import { CardTitle } from "../../../components/ui/card";
-import {
-  api,
-  type InitialFeed,
-  type PostBasic,
-  type SortingOrder,
-} from "../../../lib/api-client";
-import {
-  throttleAsync,
-  type ThrottledFunction,
-} from "../../../utils/async-throttle";
+import { api, type InitialFeed, type PostBasic, type SortingOrder } from "../../../lib/api-client";
+import { throttleAsync, type ThrottledFunction } from "../../../utils/async-throttle";
 
 export const Route = createFileRoute("/_app/rooms/")({
   component: RouteComponent,
@@ -46,8 +38,6 @@ function RouteComponent() {
     time: initialPosts.at(-1)?.createdAt,
     likes: initialPosts.at(-1)?.likesCount,
   };
-
-  console.log(totalPosts);
 
   const feedQuery = useInfiniteQuery({
     queryKey: ["feed", orderBy],
@@ -95,23 +85,13 @@ function RouteComponent() {
     return acc.concat(next.posts);
   }, [] as PostBasic[]);
 
-  const allTrendingPosts = queryClient.getQueryData([
-    "initialFeed",
-    "likesCount",
-  ]) as InitialFeed;
+  const allTrendingPosts = queryClient.getQueryData(["initialFeed", "likesCount"]) as InitialFeed;
   const mostTrendingPosts = allTrendingPosts.posts.slice(0, 12);
 
   const throttledScrollFetch = useRef<ThrottledFunction>(null);
   useEffect(() => {
-    throttledScrollFetch.current = throttleAsync(
-      feedQuery.fetchNextPage,
-      3000,
-      true,
-    );
-    return () =>
-      throttledScrollFetch.current
-        ? throttledScrollFetch.current.cancel()
-        : void null;
+    throttledScrollFetch.current = throttleAsync(feedQuery.fetchNextPage, 3000, true);
+    return () => (throttledScrollFetch.current ? throttledScrollFetch.current.cancel() : void null);
   }, [orderBy]);
 
   const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
@@ -134,9 +114,7 @@ function RouteComponent() {
           className="h-full flex-1 hover:bg-popover"
           variant={"secondary"}
           size={"lg"}
-          onClick={() =>
-            navigate({ to: ".", search: { orderBy: "createdAt" } })
-          }
+          onClick={() => navigate({ to: ".", search: { orderBy: "createdAt" } })}
           style={{
             ...(orderBy === "createdAt" && {
               backgroundColor: "hsl(var(--popover))",
@@ -149,9 +127,7 @@ function RouteComponent() {
           className="h-full flex-1"
           variant={"secondary"}
           size={"lg"}
-          onClick={() =>
-            navigate({ to: ".", search: { orderBy: "likesCount" } })
-          }
+          onClick={() => navigate({ to: ".", search: { orderBy: "likesCount" } })}
           style={{
             ...(orderBy === "likesCount" && {
               backgroundColor: "hsl(var(--popover))",
@@ -189,9 +165,7 @@ const TrendingCard: FC<{
             <div className="max-w-[10ch] truncate">{likesCount}</div>
             <Heart className="min-w-fit group-hover:fill-white" />
           </div>
-          <CardTitle className="line-clamp-[6] max-w-full scroll-m-20">
-            {title}
-          </CardTitle>
+          <CardTitle className="line-clamp-[6] max-w-full scroll-m-20">{title}</CardTitle>
         </Link>
         <Link
           to="/rooms/$roomName"
@@ -214,9 +188,7 @@ const TrendingCarousel: FC<{ posts: PostBasic[] }> = ({ posts }) => {
       <DropdownMenu>
         <DropdownMenuTrigger asChild className="p-3">
           <Button variant={"ghost"}>
-            <small className="text-sm font-medium leading-none">
-              🔥 Trending Posts
-            </small>
+            <small className="text-sm font-medium leading-none">🔥 Trending Posts</small>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>

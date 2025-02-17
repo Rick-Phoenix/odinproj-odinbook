@@ -86,4 +86,10 @@ chatWebSocket.addEventListener("message", async (e) => {
       refetchType: "all",
     });
   }
+
+  if (location.pathname.split("/")[1].toLowerCase() !== "chats") {
+    queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) =>
+      old ? [...old, chatId] : [chatId]
+    );
+  }
 });

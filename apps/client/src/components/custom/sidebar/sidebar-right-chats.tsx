@@ -1,6 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
+import type { FC } from "react";
 import { useChats } from "../../../hooks/useChats";
+import { useUnreadMessages } from "../../../hooks/useUnreadMessages";
+import type { Chat } from "../../../lib/api-client";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { SidebarMenu, SidebarMenuButton } from "../../ui/sidebar";
@@ -21,26 +24,39 @@ const ChatsSidebarContent = () => {
 
           <ul className="flex flex-col justify-center gap-2 pt-6">
             {chats.map((chat) => (
-              <li key={chat.id}>
-                <SidebarMenuButton asChild className="size-full">
-                  <Link
-                    className="flex items-center justify-between gap-2"
-                    to="/chats/$chatId"
-                    params={{ chatId: chat.id }}
-                  >
-                    <Avatar className="h-14 w-auto">
-                      <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
-                      <AvatarFallback>{chat.contact.username}</AvatarFallback>
-                    </Avatar>
-                    <p>{chat.contact.username}</p>
-                  </Link>
-                </SidebarMenuButton>
-              </li>
+              <ChatPreview key={chat.id} chat={chat} />
             ))}
           </ul>
         </SidebarMenu>
       }
     </>
+  );
+};
+
+const ChatPreview: FC<{ chat: Chat }> = ({ chat }) => {
+  const lastMessage = Number(chat.messages.at(-1)?.id);
+  const unreadMessages = useUnreadMessages(chat.id, lastMessage);
+  return (
+    <li>
+      <SidebarMenuButton asChild className="size-full">
+        <Link
+          className="flex items-center justify-between gap-2"
+          to="/chats/$chatId"
+          params={{ chatId: chat.id }}
+        >
+          <div className="relative">
+            {unreadMessages && (
+              <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
+            )}
+            <Avatar className="h-14 w-auto">
+              <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
+              <AvatarFallback>{chat.contact.username}</AvatarFallback>
+            </Avatar>
+          </div>
+          <p>{chat.contact.username}</p>
+        </Link>
+      </SidebarMenuButton>
+    </li>
   );
 };
 

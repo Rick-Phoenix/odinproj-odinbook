@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -16,10 +12,11 @@ import {
   SidebarMenuSubButton,
   SidebarMenuSubItem,
 } from "@/components/ui/sidebar";
+import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
-import { ChevronRight, type LucideIcon } from "lucide-react";
+import { ChevronRight, MessagesSquare, type LucideIcon } from "lucide-react";
 import { title } from "radashi";
-import type { JSX } from "react";
+import type { FC, JSX } from "react";
 import { useActivePage } from "../hooks/use-active-page";
 
 export function NavMain({
@@ -50,8 +47,14 @@ export function NavMain({
                 tooltip={item.title}
               >
                 <Link to={item.url}>
-                  <item.icon />
-                  <span>{item.title}</span>
+                  {item.title === "Chats" ? (
+                    <ChatSidebarButton title={item.title} />
+                  ) : (
+                    <>
+                      <item.icon />
+                      <span>{item.title}</span>
+                    </>
+                  )}
                 </Link>
               </SidebarMenuButton>
               {item.items?.length ? (
@@ -74,10 +77,8 @@ export function NavMain({
                             </SidebarMenuSubButton>
                           </SidebarMenuSubItem>
                         ) : (
-                          <SidebarMenuSubItem key={subItem.title}>
-                            {subItem.url}
-                          </SidebarMenuSubItem>
-                        ),
+                          <SidebarMenuSubItem key={subItem.title}>{subItem.url}</SidebarMenuSubItem>
+                        )
                       )}
                     </SidebarMenuSub>
                   </CollapsibleContent>
@@ -90,3 +91,17 @@ export function NavMain({
     </SidebarGroup>
   );
 }
+
+const ChatSidebarButton: FC<{ title: string }> = ({ title }) => {
+  const unreadMessages = useQuery({ queryKey: ["unreadMessages"], initialData: [] });
+  const hasUnreadMessages = !!unreadMessages.data.length;
+  return (
+    <div className="flex w-full items-center justify-between">
+      <span className="flex items-center gap-2 font-normal">
+        <MessagesSquare size={16} />
+        <span>{title}</span>
+      </span>
+      {hasUnreadMessages && <span className="size-2 rounded-full bg-red-500" />}
+    </div>
+  );
+};

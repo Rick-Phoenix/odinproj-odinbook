@@ -24,7 +24,8 @@ import {
   ContextMenuTrigger,
 } from "../../../components/ui/context-menu";
 import { useChats } from "../../../hooks/useChats";
-import { api, type Chat } from "../../../lib/api-client";
+import { useUnreadMessages } from "../../../hooks/useUnreadMessages";
+import { api, type Chat, type Message } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/chats/")({
   component: RouteComponent,
@@ -58,7 +59,7 @@ function RouteComponent() {
                 key={chat.id}
                 contactName={chat.contact.username}
                 contactAvatar={chat.contact.avatarUrl}
-                lastMessage={chat.messages.at(-1)?.text}
+                lastMessage={chat.messages.at(-1)}
                 chatId={chat.id}
               />
             ))
@@ -71,10 +72,13 @@ function RouteComponent() {
 const ChatPreview: FC<{
   contactName: string;
   contactAvatar: string;
-  lastMessage: string | undefined;
+  lastMessage: Message | undefined;
   chatId: number;
 }> = ({ contactName, contactAvatar, lastMessage, chatId }) => {
   const queryClient = useQueryClient();
+
+  const unreadMessages = useUnreadMessages(chatId, lastMessage?.id || 0);
+
   const handleDelete = useMutation({
     mutationKey: ["chatDelete", chatId],
     mutationFn: async () => {
@@ -94,6 +98,7 @@ const ChatPreview: FC<{
       );
     },
   });
+
   return (
     <AlertDialog>
       <ContextMenu modal={false}>
@@ -103,13 +108,18 @@ const ChatPreview: FC<{
             params={{ chatId }}
             className="flex h-28 w-full items-center justify-between gap-8 rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
           >
-            <Avatar className="h-full w-auto">
-              <AvatarImage src={contactAvatar} alt={`${contactName} profile picture`} />
-            </Avatar>
+            <div className="relative h-full">
+              {unreadMessages && (
+                <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
+              )}
+              <Avatar className="h-full w-auto">
+                <AvatarImage src={contactAvatar} alt={`${contactName} profile picture`} />
+              </Avatar>
+            </div>
             <div className="flex w-1/2 flex-col items-end gap-3">
               <div className="text-lg font-semibold">{contactName}</div>
               <div className="line-clamp-1 text-end font-semibold text-muted-foreground">
-                {lastMessage}
+                {lastMessage?.text}
               </div>
             </div>
           </Link>
