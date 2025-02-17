@@ -29,10 +29,7 @@ const ChatsSidebarContent = () => {
                     params={{ chatId: chat.id }}
                   >
                     <Avatar className="h-14 w-auto">
-                      <AvatarImage
-                        src={chat.contact.avatarUrl}
-                        alt={chat.contact.username}
-                      />
+                      <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
                       <AvatarFallback>{chat.contact.username}</AvatarFallback>
                     </Avatar>
                     <p>{chat.contact.username}</p>

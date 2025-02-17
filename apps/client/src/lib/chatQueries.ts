@@ -32,7 +32,7 @@ export const singleChatQueryOptions = (chatId: number) =>
 type ChatMutationData = { text: string };
 type ChatMutationVariables = { text: string; receiverId: string };
 export const chatMutationOptions = (
-  chatId: number,
+  chatId: number
 ): MutationOptions<ChatMutationData, Error, ChatMutationVariables> => ({
   mutationKey: ["chat", chatId],
   mutationFn: async (inputs: { text: string; receiverId: string }) => {
@@ -48,6 +48,7 @@ export const chatMutationOptions = (
   },
   onSuccess: (d, inputs) => {
     chatWebSocket.send(JSON.stringify({ receiver: inputs.receiverId, chatId }));
+
     queryClient.invalidateQueries({
       queryKey: ["chat", chatId],
       exact: true,
@@ -77,7 +78,7 @@ chatWebSocket.addEventListener("message", async (e) => {
   const chatId = +e.data;
   const existingChat = queryClient.getQueryData(["chat", chatId]);
   if (!existingChat) {
-    queryClient.ensureQueryData(singleChatQueryOptions(chatId));
+    await queryClient.fetchQuery(singleChatQueryOptions(chatId));
   } else {
     queryClient.invalidateQueries({
       queryKey: ["chat", chatId],

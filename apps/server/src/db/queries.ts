@@ -1,10 +1,9 @@
-import { and, asc, desc, eq, getTableColumns, gte, lt, lte, ne, sql } from 'drizzle-orm';
-import type { BasicPost, ListingInputs } from '../types/zod-schemas';
-import { hashPassword } from '../utils/password';
-import { lowercase, withCTEColumns } from './db-methods';
-import db from './dbConfig';
+import { and, asc, desc, eq, getTableColumns, gte, lt, lte, ne, sql } from "drizzle-orm";
+import type { BasicPost, ListingInputs } from "../types/zod-schemas";
+import { hashPassword } from "../utils/password";
+import { lowercase, withCTEColumns } from "./db-methods";
+import db from "./dbConfig";
 import {
-  chatInstances,
   commentLikes,
   comments,
   listings,
@@ -17,7 +16,7 @@ import {
   users,
   type MarketplaceCategory,
   type RoomCategories,
-} from './schema';
+} from "./schema";
 import {
   commentIsLiked,
   initialFeedQuery,
@@ -27,7 +26,7 @@ import {
   totalPostsFromRoom,
   totalPostsFromUserSubs,
   userStats,
-} from './subqueries';
+} from "./subqueries";
 
 export async function fetchUserData(userId: string) {
   const totalPostsFromSubs = totalPostsFromUserSubs(userId);
@@ -39,14 +38,14 @@ export async function fetchUserData(userId: string) {
       },
       listingsSaved: {
         with: {
-          listing: { extras: { isSaved: sql<boolean>`true`.as('isSaved') } },
+          listing: { extras: { isSaved: sql<boolean>`true`.as("isSaved") } },
         },
       },
     },
     extras: (f) => ({
       totalFeedPosts: sql<number>`${db.$count(totalPostsFromSubs)}::int`
         .mapWith(Number)
-        .as('totalFeedPosts'),
+        .as("totalFeedPosts"),
       ...initialFeedQuery(userId),
       ...userStats(userId),
       favoriteListingsCategory: sql<string>`(
@@ -57,7 +56,7 @@ export async function fetchUserData(userId: string) {
     GROUP BY lis.category
     ORDER BY COUNT(*) DESC
     LIMIT 1
-  )`.as('favorite_listings_category'),
+  )`.as("favorite_listings_category"),
     }),
   });
 
@@ -117,7 +116,7 @@ export async function fetchUserProfile(userId: string, username: string) {
       listingsCreated: {
         extras: (f) => ({
           ...isSaved(userId, f.id),
-          seller: sql<string>`${username}::text`.as('seller'),
+          seller: sql<string>`${username}::text`.as("seller"),
         }),
       },
       roomSubscriptions: true,
@@ -233,10 +232,10 @@ export async function fetchFeed(
   userId: string,
   cursorLikes: number,
   cursorTime: string,
-  orderBy: 'likesCount' | 'createdAt' = 'likesCount'
+  orderBy: "likesCount" | "createdAt" = "likesCount"
 ) {
   const userSubs = db
-    .$with('user_feed')
+    .$with("user_feed")
     .as(
       db
         .select({ room: rooms.name })
@@ -256,12 +255,12 @@ export async function fetchFeed(
     .innerJoin(posts, eq(posts.room, userSubs.room))
     .innerJoin(users, eq(users.id, posts.authorId))
     .where(
-      orderBy === 'likesCount'
+      orderBy === "likesCount"
         ? and(lte(posts.likesCount, cursorLikes), lt(posts.createdAt, cursorTime))
         : lt(posts.createdAt, cursorTime)
     )
     .orderBy(
-      ...(orderBy === 'likesCount'
+      ...(orderBy === "likesCount"
         ? [desc(posts.likesCount), desc(posts.createdAt)]
         : [desc(posts.createdAt), desc(posts.likesCount)])
     )
@@ -279,7 +278,7 @@ export async function fetchFeed(
 export const fetchPosts = async (
   userId: string,
   room: string,
-  orderBy: 'likesCount' | 'createdAt' = 'likesCount',
+  orderBy: "likesCount" | "createdAt" = "likesCount",
   cursorLikes: number,
   cursorTime: string
 ) => {
@@ -309,12 +308,12 @@ FROM
   posts
 WHERE
   posts.room = ${room} AND posts.${
-    orderBy === 'likesCount'
+    orderBy === "likesCount"
       ? sql.raw(`"likesCount" <= ${cursorLikes} AND posts."createdAt" < '${cursorTime}'`)
       : sql.raw(`"createdAt" < '${cursorTime}'`)
   } 
     ORDER BY posts.${safeOrderBy} DESC, ${
-      orderBy === 'likesCount' ? sql.raw(`"createdAt" DESC`) : sql.raw(`"likesCount" DESC`)
+      orderBy === "likesCount" ? sql.raw(`"createdAt" DESC`) : sql.raw(`"likesCount" DESC`)
     }
 LIMIT 20`
   );
@@ -325,7 +324,7 @@ LIMIT 20`
 export async function fetchRoom(
   userId: string,
   roomName: string,
-  orderBy: 'likesCount' | 'createdAt' = 'likesCount'
+  orderBy: "likesCount" | "createdAt" = "likesCount"
 ) {
   const room = await db.query.rooms.findFirst({
     where: (room, { eq }) => eq(lowercase(room.name), roomName.toLocaleLowerCase()),
@@ -334,7 +333,7 @@ export async function fetchRoom(
         limit: 20,
         with: { author: { columns: { username: true } } },
         orderBy: (post, { desc }) =>
-          orderBy === 'likesCount'
+          orderBy === "likesCount"
             ? [desc(post.likesCount), desc(post.createdAt)]
             : [desc(post.createdAt), desc(post.likesCount)],
         extras: (f) => postIsLiked(userId, f.id),
@@ -344,7 +343,7 @@ export async function fetchRoom(
       ...isSubscribed(userId, f.name),
       totalPosts: sql<number>`${db.$count(totalPostsFromRoom(roomName))}::int`
         .mapWith(Number)
-        .as('totalPosts'),
+        .as("totalPosts"),
     }),
   });
 
@@ -412,7 +411,7 @@ export async function removeCommentLike(userId: string, commentId: number) {
 
 export async function insertListing(inputs: { sellerId: string } & ListingInputs) {
   const insertQuery = db
-    .$with('inserted_listing')
+    .$with("inserted_listing")
     .as(db.insert(listings).values(inputs).returning());
   const [listing] = await db
     .with(insertQuery)
@@ -443,7 +442,7 @@ export async function fetchListing(userId: string, id: number) {
 export async function fetchListingsByCategory(
   userId: string,
   category: MarketplaceCategory,
-  orderBy: 'cheapest' | 'mostRecent'
+  orderBy: "cheapest" | "mostRecent"
 ) {
   const listingsByCategory = await db
     .select({
@@ -454,7 +453,7 @@ export async function fetchListingsByCategory(
     .from(listings)
     .innerJoin(users, eq(listings.sellerId, users.id))
     .where(and(eq(listings.sold, false), eq(listings.category, category)))
-    .orderBy(orderBy === 'cheapest' ? asc(listings.price) : desc(listings.createdAt));
+    .orderBy(orderBy === "cheapest" ? asc(listings.price) : desc(listings.createdAt));
   return listingsByCategory;
 }
 
@@ -556,14 +555,5 @@ export async function updateUserPassword(userId: string, sessionId: string, pass
     .returning({ newHash: users.hash });
   if (!newHash) return false;
   await db.delete(sessions).where(and(eq(sessions.userId, userId), ne(sessions.id, sessionId)));
-  return true;
-}
-
-export async function deleteChat(userId: string, chatId: number) {
-  const query = await db
-    .delete(chatInstances)
-    .where(and(eq(chatInstances.chatId, chatId), eq(chatInstances.ownerId, userId)));
-  if (!query.rowCount) return false;
-
   return true;
 }

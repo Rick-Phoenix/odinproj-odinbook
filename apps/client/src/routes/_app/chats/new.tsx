@@ -13,7 +13,8 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
 import { api } from "../../../lib/api-client";
-import { chatWebSocket } from "../../../lib/chatQueries";
+import { chatWebSocket, singleChatQueryOptions } from "../../../lib/chatQueries";
+import { queryClient } from "../../../lib/queries/queryClient";
 import { profileQueryOptions } from "../../../lib/queryOptions";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
@@ -25,9 +26,7 @@ export const Route = createFileRoute("/_app/chats/new")({
   validateSearch: zodValidator(searchInputs),
   loaderDeps: (opts) => opts.search,
   loader: async (ctx) => {
-    return await ctx.context.queryClient.fetchQuery(
-      profileQueryOptions(ctx.deps.contactUsername),
-    );
+    return await ctx.context.queryClient.fetchQuery(profileQueryOptions(ctx.deps.contactUsername));
   },
 });
 
@@ -66,9 +65,8 @@ function RouteComponent() {
       return data;
     },
     onSuccess: (data) => {
-      chatWebSocket.send(
-        JSON.stringify({ receiver: contact.id, chatId: data.chatId }),
-      );
+      chatWebSocket.send(JSON.stringify({ receiver: contact.id, chatId: data.chatId }));
+      queryClient.ensureQueryData(singleChatQueryOptions(data.chatId));
       navigate({
         to: "/chats/$chatId",
         params: { chatId: data.chatId },
@@ -95,10 +93,7 @@ function RouteComponent() {
           className="flex h-28 w-full items-center justify-between rounded-xl rounded-b-none bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
         >
           <Avatar>
-            <AvatarImage
-              src={contact.avatarUrl}
-              alt={`${contact.username} profile picture`}
-            />
+            <AvatarImage src={contact.avatarUrl} alt={`${contact.username} profile picture`} />
           </Avatar>
           <div className="text-lg font-semibold">{title(contact.username)}</div>
         </Link>
@@ -133,11 +128,7 @@ function RouteComponent() {
           ></form.Field>
 
           <form.Subscribe
-            selector={(state) => [
-              state.canSubmit,
-              state.isSubmitting,
-              state.isTouched,
-            ]}
+            selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched]}
             children={([canSubmit, isSubmitting, isTouched]) => (
               <Button
                 type="submit"

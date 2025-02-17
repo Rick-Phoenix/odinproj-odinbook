@@ -34,7 +34,7 @@ export const Route = createFileRoute("/_app/chats/")({
 });
 
 function RouteComponent() {
-  const sortedChats = useChats();
+  const chats = useChats();
 
   return (
     <InsetScrollArea>
@@ -52,8 +52,8 @@ function RouteComponent() {
             </Button>
           </CreateChatDialog>
         </header>
-        {sortedChats.length
-          ? sortedChats.map((chat) => (
+        {chats.length
+          ? chats.map((chat) => (
               <ChatPreview
                 key={chat.id}
                 contactName={chat.contact.username}
@@ -90,7 +90,7 @@ const ChatPreview: FC<{
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ["chat", chatId], exact: true });
       queryClient.setQueryData(["chats"], (old: Chat[]) =>
-        old.filter((chat) => chat.id !== chatId),
+        old.filter((chat) => chat.id !== chatId)
       );
     },
   });
@@ -104,10 +104,7 @@ const ChatPreview: FC<{
             className="flex h-28 w-full items-center justify-between gap-8 rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
           >
             <Avatar className="h-full w-auto">
-              <AvatarImage
-                src={contactAvatar}
-                alt={`${contactName} profile picture`}
-              />
+              <AvatarImage src={contactAvatar} alt={`${contactName} profile picture`} />
             </Avatar>
             <div className="flex w-1/2 flex-col items-end gap-3">
               <div className="text-lg font-semibold">{contactName}</div>
@@ -125,9 +122,7 @@ const ChatPreview: FC<{
       </ContextMenu>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            Are you sure you want to delete this chat?
-          </AlertDialogTitle>
+          <AlertDialogTitle>Are you sure you want to delete this chat?</AlertDialogTitle>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>

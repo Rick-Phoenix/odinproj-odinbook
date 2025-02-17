@@ -6,8 +6,7 @@ import { format } from "date-fns";
 import { Send } from "lucide-react";
 import { title } from "radashi";
 import { type FC, useEffect, useRef } from "react";
-import type { Chat, Message } from "../../lib/api-client";
-import { chatMutationOptions } from "../../lib/chatQueries";
+import { chatMutationOptions, singleChatQueryOptions } from "../../lib/chatQueries";
 import { singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
 import { Avatar, AvatarImage } from "../ui/avatar";
@@ -17,16 +16,13 @@ import { ScrollArea } from "../ui/scroll-area";
 import StaticInset from "./static-inset";
 
 export const ChatPage: FC<{
-  contactAvatar: string;
-  contactName: string;
-  messages: Message[];
-  contactId: string;
   chatId: number;
-}> = ({ contactAvatar, contactName, messages, contactId, chatId }) => {
-  const { data: chat } = useSuspenseQuery<Chat>({
-    queryKey: ["chat", chatId],
-  });
-  console.log(messages);
+}> = ({ chatId }) => {
+  const { data: chat } = useSuspenseQuery(singleChatQueryOptions(chatId))!;
+  const {
+    messages,
+    contact: { avatarUrl: contactAvatar, username: contactName, id: contactId },
+  } = chat;
   const form = useForm({
     defaultValues: {
       text: "",
@@ -76,10 +72,7 @@ export const ChatPage: FC<{
           className="flex h-28 w-full items-center justify-between rounded-xl rounded-b-none bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
         >
           <Avatar>
-            <AvatarImage
-              src={contactAvatar}
-              alt={`${contactName} profile picture`}
-            />
+            <AvatarImage src={contactAvatar} alt={`${contactName} profile picture`} />
           </Avatar>
           <div className="text-lg font-semibold">{title(contactName)}</div>
         </Link>
@@ -126,11 +119,7 @@ export const ChatPage: FC<{
           ></form.Field>
 
           <form.Subscribe
-            selector={(state) => [
-              state.canSubmit,
-              state.isSubmitting,
-              state.isTouched,
-            ]}
+            selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched]}
             children={([canSubmit, isSubmitting, isTouched]) => (
               <Button
                 type="submit"
@@ -167,9 +156,7 @@ const ChatMessage: FC<{
       <div className="flex flex-col gap-1">
         <div>{text}</div>
         <span className="text-sm text-muted-foreground">
-          {sentBeforeToday
-            ? format(sentAt, "MMM do '|' H:mm")
-            : format(sentAt, "H:mm")}
+          {sentBeforeToday ? format(sentAt, "MMM do '|' H:mm") : format(sentAt, "H:mm")}
         </span>
       </div>
     </div>

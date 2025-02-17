@@ -28,11 +28,10 @@ const chatsWebSocketHandler = upgradeWebSocket((c: AppContextWithUser) => {
       chatSockets.set(userId, ws);
     },
     onMessage(event, ws) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      const data: { receiver: string; chatId: number } = JSON.parse(
+      const data = JSON.parse(
         // @ts-expect-error Small props mismatch for Hono's definition of the event and the event itself
         event.data
-      );
+      ) as { receiver: string; chatId: number };
       const pairedSocket = chatSockets.get(data.receiver);
       if (pairedSocket) {
         pairedSocket.send(data.chatId.toString());
