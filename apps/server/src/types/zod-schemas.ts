@@ -74,6 +74,7 @@ export const userDataSchema = userSchema.extend({
   listingsCreated: z.array(listingSchema),
   listingsSaved: z.array(z.object({ listing: listingSchema })),
   favoriteListingsCategory: z.enum(marketplaceCategories).nullable(),
+  ownChats: z.array(chatSchema),
 });
 
 export const profileSchema = userSchema
@@ -150,16 +151,11 @@ export const loginValidationSchema = insertUserSchema.pick({
 
 export const insertRoomSchema = z.object({
   name: z.string().max(20, "The name cannot be longer than 20 characters."),
-  description: z
-    .string()
-    .max(150, "The description cannot be longer than 150 characters."),
+  description: z.string().max(150, "The description cannot be longer than 150 characters."),
   category: z.enum(roomCategoriesArray),
   avatar: z
     .instanceof(File)
-    .refine(
-      (file) => file.size <= 30000,
-      "The avatar cannot be larger than 3 megabytes."
-    )
+    .refine((file) => file.size <= 30000, "The avatar cannot be larger than 3 megabytes.")
     .optional(),
 });
 export { roomCategoriesArray } from "../db/schema";
@@ -178,9 +174,7 @@ export const insertPostSchema = z.object({
 export const insertCommentSchema = createInsertSchema(comments)
   .omit({ createdAt: true, id: true, userId: true })
   .extend({
-    text: z
-      .string()
-      .max(200, "A comment cannot be longer than 200 characters."),
+    text: z.string().max(200, "A comment cannot be longer than 200 characters."),
   });
 
 export const insertLikeSchema = createInsertSchema(postLikes).pick({
@@ -197,9 +191,7 @@ export const insertListingSchema = z.object({
     .string()
     .min(10, "The title must be at least 10 characters long.")
     .max(30, "The title cannot be longer than 30 characters."),
-  description: z
-    .string()
-    .max(250, "The description cannot be longer than 250 characters."),
+  description: z.string().max(250, "The description cannot be longer than 250 characters."),
   price: z.coerce
     .number()
     .positive()
@@ -217,10 +209,7 @@ export const insertListingSchema = z.object({
   condition: z.enum(itemConditions),
   pic: z
     .instanceof(File)
-    .refine(
-      (file) => file.size <= 1000000,
-      "The picture cannot be larger than one megabyte."
-    )
+    .refine((file) => file.size <= 1000000, "The picture cannot be larger than one megabyte.")
     .optional(),
 });
 export type ListingInputs = Omit<z.infer<typeof insertListingSchema>, "pic"> & {
@@ -234,9 +223,7 @@ export const insertMessageSchema = z.object({
 });
 
 export const updateStatusSchema = z.object({
-  status: z
-    .string()
-    .max(100, "The status cannot be longer than 100 characters."),
+  status: z.string().max(100, "The status cannot be longer than 100 characters."),
 });
 
 export const updateAvatarSchema = z.object({
@@ -259,9 +246,7 @@ export const passwordSchema = z
 
 export const updatePasswordSchema = z
   .object({
-    oldPassword: z
-      .string()
-      .refine((v) => passwordSchema.safeParse(v).success, "Invalid password."),
+    oldPassword: z.string().refine((v) => passwordSchema.safeParse(v).success, "Invalid password."),
     newPassword: passwordSchema,
     passConfirm: z.string(),
   })

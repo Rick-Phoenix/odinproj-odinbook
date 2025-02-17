@@ -56,20 +56,12 @@ export const initialFeedQuery = (userId: string) => {
     }>`(WITH
   user_subs AS (
     SELECT DISTINCT
-      rooms.name,
-      rooms."createdAt",
-      rooms.category,
-      rooms.avatar,
-      rooms.description,
-      rooms."subsCount",
-      users.id,
-      users.username
+      rooms.*
     FROM
       subs
       INNER JOIN rooms ON subs.room = rooms.name
-      INNER JOIN users ON subs."userId" = users.id
     WHERE
-      users.id = ${userId}
+      subs."userId" = ${userId}
   ),
   selected_rooms AS (
   SELECT name FROM user_subs

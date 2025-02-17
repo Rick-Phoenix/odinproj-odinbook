@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
 import { api, type ListingCategory, type PostBasic } from "./api-client";
+import { cacheChats } from "./chatQueries";
 import { queryClient } from "./queries/queryClient";
 
 // USER
@@ -19,8 +20,11 @@ export const userQueryOptions = {
       subsContent: { rooms, posts, suggestedRooms },
       listingsCreated,
       listingsSaved,
+      ownChats,
       ...userData
     } = data;
+
+    cacheChats(ownChats);
 
     const initialFeedTrending: PostBasic[] = [];
     const initialFeedNewest: PostBasic[] = [];
@@ -65,9 +69,6 @@ export const userQueryOptions = {
       ["listingsSaved"],
       listingsSaved.map((list) => list.listing)
     );
-
-    console.log(initialFeedNewest);
-    console.log(initialFeedTrending);
 
     return userData;
   },

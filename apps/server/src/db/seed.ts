@@ -163,6 +163,3 @@ FROM
   suggested_rooms_json
   )`);
 };
-
-//const a = await initialFeedQuery("c333a7e3-ec52-4d70-95d3-14d038ec983a");
-//console.log("🚀 ~ a:", a.rows[0].result);

@@ -2,6 +2,13 @@ import { queryOptions, type MutationOptions } from "@tanstack/react-query";
 import { api, wsRPC, type Chat } from "./api-client";
 import { queryClient } from "./queries/queryClient";
 
+export function cacheChats(chats: Chat[]) {
+  queryClient.setQueryDefaults(["chats"], { queryFn: chatsQueryOptions.queryFn });
+  for (const chat of chats) {
+    cacheChat(chat);
+  }
+}
+
 export const chatsQueryOptions = {
   queryKey: ["chats"],
   queryFn: async () => {
@@ -58,6 +65,14 @@ export const chatMutationOptions = (
 });
 
 export function cacheChat(chat: Chat) {
+  const lastMessageId = Number(chat.messages.at(-1)?.id);
+  const lastReadMessageId = Number(localStorage.getItem(`lastMessageRead-${chat.id}`)) || 0;
+  if (lastReadMessageId < lastMessageId) {
+    queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) =>
+      old ? [...old, chat.id] : [chat.id]
+    );
+  }
+
   queryClient.setQueryDefaults(["chat", chat.id], {
     queryFn: async () => {
       const res = await api.chats[":chatId"].$get({

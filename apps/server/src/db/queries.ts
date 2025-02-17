@@ -41,6 +41,32 @@ export async function fetchUserData(userId: string) {
           listing: { extras: { isSaved: sql<boolean>`true`.as("isSaved") } },
         },
       },
+      ownChats: {
+        with: {
+          contact: { columns: { username: true, avatarUrl: true, id: true } },
+          chat: {
+            with: {
+              messages: {
+                where: (f) =>
+                  gte(
+                    f.id,
+                    sql<number>`
+                      (
+                        SELECT
+                          "firstMessageId"
+                        FROM
+                          "chatInstances"
+                        WHERE
+                          "chatInstances"."chatId" = ${f.chatId}
+                          AND "chatInstances"."ownerId" = ${userId}
+                      )
+                    `
+                  ),
+              },
+            },
+          },
+        },
+      },
     },
     extras: (f) => ({
       totalFeedPosts: sql<number>`${db.$count(totalPostsFromSubs)}::int`
@@ -48,17 +74,31 @@ export async function fetchUserData(userId: string) {
         .as("totalFeedPosts"),
       ...initialFeedQuery(userId),
       ...userStats(userId),
-      favoriteListingsCategory: sql<string>`(
-    SELECT lis.category
-    FROM "savedListings" s
-    JOIN listings lis ON s."listingId" = lis.id
-    WHERE s."userId" = ${userId}
-    GROUP BY lis.category
-    ORDER BY COUNT(*) DESC
-    LIMIT 1
-  )`.as("favorite_listings_category"),
+      favoriteListingsCategory: sql<string>`
+        (
+          SELECT
+            lis.category
+          FROM
+            "savedListings" s
+            JOIN listings lis ON s."listingId" = lis.id
+          WHERE
+            s."userId" = ${userId}
+          GROUP BY
+            lis.category
+          ORDER BY
+            COUNT(*) DESC
+          LIMIT
+            1
+        )
+      `.as("favorite_listings_category"),
     }),
   });
+
+  if (userData)
+    return {
+      ...userData,
+      ownChats: userData.ownChats.map((chat) => ({ contact: chat.contact, ...chat.chat })),
+    };
 
   return userData;
 }
@@ -139,7 +179,17 @@ export async function getUserChats(userId: string) {
             where: (f) =>
               gte(
                 f.id,
-                sql<number>`(SELECT "firstMessageId" FROM "chatInstances" WHERE "chatInstances"."chatId" = ${f.chatId} AND "chatInstances"."ownerId" = ${userId})`
+                sql<number>`
+                  (
+                    SELECT
+                      "firstMessageId"
+                    FROM
+                      "chatInstances"
+                    WHERE
+                      "chatInstances"."chatId" = ${f.chatId}
+                      AND "chatInstances"."ownerId" = ${userId}
+                  )
+                `
               ),
           },
         },
@@ -165,7 +215,17 @@ export async function getSingleChat(userId: string, chatId: number) {
             where: (f) =>
               gte(
                 f.id,
-                sql<number>`(SELECT "firstMessageId" FROM "chatInstances" WHERE "chatInstances"."chatId" = ${f.chatId} AND "chatInstances"."ownerId" = ${userId})`
+                sql<number>`
+                  (
+                    SELECT
+                      "firstMessageId"
+                    FROM
+                      "chatInstances"
+                    WHERE
+                      "chatInstances"."chatId" = ${f.chatId}
+                      AND "chatInstances"."ownerId" = ${userId}
+                  )
+                `
               ),
             orderBy: (f) => asc(f.createdAt),
           },
@@ -288,35 +348,39 @@ export const fetchPosts = async (
   } as const;
 
   const safeOrderBy = orderByColumns[orderBy] ?? orderByColumns.likesCount;
-  const { rows: posts } = await db.execute<BasicPost>(
-    sql`SELECT
-  *,
-  (
-    SELECT DISTINCT
-      username
+  const { rows: posts } = await db.execute<BasicPost>(sql`
+    SELECT
+      *,
+      (
+        SELECT DISTINCT
+          username
+        FROM
+          users
+        WHERE
+          users.id = posts."authorId"
+      ) AS author,
+      EXISTS (
+        SELECT
+          1
+        FROM
+          likes
+        WHERE
+          likes."postId" = posts.id
+          AND likes."userId" = ${userId}
+      ) AS isLiked
     FROM
-      users
+      posts
     WHERE
-      users.id = posts."authorId"
-  ) AS author, EXISTS (
-            SELECT 1
-            FROM likes
-            WHERE likes."postId" = posts.id
-            AND likes."userId" = ${userId}
-          ) AS isLiked
-FROM
-  posts
-WHERE
-  posts.room = ${room} AND posts.${
-    orderBy === "likesCount"
+      posts.room = ${room}
+      AND posts.${orderBy === "likesCount"
       ? sql.raw(`"likesCount" <= ${cursorLikes} AND posts."createdAt" < '${cursorTime}'`)
-      : sql.raw(`"createdAt" < '${cursorTime}'`)
-  } 
-    ORDER BY posts.${safeOrderBy} DESC, ${
-      orderBy === "likesCount" ? sql.raw(`"createdAt" DESC`) : sql.raw(`"likesCount" DESC`)
-    }
-LIMIT 20`
-  );
+      : sql.raw(`"createdAt" < '${cursorTime}'`)}
+    ORDER BY
+      posts.${safeOrderBy} DESC,
+      ${orderBy === "likesCount" ? sql.raw(`"createdAt" DESC`) : sql.raw(`"likesCount" DESC`)}
+    LIMIT
+      20
+  `);
 
   return posts;
 };
