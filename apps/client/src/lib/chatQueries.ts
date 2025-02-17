@@ -71,7 +71,7 @@ export function cacheChat(chat: Chat) {
   queryClient.setQueryData(["chat", chat.id], chat);
 }
 
-const chatWebSocket = wsRPC.ws.$ws();
+export const chatWebSocket = wsRPC.ws.$ws();
 
 chatWebSocket.addEventListener("message", async (e) => {
   const chatId = +e.data;

@@ -26,6 +26,7 @@ export const ChatPage: FC<{
   const { data: chat } = useSuspenseQuery<Chat>({
     queryKey: ["chat", chatId],
   });
+  console.log(messages);
   const form = useForm({
     defaultValues: {
       text: "",

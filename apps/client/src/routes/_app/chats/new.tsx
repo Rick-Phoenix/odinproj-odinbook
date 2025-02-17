@@ -13,6 +13,7 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
 import { api } from "../../../lib/api-client";
+import { chatWebSocket } from "../../../lib/chatQueries";
 import { profileQueryOptions } from "../../../lib/queryOptions";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
@@ -65,6 +66,9 @@ function RouteComponent() {
       return data;
     },
     onSuccess: (data) => {
+      chatWebSocket.send(
+        JSON.stringify({ receiver: contact.id, chatId: data.chatId }),
+      );
       navigate({
         to: "/chats/$chatId",
         params: { chatId: data.chatId },

@@ -156,7 +156,7 @@ export async function getUserChats(userId: string) {
 export async function getSingleChat(userId: string, chatId: number) {
   const chat = await db.query.chatInstances.findFirst({
     where(chat, { eq, and }) {
-      return and(eq(chat.ownerId, userId), eq(chat.chatId, chatId));
+      return and(eq(chat.ownerId, userId), eq(chat.chatId, chatId), eq(chat.isDeleted, false));
     },
     with: {
       contact: { columns: { username: true, avatarUrl: true, id: true } },
@@ -168,6 +168,7 @@ export async function getSingleChat(userId: string, chatId: number) {
                 f.id,
                 sql<number>`(SELECT "firstMessageId" FROM "chatInstances" WHERE "chatInstances"."chatId" = ${f.chatId} AND "chatInstances"."ownerId" = ${userId})`
               ),
+            orderBy: (f) => asc(f.createdAt),
           },
         },
       },
