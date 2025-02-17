@@ -21,28 +21,16 @@ export const userStats = (userId: string) => {
     .from(postLikes)
     .where(eq(postLikes.userId, userId))
     .as("totalLikes");
-  const postsQuery = db
-    .select()
-    .from(posts)
-    .where(eq(posts.authorId, userId))
-    .as("totalPosts");
-  const roomsQuery = db
-    .select()
-    .from(rooms)
-    .where(eq(rooms.creatorId, userId))
-    .as("totalRooms");
+  const postsQuery = db.select().from(posts).where(eq(posts.authorId, userId)).as("totalPosts");
+  const roomsQuery = db.select().from(rooms).where(eq(rooms.creatorId, userId)).as("totalRooms");
   const listingsQuery = db
     .select()
     .from(listings)
     .where(eq(listings.sellerId, userId))
     .as("totalListings");
   return {
-    totalLikes: sql<number>`${db.$count(likesQuery)}::int`
-      .mapWith(Number)
-      .as("totalLikes"),
-    totalPosts: sql<number>`${db.$count(postsQuery)}::int`
-      .mapWith(Number)
-      .as("totalPosts"),
+    totalLikes: sql<number>`${db.$count(likesQuery)}::int`.mapWith(Number).as("totalLikes"),
+    totalPosts: sql<number>`${db.$count(postsQuery)}::int`.mapWith(Number).as("totalPosts"),
     totalRoomsCreated: sql<number>`${db.$count(roomsQuery)}::int`
       .mapWith(Number)
       .as("totalRoomsCreated"),
@@ -83,25 +71,24 @@ export const initialFeedQuery = (userId: string) => {
     WHERE
       users.id = ${userId}
   ),
-  recent_posts AS (
-    SELECT 
-      posts.id,
-      posts.room,
-      posts.title,
-      posts.text,
-      posts."createdAt",
-      posts."likesCount",
-      users.username AS author,
-      EXISTS (
-        SELECT 1 FROM "postLikes" 
-        WHERE "postLikes"."postId" = posts.id 
-        AND "postLikes"."userId" = ${userId}
-      ) AS isLiked
-    FROM posts
-    LEFT JOIN users ON posts."authorId" = users.id
-    WHERE posts.room IN (SELECT name FROM user_subs)
-    ORDER BY posts."createdAt" DESC
-    LIMIT 20
+    top_category AS (
+    SELECT category
+    FROM user_subs
+    GROUP BY category
+    ORDER BY COUNT(*) DESC
+    LIMIT 1
+  ),
+  suggested_rooms AS (
+    SELECT * 
+    FROM rooms r 
+    WHERE 
+      (
+        r.category IN (SELECT category FROM top_category) 
+        OR (SELECT category FROM top_category) IS NULL
+      )
+      AND r.name NOT IN (SELECT name FROM user_subs)
+    ORDER BY r."subsCount" DESC 
+    LIMIT 5
   ),
    liked_posts AS (
     SELECT 
@@ -119,40 +106,54 @@ export const initialFeedQuery = (userId: string) => {
       ) AS isLiked
     FROM posts
     LEFT JOIN users ON posts."authorId" = users.id
-    WHERE posts.room IN (SELECT name FROM user_subs)
+    WHERE posts.room IN (
+        SELECT name FROM user_subs 
+    )
+    OR (
+        NOT EXISTS (SELECT 1 FROM user_subs)  
+        AND posts.room IN (
+            SELECT name FROM rooms 
+            ORDER BY "subsCount" DESC 
+            LIMIT 5  
+        )
+    )
     ORDER BY posts."likesCount" DESC
+    LIMIT 20
+  ),
+  recent_posts AS (
+    SELECT 
+      posts.id,
+      posts.room,
+      posts.title,
+      posts.text,
+      posts."createdAt",
+      posts."likesCount",
+      users.username AS author,
+      EXISTS (
+        SELECT 1 FROM "postLikes" 
+        WHERE "postLikes"."postId" = posts.id 
+        AND "postLikes"."userId" = ${userId}
+      ) AS isLiked
+    FROM posts
+    LEFT JOIN users ON posts."authorId" = users.id
+    WHERE posts.room IN (
+        SELECT name FROM user_subs 
+    )
+    OR (
+        NOT EXISTS (SELECT 1 FROM user_subs)  
+        AND posts.room IN (
+            SELECT name FROM rooms 
+            ORDER BY "subsCount" DESC 
+            LIMIT 5  
+        )
+    )    
+    ORDER BY posts."createdAt" DESC
     LIMIT 20
   ),
     combined_posts AS (
     SELECT * FROM recent_posts
     UNION ALL
     SELECT * FROM liked_posts
-  ),
-  unique_posts AS (
-    SELECT * FROM (
-      SELECT DISTINCT ON (id) 
-        id, 
-        room, 
-        title, 
-        text, 
-        "createdAt", 
-        "likesCount", 
-        author, 
-        isLiked
-      FROM combined_posts
-      ORDER BY id 
-    ) AS unique_posts
-    ORDER BY "likesCount" DESC, "createdAt" DESC
-  ),
-  suggested_rooms AS (
-    SELECT * FROM rooms r WHERE r.category IN (SELECT r.category
-    FROM subs s
-    JOIN rooms r ON s.room = r.name
-    WHERE s."userId" = ${userId}
-    GROUP BY r.category
-    ORDER BY COUNT(*) DESC
-    LIMIT 1) AND r.name NOT IN (SELECT name FROM user_subs) 
-    ORDER BY r."subsCount" DESC LIMIT 5
   ),
   rooms_json AS (
     SELECT
@@ -203,16 +204,16 @@ export const initialFeedQuery = (userId: string) => {
   posts_json AS (
     SELECT 
       jsonb_agg(jsonb_build_object(
-        'id', unique_posts.id,
-        'author', unique_posts.author,
-        'title', unique_posts.title,
-        'text', unique_posts.text,
-        'createdAt', unique_posts."createdAt",
-        'likesCount', unique_posts."likesCount",
-        'room', unique_posts.room,
-        'isLiked', unique_posts.isLiked
+        'id', combined_posts.id,
+        'author', combined_posts.author,
+        'title', combined_posts.title,
+        'text', combined_posts.text,
+        'createdAt', combined_posts."createdAt",
+        'likesCount', combined_posts."likesCount",
+        'room', combined_posts.room,
+        'isLiked', combined_posts.isLiked
       )) AS posts
-    FROM unique_posts 
+    FROM combined_posts 
   )
 SELECT
   jsonb_build_object('rooms', rooms_json.rooms, 'posts', posts_json.posts, 'suggestedRooms', suggested_rooms_json.suggested_rooms) AS result
@@ -227,47 +228,63 @@ FROM
 export function postIsLiked(userId: string, postId: PgColumn) {
   return {
     isLiked: sql<boolean>`
-    EXISTS (
-      SELECT 1 FROM "postLikes" 
-      WHERE "postLikes"."postId" = ${postId} 
-      AND "postLikes"."userId" = ${userId}
-    )
-  `.as("isLiked"),
+      EXISTS (
+        SELECT
+          1
+        FROM
+          "postLikes"
+        WHERE
+          "postLikes"."postId" = ${postId}
+          AND "postLikes"."userId" = ${userId}
+      )
+    `.as("isLiked"),
   };
 }
 
 export function commentIsLiked(userId: string, commentId: PgColumn) {
   return {
     isLiked: sql<boolean>`
-    EXISTS (
-      SELECT 1 FROM "commentLikes" 
-      WHERE "commentLikes"."commentId" = ${commentId} 
-      AND "commentLikes"."userId" = ${userId}
-    )
-  `.as("isLiked"),
+      EXISTS (
+        SELECT
+          1
+        FROM
+          "commentLikes"
+        WHERE
+          "commentLikes"."commentId" = ${commentId}
+          AND "commentLikes"."userId" = ${userId}
+      )
+    `.as("isLiked"),
   };
 }
 
 export function isSaved(userId: string, listingId: PgColumn) {
   return {
     isSaved: sql<boolean>`
-    EXISTS (
-      SELECT 1 FROM "savedListings" 
-      WHERE "listingId" = ${listingId} 
-      AND "userId" = ${userId}
-    )
-  `.as("isSaved"),
+      EXISTS (
+        SELECT
+          1
+        FROM
+          "savedListings"
+        WHERE
+          "listingId" = ${listingId}
+          AND "userId" = ${userId}
+      )
+    `.as("isSaved"),
   };
 }
 
 export function isSubscribed(userId: string, roomName: PgColumn) {
   return {
     isSubscribed: sql<boolean>`
-    EXISTS (
-      SELECT 1 FROM "subs" 
-      WHERE "subs"."room" = ${roomName}
-      AND "subs"."userId" = ${userId}
-    )
-  `.as("isSubscribed"),
+      EXISTS (
+        SELECT
+          1
+        FROM
+          "subs"
+        WHERE
+          "subs"."room" = ${roomName}
+          AND "subs"."userId" = ${userId}
+      )
+    `.as("isSubscribed"),
   };
 }

@@ -4,13 +4,14 @@
   "semi": true,
   "singleQuote": false,
   "printWidth": 100,
-  "plugins": ["prettier-plugin-sql"],
+  "plugins": ["prettier-plugin-sql", "prettier-plugin-embed"],
+  "embeddedSqlTags": ["sql"],
   "overrides": [
     {
       "files": "*.sql",
       "options": {
         "language": "postgresql",
-        "uppercase": true
+        "keywordCase": "upper"
       }
     }
   ]
