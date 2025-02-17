@@ -25,7 +25,6 @@ export const singleChatQueryOptions = (chatId: number) =>
       if ("issues" in data) {
         throw new Error("An error occurred while loading the chat.");
       }
-      cacheChat(data);
       return data;
     },
   });
@@ -52,6 +51,7 @@ export const chatMutationOptions = (
     queryClient.invalidateQueries({
       queryKey: ["chat", chatId],
       exact: true,
+      refetchType: "all",
     });
   },
 });
@@ -73,11 +73,16 @@ export function cacheChat(chat: Chat) {
 
 const chatWebSocket = wsRPC.ws.$ws();
 
-chatWebSocket.addEventListener("message", (e) => {
+chatWebSocket.addEventListener("message", async (e) => {
   const chatId = +e.data;
-  queryClient.invalidateQueries({
-    queryKey: ["chat", chatId],
-    exact: true,
-    refetchType: "all",
-  });
+  const existingChat = queryClient.getQueryData(["chat", chatId]);
+  if (!existingChat) {
+    queryClient.ensureQueryData(singleChatQueryOptions(chatId));
+  } else {
+    queryClient.invalidateQueries({
+      queryKey: ["chat", chatId],
+      exact: true,
+      refetchType: "all",
+    });
+  }
 });

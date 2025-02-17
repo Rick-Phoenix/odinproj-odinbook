@@ -23,7 +23,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "../../../components/ui/context-menu";
-import { useReactiveQueries } from "../../../hooks/useReactiveQueries";
+import { useChats } from "../../../hooks/useChats";
 import { api, type Chat } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/chats/")({
@@ -34,14 +34,7 @@ export const Route = createFileRoute("/_app/chats/")({
 });
 
 function RouteComponent() {
-  const chats = useReactiveQueries(["chat"]);
-  const sortedChats = chats
-    .map((tup) => tup[1] as Chat)
-    .sort((a, b) => {
-      const lastMessageA = a.messages.at(-1)?.createdAt || 0;
-      const lastMessageB = b.messages.at(-1)?.createdAt || 0;
-      return new Date(lastMessageA) > new Date(lastMessageB) ? -1 : 1;
-    });
+  const sortedChats = useChats();
 
   return (
     <InsetScrollArea>

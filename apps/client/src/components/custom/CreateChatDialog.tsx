@@ -1,11 +1,10 @@
-import { cacheChat } from "@/lib/chatQueries";
 import { useForm } from "@tanstack/react-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import type { FC, ReactNode } from "react";
+import { useState, type FC, type ReactNode } from "react";
 import { z } from "zod";
-import { type Chat, api } from "../../lib/api-client";
-import { errorTypeGuard } from "../../utils/type-guards";
+import { type Chat } from "../../lib/api-client";
+import { profileQueryOptions } from "../../lib/queryOptions";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -18,8 +17,10 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
 const CreateChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
+  const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
-  const nav = useNavigate();
+  const navigate = useNavigate();
+
   const form = useForm({
     defaultValues: {
       contactUsername: "",
@@ -30,45 +31,35 @@ const CreateChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
           .getQueryData<Chat[]>(["chats"])!
           .find((chat) => chat.contact.username === contactUsername);
         if (chat) {
-          nav({
+          navigate({
             to: "/chats/$chatId",
             params: { chatId: chat.id },
           });
           return;
         }
         try {
-          await createChat.mutateAsync({ contactUsername });
+          const contact = await queryClient.fetchQuery(
+            profileQueryOptions(contactUsername),
+          );
           return null;
         } catch (error) {
-          if (errorTypeGuard(error)) return error.message;
+          return "This user does not exist.";
         }
       },
       onSubmit: z.object({ contactUsername: z.string() }),
     },
-    onSubmit() {
+    onSubmit({ value }) {
       form.reset();
+      navigate({
+        to: "/chats/new",
+        search: { contactUsername: value.contactUsername },
+      });
+      setOpen(false);
     },
   });
 
-  const createChat = useMutation({
-    mutationKey: ["chat"],
-    mutationFn: async (v: { contactUsername: string }) => {
-      const { contactUsername } = v;
-      const res = await api.chats.$post({ json: { contactUsername } });
-      const data = await res.json();
-      if ("issues" in data) {
-        throw new Error(data.issues[0].message);
-      }
-      return data;
-    },
-    onSuccess(data) {
-      queryClient.setQueryData(["chats"], (old: Chat[]) => [...old, data]);
-      cacheChat(data);
-      nav({ to: "/chats/$chatId", params: { chatId: data.id } });
-    },
-  });
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>

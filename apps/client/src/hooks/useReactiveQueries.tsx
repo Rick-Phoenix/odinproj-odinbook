@@ -15,7 +15,9 @@ export const useReactiveQueries = (keySegment: QueryKey) => {
       if (event.query.queryKey[0] === keySegment[0]) {
         if (event.type === "updated" || event.type === "added") {
           const updatedData = queryClient.getQueriesData({
-            predicate: (query) => query.queryKey[0] === keySegment[0],
+            predicate: (query) =>
+              query.queryKey[0] === keySegment[0] &&
+              query.state.data !== undefined,
           });
 
           setData(updatedData);

@@ -1,15 +1,13 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { Plus } from "lucide-react";
-import { chatsQueryOptions } from "../../../lib/chatQueries";
+import { useChats } from "../../../hooks/useChats";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { SidebarMenu, SidebarMenuButton } from "../../ui/sidebar";
 import CreateChatDialog from "../CreateChatDialog";
 
 const ChatsSidebarContent = () => {
-  const { data: chats } = useSuspenseQuery(chatsQueryOptions);
-
+  const chats = useChats();
   return (
     <>
       {
