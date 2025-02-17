@@ -29,7 +29,7 @@ export const userQueryOptions = {
       for (const room of rooms) {
         queryClient.setQueryData(["roomPreview", room.name], room);
         queryClient.setQueryData(["roomSubs"], (old: string[] | undefined) =>
-          !old ? [room.name] : [...old, room.name],
+          !old ? [room.name] : [...old, room.name]
         );
       }
     }
@@ -55,7 +55,7 @@ export const userQueryOptions = {
 
     queryClient.setQueryData(["initialFeed", "createdAt"], {
       posts: initialFeedNewest.sort((a, b) =>
-        new Date(b.createdAt) > new Date(a.createdAt) ? 1 : -1,
+        new Date(b.createdAt) > new Date(a.createdAt) ? 1 : -1
       ),
       total: data.totalFeedPosts,
     });
@@ -63,8 +63,11 @@ export const userQueryOptions = {
     queryClient.setQueryData(["listingsCreated"], listingsCreated);
     queryClient.setQueryData(
       ["listingsSaved"],
-      listingsSaved.map((list) => list.listing),
+      listingsSaved.map((list) => list.listing)
     );
+
+    console.log(initialFeedNewest);
+    console.log(initialFeedTrending);
 
     return userData;
   },
@@ -74,7 +77,7 @@ export const userQueryOptions = {
 
 export const roomQueryOptions = (
   roomName: string,
-  orderBy: "likesCount" | "createdAt" = "likesCount",
+  orderBy: "likesCount" | "createdAt" = "likesCount"
 ) =>
   queryOptions({
     queryKey: ["room", roomName],
@@ -139,7 +142,7 @@ export const listingQueryOptions = (itemId: number) => {
 
 export const listingsByCategoryQueryOptions = (
   category: ListingCategory,
-  orderBy: "cheapest" | "mostRecent",
+  orderBy: "cheapest" | "mostRecent"
 ) => {
   return queryOptions({
     queryKey: ["listings", category],

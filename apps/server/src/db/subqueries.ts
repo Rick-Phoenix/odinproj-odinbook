@@ -71,6 +71,17 @@ export const initialFeedQuery = (userId: string) => {
     WHERE
       users.id = ${userId}
   ),
+  selected_rooms AS (
+  SELECT name FROM user_subs
+  UNION ALL
+  SELECT * FROM (  
+    SELECT name 
+    FROM rooms 
+    ORDER BY "subsCount" DESC 
+    LIMIT 5
+  ) AS fallback
+  WHERE NOT EXISTS (SELECT 1 FROM user_subs)
+  ),
     top_category AS (
     SELECT category
     FROM user_subs
@@ -106,17 +117,7 @@ export const initialFeedQuery = (userId: string) => {
       ) AS isLiked
     FROM posts
     LEFT JOIN users ON posts."authorId" = users.id
-    WHERE posts.room IN (
-        SELECT name FROM user_subs 
-    )
-    OR (
-        NOT EXISTS (SELECT 1 FROM user_subs)  
-        AND posts.room IN (
-            SELECT name FROM rooms 
-            ORDER BY "subsCount" DESC 
-            LIMIT 5  
-        )
-    )
+    WHERE posts.room IN (SELECT name FROM selected_rooms)
     ORDER BY posts."likesCount" DESC
     LIMIT 20
   ),
@@ -136,24 +137,14 @@ export const initialFeedQuery = (userId: string) => {
       ) AS isLiked
     FROM posts
     LEFT JOIN users ON posts."authorId" = users.id
-    WHERE posts.room IN (
-        SELECT name FROM user_subs 
-    )
-    OR (
-        NOT EXISTS (SELECT 1 FROM user_subs)  
-        AND posts.room IN (
-            SELECT name FROM rooms 
-            ORDER BY "subsCount" DESC 
-            LIMIT 5  
-        )
-    )    
+    WHERE posts.room IN (SELECT name FROM selected_rooms)
     ORDER BY posts."createdAt" DESC
     LIMIT 20
   ),
     combined_posts AS (
-    SELECT * FROM recent_posts
-    UNION ALL
-    SELECT * FROM liked_posts
+      SELECT * FROM liked_posts
+      UNION ALL
+      SELECT * FROM recent_posts
   ),
   rooms_json AS (
     SELECT
