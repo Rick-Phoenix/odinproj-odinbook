@@ -91,9 +91,12 @@ export const roomQueryOptions = (
       if ("issues" in data) {
         throw new Error("Room not found.");
       }
-
       for (const post of data.posts) {
         queryClient.setQueryData(["post", post.id], post);
+        queryClient.setQueryData(["postLikes", post.id], {
+          isLiked: post.isLiked,
+          likesCount: post.likesCount,
+        });
       }
 
       return data;

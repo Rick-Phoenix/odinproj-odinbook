@@ -2,20 +2,11 @@ import { schemas } from "@nexus/shared-schemas";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useSpring, useTransform } from "motion/react";
 import { type FC, type MouseEvent, type MouseEventHandler } from "react";
-import {
-  Autoplay,
-  EffectCoverflow,
-  Mousewheel,
-  Pagination,
-} from "swiper/modules";
+import { Autoplay, EffectCoverflow, Mousewheel, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import CreateListingDialog from "../../../components/custom/CreateListingDialog";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
-import {
-  api,
-  type Listing,
-  type ListingCategory,
-} from "../../../lib/api-client";
+import { api, type Listing, type ListingCategory } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/marketplace/")({
   component: RouteComponent,
@@ -57,9 +48,10 @@ function RouteComponent() {
   );
 }
 
-const CategoryCard: React.FC<
-  React.ComponentProps<"button"> & { category: ListingCategory }
-> = ({ category, children }) => {
+const CategoryCard: React.FC<React.ComponentProps<"button"> & { category: ListingCategory }> = ({
+  category,
+  children,
+}) => {
   const cardRotation = 15;
   const cardScale = 1.05;
 
@@ -67,20 +59,11 @@ const CategoryCard: React.FC<
   const yPcnt = useSpring(0, { bounce: 0 });
   const scale = useSpring(1, { bounce: 0 });
 
-  const rotateX = useTransform(
-    yPcnt,
-    [-0.5, 0.5],
-    [`-${cardRotation}deg`, `${cardRotation}deg`],
-  );
-  const rotateY = useTransform(
-    xPcnt,
-    [-0.5, 0.5],
-    [`-${cardRotation}deg`, `${cardRotation}deg`],
-  );
+  const rotateX = useTransform(yPcnt, [-0.5, 0.5], [`-${cardRotation}deg`, `${cardRotation}deg`]);
+  const rotateY = useTransform(xPcnt, [-0.5, 0.5], [`-${cardRotation}deg`, `${cardRotation}deg`]);
 
   const getMousePosition = (e: MouseEvent) => {
-    const { width, height, left, top } =
-      e.currentTarget.getBoundingClientRect();
+    const { width, height, left, top } = e.currentTarget.getBoundingClientRect();
     const currentMouseX = e.clientX - left;
     const currentMouseY = e.clientY - top;
 
@@ -93,8 +76,7 @@ const CategoryCard: React.FC<
   };
 
   const handleMouseMove: MouseEventHandler = (e: MouseEvent) => {
-    const { currentMouseX, currentMouseY, containerWidth, containerHeight } =
-      getMousePosition(e);
+    const { currentMouseX, currentMouseY, containerWidth, containerHeight } = getMousePosition(e);
 
     xPcnt.set(currentMouseX / containerWidth - 0.5);
     yPcnt.set(currentMouseY / containerHeight - 0.5);
@@ -187,17 +169,14 @@ const SuggestedListing: FC<{ listing: Listing }> = ({ listing }) => {
     <Link
       to={"/marketplace/$category/$itemId"}
       params={{ category: listing.category, itemId: listing.id }}
-      className="flex flex-col items-center gap-5 rounded-xl border border-primary bg-secondary p-6 py-10 text-center hover:underline"
+      className="flex flex-col items-center justify-center gap-5 rounded-xl border border-primary bg-secondary p-6 py-10 text-center hover:underline"
     >
-      <div className="aspect-square h-full w-full">
-        <img src={listing.picUrl} />
-      </div>
+      <img src={listing.picUrl} className="aspect-square max-h-72 max-w-72 object-contain" />
+
       <h4 className="line-clamp-2 scroll-m-20 text-2xl font-semibold tracking-tight">
         {listing.title}
       </h4>
-      <h4 className="max-w-[6ch] text-center text-xl font-semibold leading-7">
-        ${listing.price}
-      </h4>
+      <h4 className="max-w-[6ch] text-center text-xl font-semibold leading-7">${listing.price}</h4>
     </Link>
   );
 };

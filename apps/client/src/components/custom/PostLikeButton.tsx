@@ -9,10 +9,11 @@ const PostLikeButton: FC<{
   postId: number;
 }> = ({ postId }) => {
   const queryClient = useQueryClient();
-  const { isLiked: initialIsLiked, likesCount: initialLikeCount } =
-    queryClient.getQueryData(["postLikes", postId]) as LikeData;
-  const [isLiked, setIsLiked] = useState(initialIsLiked);
-  const [likeCount, setLikeCount] = useState(initialLikeCount);
+  const query = queryClient.getQueryData(["postLikes", postId]) as LikeData;
+  const initialIsLiked = query?.isLiked;
+  const initialLikeCount = query?.likesCount;
+  const [isLiked, setIsLiked] = useState(initialIsLiked || false);
+  const [likeCount, setLikeCount] = useState(initialLikeCount || 0);
 
   const likeMutation = useMutation({
     mutationKey: ["postLike", postId],

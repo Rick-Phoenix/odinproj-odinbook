@@ -1,8 +1,4 @@
-import {
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { useEffect, useRef, useState, type FC } from "react";
@@ -29,15 +25,10 @@ import {
 import { useUser } from "../../../../hooks/auth";
 import { api, type PostBasic } from "../../../../lib/api-client";
 import { roomQueryOptions } from "../../../../lib/queryOptions";
-import {
-  throttleAsync,
-  type ThrottledFunction,
-} from "../../../../utils/async-throttle";
+import { throttleAsync, type ThrottledFunction } from "../../../../utils/async-throttle";
 
 const searchInputs = z.object({
-  orderBy: fallback(z.enum(["likesCount", "createdAt"]), "likesCount").default(
-    "likesCount",
-  ),
+  orderBy: fallback(z.enum(["likesCount", "createdAt"]), "likesCount").default("likesCount"),
 });
 
 export const Route = createFileRoute("/_app/rooms/$roomName/")({
@@ -46,9 +37,7 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { queryClient }, params, deps: { orderBy } }) => {
     const { roomName } = params;
-    const room = await queryClient.fetchQuery(
-      roomQueryOptions(roomName, orderBy),
-    );
+    const room = await queryClient.fetchQuery(roomQueryOptions(roomName, orderBy));
     return room;
   },
 });
@@ -92,8 +81,7 @@ function RouteComponent() {
 
       if (posts.length === 0) return { posts: [], cursor: null };
 
-      for (const post of posts)
-        queryClient.setQueryData(["post", post.id], post);
+      for (const post of posts) queryClient.setQueryData(["post", post.id], post);
 
       const cursor = {
         time: posts.at(-1)?.createdAt,
@@ -120,15 +108,8 @@ function RouteComponent() {
 
   const throttledScrollFetch = useRef<ThrottledFunction>(null);
   useEffect(() => {
-    throttledScrollFetch.current = throttleAsync(
-      postsQuery.fetchNextPage,
-      3000,
-      true,
-    );
-    return () =>
-      throttledScrollFetch.current
-        ? throttledScrollFetch.current.cancel()
-        : void null;
+    throttledScrollFetch.current = throttleAsync(postsQuery.fetchNextPage, 3000, true);
+    return () => (throttledScrollFetch.current ? throttledScrollFetch.current.cancel() : void null);
   }, [orderBy]);
 
   const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
@@ -168,9 +149,7 @@ function RouteComponent() {
             className="h-full flex-1 hover:bg-popover"
             variant={"secondary"}
             size={"lg"}
-            onClick={() =>
-              navigate({ to: ".", search: { orderBy: "createdAt" } })
-            }
+            onClick={() => navigate({ to: ".", search: { orderBy: "createdAt" } })}
             style={{
               ...(orderBy === "createdAt" && {
                 backgroundColor: "hsl(var(--popover))",
@@ -183,9 +162,7 @@ function RouteComponent() {
             className="h-full flex-1"
             variant={"secondary"}
             size={"lg"}
-            onClick={() =>
-              navigate({ to: ".", search: { orderBy: "likesCount" } })
-            }
+            onClick={() => navigate({ to: ".", search: { orderBy: "likesCount" } })}
             style={{
               ...(orderBy === "likesCount" && {
                 backgroundColor: "hsl(var(--popover))",
@@ -226,9 +203,7 @@ const SubscribeButton: FC<{
     },
     onSuccess: () => {
       queryClient.setQueryData(["roomSubs"], (old: string[]) =>
-        isSubscribed
-          ? old.filter((room) => room !== roomName)
-          : [...old, roomName],
+        isSubscribed ? old.filter((room) => room !== roomName) : [...old, roomName]
       );
       setUserIsSubscribed((old) => !old);
     },
@@ -250,9 +225,7 @@ const SubscribeButton: FC<{
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DialogTrigger asChild>
-                <DropdownMenuItem className="w-full">
-                  Unsubcribe
-                </DropdownMenuItem>
+                <DropdownMenuItem className="w-full">Unsubcribe</DropdownMenuItem>
               </DialogTrigger>
             </DropdownMenuContent>
           </DropdownMenu>
