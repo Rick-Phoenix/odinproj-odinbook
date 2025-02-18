@@ -6,8 +6,7 @@ import type { Comment } from "../../lib/api-client";
 import { renderComments } from "../../pages/Post";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import CommentLikeButton from "./comment-like-button";
-import ReplyButton from "./reply-button";
+import CommentButtons from "./reply-button";
 
 const PostComment: FC<{
   c: Comment;
@@ -22,8 +21,7 @@ const PostComment: FC<{
   let separatorRowEnd = children.length ? children.length + 3 : 3;
   if (isLast || !isNested) separatorRowEnd--;
   const separatorRowEndClass = `row-end-${separatorRowEnd}`;
-  const separatorHeight =
-    isLast && !children.length ? "h-0" : "h-[calc(100%+4.5rem)]";
+  const separatorHeight = isLast && !children.length ? "h-0" : "h-[calc(100%+4.5rem)]";
   const separatorClass = `w-full cursor-pointer flex justify-center col-start-1 row-start-2 ${separatorRowEndClass} ${separatorHeight} ${c.id} justify-self-center group/sep `;
 
   const connectorClass = `absolute connector -left-[1.27rem] top-[calc(-50%+1rem)] h-6 w-5 rounded-xl rounded-r-none rounded-t-none border-b 
@@ -54,15 +52,8 @@ const PostComment: FC<{
   if (isFolded)
     return (
       <div className={gridClassName}>
-        <div
-          className={`relative col-start-1 row-start-1 h-10 w-10 rounded-full`}
-        >
-          {isNested && (
-            <span
-              className={connectorClass}
-              id={`connector-${c.parentCommentId}`}
-            />
-          )}
+        <div className={`relative col-start-1 row-start-1 h-10 w-10 rounded-full`}>
+          {isNested && <span className={connectorClass} id={`connector-${c.parentCommentId}`} />}
           <Button
             onClick={() => setIsFolded(false)}
             size={"icon"}
@@ -74,33 +65,21 @@ const PostComment: FC<{
         </div>
         <div className="col-start-2 row-start-1 flex flex-col pl-4">
           <div className="flex gap-4">
-            <Link
-              to="/users/$username"
-              params={{ username: c.author.username }}
-            >
+            <Link to="/users/$username" params={{ username: c.author.username }}>
               {c.author.username}
             </Link>
           </div>
-          <div className="text-sm">
-            {format(new Date(c.createdAt), "dd MMM y | HH:MM")}
-          </div>
+          <div className="text-sm">{format(new Date(c.createdAt), "dd MMM y | HH:MM")}</div>
         </div>
       </div>
     );
 
   return (
     <div className={gridClassName}>
-      <div
-        className={`relative col-start-1 row-start-1 h-10 w-10 rounded-full bg-foreground`}
-      >
-        {isNested && (
-          <span
-            className={connectorClass}
-            id={`connector-${c.parentCommentId}`}
-          />
-        )}
-        <Link to="/users/$username" params={{ username: c.author.username }}>
-          <img src={c.author.avatarUrl} className="rounded-full" />
+      <div className={`relative col-start-1 row-start-1 size-10 rounded-full bg-foreground`}>
+        {isNested && <span className={connectorClass} id={`connector-${c.parentCommentId}`} />}
+        <Link to="/users/$username" className="size-full" params={{ username: c.author.username }}>
+          <img src={c.author.avatarUrl} className="size-full rounded-full object-cover" />
         </Link>
       </div>
       <div className="col-start-2 row-start-1 flex flex-col pl-4">
@@ -109,9 +88,7 @@ const PostComment: FC<{
             {c.author.username}
           </Link>
         </div>
-        <div className="text-sm">
-          {format(new Date(c.createdAt), "dd MMM y | HH:MM")}
-        </div>
+        <div className="text-sm">{format(new Date(c.createdAt), "dd MMM y | HH:MM")}</div>
       </div>
 
       <div
@@ -120,26 +97,19 @@ const PostComment: FC<{
         onMouseLeave={removeHighlightConnectors}
         onClick={() => setIsFolded(true)}
       >
-        <Separator
-          orientation="vertical"
-          className="group-hover/sep:bg-white"
-        />
+        <Separator orientation="vertical" className="group-hover/sep:bg-white" />
       </div>
 
       <div className="col-start-2 row-start-2 flex flex-col gap-2 pt-4">
         <div className="pl-4">{c.text}</div>
-        <div className="flex gap-2">
-          <CommentLikeButton
-            commentId={c.id}
-            initialIsLiked={c.isLiked}
-            initialLikeCount={c.likesCount}
-          />
-          <ReplyButton
-            parentCommentId={c.id}
-            postId={c.postId}
-            setChildren={setChildren}
-          />
-        </div>
+        <CommentButtons
+          parentCommentId={c.id}
+          postId={c.postId}
+          setChildren={setChildren}
+          commentId={c.id}
+          initialIsLiked={c.isLiked}
+          initialLikeCount={c.likesCount}
+        />
       </div>
 
       {children && renderComments(children, 3, 2)}

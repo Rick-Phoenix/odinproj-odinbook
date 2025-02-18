@@ -29,13 +29,13 @@ const CommentLikeButton: FC<{
       return data;
     },
     onSuccess: () => {
+      setIsLiked((old) => !old);
+      setLikeCount((old) => (isLiked ? old - 1 : old + 1));
       queryClient.setQueryData(["comment", commentId], (old: Comment) => ({
         ...old,
         isLiked: !isLiked,
         likesCount: isLiked ? old.likesCount - 1 : old.likesCount + 1,
       }));
-      setIsLiked((old) => !old);
-      setLikeCount((old) => (isLiked ? old - 1 : old + 1));
     },
   });
 

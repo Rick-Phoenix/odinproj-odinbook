@@ -24,14 +24,12 @@ export const users = pgTable(
     avatarUrl: text("avatarUrl")
       .notNull()
       .default(
-        "https://res.cloudinary.com/dqjizh49f/image/upload/v1733903271/Messaging%20App/genericpfp.jpg"
+        "https://res.cloudinary.com/dqjizh49f/image/upload/v1738602566/Nexus/foq8r5a5lczqphdexyy3.jpg"
       ),
     oauthProvider: text("oauthProvider"),
     oauthId: integer("oauthId"),
     status: text("status"),
-    createdAt: timestamp("createdAt", { mode: "string" })
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
   },
   (table) => [
     uniqueIndex("emailUniqueIndex").on(lowercase(trim(table.email))),
@@ -78,9 +76,7 @@ export const chatInstances = pgTable(
     chatId: integer("chatId")
       .references(() => chats.id)
       .notNull(),
-    createdAt: timestamp("createdAt", { mode: "string" })
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
     firstMessageId: integer("firstMessageId").notNull().default(0),
     isDeleted: boolean("isDeleted").notNull().default(false),
   },
@@ -169,12 +165,7 @@ export const marketplaceCategories = [
 export type MarketplaceCategory = (typeof marketplaceCategories)[number];
 export const categoryEnum = pgEnum("mktCategories", marketplaceCategories);
 
-export const itemConditions = [
-  "New",
-  "Used",
-  "As new",
-  "Spare parts only",
-] as const;
+export const itemConditions = ["New", "Used", "As new", "Spare parts only"] as const;
 export const itemConditionsEnum = pgEnum("itemConditions", itemConditions);
 
 export const listings = pgTable("listings", {
@@ -245,18 +236,13 @@ export const roomCategoriesArray = [
   "Art",
 ] as const;
 export type RoomCategories = (typeof roomCategoriesArray)[number];
-export const roomsCategoriesEnum = pgEnum(
-  "roomCategories",
-  roomCategoriesArray
-);
+export const roomsCategoriesEnum = pgEnum("roomCategories", roomCategoriesArray);
 
 export const rooms = pgTable(
   "rooms",
   {
     name: text("name").primaryKey(),
-    createdAt: timestamp("createdAt", { mode: "string" })
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
     creatorId: text("creatorId").references(() => users.id, {
       onDelete: "cascade",
     }),
@@ -323,9 +309,7 @@ export const posts = pgTable(
       .references(() => users.id, { onDelete: "cascade" }),
     title: text("title").notNull(),
     text: text("text").notNull(),
-    createdAt: timestamp("createdAt", { mode: "string" })
-      .defaultNow()
-      .notNull(),
+    createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
     likesCount: integer("likesCount").notNull().default(0),
   },
   (t) => [
@@ -361,12 +345,8 @@ export const comments = pgTable(
       .references(() => posts.id, { onDelete: "cascade" })
       .notNull(),
     text: text("text").notNull(),
-    createdAt: timestamp("createdAt", { mode: "string" })
-      .defaultNow()
-      .notNull(),
-    parentCommentId: integer("parentCommentId").references(
-      (): AnyPgColumn => comments.id
-    ),
+    createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
+    parentCommentId: integer("parentCommentId").references((): AnyPgColumn => comments.id),
     likesCount: integer("likesCount").notNull().default(0),
   },
   (t) => [index("commentsChronologicalIndex").on(t.createdAt)]
@@ -398,9 +378,7 @@ export const commentLikes = pgTable(
       .references(() => comments.id, { onDelete: "cascade" })
       .notNull(),
   },
-  (table) => [
-    uniqueIndex("uniqueUserCommentLike").on(table.userId, table.commentId),
-  ]
+  (table) => [uniqueIndex("uniqueUserCommentLike").on(table.userId, table.commentId)]
 );
 
 //
