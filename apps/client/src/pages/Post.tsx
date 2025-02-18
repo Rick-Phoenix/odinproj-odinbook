@@ -10,16 +10,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { Separator } from "../components/ui/separator";
 import type { Comment, PostFull } from "../lib/api-client";
 
-export function renderComments(
-  comments: Comment[],
-  startingRow: number,
-  startingColumn: number,
-) {
+export function renderComments(comments: Comment[], startingRow: number, startingColumn: number) {
   return comments.map((c, i, arr) => {
     const row = startingRow + i;
     const children = c?.children;
@@ -61,10 +58,7 @@ function nestComments(comments: Comment[]) {
   return rootComments;
 }
 
-const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({
-  post,
-  orderBy,
-}) => {
+const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ post, orderBy }) => {
   const [rootComments, setRootComments] = useState(nestComments(post.comments));
   const sortedComments = rootComments
     .slice()
@@ -73,7 +67,7 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({
         ? b.likesCount - a.likesCount
         : new Date(a.createdAt) > new Date(b.createdAt)
           ? -1
-          : 1,
+          : 1
     );
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -95,49 +89,61 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({
       <Separator className="mt-1" />
       <div className="flex p-3">
         <PostLikeButton postId={post.id} />
-        <CommentButton
-          roomName={post.room.name}
-          postId={post.id}
-          onClick={focusInput}
-        />
+        <CommentButton roomName={post.room.name} postId={post.id} onClick={focusInput} />
         <ShareButton />
       </div>
       <Separator className="mt-1" />
       <div className="my-4 p-6">
-        <CommentInput
-          ref={inputRef}
-          setRootComments={setRootComments}
-          postId={post.id}
-        />
+        <CommentInput ref={inputRef} setRootComments={setRootComments} postId={post.id} />
       </div>
       <Separator className="mt-1" />
 
       <div className="p-6">
         <div className="flex items-center gap-5 py-6">
-          <span>Comments</span>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant={"secondary"}>Sort</Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="flex flex-col text-center *:flex *:w-full *:justify-center">
-              <DropdownMenuItem asChild>
-                <Link to="." search={{ orderBy: "createdAt" }}>
-                  ✨ New
-                </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link to="." search={{ orderBy: "likesCount" }}>
-                  🚀 Popular
-                </Link>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <span className="border-b-2 font-semibold">Comments</span>
+          <SortComments orderBy={orderBy} />
         </div>
         <div className="grid grid-cols-[2.5rem_1fr] items-center">
           {renderComments(sortedComments, 1, 1)}
         </div>
       </div>
     </section>
+  );
+};
+
+const SortComments: FC<{ orderBy: "likesCount" | "createdAt" }> = ({ orderBy }) => {
+  const selection = orderBy === "createdAt" ? "✨ Most Recent" : "🚀 Most Popular";
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant={"outline"} className="rounded-2xl px-6">
+          Sorted By: {selection}
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent className="flex flex-col rounded-lg p-2 text-center *:flex *:w-full *:justify-center">
+        <DropdownMenuLabel>Sort By</DropdownMenuLabel>
+        <DropdownMenuItem className="px-4" asChild>
+          <Link
+            to="."
+            from="/rooms/$roomName/posts/$postId"
+            replace={true}
+            search={{ orderBy: "createdAt" }}
+          >
+            ✨ Most Recent
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem className="px-4" asChild>
+          <Link
+            to="."
+            from="/rooms/$roomName/posts/$postId"
+            replace={true}
+            search={{ orderBy: "likesCount" }}
+          >
+            🚀 Most Popular
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 };
 

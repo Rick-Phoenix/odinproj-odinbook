@@ -589,7 +589,7 @@ export async function insertComment(
     .insert(comments)
     .values({ userId, postId, text, parentCommentId })
     .returning();
-  return { ...comment, isLiked: true };
+  return { ...comment, isLiked: true, likesCount: 1 };
 }
 
 export async function updateUserAvatar(userId: string, avatarUrl: string) {

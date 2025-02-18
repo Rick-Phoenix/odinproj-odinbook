@@ -49,6 +49,7 @@ const CommentInput: FC<{
       return data;
     },
     onSuccess(data, variables, context) {
+      console.log(data);
       setRootComments((old) => {
         return [...old, data];
       });
@@ -83,11 +84,7 @@ const CommentInput: FC<{
         ></form.Field>
 
         <form.Subscribe
-          selector={(state) => [
-            state.canSubmit,
-            state.isSubmitting,
-            state.isTouched,
-          ]}
+          selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched]}
           children={([canSubmit, isSubmitting, isTouched]) => (
             <Button
               type="submit"

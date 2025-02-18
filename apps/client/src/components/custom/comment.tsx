@@ -52,7 +52,9 @@ const PostComment: FC<{
   if (isFolded)
     return (
       <div className={gridClassName}>
-        <div className={`relative col-start-1 row-start-1 h-10 w-10 rounded-full`}>
+        <div
+          className={`relative col-start-1 row-start-1 flex h-10 w-10 justify-center rounded-full`}
+        >
           {isNested && <span className={connectorClass} id={`connector-${c.parentCommentId}`} />}
           <Button
             onClick={() => setIsFolded(false)}
@@ -76,7 +78,9 @@ const PostComment: FC<{
 
   return (
     <div className={gridClassName}>
-      <div className={`relative col-start-1 row-start-1 size-10 rounded-full bg-foreground`}>
+      <div
+        className={`relative col-start-1 row-start-1 flex size-10 justify-center rounded-full bg-foreground`}
+      >
         {isNested && <span className={connectorClass} id={`connector-${c.parentCommentId}`} />}
         <Link to="/users/$username" className="size-full" params={{ username: c.author.username }}>
           <img src={c.author.avatarUrl} className="size-full rounded-full object-cover" />
