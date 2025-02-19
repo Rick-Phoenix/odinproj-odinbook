@@ -11,6 +11,8 @@ import {
   useSpring,
 } from "motion/react";
 import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
+import LoginDialog from "../components/custom/LoginDialog";
+import SignupDialog from "../components/custom/SignupDialog";
 import { FeaturesSectionDemo } from "../components/motion/features-section";
 import { cn } from "../utils/shadcn-helper";
 export const Route = createFileRoute("/")({
@@ -63,15 +65,8 @@ function Index() {
           />
         </span>
         <div className="z-20 flex gap-4">
-          <button className="rounded-md border-2 border-transparent bg-teal-500 px-8 py-2 font-bold text-white transition duration-200 hover:border-teal-500 hover:bg-white hover:text-black">
-            Sign Up
-          </button>
-          <button className="relative p-[3px]">
-            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-sky-600 to-teal-500" />
-            <div className="group relative rounded-[6px] bg-gray-950 px-8 py-2 font-semibold text-white transition duration-200 hover:bg-transparent">
-              Log In
-            </div>
-          </button>
+          <SignupDialog />
+          <LoginDialog />
         </div>
       </BackgroundGradientAnimation>
       <div className="h-svh w-full">

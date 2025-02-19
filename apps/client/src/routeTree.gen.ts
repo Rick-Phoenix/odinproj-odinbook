@@ -11,8 +11,6 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
-import { Route as SignupImport } from './routes/signup'
-import { Route as LoginImport } from './routes/login'
 import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
 import { Route as AppSettingsImport } from './routes/_app/settings'
@@ -30,18 +28,6 @@ import { Route as AppMarketplaceCategoryItemIdImport } from './routes/_app/marke
 import { Route as AppRoomsRoomNamePostsPostIdImport } from './routes/_app/rooms/$roomName/posts/$postId'
 
 // Create/Update Routes
-
-const SignupRoute = SignupImport.update({
-  id: '/signup',
-  path: '/signup',
-  getParentRoute: () => rootRoute,
-} as any)
-
-const LoginRoute = LoginImport.update({
-  id: '/login',
-  path: '/login',
-  getParentRoute: () => rootRoute,
-} as any)
 
 const AppRoute = AppImport.update({
   id: '/_app',
@@ -152,20 +138,6 @@ declare module '@tanstack/react-router' {
       path: ''
       fullPath: ''
       preLoaderRoute: typeof AppImport
-      parentRoute: typeof rootRoute
-    }
-    '/login': {
-      id: '/login'
-      path: '/login'
-      fullPath: '/login'
-      preLoaderRoute: typeof LoginImport
-      parentRoute: typeof rootRoute
-    }
-    '/signup': {
-      id: '/signup'
-      path: '/signup'
-      fullPath: '/signup'
-      preLoaderRoute: typeof SignupImport
       parentRoute: typeof rootRoute
     }
     '/_app/settings': {
@@ -301,8 +273,6 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '': typeof AppRouteWithChildren
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
   '/settings': typeof AppSettingsRoute
   '/chats/$chatId': typeof AppChatsChatIdRoute
   '/chats/new': typeof AppChatsNewRoute
@@ -321,8 +291,6 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '': typeof AppRouteWithChildren
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
   '/settings': typeof AppSettingsRoute
   '/chats/$chatId': typeof AppChatsChatIdRoute
   '/chats/new': typeof AppChatsNewRoute
@@ -342,8 +310,6 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/_app': typeof AppRouteWithChildren
-  '/login': typeof LoginRoute
-  '/signup': typeof SignupRoute
   '/_app/settings': typeof AppSettingsRoute
   '/_app/chats/$chatId': typeof AppChatsChatIdRoute
   '/_app/chats/new': typeof AppChatsNewRoute
@@ -364,8 +330,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | ''
-    | '/login'
-    | '/signup'
     | '/settings'
     | '/chats/$chatId'
     | '/chats/new'
@@ -383,8 +347,6 @@ export interface FileRouteTypes {
   to:
     | '/'
     | ''
-    | '/login'
-    | '/signup'
     | '/settings'
     | '/chats/$chatId'
     | '/chats/new'
@@ -402,8 +364,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/_app'
-    | '/login'
-    | '/signup'
     | '/_app/settings'
     | '/_app/chats/$chatId'
     | '/_app/chats/new'
@@ -423,15 +383,11 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRouteWithChildren
-  LoginRoute: typeof LoginRoute
-  SignupRoute: typeof SignupRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRouteWithChildren,
-  LoginRoute: LoginRoute,
-  SignupRoute: SignupRoute,
 }
 
 export const routeTree = rootRoute
@@ -445,9 +401,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/_app",
-        "/login",
-        "/signup"
+        "/_app"
       ]
     },
     "/": {
@@ -470,12 +424,6 @@ export const routeTree = rootRoute
         "/_app/rooms/$roomName/",
         "/_app/rooms/$roomName/posts/$postId"
       ]
-    },
-    "/login": {
-      "filePath": "login.tsx"
-    },
-    "/signup": {
-      "filePath": "signup.tsx"
     },
     "/_app/settings": {
       "filePath": "_app/settings.tsx",
