@@ -81,9 +81,7 @@ export const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Create Post</DialogTitle>
-          <DialogDescription>
-            Make a new contribution to this community.
-          </DialogDescription>
+          <DialogDescription>Make a new contribution to this community.</DialogDescription>
         </DialogHeader>
         <form
           onSubmit={(e) => {
@@ -99,7 +97,7 @@ export const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
                 children={(field) => {
                   return (
                     <>
-                      <Label htmlFor={field.name}>{field.name}</Label>
+                      <Label htmlFor={field.name}>Title</Label>
                       <Input
                         name={field.name}
                         type="text"
@@ -108,8 +106,7 @@ export const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
                         onChange={(e) => field.handleChange(e.target.value)}
                         required
                       />
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
+                      {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                     </>
                   );
                 }}
@@ -121,7 +118,7 @@ export const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
                 children={(field) => {
                   return (
                     <>
-                      <Label htmlFor={field.name}>{field.name}</Label>
+                      <Label htmlFor={field.name}>Text</Label>
                       <Input
                         name={field.name}
                         type="text"
@@ -129,8 +126,7 @@ export const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
                         onChange={(e) => field.handleChange(e.target.value)}
                         required
                       />
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
+                      {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                     </>
                   );
                 }}

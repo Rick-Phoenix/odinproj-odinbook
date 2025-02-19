@@ -12,6 +12,7 @@ import {
   Dialog,
   DialogClose,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -138,11 +139,11 @@ function RouteComponent() {
           >
             r/{roomName}
           </Link>
-          <SubscribeButton
-            roomName={roomName}
-            isSubscribed={isSubscribed}
-            userIsCreator={userIsCreator}
-          />
+          {userIsCreator ? (
+            <RoomFounderMenu roomName={roomName} />
+          ) : (
+            <SubscribeButton roomName={roomName} isSubscribed={isSubscribed} />
+          )}
         </header>
         <div className="flex h-12 items-center justify-center gap-3 rounded-xl bg-primary/80 p-1">
           <Button
@@ -180,11 +181,72 @@ function RouteComponent() {
   );
 }
 
+const RoomFounderMenu: FC<{
+  roomName: string;
+}> = ({ roomName }) => {
+  const handleDelete = useMutation({
+    mutationKey: ["roomDeletion", roomName],
+    mutationFn: async () => {
+      const res = await api.rooms[":roomName"].$delete({
+        param: { roomName },
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        throw new Error("An error occurred while trying to delete this room.");
+      }
+      return data;
+    },
+    onSuccess: () => {
+      location.href = "/";
+    },
+  });
+
+  return (
+    <>
+      <Dialog>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size={"lg"} variant={"outline"}>
+              Founder
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DialogTrigger asChild>
+              <DropdownMenuItem className="w-full">Delete Room</DropdownMenuItem>
+            </DialogTrigger>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-center">
+              Are you sure you want to delete this room?
+            </DialogTitle>
+            <DialogDescription>
+              All the content belonging to this room will be permanently deleted.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-center gap-3">
+            <DialogClose asChild>
+              <Button variant={"secondary"} size={"lg"}>
+                Cancel
+              </Button>
+            </DialogClose>
+            <DialogClose asChild>
+              <Button variant={"destructive"} onClick={() => handleDelete.mutate()} size={"lg"}>
+                Delete
+              </Button>
+            </DialogClose>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+};
+
 const SubscribeButton: FC<{
   isSubscribed: boolean;
   roomName: string;
-  userIsCreator: boolean;
-}> = ({ isSubscribed, roomName, userIsCreator }) => {
+}> = ({ isSubscribed, roomName }) => {
   const [userIsSubscribed, setUserIsSubscribed] = useState(isSubscribed);
   const queryClient = useQueryClient();
   const subscribeMutation = useMutation({
@@ -211,11 +273,7 @@ const SubscribeButton: FC<{
 
   return (
     <>
-      {userIsCreator ? (
-        <Button size={"lg"} variant={"outline"}>
-          Subscribed
-        </Button>
-      ) : userIsSubscribed ? (
+      {userIsSubscribed ? (
         <Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>

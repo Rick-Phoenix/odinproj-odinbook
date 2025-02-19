@@ -126,7 +126,7 @@ const ChatPreview: FC<{
         </ContextMenuTrigger>
         <ContextMenuContent>
           <AlertDialogTrigger asChild>
-            <ContextMenuItem>Delete</ContextMenuItem>
+            <ContextMenuItem>Delete Chat</ContextMenuItem>
           </AlertDialogTrigger>
         </ContextMenuContent>
       </ContextMenu>
