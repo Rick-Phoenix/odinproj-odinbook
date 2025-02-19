@@ -245,9 +245,13 @@ const TrendingCarousel: FC<{ posts: PostBasic[] }> = ({ posts }) => {
                   spaceBetween: 10,
                   slidesPerView: 1,
                 },
-                1024: {
+                500: {
                   spaceBetween: 15,
                   slidesPerView: 2,
+                },
+                1270: {
+                  spaceBetween: 15,
+                  slidesPerView: 3,
                 },
                 1536: {
                   spaceBetween: 30,

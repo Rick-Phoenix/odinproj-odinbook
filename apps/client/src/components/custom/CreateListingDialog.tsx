@@ -18,13 +18,7 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
 const CreateListingDialog = () => {
   const navigate = useNavigate();
@@ -77,10 +71,7 @@ const CreateListingDialog = () => {
     },
     onSuccess(data, variables, context) {
       queryClient.setQueryData(["listing", data.id], data);
-      queryClient.setQueryData(["listingsCreated"], (old: Listing[]) => [
-        ...old,
-        data,
-      ]);
+      queryClient.setQueryData(["listingsCreated"], (old: Listing[]) => [...old, data]);
       navigate({
         to: "/marketplace/$category/$itemId",
         params: { category: data.category, itemId: data.id },
@@ -99,8 +90,8 @@ const CreateListingDialog = () => {
           <DialogTitle>Create a new listing</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Insert the details for your listing. A well defined photo and detailed
-          description will help you to sell your item faster.
+          Insert the details for your listing. A well defined photo and detailed description will
+          help you to sell your item faster.
         </DialogDescription>
         <form
           onSubmit={(e) => {
@@ -125,8 +116,7 @@ const CreateListingDialog = () => {
                         onChange={(e) => field.handleChange(e.target.value)}
                         required
                       />
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
+                      {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                     </>
                   );
                 }}
@@ -147,13 +137,10 @@ const CreateListingDialog = () => {
                           placeholder="Price"
                           min={1}
                           max={300000}
-                          onChange={(e) =>
-                            field.handleChange(e.target.valueAsNumber)
-                          }
+                          onChange={(e) => field.handleChange(e.target.valueAsNumber)}
                           required
                         />
-                        {field.state.meta.isTouched &&
-                          formatFormErrors(field.state.meta.errors)}
+                        {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                       </>
                     );
                   }}
@@ -174,8 +161,7 @@ const CreateListingDialog = () => {
                           onChange={(e) => field.handleChange(e.target.value)}
                           required
                         />
-                        {field.state.meta.isTouched &&
-                          formatFormErrors(field.state.meta.errors)}
+                        {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                       </>
                     );
                   }}
@@ -194,9 +180,7 @@ const CreateListingDialog = () => {
                           name={field.name}
                           value={field.state.value}
                           onValueChange={(e) =>
-                            field.handleChange(
-                              e as (typeof schemas.marketplaceCategories)[number],
-                            )
+                            field.handleChange(e as (typeof schemas.marketplaceCategories)[number])
                           }
                           required
                         >
@@ -205,14 +189,13 @@ const CreateListingDialog = () => {
                           </SelectTrigger>
                           <SelectContent>
                             {schemas.marketplaceCategories.map((cat, i) => (
-                              <SelectItem key={i} value={cat}>
+                              <SelectItem key={i} value={cat} className="cursor-pointer">
                                 {cat}
                               </SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
-                        {field.state.meta.isTouched &&
-                          formatFormErrors(field.state.meta.errors)}
+                        {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                       </>
                     );
                   }}
@@ -229,9 +212,7 @@ const CreateListingDialog = () => {
                           name={field.name}
                           value={field.state.value}
                           onValueChange={(e) =>
-                            field.handleChange(
-                              e as (typeof schemas.itemConditions)[number],
-                            )
+                            field.handleChange(e as (typeof schemas.itemConditions)[number])
                           }
                           required
                         >
@@ -246,8 +227,7 @@ const CreateListingDialog = () => {
                             ))}
                           </SelectContent>
                         </Select>
-                        {field.state.meta.isTouched &&
-                          formatFormErrors(field.state.meta.errors)}
+                        {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                       </>
                     );
                   }}
@@ -270,8 +250,7 @@ const CreateListingDialog = () => {
                           form.setFieldValue("pic", file);
                         }}
                       />
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
+                      {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                     </>
                   );
                 }}
@@ -291,8 +270,7 @@ const CreateListingDialog = () => {
                         onChange={(e) => field.handleChange(e.target.value)}
                         required
                       />
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
+                      {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                     </>
                   );
                 }}

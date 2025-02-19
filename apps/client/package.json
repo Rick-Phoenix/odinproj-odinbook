@@ -11,6 +11,10 @@
     "lintconfig": "eslint-config-inspector",
     "debug": "vite --debug"
   },
+  "overrides": {
+    "@radix-ui/react-dismissable-layer": "^1.0.5",
+    "@radix-ui/react-focus-scope": "^1.0.4"
+  },
   "dependencies": {
     "@nexus/shared-schemas": "workspace:*",
     "@radix-ui/react-alert-dialog": "^1.1.5",

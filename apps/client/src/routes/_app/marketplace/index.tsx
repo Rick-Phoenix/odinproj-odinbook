@@ -129,9 +129,9 @@ const SuggestedListingsCarousel: FC<{
             },
             1024: {
               spaceBetween: 15,
-              slidesPerView: 2,
+              slidesPerView: 1,
             },
-            1536: {
+            1400: {
               spaceBetween: 30,
               slidesPerView: 3,
             },
@@ -171,7 +171,7 @@ const SuggestedListing: FC<{ listing: Listing }> = ({ listing }) => {
       params={{ category: listing.category, itemId: listing.id }}
       className="flex flex-col items-center justify-center gap-5 rounded-xl border border-primary bg-secondary p-6 py-10 text-center hover:underline"
     >
-      <img src={listing.picUrl} className="aspect-square max-h-72 max-w-72 object-contain" />
+      <img src={listing.picUrl} className="aspect-square max-h-full max-w-full object-contain" />
 
       <h4 className="line-clamp-2 scroll-m-20 text-2xl font-semibold tracking-tight">
         {listing.title}

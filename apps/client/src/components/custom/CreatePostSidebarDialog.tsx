@@ -19,13 +19,7 @@ import {
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { SidebarMenuSubButton } from "../ui/sidebar";
 
 export const CreatePostSidebarDialog = () => {
@@ -59,11 +53,7 @@ export const CreatePostSidebarDialog = () => {
 
   const handleCreatePost = useMutation({
     mutationKey: ["post", "new"],
-    mutationFn: async (value: {
-      title: string;
-      text: string;
-      roomName: string;
-    }) => {
+    mutationFn: async (value: { title: string; text: string; roomName: string }) => {
       const { title, text, roomName } = value;
       const res = await api.rooms[":roomName"].posts.$post({
         json: { text, title },
@@ -98,16 +88,12 @@ export const CreatePostSidebarDialog = () => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         {!subs?.length ? (
-          <div className="p-1 italic">
-            You must subscribe to a room before creating a post.
-          </div>
+          <div className="p-1 italic">You must subscribe to a room before creating a post.</div>
         ) : (
           <>
             <DialogHeader>
               <DialogTitle>Create Post</DialogTitle>
-              <DialogDescription>
-                Make a new contribution to this community.
-              </DialogDescription>
+              <DialogDescription>Make a new contribution to this community.</DialogDescription>
             </DialogHeader>
             <form
               onSubmit={(e) => {
@@ -135,14 +121,13 @@ export const CreatePostSidebarDialog = () => {
                             </SelectTrigger>
                             <SelectContent>
                               {subs.map((sub, i) => (
-                                <SelectItem key={i} value={sub}>
+                                <SelectItem key={i} value={sub} className="cursor-pointer">
                                   {sub}
                                 </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>
-                          {field.state.meta.isTouched &&
-                            formatFormErrors(field.state.meta.errors)}
+                          {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                         </>
                       );
                     }}
@@ -163,8 +148,7 @@ export const CreatePostSidebarDialog = () => {
                             onChange={(e) => field.handleChange(e.target.value)}
                             required
                           />
-                          {field.state.meta.isTouched &&
-                            formatFormErrors(field.state.meta.errors)}
+                          {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                         </>
                       );
                     }}
@@ -185,8 +169,7 @@ export const CreatePostSidebarDialog = () => {
                             onChange={(e) => field.handleChange(e.target.value)}
                             required
                           />
-                          {field.state.meta.isTouched &&
-                            formatFormErrors(field.state.meta.errors)}
+                          {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                         </>
                       );
                     }}

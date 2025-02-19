@@ -1,12 +1,14 @@
+import { useMutationState } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { PlusCircle } from "lucide-react";
-import { useState, type FC, type MouseEventHandler } from "react";
+import { useEffect, useState, type FC, type MouseEventHandler } from "react";
+import { useUser } from "../../hooks/auth";
 import type { Comment } from "../../lib/api-client";
 import { renderComments } from "../../pages/Post";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";
-import CommentButtons from "./reply-button";
+import CommentButtons from "./CommentButtons";
 
 const PostComment: FC<{
   c: Comment;
@@ -16,6 +18,7 @@ const PostComment: FC<{
 }> = ({ c, gridClassName, initialChildren, isLast }) => {
   const [children, setChildren] = useState(initialChildren || []);
   const [isFolded, setIsFolded] = useState(false);
+  const { id: userId } = useUser()!;
 
   const isNested = c.parentCommentId !== null;
   let separatorRowEnd = children.length ? children.length + 3 : 3;
@@ -105,7 +108,7 @@ const PostComment: FC<{
       </div>
 
       <div className="col-start-2 row-start-2 flex flex-col gap-2 pt-4">
-        <div className="pl-4">{c.text}</div>
+        <CommentText text={c.text} commentId={c.id} initialIsDeleted={c.isDeleted} />
         <CommentButtons
           parentCommentId={c.id}
           postId={c.postId}
@@ -113,11 +116,35 @@ const PostComment: FC<{
           commentId={c.id}
           initialIsLiked={c.isLiked}
           initialLikeCount={c.likesCount}
+          isFromUser={c.userId === userId}
+          initialIsDeleted={c.isDeleted}
         />
       </div>
 
       {children && renderComments(children, 3, 2)}
     </div>
+  );
+};
+
+const CommentText: FC<{ text: string; commentId: number; initialIsDeleted: boolean }> = ({
+  text,
+  commentId,
+  initialIsDeleted,
+}) => {
+  const [isDeleted, setIsDeleted] = useState(false);
+  const mutationState = useMutationState({
+    filters: { mutationKey: ["commentDeletion", commentId], exact: true },
+    select: (mutation) => mutation.state.status,
+  });
+
+  useEffect(() => {
+    if (mutationState[0] === "success") setIsDeleted(true);
+  }, [mutationState]);
+
+  return !isDeleted && !initialIsDeleted ? (
+    <div className="pl-4">{text}</div>
+  ) : (
+    <div className="italic">This comment has been deleted by its author.</div>
   );
 };
 

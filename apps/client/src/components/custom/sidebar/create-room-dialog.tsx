@@ -4,10 +4,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { FC } from "react";
 import { api, roomCategories, type RoomInputs } from "../../../lib/api-client";
-import {
-  formatFormErrors,
-  singleErrorsAdapter,
-} from "../../../utils/form-utils";
+import { formatFormErrors, singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 import { Button } from "../../ui/button";
 import {
@@ -21,13 +18,7 @@ import {
 } from "../../ui/dialog";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../../ui/select";
 import { SidebarMenuSubButton } from "../../ui/sidebar";
 
 const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
@@ -99,8 +90,8 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
           <DialogTitle>Create a new Room</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Rooms are spaces where you can share your ideas and passions with
-          other members of the community.
+          Rooms are spaces where you can share your ideas and passions with other members of the
+          community.
         </DialogDescription>
         <form
           onSubmit={(e) => {
@@ -125,8 +116,7 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
                         onChange={(e) => field.handleChange(e.target.value)}
                         required
                       />
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
+                      {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                     </>
                   );
                 }}
@@ -143,9 +133,7 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
                         name={field.name}
                         value={field.state.value}
                         onValueChange={(e) =>
-                          field.handleChange(
-                            e as (typeof schemas.roomCategoriesArray)[number],
-                          )
+                          field.handleChange(e as (typeof schemas.roomCategoriesArray)[number])
                         }
                         required
                       >
@@ -154,14 +142,13 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
                         </SelectTrigger>
                         <SelectContent>
                           {roomCategories.map((cat, i) => (
-                            <SelectItem key={i} value={cat}>
+                            <SelectItem key={i} value={cat} className="cursor-pointer">
                               {cat}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
+                      {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                     </>
                   );
                 }}
@@ -183,8 +170,7 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
                           form.setFieldValue("avatar", file);
                         }}
                       />
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
+                      {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                     </>
                   );
                 }}
@@ -204,8 +190,7 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
                         onChange={(e) => field.handleChange(e.target.value)}
                         required
                       />
-                      {field.state.meta.isTouched &&
-                        formatFormErrors(field.state.meta.errors)}
+                      {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                     </>
                   );
                 }}

@@ -1,12 +1,29 @@
 import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-import { MessageCircleMore } from "lucide-react";
+import { EllipsisVertical, MessageCircleMore } from "lucide-react";
 import { useState, type FC } from "react";
 import { api, type Comment } from "../../lib/api-client";
 import { singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../ui/alert-dialog";
 import { Button } from "../ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../ui/dropdown-menu";
 import { Textarea } from "../ui/textarea";
 import CommentLikeButton from "./comment-like-button";
 
@@ -17,7 +34,18 @@ const CommentButtons: FC<{
   commentId: number;
   initialIsLiked: boolean;
   initialLikeCount: number;
-}> = ({ parentCommentId, postId, setChildren, commentId, initialIsLiked, initialLikeCount }) => {
+  isFromUser: boolean;
+  initialIsDeleted: boolean;
+}> = ({
+  parentCommentId,
+  postId,
+  setChildren,
+  commentId,
+  initialIsLiked,
+  initialLikeCount,
+  initialIsDeleted,
+  isFromUser,
+}) => {
   const [isReplying, setIsReplying] = useState(false);
 
   const form = useForm({
@@ -77,6 +105,7 @@ const CommentButtons: FC<{
         >
           <MessageCircleMore /> Reply
         </Button>
+        {isFromUser && !initialIsDeleted && <CommentOptions commentId={commentId} />}
       </div>
       {isReplying && (
         <>
@@ -131,6 +160,52 @@ const CommentButtons: FC<{
         </>
       )}
     </div>
+  );
+};
+
+const CommentOptions: FC<{ commentId: number }> = ({ commentId }) => {
+  const handleDelete = useMutation({
+    mutationKey: ["commentDeletion", commentId],
+    mutationFn: async (c) => {
+      const res = await api.posts.comments[":commentId"].$delete({ param: { commentId } });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("An error occurred while deleting this comment.");
+      }
+      return data;
+    },
+  });
+
+  return (
+    <AlertDialog>
+      <DropdownMenu modal={false}>
+        <DropdownMenuTrigger asChild>
+          <Button variant={"ghost"} className="flex w-fit items-center gap-2 rounded-3xl p-6">
+            <EllipsisVertical />
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent>
+          <AlertDialogTrigger asChild>
+            <DropdownMenuItem>Delete Comment</DropdownMenuItem>
+          </AlertDialogTrigger>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you sure you want to delete this comment?</AlertDialogTitle>
+          <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => handleDelete.mutate()}
+            className="bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
+          >
+            Delete
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
   );
 };
 

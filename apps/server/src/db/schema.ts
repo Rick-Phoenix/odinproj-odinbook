@@ -350,6 +350,7 @@ export const comments = pgTable(
     createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
     parentCommentId: integer("parentCommentId").references((): AnyPgColumn => comments.id),
     likesCount: integer("likesCount").notNull().default(0),
+    isDeleted: boolean("isDeleted").notNull().default(false),
   },
   (t) => [
     index("commentsChronologicalIndex").on(t.createdAt),
