@@ -96,6 +96,9 @@ const ChatPreview: FC<{
       queryClient.setQueryData(["chats"], (old: Chat[]) =>
         old.filter((chat) => chat.id !== chatId)
       );
+      queryClient.setQueryData(["unreadMessages"], (old: number[]) =>
+        old.filter((id) => id !== chatId)
+      );
     },
   });
 

@@ -99,6 +99,9 @@ export const roomQueryOptions = (
         });
       }
 
+      const queryType = orderBy === "createdAt" ? "postsRecent" : "postsPopular";
+      queryClient.setQueryData([queryType, data.name], data.posts);
+
       return data;
     },
   });
@@ -171,6 +174,27 @@ export const profileQueryOptions = (username: string) =>
       const data = await res.json();
       if ("issues" in data) {
         throw new Error("User not found.");
+      }
+      return data;
+    },
+  });
+
+export const initialPostsQueryOptions = (
+  roomName: string,
+  orderBy: "likesCount" | "createdAt",
+  cursorLikes: number,
+  cursorTime: string
+) =>
+  queryOptions({
+    queryKey: [orderBy === "createdAt" ? "postsRecent" : "postsPopular", roomName],
+    queryFn: async () => {
+      const res = await api.rooms[":roomName"].posts.$get({
+        param: { roomName },
+        query: { cursorLikes, cursorTime, orderBy },
+      });
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("An error occurred while loading the posts.");
       }
       return data;
     },
