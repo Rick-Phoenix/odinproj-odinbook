@@ -5,7 +5,7 @@ import PostComment from "../components/custom/comment";
 import CommentInput from "../components/custom/comment-input";
 import PostLikeButton from "../components/custom/PostLikeButton";
 import { Button } from "../components/ui/button";
-import { CardContent, CardHeader, CardTitle } from "../components/ui/card";
+import { CardContent, CardDescription, CardHeader, CardTitle } from "../components/ui/card";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -83,6 +83,15 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
     <section className="min-h-svh overflow-x-auto rounded-xl bg-muted/50">
       <CardHeader>
         <CardTitle className="text-2xl">{post.title}</CardTitle>
+        <CardDescription>
+          {post.author === "[deleted]" ? (
+            <span className="italic">Deleted User</span>
+          ) : (
+            <Link to="/users/$username" params={{ username: post.author }}>
+              @{post.author}
+            </Link>
+          )}
+        </CardDescription>
       </CardHeader>
       <Separator />
       <CardContent className="pt-4">{post.text}</CardContent>

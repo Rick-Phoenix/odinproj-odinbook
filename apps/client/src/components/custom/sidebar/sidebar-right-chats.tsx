@@ -39,22 +39,37 @@ const ChatPreview: FC<{ chat: Chat }> = ({ chat }) => {
   return (
     <li>
       <SidebarMenuButton asChild className="size-full">
-        <Link
-          className="flex items-center justify-between gap-2"
-          to="/chats/$chatId"
-          params={{ chatId: chat.id }}
-        >
-          <div className="relative">
-            {unreadMessages && (
-              <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
-            )}
-            <Avatar className="h-14 w-auto">
-              <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
-              <AvatarFallback>{chat.contact.username}</AvatarFallback>
-            </Avatar>
+        {chat.contact.username !== "[deleted]" ? (
+          <Link
+            className="flex items-center justify-between gap-2"
+            to="/chats/$chatId"
+            params={{ chatId: chat.id }}
+          >
+            <div className="relative">
+              {unreadMessages && (
+                <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
+              )}
+              <Avatar className="h-14 w-auto">
+                <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
+                <AvatarFallback>{chat.contact.username}</AvatarFallback>
+              </Avatar>
+            </div>
+            <p>{chat.contact.username}</p>
+          </Link>
+        ) : (
+          <div className="flex items-center justify-between gap-2">
+            <div className="relative">
+              {unreadMessages && (
+                <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
+              )}
+              <Avatar className="h-14 w-auto">
+                <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
+                <AvatarFallback>{chat.contact.username}</AvatarFallback>
+              </Avatar>
+            </div>
+            <p className="italic text-muted-foreground">Deleted User</p>
           </div>
-          <p>{chat.contact.username}</p>
-        </Link>
+        )}
       </SidebarMenuButton>
     </li>
   );

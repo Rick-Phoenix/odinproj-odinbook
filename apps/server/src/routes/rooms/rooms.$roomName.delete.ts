@@ -1,5 +1,6 @@
 import { createRoute, z } from "@hono/zod-openapi";
 import { and, eq } from "drizzle-orm";
+import { deleteCookie } from "hono/cookie";
 import { INTERNAL_SERVER_ERROR, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import db from "../../db/dbConfig";
 import { rooms } from "../../db/schema";
@@ -33,6 +34,7 @@ export const deleteRoomHandler: AppRouteHandler<typeof deleteRoom, AppBindingsWi
   const { roomName } = c.req.valid("param");
   const removal = await removeRoom(userId, roomName);
   if (!removal) return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
+  deleteCookie(c, "session");
   return c.json(okResponse.content, OK);
 };
 

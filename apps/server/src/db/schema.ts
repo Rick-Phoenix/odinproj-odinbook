@@ -205,7 +205,7 @@ export const savedListings = pgTable(
       .notNull(),
     listingId: integer("listingId")
       .notNull()
-      .references(() => listings.id),
+      .references(() => listings.id, { onDelete: "cascade" }),
   },
   (t) => [uniqueIndex("uniqueUserSavedListingIndex").on(t.listingId, t.userId)]
 );

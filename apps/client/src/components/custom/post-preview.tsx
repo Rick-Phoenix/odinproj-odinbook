@@ -20,9 +20,13 @@ export const PostPreview: FC<{
           <CardTitle className="line-clamp-4 text-2xl">{title}</CardTitle>
         </Link>
         <div className="flex flex-col">
-          <Link to="/users/$username" params={{ username: author }}>
-            @{author}
-          </Link>
+          {author === "[deleted]" ? (
+            <span className="italic text-muted-foreground">Deleted User</span>
+          ) : (
+            <Link to="/users/$username" params={{ username: author }}>
+              @{author}
+            </Link>
+          )}
           <CardDescription>
             <Link
               to="/rooms/$roomName"

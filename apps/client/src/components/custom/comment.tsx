@@ -85,15 +85,29 @@ const PostComment: FC<{
         className={`relative col-start-1 row-start-1 flex size-10 justify-center rounded-full bg-foreground`}
       >
         {isNested && <span className={connectorClass} id={`connector-${c.parentCommentId}`} />}
-        <Link to="/users/$username" className="size-full" params={{ username: c.author.username }}>
-          <img src={c.author.avatarUrl} className="size-full rounded-full object-cover" />
-        </Link>
+        {c.author.username !== "[deleted]" ? (
+          <Link
+            to="/users/$username"
+            className="size-full"
+            params={{ username: c.author.username }}
+          >
+            <img src={c.author.avatarUrl} className="size-full rounded-full object-cover" />
+          </Link>
+        ) : (
+          <div className="size-full">
+            <img src={c.author.avatarUrl} className="size-full rounded-full object-cover" />
+          </div>
+        )}
       </div>
       <div className="col-start-2 row-start-1 flex flex-col pl-4">
         <div className="flex gap-4">
-          <Link to="/users/$username" params={{ username: c.author.username }}>
-            {c.author.username}
-          </Link>
+          {c.author.username !== "[deleted]" ? (
+            <Link to="/users/$username" params={{ username: c.author.username }}>
+              {c.author.username}
+            </Link>
+          ) : (
+            <span className="italic text-muted-foreground">Deleted User</span>
+          )}
         </div>
         <div className="text-sm">{format(new Date(c.createdAt), "dd MMM y | HH:MM")}</div>
       </div>
@@ -144,7 +158,7 @@ const CommentText: FC<{ text: string; commentId: number; initialIsDeleted: boole
   return !isDeleted && !initialIsDeleted ? (
     <div className="pl-4">{text}</div>
   ) : (
-    <div className="italic">This comment has been deleted by its author.</div>
+    <div className="italic text-muted-foreground">This comment has been deleted by its author.</div>
   );
 };
 

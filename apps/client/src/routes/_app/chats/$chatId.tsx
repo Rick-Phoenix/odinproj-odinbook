@@ -82,16 +82,25 @@ function RouteComponent() {
   return (
     <StaticInset>
       <section className="flex h-full flex-col justify-between rounded-xl bg-muted/50">
-        <Link
-          to="/users/$username"
-          params={{ username: chat.contact.username }}
-          className="flex h-28 w-full items-center justify-between rounded-xl rounded-b-none bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
-        >
-          <Avatar>
-            <AvatarImage src={contactAvatar} alt={`${contactName} profile picture`} />
-          </Avatar>
-          <div className="text-lg font-semibold">{title(contactName)}</div>
-        </Link>
+        {contactName !== "[deleted]" ? (
+          <Link
+            to="/users/$username"
+            params={{ username: chat.contact.username }}
+            className="flex h-28 w-full items-center justify-between rounded-xl rounded-b-none bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
+          >
+            <Avatar>
+              <AvatarImage src={contactAvatar} alt={`${contactName} profile picture`} />
+            </Avatar>
+            <div className="text-lg font-semibold">{title(contactName)}</div>
+          </Link>
+        ) : (
+          <div className="flex h-28 w-full items-center justify-between rounded-xl rounded-b-none bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
+            <Avatar>
+              <AvatarImage src={contactAvatar} alt={`${contactName} profile picture`} />
+            </Avatar>
+            <div className="text-lg font-semibold italic text-muted-foreground">Deleted User</div>
+          </div>
+        )}
 
         <ScrollArea className="h-full w-full" viewportRef={viewportRef}>
           <div className="grid w-full gap-8 rounded-xl p-8">

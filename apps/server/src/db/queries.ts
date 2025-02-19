@@ -131,7 +131,10 @@ export async function findUserByUsername(username: string) {
 export async function fetchUserProfile(userId: string, username: string) {
   const profile = await db.query.users.findFirst({
     where(user, { eq }) {
-      return eq(lowercase(user.username), username.toLocaleLowerCase());
+      return and(
+        eq(lowercase(user.username), username.toLocaleLowerCase()),
+        ne(user.id, "deleted")
+      );
     },
     columns: {
       avatarUrl: true,

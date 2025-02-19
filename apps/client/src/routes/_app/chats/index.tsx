@@ -117,7 +117,13 @@ const ChatPreview: FC<{
               </Avatar>
             </div>
             <div className="flex w-1/2 flex-col items-end gap-3">
-              <div className="text-lg font-semibold">{contactName}</div>
+              {contactName !== "[deleted]" ? (
+                <div className="text-lg font-semibold">{contactName}</div>
+              ) : (
+                <div className="text-lg font-semibold italic text-muted-foreground">
+                  Deleted User
+                </div>
+              )}
               <div className="line-clamp-1 text-end font-semibold text-muted-foreground">
                 {lastMessage?.text}
               </div>

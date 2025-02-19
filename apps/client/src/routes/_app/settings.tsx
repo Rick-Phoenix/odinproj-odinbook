@@ -6,6 +6,17 @@ import { Pencil } from "lucide-react";
 import { useRef } from "react";
 import { PiGithubLogoFill } from "react-icons/pi";
 import InsetScrollArea from "../../components/custom/inset-scrollarea";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "../../components/ui/alert-dialog";
 import { Button } from "../../components/ui/button";
 import { Input } from "../../components/ui/input";
 import { Label } from "../../components/ui/label";
@@ -34,9 +45,7 @@ function RouteComponent() {
             <StatusEdit />
             {oauthProvider ? (
               <div className="flex flex-col gap-2 [&_svg]:size-12">
-                <span className="border-b pb-1 font-semibold">
-                  Connected Profiles
-                </span>
+                <span className="border-b pb-1 font-semibold">Connected Profiles</span>
                 <a
                   href={"https://github.com/" + username}
                   className="flex items-center gap-3 font-semibold hover:underline"
@@ -48,16 +57,8 @@ function RouteComponent() {
               <PasswordEdit />
             )}
             <div className="flex size-full flex-col gap-2">
-              <h2 className="mb-1 w-fit border-b-2 font-semibold text-red-800">
-                Delete Account
-              </h2>
-              <Button
-                variant={"destructive"}
-                size={"sm"}
-                className="w-fit rounded-xl"
-              >
-                Delete
-              </Button>
+              <h2 className="mb-1 w-fit border-b-2 font-semibold text-red-800">Delete Account</h2>
+              <DeleteAccountButton />
             </div>
           </div>
           <ProfilePictureEdit />
@@ -66,6 +67,48 @@ function RouteComponent() {
     </InsetScrollArea>
   );
 }
+
+const DeleteAccountButton = () => {
+  const handleDelete = useMutation({
+    mutationKey: ["userAccount"],
+    mutationFn: async () => {
+      const res = await api.users.user.$delete();
+      const data = await res.json();
+      if ("issues" in data) {
+        throw new Error("An error occurred while attempting to delete the account.");
+      }
+      return data;
+    },
+    onSuccess: () => {
+      location.href = "/";
+    },
+  });
+
+  return (
+    <AlertDialog>
+      <AlertDialogTrigger asChild>
+        <Button variant={"destructive"} size={"sm"} className="w-fit rounded-xl">
+          Delete
+        </Button>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>Are you sure you want to delete your account?</AlertDialogTitle>
+          <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
+        </AlertDialogHeader>
+        <AlertDialogFooter>
+          <AlertDialogCancel>Cancel</AlertDialogCancel>
+          <AlertDialogAction
+            onClick={() => handleDelete.mutate()}
+            className="bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90"
+          >
+            Delete Account
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
+  );
+};
 
 const PasswordEdit = () => {
   const { toast } = useToast();
@@ -180,11 +223,7 @@ const PasswordEdit = () => {
           ></form.Field>
         </div>
         <form.Subscribe
-          selector={(state) => [
-            state.canSubmit,
-            state.isSubmitting,
-            state.isTouched,
-          ]}
+          selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched]}
           children={([canSubmit, isSubmitting, isTouched]) => {
             return (
               <Button
@@ -282,19 +321,14 @@ const StatusEdit = () => {
                     onChange={(e) => field.handleChange(e.target.value)}
                     required
                   />
-                  {field.state.meta.isTouched &&
-                    formatFormErrors(field.state.meta.errors)}
+                  {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                 </>
               );
             }}
           ></form.Field>
         </div>
         <form.Subscribe
-          selector={(state) => [
-            state.canSubmit,
-            state.isSubmitting,
-            state.isTouched,
-          ]}
+          selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched]}
           children={([canSubmit, isSubmitting, isTouched]) => {
             return (
               <Button
@@ -422,8 +456,7 @@ const ProfilePictureEdit = () => {
                         }
                       }}
                     />
-                    {field.state.meta.isTouched &&
-                      formatFormErrors(field.state.meta.errors)}
+                    {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}
                   </>
                 );
               }}
