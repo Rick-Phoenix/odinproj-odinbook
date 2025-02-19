@@ -2,10 +2,7 @@ import { createRoute, z } from "@hono/zod-openapi";
 import { NOT_FOUND, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import { fetchFeed } from "../../db/queries";
-import type {
-  AppBindingsWithUser,
-  AppRouteHandler,
-} from "../../types/app-bindings";
+import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
 import { numberParamSchema } from "../../types/schema-helpers";
 import { userFeedSchema } from "../../types/zod-schemas";
 import { getUserId } from "../../utils/getters";
@@ -15,7 +12,7 @@ import { notFoundError } from "../../utils/response-schemas";
 const tags = ["posts"];
 
 export const getFeed = createRoute({
-  path: "/feed",
+  path: "/feed/data",
   method: "get",
   tags,
   request: {
@@ -32,10 +29,7 @@ export const getFeed = createRoute({
   },
 });
 
-export const getFeedHandler: AppRouteHandler<
-  typeof getFeed,
-  AppBindingsWithUser
-> = async (c) => {
+export const getFeedHandler: AppRouteHandler<typeof getFeed, AppBindingsWithUser> = async (c) => {
   const userId = getUserId(c);
   const query = c.req.valid("query");
   const { cursorLikes, cursorTime, orderBy } = query;

@@ -363,10 +363,10 @@ export const fetchPosts = async (
         SELECT
           1
         FROM
-          likes
+          "postLikes"
         WHERE
-          likes."postId" = posts.id
-          AND likes."userId" = ${userId}
+          "postLikes"."postId" = posts.id
+          AND "postLikes"."userId" = ${userId}
       ) AS isLiked
     FROM
       posts
@@ -377,7 +377,7 @@ export const fetchPosts = async (
       : sql.raw(`"createdAt" < '${cursorTime}'`)}
     ORDER BY
       posts.${safeOrderBy} DESC,
-      ${orderBy === "likesCount" ? sql.raw(`"createdAt" DESC`) : sql.raw(`"likesCount" DESC`)}
+      posts.${orderBy === "likesCount" ? sql.raw(`"createdAt" DESC`) : sql.raw(`"likesCount" DESC`)}
     LIMIT
       20
   `);

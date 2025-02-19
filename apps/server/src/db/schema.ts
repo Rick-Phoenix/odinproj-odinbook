@@ -315,6 +315,8 @@ export const posts = pgTable(
   (t) => [
     index("likesCountIndex").on(t.likesCount),
     index("postsChronologicalIndex").on(t.createdAt),
+    index("postsAuthorsIndex").on(t.authorId),
+    index("postsRoomIndex").on(t.room),
   ]
 );
 
@@ -349,7 +351,11 @@ export const comments = pgTable(
     parentCommentId: integer("parentCommentId").references((): AnyPgColumn => comments.id),
     likesCount: integer("likesCount").notNull().default(0),
   },
-  (t) => [index("commentsChronologicalIndex").on(t.createdAt)]
+  (t) => [
+    index("commentsChronologicalIndex").on(t.createdAt),
+    index("commentsPostIndex").on(t.postId),
+    index("commentsAuthorIndex").on(t.userId),
+  ]
 );
 
 export const commentsRelations = relations(comments, ({ one, many }) => ({

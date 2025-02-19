@@ -135,8 +135,9 @@ export const initialFeedQuery = (userId: string) => {
   ),
     combined_posts AS (
       SELECT * FROM liked_posts
-      UNION ALL
+      UNION 
       SELECT * FROM recent_posts
+      ORDER BY "likesCount" DESC, "createdAt" DESC
   ),
   rooms_json AS (
     SELECT
