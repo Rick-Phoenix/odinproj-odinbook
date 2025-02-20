@@ -81,17 +81,26 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
 
   return (
     <section className="min-h-svh overflow-x-auto rounded-xl bg-muted/50">
-      <CardHeader>
-        <CardTitle className="text-2xl">{post.title}</CardTitle>
-        <CardDescription>
-          {post.author === "[deleted]" ? (
-            <span className="italic">Deleted User</span>
-          ) : (
-            <Link to="/users/$username" params={{ username: post.author }}>
-              @{post.author}
-            </Link>
-          )}
-        </CardDescription>
+      <CardHeader className="flex flex-row justify-between gap-4">
+        <div className="flex flex-col">
+          <CardTitle className="text-2xl">{post.title}</CardTitle>
+          <CardDescription>
+            {post.author === "[deleted]" ? (
+              <span className="italic">Deleted User</span>
+            ) : (
+              <Link to="/users/$username" params={{ username: post.author }}>
+                @{post.author}
+              </Link>
+            )}
+          </CardDescription>
+        </div>
+        <Link
+          to="/rooms/$roomName"
+          params={{ roomName: post.room.name }}
+          className="h-fit text-nowrap rounded-xl bg-muted p-2 px-4 hover:bg-muted-foreground/50"
+        >
+          r/{post.room.name}
+        </Link>
       </CardHeader>
       <Separator />
       <CardContent className="pt-4">{post.text}</CardContent>

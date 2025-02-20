@@ -187,7 +187,7 @@ function RouteComponent() {
           <PostPreview post={post} key={post.id} />
         ))}
 
-        <div role="status" ref={spinnerRef} className="justify-center">
+        <div role="status" ref={spinnerRef} className="hidden justify-center">
           <svg
             aria-hidden="true"
             className="h-8 w-8 animate-spin fill-blue-600 text-gray-200 dark:text-gray-600"

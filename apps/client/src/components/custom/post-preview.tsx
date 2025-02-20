@@ -15,11 +15,11 @@ export const PostPreview: FC<{
 }) => {
   return (
     <div className="flex max-h-[50%] min-h-min flex-col justify-between rounded-xl bg-gray-900">
-      <CardHeader className="pb-0">
-        <Link to="/rooms/$roomName/posts/$postId" params={{ roomName, postId }}>
-          <CardTitle className="line-clamp-4 text-2xl">{title}</CardTitle>
-        </Link>
+      <CardHeader className="flex flex-row justify-between gap-4 pb-0">
         <div className="flex flex-col">
+          <Link to="/rooms/$roomName/posts/$postId" params={{ roomName, postId }}>
+            <CardTitle className="line-clamp-4 text-2xl">{title}</CardTitle>
+          </Link>
           {author === "[deleted]" ? (
             <span className="italic text-muted-foreground">Deleted User</span>
           ) : (
@@ -38,6 +38,13 @@ export const PostPreview: FC<{
             </Link>
           </CardDescription>
         </div>
+        <Link
+          to="/rooms/$roomName"
+          params={{ roomName }}
+          className="h-fit text-nowrap rounded-xl bg-muted p-2 px-4 hover:bg-muted-foreground/50"
+        >
+          r/{roomName}
+        </Link>
       </CardHeader>
       <Separator className="my-2" />
       <CardContent className="line-clamp-6">{text}</CardContent>

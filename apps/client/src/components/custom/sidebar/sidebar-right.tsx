@@ -1,9 +1,4 @@
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarSeparator,
-} from "@/components/ui/sidebar";
+import { Sidebar, SidebarContent, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { title } from "radashi";
 import * as React from "react";
 import { useActivePage } from "../../../hooks/use-active-page";
@@ -13,16 +8,10 @@ import MarketplaceSidebarContent from "./sidebar-right-marketplace";
 import UserProfileSidebarContent from "./sidebar-right-profiles";
 import RoomsIndexSidebarContent from "./sidebar-right-rooms";
 
-export default function SidebarRight({
-  ...props
-}: React.ComponentProps<typeof Sidebar>) {
+export default function SidebarRight({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { mainSection } = useActivePage();
   return (
-    <Sidebar
-      collapsible="none"
-      className="sticky top-0 hidden border-l lg:flex"
-      {...props}
-    >
+    <Sidebar collapsible="none" className="sticky top-0 hidden lg:flex" {...props}>
       <SidebarHeader className="flex h-16 items-center justify-center border-b border-sidebar-border text-xl font-semibold">
         {title(mainSection)}
       </SidebarHeader>
