@@ -8,9 +8,7 @@ import { Button } from "../../../../components/ui/button";
 import { listingsByCategoryQueryOptions } from "../../../../lib/queryOptions";
 
 const searchParams = z.object({
-  orderBy: fallback(z.enum(["cheapest", "mostRecent"]), "mostRecent").default(
-    "mostRecent",
-  ),
+  orderBy: fallback(z.enum(["cheapest", "mostRecent"]), "mostRecent").default("mostRecent"),
 });
 const pathParams = z.object({
   category: z.enum(schemas.marketplaceCategories),
@@ -23,7 +21,7 @@ export const Route = createFileRoute("/_app/marketplace/$category/")({
   loaderDeps: ({ search }) => search,
   loader: async (c) => {
     const listings = await c.context.queryClient.fetchQuery(
-      listingsByCategoryQueryOptions(c.params.category, c.deps.orderBy),
+      listingsByCategoryQueryOptions(c.params.category, c.deps.orderBy)
     );
     return listings;
   },
@@ -40,7 +38,7 @@ function RouteComponent() {
         ? a.price - b.price
         : new Date(a.createdAt) > new Date(b.createdAt)
           ? -1
-          : 1,
+          : 1
     );
   return (
     <InsetScrollArea>
@@ -50,9 +48,7 @@ function RouteComponent() {
             className="h-full flex-1 hover:bg-popover"
             variant={"secondary"}
             size={"lg"}
-            onClick={() =>
-              navigate({ to: ".", search: { orderBy: "cheapest" } })
-            }
+            onClick={() => navigate({ to: ".", search: { orderBy: "cheapest" } })}
             style={{
               ...(orderBy === "cheapest" && {
                 backgroundColor: "hsl(var(--popover))",
@@ -65,9 +61,7 @@ function RouteComponent() {
             className="h-full flex-1"
             variant={"secondary"}
             size={"lg"}
-            onClick={() =>
-              navigate({ to: ".", search: { orderBy: "mostRecent" } })
-            }
+            onClick={() => navigate({ to: ".", search: { orderBy: "mostRecent" } })}
             style={{
               ...(orderBy === "mostRecent" && {
                 backgroundColor: "hsl(var(--popover))",

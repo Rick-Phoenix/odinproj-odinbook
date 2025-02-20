@@ -3,6 +3,8 @@ import { createRootRouteWithContext, Link, Outlet } from "@tanstack/react-router
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { TbSpaces } from "react-icons/tb";
 import type { User } from "../lib/api-client";
+import ErrorComponent from "../pages/ErrorComponent";
+import NotFoundComponent from "../pages/NotFoundComponent";
 
 interface RouterAppContext {
   queryClient: QueryClient;
@@ -11,6 +13,8 @@ interface RouterAppContext {
 
 export const Route = createRootRouteWithContext<RouterAppContext>()({
   component: Root,
+  errorComponent: (errorData) => <ErrorComponent errorData={errorData} />,
+  notFoundComponent: ({ data }) => <NotFoundComponent data={data} />,
 });
 
 function Root() {

@@ -1,20 +1,11 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
 import SaveListingButton from "../../../../components/custom/SaveListingButton";
 import { Button } from "../../../../components/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "../../../../components/ui/popover";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableRow,
-} from "../../../../components/ui/table";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../../components/ui/popover";
+import { Table, TableBody, TableCell, TableRow } from "../../../../components/ui/table";
 import { useUser } from "../../../../hooks/auth";
 import { chatsQueryOptions } from "../../../../lib/chatQueries";
 import { listingQueryOptions } from "../../../../lib/queryOptions";
@@ -23,9 +14,11 @@ export const Route = createFileRoute("/_app/marketplace/$category/$itemId")({
   component: RouteComponent,
   params: { parse: ({ category, itemId }) => ({ category, itemId: +itemId }) },
   loader: async (c) => {
-    return await c.context.queryClient.fetchQuery(
-      listingQueryOptions(c.params.itemId),
-    );
+    try {
+      return await c.context.queryClient.fetchQuery(listingQueryOptions(c.params.itemId));
+    } catch (error) {
+      throw notFound();
+    }
   },
 });
 
@@ -38,9 +31,7 @@ function RouteComponent() {
 
   const handleSendMessage = async () => {
     const chats = await queryClient.fetchQuery(chatsQueryOptions);
-    const existingChat = chats.find(
-      (chat) => chat.contact.username === listing.seller,
-    );
+    const existingChat = chats.find((chat) => chat.contact.username === listing.seller);
     if (existingChat)
       return navigate({
         to: "/chats/$chatId",
@@ -75,10 +66,7 @@ function RouteComponent() {
                         </PopoverTrigger>
                         <PopoverContent className="w-fit">
                           <Button variant={"ghost"} asChild>
-                            <Link
-                              to="/users/$username"
-                              params={{ username: listing.seller }}
-                            >
+                            <Link to="/users/$username" params={{ username: listing.seller }}>
                               View seller's profile
                             </Link>
                           </Button>
@@ -88,9 +76,7 @@ function RouteComponent() {
                   </TableRow>
                   <TableRow>
                     <TableCell>Item's conditions</TableCell>
-                    <TableCell className="text-right">
-                      {listing.condition}
-                    </TableCell>
+                    <TableCell className="text-right">{listing.condition}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Listed On</TableCell>
@@ -100,9 +86,7 @@ function RouteComponent() {
                   </TableRow>
                   <TableRow>
                     <TableCell>Location</TableCell>
-                    <TableCell className="text-right">
-                      {listing.location}
-                    </TableCell>
+                    <TableCell className="text-right">{listing.location}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
@@ -121,9 +105,7 @@ function RouteComponent() {
             ) : null}
           </div>
           <div className="flex size-full flex-col gap-10 p-2 pt-0">
-            <div className="justify-center text-center text-lg">
-              {listing.description}
-            </div>
+            <div className="justify-center text-center text-lg">{listing.description}</div>
           </div>
         </div>
       </section>

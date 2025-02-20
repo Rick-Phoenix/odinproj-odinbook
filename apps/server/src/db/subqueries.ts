@@ -89,7 +89,7 @@ export const initialFeedQuery = (userId: string) => {
         r.category IN (SELECT category FROM top_category) 
         OR (SELECT category FROM top_category) IS NULL
       )
-      AND r.name NOT IN (SELECT name FROM user_subs)
+      AND r.name NOT IN (SELECT name FROM user_subs) AND r."creatorId" != ${userId}
     ORDER BY r."subsCount" DESC 
     LIMIT 5
   ),

@@ -15,8 +15,6 @@ export const router = createRouter({
     queryClient,
     user: undefined!,
   },
-  defaultPreload: "intent",
   defaultPreloadStaleTime: 0,
-  // defaultErrorComponent: DefaultCatchBoundary,
-  //     defaultNotFoundComponent: () => <NotFound />,
+  notFoundMode: "root",
 });

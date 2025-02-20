@@ -49,7 +49,6 @@ const CommentInput: FC<{
       return data;
     },
     onSuccess(data, variables, context) {
-      console.log(data);
       setRootComments((old) => {
         return [...old, data];
       });

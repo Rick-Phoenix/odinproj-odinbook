@@ -1,30 +1,26 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { format } from "date-fns";
 import type { FC } from "react";
 import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "../../../components/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 import { type Listing } from "../../../lib/api-client";
 import { profileQueryOptions } from "../../../lib/queryOptions";
 
 export const Route = createFileRoute("/_app/users/$username")({
   component: RouteComponent,
   loader: async (ctx) => {
-    const { username } = ctx.params;
-    return await ctx.context.queryClient.fetchQuery(
-      profileQueryOptions(username),
-    );
+    try {
+      const { username } = ctx.params;
+      return await ctx.context.queryClient.fetchQuery(profileQueryOptions(username));
+    } catch (error) {
+      throw notFound();
+    }
   },
 });
 
 function RouteComponent() {
-  const { username, avatarUrl, comments, listingsCreated, posts } =
-    Route.useLoaderData();
+  const { username, avatarUrl, comments, listingsCreated, posts } = Route.useLoaderData();
 
   const postingHistory = [...comments, ...posts].sort((a, b) => {
     const d1 = new Date(a.createdAt);
@@ -41,10 +37,7 @@ function RouteComponent() {
           </Avatar>
           <h3 className="w-fit text-2xl font-semibold">{username}</h3>
         </header>
-        <Tabs
-          defaultValue="rooms"
-          className="size-full min-h-64 rounded-b-xl bg-muted/50 p-6"
-        >
+        <Tabs defaultValue="rooms" className="size-full min-h-64 rounded-b-xl bg-muted/50 p-6">
           <TabsList className="flex w-full [&_button]:flex-grow">
             <TabsTrigger value="rooms">Rooms</TabsTrigger>
             <TabsTrigger value="marketplace" className="">
@@ -104,8 +97,7 @@ const MarketplaceHistoryItem: FC<{ listing: Listing }> = ({ listing }) => {
             </span>
             <span className="text-accent-foreground">{listing.condition}</span>
             <span className="text-accent-foreground">
-              {listing.location} |{" "}
-              {format(new Date(listing.createdAt), "dd MMM y")}
+              {listing.location} | {format(new Date(listing.createdAt), "dd MMM y")}
             </span>
           </div>
           <span className="text-xl font-semibold">${listing.price}</span>

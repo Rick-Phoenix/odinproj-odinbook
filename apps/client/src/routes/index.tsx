@@ -13,7 +13,7 @@ import {
 import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 import LoginDialog from "../components/custom/LoginDialog";
 import SignupDialog from "../components/custom/SignupDialog";
-import { FeaturesSectionDemo } from "../components/motion/features-section";
+import { ParallaxContent } from "../components/custom/TextParallax";
 import { cn } from "../utils/shadcn-helper";
 export const Route = createFileRoute("/")({
   beforeLoad: async ({ context }) => {
@@ -33,7 +33,7 @@ function Index() {
     <div className="min-h-[90vh] w-full">
       <BackgroundGradientAnimation
         interactive={false}
-        className="flex flex-col items-center justify-center gap-4 p-4"
+        className="flex w-full flex-col items-center justify-center gap-4 p-4"
         gradientBackgroundEnd="rgb(30, 41, 59)"
         gradientBackgroundStart="rgb(2, 8, 23)"
       >
@@ -43,7 +43,7 @@ function Index() {
             { text: "is", className: "font-thin" },
             { text: "Nexus.", className: "dark:text-sky-500" },
           ]}
-          className="mt-0 text-9xl tracking-tight"
+          className="mt-0 text-4xl tracking-tight"
         />
         <div
           className="relative size-[500px] bg-black"
@@ -69,8 +69,14 @@ function Index() {
           <LoginDialog />
         </div>
       </BackgroundGradientAnimation>
-      <div className="h-svh w-full">
-        <FeaturesSectionDemo />
+      <ParallaxContent />
+      <div className="m-4 mb-20 flex items-center justify-center gap-4 text-2xl">
+        <button className="relative p-[3px]">
+          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-sky-600 to-teal-500" />
+          <div className="group relative rounded-[6px] bg-gray-950 px-8 py-2 font-semibold text-white transition duration-200 hover:bg-transparent">
+            Come join us!
+          </div>
+        </button>
       </div>
     </div>
   );

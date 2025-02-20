@@ -42,6 +42,7 @@ export async function fetchUserData(userId: string) {
         },
       },
       ownChats: {
+        where: (f) => eq(f.isDeleted, false),
         with: {
           contact: { columns: { username: true, avatarUrl: true, id: true } },
           chat: {

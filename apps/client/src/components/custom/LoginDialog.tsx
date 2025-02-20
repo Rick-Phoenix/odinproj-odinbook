@@ -20,7 +20,7 @@ function LoginDialog() {
       password: "",
     },
     validators: {
-      onChange: schemas.loginValidationSchema,
+      onSubmit: schemas.loginValidationSchema,
       onSubmitAsync: async ({ value }) => {
         try {
           await handleLogin.mutateAsync(value);

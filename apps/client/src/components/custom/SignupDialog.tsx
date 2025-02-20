@@ -21,7 +21,7 @@ function SignupDialog() {
       email: "",
     },
     validators: {
-      onChange: schemas.insertUserSchema,
+      onSubmit: schemas.insertUserSchema,
       onSubmitAsync: async ({ value }) => {
         try {
           await handleSignup.mutateAsync(value);

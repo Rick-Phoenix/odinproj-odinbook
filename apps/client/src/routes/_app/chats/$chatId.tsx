@@ -2,10 +2,9 @@ import { chatMutationOptions, singleChatQueryOptions } from "@/lib/chatQueries";
 import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Send } from "lucide-react";
-import { title } from "radashi";
 import { type FC, useEffect, useRef } from "react";
 import StaticInset from "../../../components/custom/static-inset";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
@@ -23,7 +22,11 @@ export const Route = createFileRoute("/_app/chats/$chatId")({
     },
   },
   loader: async ({ context: { queryClient }, params: { chatId } }) => {
-    return await queryClient.fetchQuery(singleChatQueryOptions(chatId));
+    try {
+      return await queryClient.fetchQuery(singleChatQueryOptions(chatId));
+    } catch (error) {
+      throw notFound();
+    }
   },
 });
 
@@ -91,7 +94,7 @@ function RouteComponent() {
             <Avatar>
               <AvatarImage src={contactAvatar} alt={`${contactName} profile picture`} />
             </Avatar>
-            <div className="text-lg font-semibold">{title(contactName)}</div>
+            <div className="text-lg font-semibold">{contactName}</div>
           </Link>
         ) : (
           <div className="flex h-28 w-full items-center justify-between rounded-xl rounded-b-none bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
