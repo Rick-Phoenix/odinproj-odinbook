@@ -102,7 +102,7 @@ export const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
                         name={field.name}
                         type="text"
                         value={field.state.value}
-                        placeholder="A very interesting title"
+                        placeholder="A very interesting title..."
                         onChange={(e) => field.handleChange(e.target.value)}
                         required
                       />
@@ -124,6 +124,7 @@ export const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
                         type="text"
                         value={field.state.value}
                         onChange={(e) => field.handleChange(e.target.value)}
+                        placeholder="An even more interesting text..."
                         required
                       />
                       {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}

@@ -29,7 +29,9 @@ export default function InsetHeader() {
                       <BreadcrumbPage>{title(mainSection)}</BreadcrumbPage>
                     </Link>
                   ) : (
-                    <Link to={mainSection}>{title(mainSection)}</Link>
+                    <Link to={mainSection === "users" ? "." : mainSection}>
+                      {title(mainSection)}
+                    </Link>
                   ))}
               </BreadcrumbLink>
             </BreadcrumbItem>

@@ -50,10 +50,9 @@ function RouteComponent() {
             <div className="grid max-h-full w-full min-w-0 max-w-80 justify-center [--swiper-navigation-color:hsl(var(--primary))] [&_.swiper]:max-w-full">
               <img src={listing.picUrl} alt={listing.title} />
             </div>
-            <div className="flex w-full flex-col items-center gap-5">
-              <h2 className="text-2xl">{listing.title}</h2>
+            <div className="flex max-w-80 flex-col items-center gap-5 break-words">
               <h2 className="text-2xl">${listing.price}</h2>
-              <Table className="w-full *:text-xl">
+              <Table className="max-w-full break-words *:text-xl">
                 <TableBody>
                   <TableRow>
                     <TableCell>Seller:</TableCell>

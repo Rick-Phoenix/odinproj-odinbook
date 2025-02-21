@@ -27,7 +27,7 @@ function RouteComponent() {
   const suggestedListings = Route.useLoaderData();
   return (
     <InsetScrollArea>
-      <section className="flex min-h-svh max-w-full flex-col items-center rounded-xl bg-muted/50">
+      <section className="flex min-h-svh max-w-full flex-col items-center rounded-xl border bg-muted/50">
         <h2 className="scroll-m-20 border-b p-5 text-center text-3xl font-semibold tracking-tight first:mt-0">
           Marketplace
         </h2>
@@ -173,7 +173,7 @@ const SuggestedListing: FC<{ listing: Listing }> = ({ listing }) => {
     >
       <img src={listing.picUrl} className="aspect-square max-h-full max-w-full object-contain" />
 
-      <h4 className="line-clamp-2 scroll-m-20 text-2xl font-semibold tracking-tight">
+      <h4 className="line-clamp-2 min-w-0 max-w-full scroll-m-20 break-words text-2xl font-semibold tracking-tight">
         {listing.title}
       </h4>
       <h4 className="max-w-[6ch] text-center text-xl font-semibold leading-7">${listing.price}</h4>

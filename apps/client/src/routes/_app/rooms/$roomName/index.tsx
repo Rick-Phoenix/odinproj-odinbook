@@ -136,7 +136,7 @@ function RouteComponent() {
   };
   return (
     <InsetScrollArea onScroll={posts.length >= 20 ? handleScroll : undefined}>
-      <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
+      <section className="flex h-full flex-col justify-between gap-8 rounded-xl border bg-transparent">
         <header className="flex h-28 w-full items-center justify-between rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
           <Avatar className="h-full w-auto">
             <AvatarImage src={avatar} alt={`${roomName} avatar`} />

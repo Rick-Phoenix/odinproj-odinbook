@@ -10,7 +10,7 @@ const ListingPreview: FC<{
   return (
     <div className="group size-full p-4">
       <div
-        className={`flex h-48 items-center gap-4 rounded-lg bg-muted p-3 ${listing.sold ? "line-through" : ""}`}
+        className={`flex h-48 items-center gap-4 rounded-lg border bg-muted p-3 ${listing.sold ? "line-through" : ""}`}
       >
         <Link
           to="/marketplace/$category/$itemId"
@@ -25,13 +25,12 @@ const ListingPreview: FC<{
           className="flex h-full flex-1 flex-col justify-center gap-2"
         >
           <div className="flex flex-col">
-            <span className="break-normal text-2xl font-semibold group-hover:underline">
+            <span className="line-clamp-1 break-normal text-2xl font-semibold group-hover:underline">
               {listing.title}
             </span>
             <span className="text-accent-foreground">{listing.condition}</span>
-            <span className="text-accent-foreground">
-              {listing.location} |{" "}
-              {format(new Date(listing.createdAt), "dd MMM y")}
+            <span className="line-clamp-1 max-w-full break-all text-accent-foreground">
+              {listing.location} | {format(new Date(listing.createdAt), "dd MMM y")}
             </span>
           </div>
           <span className="text-xl font-semibold">${listing.price}</span>

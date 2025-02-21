@@ -73,6 +73,7 @@
     --sidebar-accent-foreground: 240 4.8% 95.9%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+    --inset-container-padding: 2rem;
   }
 }
 
@@ -103,5 +104,11 @@
 @layer utilities {
   .center {
     @apply items-center justify-center;
+  }
+}
+
+@media (min-width: 1280px) {
+  :root {
+    --inset-container-padding: 4rem;
   }
 }

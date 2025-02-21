@@ -156,7 +156,7 @@ const CommentText: FC<{ text: string; commentId: number; initialIsDeleted: boole
   }, [mutationState]);
 
   return !isDeleted && !initialIsDeleted ? (
-    <div className="pl-4">{text}</div>
+    <div className="max-w-[70vw] break-words pl-4 md:max-w-[50vw]">{text}</div>
   ) : (
     <div className="italic text-muted-foreground">This comment has been deleted by its author.</div>
   );

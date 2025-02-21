@@ -36,7 +36,7 @@ function RouteComponent() {
 
   return (
     <InsetScrollArea>
-      <section className="flex min-h-[75svh] max-w-full flex-col rounded-xl bg-muted/50">
+      <section className="flex min-h-[75svh] max-w-full flex-col rounded-xl border bg-muted/50">
         <h2 className="mb-3 w-full scroll-m-20 border-b p-5 text-center text-3xl font-semibold tracking-tight first:mt-0">
           Settings
         </h2>

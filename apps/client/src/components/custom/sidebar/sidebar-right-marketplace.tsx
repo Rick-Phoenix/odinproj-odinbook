@@ -3,11 +3,7 @@ import { Link, useParams } from "@tanstack/react-router";
 import type { Listing } from "../../../lib/api-client";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
-import {
-  SidebarHeader,
-  SidebarMenuButton,
-  SidebarSeparator,
-} from "../../ui/sidebar";
+import { SidebarHeader, SidebarMenuButton, SidebarSeparator } from "../../ui/sidebar";
 
 const MarketplaceSidebarContent = () => {
   const { itemId } = useParams({ strict: false });
@@ -26,9 +22,7 @@ const MarketplaceSidebarContent = () => {
   if (!itemId)
     return (
       <>
-        <SidebarHeader className="text-center text-lg font-semibold">
-          Saved Listings
-        </SidebarHeader>
+        <SidebarHeader className="text-center text-lg font-semibold">Saved Listings</SidebarHeader>
         <ul className="flex flex-col justify-center gap-2 px-2">
           {listingsSaved.map((lis) => (
             <SidebarMenuButton key={lis.id} asChild className="size-full">
@@ -37,16 +31,14 @@ const MarketplaceSidebarContent = () => {
                 to="/marketplace/$category/$itemId"
                 params={{ itemId: lis.id, category: lis.category }}
               >
-                <img src={lis.picUrl} className="size-12" />
-                <span className="line-clamp-1">{lis.title}</span>
+                <img src={lis.picUrl} className="size-12 min-w-12" />
+                <span className="text-ellipsis">{lis.title}</span>
               </Link>
             </SidebarMenuButton>
           ))}
         </ul>
         <SidebarSeparator className="mx-0" />
-        <SidebarHeader className="text-center text-lg font-semibold">
-          Active Listings
-        </SidebarHeader>
+        <SidebarHeader className="text-center text-lg font-semibold">Active Listings</SidebarHeader>
         <ul className="flex flex-col justify-center gap-2 px-2">
           {listingsCreated.map((lis) => (
             <SidebarMenuButton key={lis.id} asChild className="size-full">
@@ -55,8 +47,8 @@ const MarketplaceSidebarContent = () => {
                 to="/marketplace/$category/$itemId"
                 params={{ itemId: lis.id, category: lis.category }}
               >
-                <img src={lis.picUrl} className="size-12" />
-                <span className="line-clamp-1">{lis.title}</span>
+                <img src={lis.picUrl} className="size-12 min-w-12" />
+                <span className="text-ellipsis">{lis.title}</span>
               </Link>
             </SidebarMenuButton>
           ))}
@@ -64,10 +56,7 @@ const MarketplaceSidebarContent = () => {
       </>
     );
 
-  const { picUrl, seller } = queryClient.getQueryData([
-    "listing",
-    itemId,
-  ]) as Listing;
+  const { picUrl, seller } = queryClient.getQueryData(["listing", itemId]) as Listing;
 
   return (
     <>

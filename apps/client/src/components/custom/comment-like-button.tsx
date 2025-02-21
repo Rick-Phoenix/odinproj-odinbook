@@ -48,7 +48,7 @@ const CommentLikeButton: FC<{
       onClick={() => {
         likeMutation.mutate();
       }}
-      className="rounded-3xl p-6 px-8"
+      className="min-w-fit rounded-3xl p-6 px-8"
     >
       <ButtonGesture>
         {isLiked ? <PiThumbsUpFill /> : <PiThumbsUpBold />}

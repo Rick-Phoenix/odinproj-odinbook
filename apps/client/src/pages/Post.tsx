@@ -80,10 +80,10 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
   };
 
   return (
-    <section className="min-h-svh overflow-x-auto rounded-xl bg-muted/50">
-      <CardHeader className="flex flex-row justify-between gap-4">
+    <section className="min-h-svh w-full min-w-0 overflow-x-auto break-words rounded-xl border bg-muted/50">
+      <CardHeader className="flex max-w-full flex-row justify-between gap-4 break-all">
         <div className="flex flex-col">
-          <CardTitle className="text-2xl">{post.title}</CardTitle>
+          <CardTitle className="min-w-0 max-w-full break-words text-2xl">{post.title}</CardTitle>
           <CardDescription>
             {post.author === "[deleted]" ? (
               <span className="italic">Deleted User</span>
@@ -97,7 +97,7 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
         <Link
           to="/rooms/$roomName"
           params={{ roomName: post.room.name }}
-          className="h-fit text-nowrap rounded-xl bg-muted p-2 px-4 hover:bg-muted-foreground/50"
+          className="h-fit text-nowrap rounded-xl bg-muted p-2 px-4 hover:bg-muted-foreground/30"
         >
           r/{post.room.name}
         </Link>

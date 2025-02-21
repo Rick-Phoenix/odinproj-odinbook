@@ -98,6 +98,16 @@ const CommentInput: FC<{
           )}
         />
       </form>
+      <form.Subscribe
+        selector={(state) => [state.errorMap]}
+        children={([errorMap]) =>
+          errorMap.onSubmit ? (
+            <div className="mt-3 flex w-full justify-center">
+              <em>{errorMap.onSubmit?.toString()}</em>
+            </div>
+          ) : null
+        }
+      />
     </>
   );
 };

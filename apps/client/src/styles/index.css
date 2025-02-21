@@ -5,6 +5,9 @@
 :after,
 :before {
   box-sizing: border-box;
+  min-width: 0px;
+  overflow-wrap: break-word;
+  max-width: 100%;
 }
 
 body {

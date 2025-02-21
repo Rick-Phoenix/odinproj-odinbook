@@ -106,7 +106,7 @@ function RouteComponent() {
         )}
 
         <ScrollArea className="h-full w-full" viewportRef={viewportRef}>
-          <div className="grid w-full gap-8 rounded-xl p-8">
+          <div className="grid max-w-full gap-8 break-words rounded-xl p-8">
             {messages.map((message, i, a) => {
               const isFromUser = message.senderId !== contactId;
               return (
@@ -178,11 +178,11 @@ const ChatMessage: FC<{
   const conditionalClasses = isFromUser
     ? "message-user rounded-tr-none justify-self-end text-end"
     : "message-contact rounded-tl-none";
-  const className = `${conditionalClasses} relative flex max-h-max w-fit items-end rounded-2xl bg-muted-foreground/30 p-3`;
+  const className = `${conditionalClasses} relative flex max-h-max w-fit max-w-full items-end rounded-2xl bg-muted-foreground/30 p-3`;
   return (
     <div className={className}>
-      <div className="flex flex-col gap-1">
-        <div>{text}</div>
+      <div className="flex w-full flex-col gap-1 break-words">
+        <span className="inline-block w-full break-words">{text}</span>
         <span className="text-sm text-muted-foreground">
           {sentBeforeToday ? format(sentAt, "MMM do '|' H:mm") : format(sentAt, "H:mm")}
         </span>
