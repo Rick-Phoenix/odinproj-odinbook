@@ -26,8 +26,9 @@ import {
 } from "../../../../components/ui/dropdown-menu";
 import { useUser } from "../../../../hooks/auth";
 import { api, type PostBasic } from "../../../../lib/api-client";
-import { initialPostsQueryOptions, roomQueryOptions } from "../../../../lib/queryOptions";
+import { getAllRoomPosts, roomPostsQueryOptions, sortPosts } from "../../../../lib/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../../utils/async-throttle";
+import { extractFromArray, getTotalPosts } from "../../../../utils/extract-array";
 
 const searchInputs = z.object({
   orderBy: fallback(z.enum(["likesCount", "createdAt"]), "likesCount").default("likesCount"),
@@ -40,16 +41,52 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
   loader: async ({ context: { queryClient }, params, deps: { orderBy } }) => {
     try {
       const { roomName } = params;
-      const room = await queryClient.fetchQuery(roomQueryOptions(roomName, orderBy));
-      const initialPosts = await queryClient.fetchQuery(
-        initialPostsQueryOptions(roomName, orderBy, 1000000000000, new Date().toISOString())
+      const { ids: prefetchedPostsIds, posts: prefetchedPosts } = getAllRoomPosts(roomName);
+      const { posts: initialPosts, ...room } = await queryClient.fetchQuery(
+        roomPostsQueryOptions(roomName, orderBy, prefetchedPostsIds)
       );
-      return { room, initialPosts };
+      return {
+        room,
+        initialPosts: getInitialPosts(initialPosts, prefetchedPosts, orderBy, room.totalPosts),
+        prefetchedPostsIds,
+        prefetchedPosts,
+      };
     } catch (error) {
       throw notFound();
     }
   },
 });
+
+function getInitialPosts(
+  initialPosts: PostBasic[],
+  prefetchedPosts: PostBasic[],
+  orderBy: "likesCount" | "createdAt",
+  totalPosts: number
+) {
+  if (initialPosts.length < 20) return sortPosts([...initialPosts, ...prefetchedPosts], orderBy);
+  if (prefetchedPosts.length === totalPosts) return sortPosts(prefetchedPosts, orderBy);
+  else {
+    if (orderBy === "likesCount") {
+      const upperRangeCursor = initialPosts[0].likesCount;
+      const prefetchedPostsInRange = extractFromArray(
+        prefetchedPosts,
+        (post) => post.likesCount > upperRangeCursor
+      );
+      if (prefetchedPostsInRange.length)
+        return [...sortPosts(prefetchedPostsInRange, orderBy), ...initialPosts];
+      else return initialPosts;
+    } else {
+      const upperRangeCursor = initialPosts[0].createdAt;
+      const prefetchedPostsInRange = extractFromArray(
+        prefetchedPosts,
+        (post) => new Date(post.likesCount) > new Date(upperRangeCursor)
+      );
+      if (prefetchedPostsInRange.length)
+        return [...sortPosts(prefetchedPostsInRange, orderBy), ...initialPosts];
+      else return initialPosts;
+    }
+  }
+}
 
 function RouteComponent() {
   const queryClient = useQueryClient();
@@ -58,7 +95,10 @@ function RouteComponent() {
   const {
     room: { name: roomName, avatar, isSubscribed, creatorId, totalPosts },
     initialPosts,
+    prefetchedPosts,
+    prefetchedPostsIds,
   } = Route.useLoaderData();
+  console.log("🚀 ~ RouteComponent ~ prefetchedPosts:", prefetchedPosts);
   const userIsCreator = userId === creatorId;
   const { orderBy } = Route.useSearch();
 
@@ -68,26 +108,49 @@ function RouteComponent() {
   };
 
   const postsQuery = useInfiniteQuery({
-    queryKey: ["posts", roomName, orderBy],
+    queryKey: ["posts", roomName.toLowerCase(), orderBy],
     queryFn: async (c) => {
-      const { pageParam } = c;
+      const {
+        pageParam: { likes: upperRangeCursorLikes, time: upperRangeCursorTime },
+      } = c;
+
+      if (prefetchedPosts.length + getTotalPosts(postsQuery.data.pages) >= totalPosts)
+        return { posts: sortPosts(prefetchedPosts, orderBy), cursor: null };
 
       const res = await api.rooms[":roomName"].posts.$get({
         param: { roomName },
         query: {
           orderBy,
-          cursorLikes: pageParam.likes!,
-          cursorTime: pageParam.time!,
+          cursorLikes: upperRangeCursorLikes,
+          cursorTime: upperRangeCursorTime,
+          excludeIds: prefetchedPostsIds,
         },
       });
-      const posts = await res.json();
-      if ("issues" in posts) {
+      const data = await res.json();
+      if ("issues" in data) {
         throw new Error("Error while fetching the posts for this room.");
       }
 
-      if (posts.length === 0) return { posts: [], cursor: null };
+      let { posts } = data;
 
-      for (const post of posts) queryClient.setQueryData(["post", post.id], post);
+      if (orderBy === "likesCount") {
+        const lowerRangeCursor = posts.at(-1)!.likesCount;
+        const prefetchedPostsInRange = extractFromArray(
+          prefetchedPosts,
+          (post) => post.likesCount > lowerRangeCursor
+        );
+        posts = sortPosts([...posts, ...prefetchedPostsInRange], "likesCount");
+      } else {
+        const lowerRangeCursor = posts.at(-1)!.createdAt;
+        const prefetchedPostsInRange = extractFromArray(
+          prefetchedPosts,
+          (post) => new Date(post.createdAt) > new Date(lowerRangeCursor)
+        );
+        posts = sortPosts([...posts, ...prefetchedPostsInRange], "createdAt");
+      }
+
+      for (const post of posts)
+        queryClient.setQueryData(["post", roomName.toLowerCase(), post.id], post);
 
       const cursor = {
         time: posts.at(-1)?.createdAt,
@@ -98,14 +161,15 @@ function RouteComponent() {
     },
     initialPageParam: initialCursor,
     getNextPageParam: (lastPage, pages) => {
-      if (pages.length >= Math.ceil(totalPosts / 20)) return null;
+      if (getTotalPosts(pages) >= totalPosts || pages.length >= Math.ceil(totalPosts / 20))
+        return null;
       return lastPage.cursor;
     },
     initialData: {
       pageParams: [initialCursor],
       pages: [{ posts: initialPosts, cursor: initialCursor }],
     },
-    enabled: totalPosts > 0,
+    enabled: totalPosts > initialPosts.length,
   });
 
   const posts = postsQuery.data.pages.reduce((acc, next) => {
@@ -136,8 +200,8 @@ function RouteComponent() {
   };
   return (
     <InsetScrollArea onScroll={posts.length >= 20 ? handleScroll : undefined}>
-      <section className="flex h-full flex-col justify-between gap-8 rounded-xl border bg-transparent">
-        <header className="flex h-28 w-full items-center justify-between rounded-xl bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
+      <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
+        <header className="flex h-28 w-full items-center justify-between rounded-xl border bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
           <Avatar className="h-full w-auto">
             <AvatarImage src={avatar} alt={`${roomName} avatar`} />
           </Avatar>

@@ -44,7 +44,7 @@ export const userQueryOptions = {
       posts.forEach((post, i) => {
         if (i < 20) initialFeedTrending.push(post);
         else initialFeedNewest.push(post);
-        queryClient.setQueryData(["post", post.id], post);
+        queryClient.setQueryData(["post", post.room.toLowerCase(), post.id], post);
         queryClient.setQueryData(["postLikes", post.id], {
           isLiked: post.isLiked,
           likesCount: post.likesCount,
@@ -72,61 +72,6 @@ export const userQueryOptions = {
 
     return userData;
   },
-};
-
-// ROOMS
-
-export const roomQueryOptions = (
-  roomName: string,
-  orderBy: "likesCount" | "createdAt" = "likesCount"
-) =>
-  queryOptions({
-    queryKey: ["room", roomName],
-    queryFn: async () => {
-      const res = await api.rooms[":roomName"].$get({
-        param: { roomName },
-        query: { orderBy },
-      });
-      const data = await res.json();
-      if ("issues" in data) {
-        throw new Error("Room not found.");
-      }
-      for (const post of data.posts) {
-        queryClient.setQueryData(["post", post.id], post);
-        queryClient.setQueryData(["postLikes", post.id], {
-          isLiked: post.isLiked,
-          likesCount: post.likesCount,
-        });
-      }
-
-      const queryType = orderBy === "createdAt" ? "postsRecent" : "postsPopular";
-      queryClient.setQueryData([queryType, data.name], data.posts);
-
-      return data;
-    },
-  });
-
-// POSTS
-
-export const postQueryOptions = (postId: number) => {
-  return queryOptions({
-    queryKey: ["postFull", postId],
-    queryFn: async () => {
-      const res = await api.posts[":postId"].$get({ param: { postId } });
-      const post = await res.json();
-      if ("issues" in post) {
-        throw new Error("Post not found.");
-      }
-
-      queryClient.setQueryData(["postLikes", post.id], {
-        isLiked: post.isLiked,
-        likesCount: post.likesCount,
-      });
-      queryClient.setQueryData(["roomPreview", post.room.name], post.room);
-
-      return post;
-    },
-  });
 };
 
 // LISTINGS
@@ -179,23 +124,82 @@ export const profileQueryOptions = (username: string) =>
     },
   });
 
-export const initialPostsQueryOptions = (
+export const roomPostsQueryOptions = (
   roomName: string,
   orderBy: "likesCount" | "createdAt",
-  cursorLikes: number,
-  cursorTime: string
+  excludeIds?: number[],
+  cursorLikes?: number,
+  cursorTime?: string
 ) =>
   queryOptions({
-    queryKey: [orderBy === "createdAt" ? "postsRecent" : "postsPopular", roomName],
+    queryKey: ["room", roomName.toLowerCase()],
     queryFn: async () => {
       const res = await api.rooms[":roomName"].posts.$get({
         param: { roomName },
-        query: { cursorLikes, cursorTime, orderBy },
+        query: { cursorLikes, cursorTime, orderBy, excludeIds },
       });
       const data = await res.json();
       if ("issues" in data) {
         throw new Error("An error occurred while loading the posts.");
       }
+      for (const post of data.posts) {
+        queryClient.setQueryData(["post", post.room.toLowerCase(), post.id], post);
+        queryClient.setQueryData(["postLikes", post.id], {
+          isLiked: post.isLiked,
+          likesCount: post.likesCount,
+        });
+      }
+
+      queryClient.setQueryData(["totalPosts", roomName.toLowerCase()], data.totalPosts);
+
       return data;
     },
   });
+
+export const postQueryOptions = (postId: number, roomName: string) => {
+  return queryOptions({
+    queryKey: ["postFull", roomName.toLowerCase(), postId],
+    queryFn: async () => {
+      const res = await api.posts[":postId"].$get({ param: { postId } });
+      const post = await res.json();
+      if ("issues" in post) {
+        throw new Error("Post not found.");
+      }
+
+      queryClient.setQueryData(["postLikes", post.id], {
+        isLiked: post.isLiked,
+        likesCount: post.likesCount,
+      });
+      queryClient.setQueryData(["roomPreview", post.room.name.toLowerCase()], post.room);
+
+      return post;
+    },
+  });
+};
+
+export const getAllRoomPosts = (roomName: string) => {
+  const ids = [] as number[];
+  const posts = queryClient
+    .getQueriesData({
+      predicate: (q) =>
+        (q.queryKey[0] === "post" || q.queryKey[0] === "postFull") &&
+        q.queryKey[1] === roomName.toLowerCase(),
+    })
+    .map(([key, post]) => {
+      ids.push(key[2] as number);
+      return post;
+    }) as PostBasic[];
+  return { ids, posts };
+};
+
+export const sortPosts = (array: PostBasic[], orderBy: "likesCount" | "createdAt") => {
+  return array
+    .slice()
+    .sort((a, b) =>
+      orderBy === "likesCount"
+        ? b.likesCount - a.likesCount
+        : new Date(a.createdAt) > new Date(b.createdAt)
+          ? -1
+          : 1
+    );
+};

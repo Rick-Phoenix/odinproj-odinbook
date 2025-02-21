@@ -1,5 +1,5 @@
 import { and, asc, desc, eq, getTableColumns, gte, lt, lte, ne, sql } from "drizzle-orm";
-import type { BasicPost, ListingInputs } from "../types/zod-schemas";
+import type { ListingInputs } from "../types/zod-schemas";
 import { hashPassword } from "../utils/password";
 import { lowercase, withCTEColumns } from "./db-methods";
 import db from "./dbConfig";
@@ -23,7 +23,6 @@ import {
   isSaved,
   isSubscribed,
   postIsLiked,
-  totalPostsFromRoom,
   totalPostsFromUserSubs,
   userStats,
 } from "./subqueries";
@@ -337,94 +336,6 @@ export async function fetchFeed(
   }));
 
   return parsedFeed;
-}
-
-export const fetchPosts = async (
-  userId: string,
-  room: string,
-  orderBy: "likesCount" | "createdAt" = "likesCount",
-  cursorLikes: number,
-  cursorTime: string
-) => {
-  const orderByColumns = {
-    createdAt: sql.raw(`"createdAt"`),
-    likesCount: sql.raw(`"likesCount"`),
-  } as const;
-
-  const safeOrderBy = orderByColumns[orderBy] ?? orderByColumns.likesCount;
-  const { rows: posts } = await db.execute<BasicPost>(sql`
-    SELECT
-      *,
-      (
-        SELECT DISTINCT
-          username
-        FROM
-          users
-        WHERE
-          users.id = posts."authorId"
-      ) AS author,
-      EXISTS (
-        SELECT
-          1
-        FROM
-          "postLikes"
-        WHERE
-          "postLikes"."postId" = posts.id
-          AND "postLikes"."userId" = ${userId}
-      ) AS isLiked
-    FROM
-      posts
-    WHERE
-      posts.room = ${room}
-      AND posts.${orderBy === "likesCount"
-      ? sql.raw(`"likesCount" <= ${cursorLikes} AND posts."createdAt" < '${cursorTime}'`)
-      : sql.raw(`"createdAt" < '${cursorTime}'`)}
-    ORDER BY
-      posts.${safeOrderBy} DESC,
-      posts.${orderBy === "likesCount" ? sql.raw(`"createdAt" DESC`) : sql.raw(`"likesCount" DESC`)}
-    LIMIT
-      20
-  `);
-
-  return posts;
-};
-
-export async function fetchRoom(
-  userId: string,
-  roomName: string,
-  orderBy: "likesCount" | "createdAt" = "likesCount"
-) {
-  const room = await db.query.rooms.findFirst({
-    where: (room, { eq }) => eq(lowercase(room.name), roomName.toLocaleLowerCase()),
-    with: {
-      posts: {
-        limit: 20,
-        with: { author: { columns: { username: true } } },
-        orderBy: (post, { desc }) =>
-          orderBy === "likesCount"
-            ? [desc(post.likesCount), desc(post.createdAt)]
-            : [desc(post.createdAt), desc(post.likesCount)],
-        extras: (f) => postIsLiked(userId, f.id),
-      },
-    },
-    extras: (f) => ({
-      ...isSubscribed(userId, f.name),
-      totalPosts: sql<number>`${db.$count(totalPostsFromRoom(roomName))}::int`
-        .mapWith(Number)
-        .as("totalPosts"),
-    }),
-  });
-
-  if (room)
-    return {
-      ...room,
-      posts: room.posts.map((post) => ({
-        ...post,
-        author: post.author.username,
-      })),
-    };
-
-  return room;
 }
 
 export async function insertRoom(

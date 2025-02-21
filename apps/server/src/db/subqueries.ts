@@ -1,6 +1,7 @@
 import { eq, sql } from "drizzle-orm";
 import type { PgColumn } from "drizzle-orm/pg-core";
 import type { BasicPost, RoomData } from "../types/zod-schemas";
+import { lowercase } from "./db-methods";
 import db from "./dbConfig";
 import { listings, postLikes, posts, rooms, subs } from "./schema";
 
@@ -43,8 +44,7 @@ export const totalPostsFromRoom = (room: string) =>
   db
     .select()
     .from(posts)
-    .innerJoin(rooms, eq(rooms.name, posts.room))
-    .where(eq(rooms.name, room))
+    .where(eq(lowercase(posts.room), room.toLowerCase()))
     .as("room_posts");
 
 export const initialFeedQuery = (userId: string) => {

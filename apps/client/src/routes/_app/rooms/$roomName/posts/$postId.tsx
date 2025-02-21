@@ -19,7 +19,9 @@ export const Route = createFileRoute("/_app/rooms/$roomName/posts/$postId")({
   validateSearch: zodValidator(searchInputs),
   loader: async (c) => {
     try {
-      const post = await c.context.queryClient.fetchQuery(postQueryOptions(c.params.postId));
+      const post = await c.context.queryClient.fetchQuery(
+        postQueryOptions(c.params.postId, c.params.roomName)
+      );
       return post;
     } catch (error) {
       throw notFound();
