@@ -1,4 +1,4 @@
-import { userQueryOptions } from "@/lib/queryOptions";
+import { userQueryOptions } from "@/lib/queries/queryOptions";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import SidebarWrapper from "../components/custom/sidebar/sidebar-wrapper";
 

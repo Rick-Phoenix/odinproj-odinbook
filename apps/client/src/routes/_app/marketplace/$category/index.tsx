@@ -5,7 +5,7 @@ import { z } from "zod";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
 import ListingPreview from "../../../../components/custom/ListingPreview";
 import { Button } from "../../../../components/ui/button";
-import { listingsByCategoryQueryOptions } from "../../../../lib/queryOptions";
+import { listingsByCategoryQueryOptions } from "../../../../lib/queries/queryOptions";
 
 const searchParams = z.object({
   orderBy: fallback(z.enum(["cheapest", "mostRecent"]), "mostRecent").default("mostRecent"),

@@ -5,7 +5,7 @@ import InsetScrollArea from "../../../components/custom/inset-scrollarea";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 import { type Listing } from "../../../lib/api-client";
-import { profileQueryOptions } from "../../../lib/queryOptions";
+import { profileQueryOptions } from "../../../lib/queries/queryOptions";
 
 export const Route = createFileRoute("/_app/users/$username")({
   component: RouteComponent,

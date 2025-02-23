@@ -4,15 +4,9 @@ import { useNavigate } from "@tanstack/react-router";
 import { useState, type FC, type ReactNode } from "react";
 import { z } from "zod";
 import { type Chat } from "../../lib/api-client";
-import { profileQueryOptions } from "../../lib/queryOptions";
+import { profileQueryOptions } from "../../lib/queries/queryOptions";
 import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "../ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
@@ -38,9 +32,7 @@ const CreateChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
           return;
         }
         try {
-          const contact = await queryClient.fetchQuery(
-            profileQueryOptions(contactUsername),
-          );
+          const contact = await queryClient.fetchQuery(profileQueryOptions(contactUsername));
           return null;
         } catch (error) {
           return "This user does not exist.";
@@ -86,11 +78,7 @@ const CreateChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
               )}
             ></form.Field>
             <form.Subscribe
-              selector={(state) => [
-                state.canSubmit,
-                state.isSubmitting,
-                state.isTouched,
-              ]}
+              selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched]}
               children={([canSubmit, isSubmitting, isTouched]) => (
                 <Button
                   type="submit"

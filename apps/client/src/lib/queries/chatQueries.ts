@@ -1,6 +1,6 @@
 import { queryOptions, type MutationOptions } from "@tanstack/react-query";
-import { api, wsRPC, type Chat } from "./api-client";
-import { queryClient } from "./queries/queryClient";
+import { api, wsRPC, type Chat } from "../api-client";
+import { queryClient } from "./queryClient";
 
 export function cacheChats(chats: Chat[]) {
   queryClient.setQueryDefaults(["chats"], { queryFn: chatsQueryOptions.queryFn });

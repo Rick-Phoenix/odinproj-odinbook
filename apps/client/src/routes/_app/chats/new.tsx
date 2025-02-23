@@ -13,9 +13,9 @@ import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
 import { api } from "../../../lib/api-client";
-import { chatWebSocket, singleChatQueryOptions } from "../../../lib/chatQueries";
+import { chatWebSocket, singleChatQueryOptions } from "../../../lib/queries/chatQueries";
 import { queryClient } from "../../../lib/queries/queryClient";
-import { profileQueryOptions } from "../../../lib/queryOptions";
+import { profileQueryOptions } from "../../../lib/queries/queryOptions";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 

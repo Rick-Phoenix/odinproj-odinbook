@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { MessageSquare } from "lucide-react";
 import { type Profile } from "../../../lib/api-client";
-import { chatsQueryOptions } from "../../../lib/chatQueries";
+import { chatsQueryOptions } from "../../../lib/queries/chatQueries";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { SidebarMenu } from "../../ui/sidebar";

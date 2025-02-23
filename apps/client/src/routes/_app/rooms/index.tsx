@@ -17,6 +17,7 @@ import { Button } from "../../../components/ui/button";
 import { CardTitle } from "../../../components/ui/card";
 import { api, type InitialFeed, type PostBasic, type SortingOrder } from "../../../lib/api-client";
 import { throttleAsync, type ThrottledFunction } from "../../../utils/async-throttle";
+import { getTotalPosts } from "../../../utils/extract-array";
 
 export const Route = createFileRoute("/_app/rooms/")({
   component: RouteComponent,
@@ -24,16 +25,20 @@ export const Route = createFileRoute("/_app/rooms/")({
     orderBy: (s.orderBy as SortingOrder) || "likesCount",
   }),
   loaderDeps: ({ search }) => search,
+  loader: async (c) => {
+    const { posts: initialPosts, total: totalPosts } = c.context.queryClient.getQueryData([
+      "initialFeed",
+      c.deps.orderBy,
+    ]) as InitialFeed;
+    return { initialPosts, totalPosts };
+  },
 });
 
 function RouteComponent() {
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
   const { orderBy } = Route.useSearch();
-  const { posts: initialPosts, total: totalPosts } = queryClient.getQueryData([
-    "initialFeed",
-    orderBy,
-  ]) as InitialFeed;
+  const { totalPosts, initialPosts } = Route.useLoaderData();
   const initialCursor = {
     time: initialPosts.at(-1)?.createdAt,
     likes: initialPosts.at(-1)?.likesCount,
@@ -42,45 +47,52 @@ function RouteComponent() {
   const spinnerRef = useRef<HTMLDivElement>(null);
 
   const feedQuery = useInfiniteQuery({
-    queryKey: ["feed", orderBy],
+    queryKey: ["paginatedFeed", orderBy],
     queryFn: async (c) => {
-      const { pageParam } = c;
+      const {
+        pageParam: { likes: upperRangeCursorLikes, time: upperRangeCursorTime },
+      } = c;
+
       const res = await api.posts.feed.data.$get({
         query: {
           orderBy,
-          cursorLikes: pageParam.likes!,
-          cursorTime: pageParam.time!,
+          cursorLikes: upperRangeCursorLikes!,
+          cursorTime: upperRangeCursorTime!,
         },
       });
+
       const data = await res.json();
       if ("issues" in data) {
         throw new Error("Error while fetching the posts for the main feed.");
       }
+
       for (const post of data) {
-        queryClient.setQueryData(["post", post.id], post);
+        queryClient.setQueryData(["post", post.room.toLowerCase(), post.id], post);
       }
 
-      if (data.length === 0) return { posts: [], cursor: null };
+      let posts = data;
+
       const cursor = {
-        time: data.at(-1)?.createdAt,
-        likes: data.at(-1)?.likesCount,
+        time: posts.at(-1)?.createdAt,
+        likes: posts.at(-1)?.likesCount,
       };
 
       return {
-        posts: data,
+        posts,
         cursor,
       };
     },
     initialPageParam: initialCursor,
     getNextPageParam: (lastPage, pages) => {
-      if (pages.length >= Math.ceil(totalPosts / 20)) return null;
+      if (getTotalPosts(pages) >= totalPosts || pages.length >= Math.ceil(totalPosts / 20))
+        return null;
       return lastPage.cursor;
     },
     initialData: {
       pageParams: [initialCursor],
       pages: [{ posts: initialPosts, cursor: initialCursor }],
     },
-    enabled: totalPosts > 0,
+    enabled: totalPosts > initialPosts.length,
   });
 
   const posts = feedQuery.data.pages.reduce((acc, next) => {
@@ -193,7 +205,9 @@ const TrendingCard: FC<{
             <div className="max-w-[10ch] truncate">{likesCount}</div>
             <Heart className="min-w-fit group-hover:fill-white" />
           </div>
-          <CardTitle className="line-clamp-[6] max-w-full scroll-m-20">{title}</CardTitle>
+          <CardTitle className="line-clamp-2 max-w-full scroll-m-20 lg:line-clamp-5">
+            {title}
+          </CardTitle>
         </Link>
         <Link
           to="/rooms/$roomName"

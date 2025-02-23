@@ -1,4 +1,4 @@
-import { userQueryOptions } from "@/lib/queryOptions";
+import { userQueryOptions } from "@/lib/queries/queryOptions";
 import { createFileRoute, redirect } from "@tanstack/react-router";
 import {
   AnimatePresence,

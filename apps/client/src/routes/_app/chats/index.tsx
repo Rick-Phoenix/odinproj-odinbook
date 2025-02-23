@@ -1,4 +1,3 @@
-import { chatsQueryOptions } from "@/lib/chatQueries";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SquarePen } from "lucide-react";
@@ -26,6 +25,7 @@ import {
 import { useChats } from "../../../hooks/useChats";
 import { useUnreadMessages } from "../../../hooks/useUnreadMessages";
 import { api, type Chat, type Message } from "../../../lib/api-client";
+import { chatsQueryOptions } from "../../../lib/queries/chatQueries";
 
 export const Route = createFileRoute("/_app/chats/")({
   component: RouteComponent,

@@ -2,7 +2,7 @@ import { createFileRoute, notFound } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import InsetScrollArea from "../../../../../components/custom/inset-scrollarea";
-import { postQueryOptions } from "../../../../../lib/queryOptions";
+import { postQueryOptions } from "../../../../../lib/queries/queryOptions";
 import Post from "../../../../../pages/Post";
 
 const searchInputs = z.object({

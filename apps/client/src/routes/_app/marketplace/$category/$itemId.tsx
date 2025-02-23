@@ -7,8 +7,8 @@ import { Button } from "../../../../components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../../components/ui/popover";
 import { Table, TableBody, TableCell, TableRow } from "../../../../components/ui/table";
 import { useUser } from "../../../../hooks/auth";
-import { chatsQueryOptions } from "../../../../lib/chatQueries";
-import { listingQueryOptions } from "../../../../lib/queryOptions";
+import { chatsQueryOptions } from "../../../../lib/queries/chatQueries";
+import { listingQueryOptions } from "../../../../lib/queries/queryOptions";
 
 export const Route = createFileRoute("/_app/marketplace/$category/$itemId")({
   component: RouteComponent,

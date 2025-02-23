@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, getTableColumns, gte, lt, lte, ne, sql } from "drizzle-orm";
+import { and, asc, desc, eq, getTableColumns, gte, ne, sql } from "drizzle-orm";
 import type { ListingInputs } from "../types/zod-schemas";
 import { hashPassword } from "../utils/password";
 import { lowercase, withCTEColumns } from "./db-methods";
@@ -289,53 +289,6 @@ export async function addSubscription(userId: string, room: string) {
 
 export async function removeSubscription(userId: string, room: string) {
   await db.delete(subs).where(and(eq(subs.room, room), eq(subs.userId, userId)));
-}
-
-export async function fetchFeed(
-  userId: string,
-  cursorLikes: number,
-  cursorTime: string,
-  orderBy: "likesCount" | "createdAt" = "likesCount"
-) {
-  const userSubs = db
-    .$with("user_feed")
-    .as(
-      db
-        .select({ room: rooms.name })
-        .from(subs)
-        .innerJoin(rooms, eq(rooms.name, subs.room))
-        .where(eq(subs.userId, userId))
-    );
-
-  const userFeed = await db
-    .with(userSubs)
-    .select({
-      post: posts,
-      author: users.username,
-      ...postIsLiked(userId, posts.id),
-    })
-    .from(userSubs)
-    .innerJoin(posts, eq(posts.room, userSubs.room))
-    .innerJoin(users, eq(users.id, posts.authorId))
-    .where(
-      orderBy === "likesCount"
-        ? and(lte(posts.likesCount, cursorLikes), lt(posts.createdAt, cursorTime))
-        : lt(posts.createdAt, cursorTime)
-    )
-    .orderBy(
-      ...(orderBy === "likesCount"
-        ? [desc(posts.likesCount), desc(posts.createdAt)]
-        : [desc(posts.createdAt), desc(posts.likesCount)])
-    )
-    .limit(20);
-
-  const parsedFeed = userFeed.map((i) => ({
-    ...i.post,
-    isLiked: i.isLiked,
-    author: i.author,
-  }));
-
-  return parsedFeed;
 }
 
 export async function insertRoom(

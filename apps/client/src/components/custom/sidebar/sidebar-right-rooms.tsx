@@ -15,16 +15,9 @@ import SidebarSkeleton from "./sidebar-skeleton";
 
 const RoomsIndexSidebarContent = () => {
   const { mainSection, subSection, activePage } = useActivePage();
-  const {
-    createdAt,
-    totalLikes,
-    totalPosts,
-    totalRoomsCreated,
-    totalListings,
-  } = useUser()!;
+  const { createdAt, totalLikes, totalPosts, totalRoomsCreated, totalListings } = useUser()!;
   const queryClient = useQueryClient();
-  const suggestedRooms =
-    (queryClient.getQueryData(["suggestedRooms"]) as Room[]) || null;
+  const suggestedRooms = (queryClient.getQueryData(["suggestedRooms"]) as Room[]) || null;
   return (
     <>
       {activePage === mainSection && (
@@ -32,25 +25,17 @@ const RoomsIndexSidebarContent = () => {
           <div className="p-4">
             <CreateRoomDialog />
             <SidebarSeparator className="mx-0" />
-            <h4 className="mt-2 text-center text-lg font-semibold">
-              Suggested Rooms
-            </h4>
+            <h4 className="mt-2 text-center text-lg font-semibold">Suggested Rooms</h4>
 
             <ul className="flex flex-col justify-center gap-2 pt-6">
               {suggestedRooms &&
                 suggestedRooms.map((room) => (
-                  <SuggestedRoom
-                    key={room.name}
-                    roomAvatar={room.avatar}
-                    roomName={room.name}
-                  />
+                  <SuggestedRoom key={room.name} roomAvatar={room.avatar} roomName={room.name} />
                 ))}
             </ul>
           </div>
           <SidebarSeparator className="mx-0" />
-          <div className="p-4 text-center text-lg font-semibold">
-            Your Stats
-          </div>
+          <div className="p-4 text-center text-lg font-semibold">Your Stats</div>
           <Table className="w-full">
             <TableBody>
               <TableRow>
@@ -69,9 +54,7 @@ const RoomsIndexSidebarContent = () => {
               </TableRow>
               <TableRow>
                 <TableCell>Total rooms created:</TableCell>
-                <TableCell className="text-right">
-                  {totalRoomsCreated}
-                </TableCell>
+                <TableCell className="text-right">{totalRoomsCreated}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Total listings created:</TableCell>
@@ -87,10 +70,7 @@ const RoomsIndexSidebarContent = () => {
   );
 };
 
-const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({
-  roomAvatar,
-  roomName,
-}) => {
+const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({ roomAvatar, roomName }) => {
   return (
     <li>
       <SidebarMenuButton asChild className="size-full">

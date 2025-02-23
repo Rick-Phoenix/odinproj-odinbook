@@ -1,4 +1,3 @@
-import { chatMutationOptions, singleChatQueryOptions } from "@/lib/chatQueries";
 import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient, useSuspenseQuery } from "@tanstack/react-query";
@@ -11,6 +10,7 @@ import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
+import { chatMutationOptions, singleChatQueryOptions } from "../../../lib/queries/chatQueries";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 

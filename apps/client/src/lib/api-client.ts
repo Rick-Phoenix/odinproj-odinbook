@@ -23,11 +23,12 @@ export type Comment = z.infer<typeof schemas.commentSchema> & {
   children?: Comment[];
 };
 export type LikeData = { isLiked: boolean; likesCount: number };
-
+export type Post = PostBasic | PostFull;
 const userDataWithoutExtras = schemas.userDataSchema.omit({
   subsContent: true,
   listingsCreated: true,
   listingsSaved: true,
+  ownChats: true,
 });
 export type User = z.infer<typeof userDataWithoutExtras>;
 

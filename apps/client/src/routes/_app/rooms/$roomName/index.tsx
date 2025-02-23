@@ -26,9 +26,10 @@ import {
 } from "../../../../components/ui/dropdown-menu";
 import { useUser } from "../../../../hooks/auth";
 import { api, type PostBasic } from "../../../../lib/api-client";
-import { getAllRoomPosts, roomPostsQueryOptions, sortPosts } from "../../../../lib/queryOptions";
+import { cachePost, getCursor, getNextPostsByLikes, getNextPostsByTime } from "../../../../lib/queries/caches";
+import { roomPostsQueryOptions, sortPosts } from "../../../../lib/queries/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../../utils/async-throttle";
-import { extractFromArray, getTotalPosts } from "../../../../utils/extract-array";
+import { getTotalPosts } from "../../../../utils/extract-array";
 
 const searchInputs = z.object({
   orderBy: fallback(z.enum(["likesCount", "createdAt"]), "likesCount").default("likesCount"),
@@ -41,15 +42,10 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
   loader: async ({ context: { queryClient }, params, deps: { orderBy } }) => {
     try {
       const { roomName } = params;
-      const { ids: prefetchedPostsIds, posts: prefetchedPosts } = getAllRoomPosts(roomName);
-      const { posts: initialPosts, ...room } = await queryClient.fetchQuery(
-        roomPostsQueryOptions(roomName, orderBy, prefetchedPostsIds)
-      );
+      const { posts: initialPosts, ...room } = await queryClient.fetchQuery(roomPostsQueryOptions(roomName, orderBy));
       return {
         room,
-        initialPosts: getInitialPosts(initialPosts, prefetchedPosts, orderBy, room.totalPosts),
-        prefetchedPostsIds,
-        prefetchedPosts,
+        initialPosts,
       };
     } catch (error) {
       throw notFound();
@@ -57,75 +53,51 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
   },
 });
 
-function getInitialPosts(
-  initialPosts: PostBasic[],
-  prefetchedPosts: PostBasic[],
-  orderBy: "likesCount" | "createdAt",
-  totalPosts: number
-) {
-  if (initialPosts.length < 20) return sortPosts([...initialPosts, ...prefetchedPosts], orderBy);
-  if (prefetchedPosts.length === totalPosts) return sortPosts(prefetchedPosts, orderBy);
-  else {
-    if (orderBy === "likesCount") {
-      const upperRangeCursor = initialPosts[0].likesCount;
-      const prefetchedPostsInRange = extractFromArray(
-        prefetchedPosts,
-        (post) => post.likesCount > upperRangeCursor
-      );
-      if (prefetchedPostsInRange.length)
-        return [...sortPosts(prefetchedPostsInRange, orderBy), ...initialPosts];
-      else return initialPosts;
-    } else {
-      const upperRangeCursor = initialPosts[0].createdAt;
-      const prefetchedPostsInRange = extractFromArray(
-        prefetchedPosts,
-        (post) => new Date(post.likesCount) > new Date(upperRangeCursor)
-      );
-      if (prefetchedPostsInRange.length)
-        return [...sortPosts(prefetchedPostsInRange, orderBy), ...initialPosts];
-      else return initialPosts;
-    }
-  }
-}
-
 function RouteComponent() {
   const queryClient = useQueryClient();
+
   const { id: userId } = useUser()!;
   const navigate = useNavigate({ from: Route.fullPath });
   const {
     room: { name: roomName, avatar, isSubscribed, creatorId, totalPosts },
     initialPosts,
-    prefetchedPosts,
-    prefetchedPostsIds,
   } = Route.useLoaderData();
-  console.log("🚀 ~ RouteComponent ~ prefetchedPosts:", prefetchedPosts);
+
   const userIsCreator = userId === creatorId;
   const { orderBy } = Route.useSearch();
 
-  const initialCursor = {
-    time: initialPosts.at(-1)?.createdAt,
-    likes: initialPosts.at(-1)?.likesCount,
-  };
+  const initialCursor = getCursor(initialPosts);
 
   const postsQuery = useInfiniteQuery({
     queryKey: ["posts", roomName.toLowerCase(), orderBy],
     queryFn: async (c) => {
       const {
-        pageParam: { likes: upperRangeCursorLikes, time: upperRangeCursorTime },
+        pageParam: { likes: cursorLikes, time: cursorTime },
       } = c;
 
-      if (prefetchedPosts.length + getTotalPosts(postsQuery.data.pages) >= totalPosts)
-        return { posts: sortPosts(prefetchedPosts, orderBy), cursor: null };
+      let prefetchedPosts = [] as PostBasic[];
+
+      if (orderBy === "createdAt") {
+        prefetchedPosts = getNextPostsByTime(cursorTime!, roomName.toLowerCase());
+      } else {
+        prefetchedPosts = getNextPostsByLikes(cursorLikes!, cursorTime!, roomName.toLowerCase());
+      }
+
+      if (prefetchedPosts.length >= 10)
+        return {
+          posts: prefetchedPosts,
+          cursor: getCursor(prefetchedPosts),
+        };
 
       const res = await api.rooms[":roomName"].posts.$get({
         param: { roomName },
         query: {
           orderBy,
-          cursorLikes: upperRangeCursorLikes,
-          cursorTime: upperRangeCursorTime,
-          excludeIds: prefetchedPostsIds,
+          cursorLikes: cursorLikes,
+          cursorTime: cursorTime,
         },
       });
+
       const data = await res.json();
       if ("issues" in data) {
         throw new Error("Error while fetching the posts for this room.");
@@ -133,36 +105,25 @@ function RouteComponent() {
 
       let { posts } = data;
 
-      if (orderBy === "likesCount") {
-        const lowerRangeCursor = posts.at(-1)!.likesCount;
-        const prefetchedPostsInRange = extractFromArray(
-          prefetchedPosts,
-          (post) => post.likesCount > lowerRangeCursor
-        );
-        posts = sortPosts([...posts, ...prefetchedPostsInRange], "likesCount");
-      } else {
-        const lowerRangeCursor = posts.at(-1)!.createdAt;
-        const prefetchedPostsInRange = extractFromArray(
-          prefetchedPosts,
-          (post) => new Date(post.createdAt) > new Date(lowerRangeCursor)
-        );
-        posts = sortPosts([...posts, ...prefetchedPostsInRange], "createdAt");
+      if (!posts.length) return { posts: prefetchedPosts, cursor: null };
+
+      for (const post of posts) cachePost(post);
+      if (prefetchedPosts.length) {
+        const newPageIds = new Set<number>(posts.map((p) => p.id));
+        prefetchedPosts.forEach((p, i) => {
+          if (newPageIds.has(p.id)) prefetchedPosts.slice(i, 1);
+        });
       }
 
-      for (const post of posts)
-        queryClient.setQueryData(["post", roomName.toLowerCase(), post.id], post);
+      posts = sortPosts(posts.concat(prefetchedPosts), orderBy);
 
-      const cursor = {
-        time: posts.at(-1)?.createdAt,
-        likes: posts.at(-1)?.likesCount,
-      };
+      const cursor = getCursor(posts);
 
       return { posts, cursor };
     },
     initialPageParam: initialCursor,
     getNextPageParam: (lastPage, pages) => {
-      if (getTotalPosts(pages) >= totalPosts || pages.length >= Math.ceil(totalPosts / 20))
-        return null;
+      if (getTotalPosts(pages) >= totalPosts || pages.length >= Math.ceil(totalPosts / 20)) return null;
       return lastPage.cursor;
     },
     initialData: {
@@ -316,12 +277,8 @@ const RoomFounderMenu: FC<{
         </DropdownMenu>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center">
-              Are you sure you want to delete this room?
-            </DialogTitle>
-            <DialogDescription>
-              All the content belonging to this room will be permanently deleted.
-            </DialogDescription>
+            <DialogTitle className="text-center">Are you sure you want to delete this room?</DialogTitle>
+            <DialogDescription>All the content belonging to this room will be permanently deleted.</DialogDescription>
           </DialogHeader>
           <div className="flex justify-center gap-3">
             <DialogClose asChild>
@@ -387,9 +344,7 @@ const SubscribeButton: FC<{
           </DropdownMenu>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle className="text-center">
-                Are you sure you want to unsubcribe?
-              </DialogTitle>
+              <DialogTitle className="text-center">Are you sure you want to unsubcribe?</DialogTitle>
             </DialogHeader>
             <div className="flex justify-center gap-3">
               <DialogClose asChild>
@@ -398,11 +353,7 @@ const SubscribeButton: FC<{
                 </Button>
               </DialogClose>
               <DialogClose asChild>
-                <Button
-                  variant={"destructive"}
-                  onClick={() => subscribeMutation.mutate()}
-                  size={"lg"}
-                >
+                <Button variant={"destructive"} onClick={() => subscribeMutation.mutate()} size={"lg"}>
                   Continue
                 </Button>
               </DialogClose>

@@ -1,7 +1,8 @@
 import { queryOptions } from "@tanstack/react-query";
-import { api, type ListingCategory, type PostBasic } from "./api-client";
+import { api, type ListingCategory, type PostBasic } from "../api-client";
+import { cachePost } from "./caches";
 import { cacheChats } from "./chatQueries";
-import { queryClient } from "./queries/queryClient";
+import { queryClient } from "./queryClient";
 
 // USER
 
@@ -26,8 +27,7 @@ export const userQueryOptions = {
 
     cacheChats(ownChats);
 
-    const initialFeedTrending: PostBasic[] = [];
-    const initialFeedNewest: PostBasic[] = [];
+    const initialFeedTrending = posts[19].likesCount === 0 ? posts : posts.slice(0, 20);
 
     if (rooms) {
       for (const room of rooms) {
@@ -41,14 +41,8 @@ export const userQueryOptions = {
     queryClient.setQueryData(["suggestedRooms"], suggestedRooms);
 
     if (posts) {
-      posts.forEach((post, i) => {
-        if (i < 20) initialFeedTrending.push(post);
-        else initialFeedNewest.push(post);
-        queryClient.setQueryData(["post", post.room.toLowerCase(), post.id], post);
-        queryClient.setQueryData(["postLikes", post.id], {
-          isLiked: post.isLiked,
-          likesCount: post.likesCount,
-        });
+      posts.forEach((post) => {
+        cachePost(post);
       });
     }
 
@@ -58,9 +52,7 @@ export const userQueryOptions = {
     });
 
     queryClient.setQueryData(["initialFeed", "createdAt"], {
-      posts: initialFeedNewest.sort((a, b) =>
-        new Date(b.createdAt) > new Date(a.createdAt) ? 1 : -1
-      ),
+      posts: sortPosts(posts, "createdAt").slice(0, 20),
       total: data.totalFeedPosts,
     });
 
@@ -92,10 +84,7 @@ export const listingQueryOptions = (itemId: number) => {
   });
 };
 
-export const listingsByCategoryQueryOptions = (
-  category: ListingCategory,
-  orderBy: "cheapest" | "mostRecent"
-) => {
+export const listingsByCategoryQueryOptions = (category: ListingCategory, orderBy: "cheapest" | "mostRecent") => {
   return queryOptions({
     queryKey: ["listings", category],
     queryFn: async () => {
@@ -127,30 +116,26 @@ export const profileQueryOptions = (username: string) =>
 export const roomPostsQueryOptions = (
   roomName: string,
   orderBy: "likesCount" | "createdAt",
-  excludeIds?: number[],
   cursorLikes?: number,
   cursorTime?: string
 ) =>
   queryOptions({
-    queryKey: ["room", roomName.toLowerCase()],
+    queryKey: ["room", roomName.toLowerCase(), orderBy],
     queryFn: async () => {
       const res = await api.rooms[":roomName"].posts.$get({
         param: { roomName },
-        query: { cursorLikes, cursorTime, orderBy, excludeIds },
+        query: { cursorLikes, cursorTime, orderBy },
       });
       const data = await res.json();
       if ("issues" in data) {
         throw new Error("An error occurred while loading the posts.");
       }
-      for (const post of data.posts) {
-        queryClient.setQueryData(["post", post.room.toLowerCase(), post.id], post);
-        queryClient.setQueryData(["postLikes", post.id], {
-          isLiked: post.isLiked,
-          likesCount: post.likesCount,
-        });
+      const { posts, ...room } = data;
+      for (const post of posts) {
+        cachePost(post);
       }
 
-      queryClient.setQueryData(["totalPosts", roomName.toLowerCase()], data.totalPosts);
+      queryClient.setQueryData(["roomPreview", roomName.toLowerCase()], room);
 
       return data;
     },
@@ -166,10 +151,7 @@ export const postQueryOptions = (postId: number, roomName: string) => {
         throw new Error("Post not found.");
       }
 
-      queryClient.setQueryData(["postLikes", post.id], {
-        isLiked: post.isLiked,
-        likesCount: post.likesCount,
-      });
+      cachePost(post);
       queryClient.setQueryData(["roomPreview", post.room.name.toLowerCase()], post.room);
 
       return post;
@@ -177,29 +159,10 @@ export const postQueryOptions = (postId: number, roomName: string) => {
   });
 };
 
-export const getAllRoomPosts = (roomName: string) => {
-  const ids = [] as number[];
-  const posts = queryClient
-    .getQueriesData({
-      predicate: (q) =>
-        (q.queryKey[0] === "post" || q.queryKey[0] === "postFull") &&
-        q.queryKey[1] === roomName.toLowerCase(),
-    })
-    .map(([key, post]) => {
-      ids.push(key[2] as number);
-      return post;
-    }) as PostBasic[];
-  return { ids, posts };
-};
-
 export const sortPosts = (array: PostBasic[], orderBy: "likesCount" | "createdAt") => {
   return array
     .slice()
     .sort((a, b) =>
-      orderBy === "likesCount"
-        ? b.likesCount - a.likesCount
-        : new Date(a.createdAt) > new Date(b.createdAt)
-          ? -1
-          : 1
+      orderBy === "likesCount" ? b.likesCount - a.likesCount : new Date(a.createdAt) > new Date(b.createdAt) ? -1 : 1
     );
 };

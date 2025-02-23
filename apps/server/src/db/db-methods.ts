@@ -8,12 +8,7 @@ import {
   type Subquery,
   type Table,
 } from "drizzle-orm";
-import {
-  PgDialect,
-  type AnyPgColumn,
-  type PgColumn,
-  type PgTable,
-} from "drizzle-orm/pg-core";
+import { PgDialect, type AnyPgColumn, type PgColumn, type PgTable } from "drizzle-orm/pg-core";
 
 export function lowercase(column: AnyPgColumn | SQL): SQL {
   return sql`lower(${column})`;
@@ -33,7 +28,16 @@ export const countRelation = <const T extends string>(
   fieldId: PgColumn,
   refId: PgColumn
 ): { [Key in T]: SQL.Aliased<number> } => {
-  const sqlChunks = sql`(SELECT COUNT(*) FROM ${refId.table} WHERE ${refId} = ${fieldId})`;
+  const sqlChunks = sql`
+    (
+      SELECT
+        COUNT(*)
+      FROM
+        ${refId.table}
+      WHERE
+        ${refId} = ${fieldId}
+    )
+  `;
   const rawSQL = sql.raw(pgDialect.sqlToQuery(sqlChunks).sql);
 
   return {

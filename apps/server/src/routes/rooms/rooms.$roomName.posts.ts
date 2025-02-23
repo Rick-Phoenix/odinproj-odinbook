@@ -1,5 +1,5 @@
 import { createRoute, z } from "@hono/zod-openapi";
-import { and, lt, lte, notInArray, sql } from "drizzle-orm";
+import { and, lt, lte, sql } from "drizzle-orm";
 import { NOT_FOUND, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { lowercase } from "../../db/db-methods";
@@ -26,7 +26,6 @@ export const getPosts = createRoute({
         orderBy: z.enum(["likesCount", "createdAt"]).default("likesCount"),
         cursorLikes: numberParamSchema,
         cursorTime: z.string(),
-        excludeIds: z.array(z.coerce.number()),
       })
       .partial(),
   },
@@ -39,16 +38,9 @@ export const getPosts = createRoute({
 export const getPostsHandler: AppRouteHandler<typeof getPosts, AppBindingsWithUser> = async (c) => {
   const userId = getUserId(c);
   const { roomName } = c.req.valid("param");
-  const { orderBy, cursorTime, cursorLikes, excludeIds } = c.req.valid("query");
+  const { orderBy, cursorTime, cursorLikes } = c.req.valid("query");
 
-  const posts = await fetchRoomPosts(
-    userId,
-    roomName,
-    orderBy,
-    cursorLikes,
-    cursorTime,
-    excludeIds
-  );
+  const posts = await fetchRoomPosts(userId, roomName, orderBy, cursorLikes, cursorTime);
   if (!posts) return c.json(notFoundError.content, NOT_FOUND);
   return c.json(posts, OK);
 };
@@ -58,8 +50,7 @@ export async function fetchRoomPosts(
   roomName: string,
   orderBy: "likesCount" | "createdAt" = "likesCount",
   cursorLikes?: number,
-  cursorTime: string = new Date().toISOString(),
-  excludeIds: number[] = []
+  cursorTime: string = new Date().toISOString()
 ) {
   const room = await db.query.rooms.findFirst({
     where: (room, { eq }) => eq(lowercase(room.name), roomName.toLocaleLowerCase()),
@@ -73,13 +64,9 @@ export async function fetchRoomPosts(
             : [desc(post.createdAt), desc(post.likesCount)],
         extras: (f) => postIsLiked(userId, f.id),
         where: (f) =>
-          !cursorLikes
-            ? and(lt(f.createdAt, cursorTime), notInArray(f.id, excludeIds))
-            : and(
-                lt(f.createdAt, cursorTime),
-                lte(f.likesCount, cursorLikes),
-                notInArray(f.id, excludeIds)
-              ),
+          cursorLikes === undefined
+            ? lt(f.createdAt, cursorTime)
+            : and(lt(f.createdAt, cursorTime), lte(f.likesCount, cursorLikes)),
       },
     },
     extras: (f) => ({

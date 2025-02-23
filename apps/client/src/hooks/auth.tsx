@@ -1,6 +1,6 @@
 import { useQuery, useSuspenseQuery } from "@tanstack/react-query";
 import { api } from "../lib/api-client";
-import { userQueryOptions } from "../lib/queryOptions";
+import { userQueryOptions } from "../lib/queries/queryOptions";
 
 export function useUser() {
   const query = useQuery(userQueryOptions);

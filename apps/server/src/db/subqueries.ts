@@ -110,7 +110,7 @@ export const initialFeedQuery = (userId: string) => {
     FROM posts
     LEFT JOIN users ON posts."authorId" = users.id
     WHERE posts.room IN (SELECT name FROM selected_rooms)
-    ORDER BY posts."likesCount" DESC
+    ORDER BY posts."likesCount" DESC, posts."createdAt" DESC
     LIMIT 20
   ),
   recent_posts AS (
@@ -129,15 +129,14 @@ export const initialFeedQuery = (userId: string) => {
       ) AS isLiked
     FROM posts
     LEFT JOIN users ON posts."authorId" = users.id
-    WHERE posts.room IN (SELECT name FROM selected_rooms)
-    ORDER BY posts."createdAt" DESC
+    WHERE posts.room IN (SELECT name FROM selected_rooms) AND posts.id NOT IN (SELECT id FROM liked_posts)
+    ORDER BY posts."createdAt" DESC, posts."likesCount" DESC
     LIMIT 20
   ),
     combined_posts AS (
       SELECT * FROM liked_posts
-      UNION 
+      UNION ALL
       SELECT * FROM recent_posts
-      ORDER BY "likesCount" DESC, "createdAt" DESC
   ),
   rooms_json AS (
     SELECT

@@ -1,13 +1,15 @@
 import type { PostBasic } from "../lib/api-client";
 
-export function extractFromArray<T extends unknown[]>(
-  arr: T,
-  predicate: (a: (typeof arr)[number]) => boolean
-): (typeof arr)[number][] {
+export function extractPostsFromArray<T extends PostBasic>(
+  arr: T[],
+  predicate: (item: T) => boolean,
+  idSet: Set<number>
+): T[] {
   const removed = [];
   for (let i = arr.length - 1; i >= 0; i--) {
     if (predicate(arr[i])) {
-      removed.unshift(arr.splice(i, 1)[0]);
+      const removedPost = arr.splice(i, 1)[0];
+      if (!idSet.has(removedPost.id)) removed.unshift(removedPost);
     }
   }
   return removed;
