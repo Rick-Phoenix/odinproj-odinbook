@@ -24,6 +24,7 @@ export const userQueryOptions = {
       ownChats,
       ...userData
     } = data;
+    console.log("🚀 ~ queryFn: ~ rooms:", rooms);
 
     cacheChats(ownChats);
 

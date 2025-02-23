@@ -140,24 +140,33 @@ export const initialFeedQuery = (userId: string) => {
   ),
   rooms_json AS (
     SELECT
+    COALESCE(
       jsonb_agg(
         jsonb_build_object(
-          'name',
-          user_subs.name,
-          'createdAt',
-          user_subs."createdAt",
-          'category',
-          user_subs.category,
-          'avatar',
-          user_subs.avatar,
-          'description',
-          user_subs.description,
-          'subsCount',
-          user_subs."subsCount",
-          'isSubscribed',
-          'true'::boolean
+          'name', name,
+          'createdAt', "createdAt",
+          'category', category,
+          'avatar', avatar,
+          'description', description,
+          'subsCount', "subsCount",
+          'isSubscribed', true
         )
-      ) AS rooms
+      ),
+      ( 
+        SELECT jsonb_agg(
+          jsonb_build_object(
+            'name', suggested_rooms.name,
+            'createdAt', suggested_rooms."createdAt",
+            'category', suggested_rooms.category,
+            'avatar', suggested_rooms.avatar,
+            'description', suggested_rooms.description,
+            'subsCount', suggested_rooms."subsCount",
+            'isSubscribed', false
+          )
+        )
+        FROM suggested_rooms
+      )
+    ) AS rooms
     FROM
       user_subs 
   ),

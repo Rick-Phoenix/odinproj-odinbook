@@ -3,12 +3,10 @@ import { queryClient } from "./queryClient";
 
 export const postsTimeSlotsMap = new Map<string, Map<string, Set<number>>>();
 export const postsLikesSlotsMap = new Map<string, Map<number, Set<number>>>();
-export const cachedPostsMap = new Map<string, Set<number>>();
 
 export function cachePost(post: PostBasic | PostFull) {
   const room = typeof post.room === "string" ? post.room.toLowerCase() : post.room.name.toLowerCase();
   const isFullPost = typeof post.room !== "string";
-  if (cachedPostsMap.get(room)?.has(post.id) && !isFullPost) return;
   if (!postsTimeSlotsMap.get(room)) postsTimeSlotsMap.set(room, new Map());
   if (!postsLikesSlotsMap.get(room)) postsLikesSlotsMap.set(room, new Map());
   const timeSlotsMap = postsTimeSlotsMap.get(room);
@@ -34,9 +32,6 @@ export function cachePost(post: PostBasic | PostFull) {
     isLiked: post.isLiked,
     likesCount: post.likesCount,
   });
-  let roomIdCache = cachedPostsMap.get(room);
-  if (roomIdCache) roomIdCache.add(post.id);
-  else cachedPostsMap.set(room, new Set([post.id]));
 }
 
 export function getNextPostsByLikes(cursorLikes: number, cursorTime: string, room: string) {
