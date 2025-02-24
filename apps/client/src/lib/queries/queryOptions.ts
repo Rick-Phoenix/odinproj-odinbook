@@ -24,7 +24,6 @@ export const userQueryOptions = {
       ownChats,
       ...userData
     } = data;
-    console.log("🚀 ~ queryFn: ~ rooms:", rooms);
 
     cacheChats(ownChats);
 
@@ -32,9 +31,9 @@ export const userQueryOptions = {
 
     if (rooms) {
       for (const room of rooms) {
-        queryClient.setQueryData(["roomPreview", room.name], room);
+        queryClient.setQueryData(["roomPreview", room.name.toLowerCase()], room);
         queryClient.setQueryData(["roomSubs"], (old: string[] | undefined) =>
-          !old ? [room.name] : [...old, room.name]
+          !old ? [room.name.toLowerCase()] : [...old, room.name.toLowerCase()]
         );
       }
     }
@@ -144,7 +143,7 @@ export const roomPostsQueryOptions = (
 
 export const postQueryOptions = (postId: number, roomName: string) => {
   return queryOptions({
-    queryKey: ["postFull", roomName.toLowerCase(), postId],
+    queryKey: ["postFull", postId, roomName.toLowerCase()],
     queryFn: async () => {
       const res = await api.posts[":postId"].$get({ param: { postId } });
       const post = await res.json();

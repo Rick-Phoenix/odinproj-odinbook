@@ -58,7 +58,7 @@ export const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
       return newPost;
     },
     onSuccess(data, variables, context) {
-      if (queryClient.getQueryData(["roomPreview", data.room])) {
+      if (queryClient.getQueryData(["roomPreview", data.room.toLowerCase()])) {
         queryClient.setQueryData(["fullPost", data.id], {
           ...data,
           comments: [],

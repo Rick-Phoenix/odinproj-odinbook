@@ -16,6 +16,8 @@ import { PostPreview } from "../../../components/custom/post-preview";
 import { Button } from "../../../components/ui/button";
 import { CardTitle } from "../../../components/ui/card";
 import { api, type InitialFeed, type PostBasic, type SortingOrder } from "../../../lib/api-client";
+import { cachePost, getNextPostsByLikes, getNextPostsByTime, getPostsCursor } from "../../../lib/queries/caches";
+import { sortPosts } from "../../../lib/queries/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../utils/async-throttle";
 import { getTotalPosts } from "../../../utils/extract-array";
 
@@ -39,10 +41,8 @@ function RouteComponent() {
   const navigate = useNavigate({ from: Route.fullPath });
   const { orderBy } = Route.useSearch();
   const { totalPosts, initialPosts } = Route.useLoaderData();
-  const initialCursor = {
-    time: initialPosts.at(-1)?.createdAt,
-    likes: initialPosts.at(-1)?.likesCount,
-  };
+  const initialCursor = getPostsCursor(initialPosts);
+  console.log("🚀 ~ RouteComponent ~ initialPosts:", initialPosts);
 
   const spinnerRef = useRef<HTMLDivElement>(null);
 
@@ -50,32 +50,49 @@ function RouteComponent() {
     queryKey: ["paginatedFeed", orderBy],
     queryFn: async (c) => {
       const {
-        pageParam: { likes: upperRangeCursorLikes, time: upperRangeCursorTime },
+        pageParam: { likes: cursorLikes, time: cursorTime },
       } = c;
+
+      let prefetchedPosts = [] as PostBasic[];
+
+      if (orderBy === "createdAt") {
+        prefetchedPosts = getNextPostsByTime({ cursorTime, fromFeed: true });
+      } else {
+        prefetchedPosts = getNextPostsByLikes({ cursorLikes, cursorTime, fromFeed: true });
+      }
+
+      if (prefetchedPosts.length >= 10)
+        return {
+          posts: prefetchedPosts,
+          cursor: getPostsCursor(prefetchedPosts),
+        };
 
       const res = await api.posts.feed.data.$get({
         query: {
           orderBy,
-          cursorLikes: upperRangeCursorLikes!,
-          cursorTime: upperRangeCursorTime!,
+          cursorLikes: cursorLikes!,
+          cursorTime: cursorTime!,
         },
       });
 
-      const data = await res.json();
-      if ("issues" in data) {
+      let posts = await res.json();
+      if ("issues" in posts) {
         throw new Error("Error while fetching the posts for the main feed.");
       }
 
-      for (const post of data) {
-        queryClient.setQueryData(["post", post.room.toLowerCase(), post.id], post);
+      if (!posts.length) return { posts: prefetchedPosts, cursor: null };
+
+      for (const post of posts) cachePost(post);
+      if (prefetchedPosts.length) {
+        const newPageIds = new Set<number>(posts.map((p) => p.id));
+        prefetchedPosts.forEach((p, i) => {
+          if (newPageIds.has(p.id)) prefetchedPosts.slice(i, 1);
+        });
       }
 
-      let posts = data;
+      posts = sortPosts(posts.concat(prefetchedPosts), orderBy);
 
-      const cursor = {
-        time: posts.at(-1)?.createdAt,
-        likes: posts.at(-1)?.likesCount,
-      };
+      const cursor = getPostsCursor(posts);
 
       return {
         posts,
@@ -84,8 +101,7 @@ function RouteComponent() {
     },
     initialPageParam: initialCursor,
     getNextPageParam: (lastPage, pages) => {
-      if (getTotalPosts(pages) >= totalPosts || pages.length >= Math.ceil(totalPosts / 20))
-        return null;
+      if (getTotalPosts(pages) >= totalPosts || pages.length >= Math.ceil(totalPosts / 20)) return null;
       return lastPage.cursor;
     },
     initialData: {
@@ -180,8 +196,7 @@ function RouteComponent() {
       </div>
 
       <div className="text-center text-sm italic text-muted-foreground">
-        {!feedQuery.hasNextPage &&
-          "Hungry for more? Subscribe to more rooms to get more posts in your feed."}
+        {!feedQuery.hasNextPage && "Hungry for more? Subscribe to more rooms to get more posts in your feed."}
       </div>
     </InsetScrollArea>
   );
@@ -205,9 +220,7 @@ const TrendingCard: FC<{
             <div className="max-w-[10ch] truncate">{likesCount}</div>
             <Heart className="min-w-fit group-hover:fill-white" />
           </div>
-          <CardTitle className="line-clamp-2 max-w-full scroll-m-20 lg:line-clamp-5">
-            {title}
-          </CardTitle>
+          <CardTitle className="line-clamp-2 max-w-full scroll-m-20 lg:line-clamp-5">{title}</CardTitle>
         </Link>
         <Link
           to="/rooms/$roomName"
@@ -289,12 +302,7 @@ const TrendingCarousel: FC<{ posts: PostBasic[] }> = ({ posts }) => {
             >
               {posts.map((post) => (
                 <SwiperSlide key={post.id}>
-                  <TrendingCard
-                    likesCount={post.likesCount}
-                    postId={post.id}
-                    title={post.title}
-                    roomName={post.room}
-                  />
+                  <TrendingCard likesCount={post.likesCount} postId={post.id} title={post.title} roomName={post.room} />
                 </SwiperSlide>
               ))}
             </Swiper>

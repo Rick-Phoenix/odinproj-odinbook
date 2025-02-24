@@ -26,7 +26,7 @@ import {
 } from "../../../../components/ui/dropdown-menu";
 import { useUser } from "../../../../hooks/auth";
 import { api, type PostBasic } from "../../../../lib/api-client";
-import { cachePost, getCursor, getNextPostsByLikes, getNextPostsByTime } from "../../../../lib/queries/caches";
+import { cachePost, getNextPostsByLikes, getNextPostsByTime, getPostsCursor } from "../../../../lib/queries/caches";
 import { roomPostsQueryOptions, sortPosts } from "../../../../lib/queries/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../../utils/async-throttle";
 import { getTotalPosts } from "../../../../utils/extract-array";
@@ -54,8 +54,6 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
 });
 
 function RouteComponent() {
-  const queryClient = useQueryClient();
-
   const { id: userId } = useUser()!;
   const navigate = useNavigate({ from: Route.fullPath });
   const {
@@ -66,7 +64,7 @@ function RouteComponent() {
   const userIsCreator = userId === creatorId;
   const { orderBy } = Route.useSearch();
 
-  const initialCursor = getCursor(initialPosts);
+  const initialCursor = getPostsCursor(initialPosts);
 
   const postsQuery = useInfiniteQuery({
     queryKey: ["posts", roomName.toLowerCase(), orderBy],
@@ -78,15 +76,15 @@ function RouteComponent() {
       let prefetchedPosts = [] as PostBasic[];
 
       if (orderBy === "createdAt") {
-        prefetchedPosts = getNextPostsByTime(cursorTime!, roomName.toLowerCase());
+        prefetchedPosts = getNextPostsByTime({ cursorTime, room: roomName.toLowerCase() });
       } else {
-        prefetchedPosts = getNextPostsByLikes(cursorLikes!, cursorTime!, roomName.toLowerCase());
+        prefetchedPosts = getNextPostsByLikes({ cursorLikes, cursorTime, room: roomName.toLowerCase() });
       }
 
       if (prefetchedPosts.length >= 10)
         return {
           posts: prefetchedPosts,
-          cursor: getCursor(prefetchedPosts),
+          cursor: getPostsCursor(prefetchedPosts),
         };
 
       const res = await api.rooms[":roomName"].posts.$get({
@@ -117,7 +115,7 @@ function RouteComponent() {
 
       posts = sortPosts(posts.concat(prefetchedPosts), orderBy);
 
-      const cursor = getCursor(posts);
+      const cursor = getPostsCursor(posts);
 
       return { posts, cursor };
     },
@@ -320,7 +318,9 @@ const SubscribeButton: FC<{
     },
     onSuccess: () => {
       queryClient.setQueryData(["roomSubs"], (old: string[]) =>
-        isSubscribed ? old.filter((room) => room !== roomName) : [...old, roomName]
+        isSubscribed
+          ? old.filter((room) => room.toLowerCase() !== roomName.toLowerCase())
+          : [...old, roomName.toLowerCase()]
       );
       setUserIsSubscribed((old) => !old);
     },

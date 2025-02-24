@@ -4,53 +4,84 @@ import { queryClient } from "./queryClient";
 export const postsTimeSlotsMap = new Map<string, Map<string, Set<number>>>();
 export const postsLikesSlotsMap = new Map<string, Map<number, Set<number>>>();
 
+export const feedTimeSlotsMap = new Map<string, Set<number>>();
+export const feedLikesSlotsMap = new Map<number, Set<number>>();
+
+function storeIdInCache<T extends number | string>(
+  cache: Map<string, Map<T, Set<number>>>,
+  slotValue: T,
+  room: string,
+  id: number
+) {
+  if (!cache.get(room)) cache.set(room, new Map());
+  const innerCache = cache.get(room);
+  const slot =
+    typeof slotValue === "string" ? getPostTimeSlot(slotValue) : (Math.floor((slotValue as number) / 10) as T);
+  if (!innerCache?.has(slot as T)) innerCache?.set(slot as T, new Set([id]));
+  else {
+    const slotValues = innerCache.get(slot as T);
+    slotValues!.add(id);
+  }
+}
+
+function storeIdInFeedCache(timeValue: string, likesValue: number, id: number) {
+  const timeSlot = getPostTimeSlot(timeValue);
+  const likesSlot = Math.floor(likesValue / 10);
+  const timeSlotSet = feedTimeSlotsMap.get(timeSlot);
+  if (!timeSlotSet) {
+    feedTimeSlotsMap.set(timeSlot, new Set([id]));
+  } else timeSlotSet.add(id);
+  const likesSlotSet = feedLikesSlotsMap.get(likesSlot);
+  if (!likesSlotSet) {
+    feedLikesSlotsMap.set(likesSlot, new Set([id]));
+  } else likesSlotSet.add(id);
+}
+
 export function cachePost(post: PostBasic | PostFull) {
   const room = typeof post.room === "string" ? post.room.toLowerCase() : post.room.name.toLowerCase();
   const isFullPost = typeof post.room !== "string";
-  if (!postsTimeSlotsMap.get(room)) postsTimeSlotsMap.set(room, new Map());
-  if (!postsLikesSlotsMap.get(room)) postsLikesSlotsMap.set(room, new Map());
-  const timeSlotsMap = postsTimeSlotsMap.get(room);
-  const timeSlot = getPostTimeSlot(post.createdAt);
-  if (!timeSlotsMap!.has(timeSlot)) {
-    timeSlotsMap!.set(timeSlot, new Set([post.id]));
-  } else {
-    const idsInTimeSlot = timeSlotsMap!.get(timeSlot);
-    idsInTimeSlot!.add(post.id);
+  storeIdInCache(postsTimeSlotsMap, post.createdAt, room, post.id);
+  storeIdInCache(postsLikesSlotsMap, post.likesCount, room, post.id);
+
+  if (queryClient.getQueryData<string[]>(["roomSubs"])?.includes(room)) {
+    storeIdInFeedCache(post.createdAt, post.likesCount, post.id);
   }
 
-  const likesSlotsMap = postsLikesSlotsMap.get(room);
-  const likesSlot = Math.floor(post.likesCount / 10);
-  if (!likesSlotsMap!.has(likesSlot)) {
-    likesSlotsMap!.set(likesSlot, new Set([post.id]));
-  } else {
-    const idsInLikesSlot = likesSlotsMap!.get(likesSlot);
-    idsInLikesSlot!.add(post.id);
-  }
-
-  queryClient.setQueryData([isFullPost ? "postFull" : "postBasic", room.toLowerCase(), post.id], post);
+  queryClient.setQueryData([isFullPost ? "postFull" : "postBasic", post.id], post);
   queryClient.setQueryData(["postLikes", post.id], {
     isLiked: post.isLiked,
     likesCount: post.likesCount,
   });
 }
 
-export function getNextPostsByLikes(cursorLikes: number, cursorTime: string, room: string) {
+export function getNextPostsByLikes(
+  opts: {
+    cursorLikes: number;
+    cursorTime: string;
+  } & ({ room: string; fromFeed?: never } | { fromFeed: true; room?: never })
+) {
   const posts = [] as PostBasic[];
-  const likesSlot = Math.max(Math.floor(cursorLikes / 10) - 10, 0);
-  const nextPostsInRange = getCachedPostsInLikesSlot(likesSlot, cursorTime, room.toLowerCase());
+  const likesSlot = Math.max(Math.floor(opts.cursorLikes / 10) - 10, 0);
+  let nextPostsInRange = !opts.fromFeed
+    ? getCachedPostsInLikesSlot(likesSlot, opts.cursorTime, opts.room.toLowerCase())
+    : getCachedPostsInLikesSlot(likesSlot, opts.cursorTime, "", true);
   posts.push(...nextPostsInRange);
   return posts;
 }
 
-function getCachedPostsInLikesSlot(likesSlot: number, cursorTime: string, roomName: string) {
+function getCachedPostsInLikesSlot(likesSlot: number, cursorTime: string, roomName: string, fromFeed?: boolean) {
   const posts = [] as PostBasic[];
   const room = roomName.toLowerCase();
-  const roomCache = postsLikesSlotsMap.get(room);
-  const nextSlotIds = roomCache?.get(likesSlot);
-  if (!roomCache || !nextSlotIds) return [];
+  let nextSlotIds: Set<number> | undefined;
+  if (fromFeed) nextSlotIds = feedLikesSlotsMap.get(likesSlot);
+  else {
+    const roomCache = postsLikesSlotsMap.get(room);
+    nextSlotIds = roomCache?.get(likesSlot);
+  }
+  if (!nextSlotIds) return [];
   nextSlotIds.forEach((id) => {
     const post: PostBasic | undefined =
-      queryClient.getQueryData(["postBasic", room, id]) || queryClient.getQueryData(["postFull", room, id]);
+      queryClient.getQueryData(["postBasic", id]) || queryClient.getQueryData(["postFull", id]);
     if (post && new Date(post.createdAt) < new Date(cursorTime)) posts.push(post);
   });
 
@@ -69,11 +100,15 @@ function getNextTimeSlot(cursorTime: string, offset: number = 1) {
   return timeSlot;
 }
 
-export function getNextPostsByTime(cursorTime: string, room: string) {
+export function getNextPostsByTime(
+  opts: { cursorTime: string } & ({ room: string; fromFeed?: never } | { fromFeed: true; room?: never })
+) {
   const nextPosts = [] as PostBasic[];
   for (let i = 1; i <= 72; i++) {
-    const timeSlot = getNextTimeSlot(cursorTime, i);
-    const posts = getCachedPostsInTimeSlot(timeSlot, room.toLowerCase());
+    const timeSlot = getNextTimeSlot(opts.cursorTime, i);
+    const posts = !opts.fromFeed
+      ? getCachedPostsInTimeSlot(timeSlot, opts.room.toLowerCase())
+      : getCachedPostsInTimeSlot(timeSlot, "", true);
     nextPosts.push(...posts);
     if (nextPosts.length >= 20) break;
   }
@@ -81,22 +116,26 @@ export function getNextPostsByTime(cursorTime: string, room: string) {
   return nextPosts;
 }
 
-function getCachedPostsInTimeSlot(timeSlot: string, room: string) {
+function getCachedPostsInTimeSlot(timeSlot: string, room: string, fromFeed?: boolean) {
   const posts = [] as PostBasic[];
-  const roomCache = postsTimeSlotsMap.get(room.toLowerCase());
-  const nextSlotIds = roomCache?.get(timeSlot);
-  if (!roomCache || !nextSlotIds) return [];
+  let nextSlotIds: Set<number> | undefined;
+  if (fromFeed) nextSlotIds = feedTimeSlotsMap.get(timeSlot);
+  else {
+    const roomCache = postsTimeSlotsMap.get(room.toLowerCase());
+
+    nextSlotIds = roomCache?.get(timeSlot);
+  }
+  if (!nextSlotIds) return [];
   nextSlotIds.forEach((id) => {
     const post: PostBasic | undefined =
-      queryClient.getQueryData(["postBasic", room.toLowerCase(), id]) ||
-      queryClient.getQueryData(["postFull", room.toLowerCase(), id]);
+      queryClient.getQueryData(["postBasic", id]) || queryClient.getQueryData(["postFull", id]);
     if (post) posts.push(post);
   });
 
   return posts;
 }
 
-export function getCursor(post: Post[]) {
+export function getPostsCursor(post: Post[]) {
   return {
     time: post.at(-1)?.createdAt || new Date().toISOString(),
     likes: post.at(-1)?.likesCount ?? 1000,

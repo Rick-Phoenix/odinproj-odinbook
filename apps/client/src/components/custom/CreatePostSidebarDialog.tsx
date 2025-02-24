@@ -36,9 +36,7 @@ export const CreatePostSidebarDialog = () => {
     validators: {
       onChange: schemas.insertPostSchema.extend({ roomName: z.string() }),
       onSubmit: ({ value }) =>
-        subs?.find((r) => r === value.roomName)
-          ? undefined
-          : "You are not subscribed to this room.",
+        subs?.find((r) => r === value.roomName) ? undefined : "You are not subscribed to this room.",
       onSubmitAsync: async ({ value }) => {
         try {
           await handleCreatePost.mutateAsync(value);
@@ -66,7 +64,7 @@ export const CreatePostSidebarDialog = () => {
       return newPost;
     },
     onSuccess(data, variables, context) {
-      if (queryClient.getQueryData(["roomPreview", data.room])) {
+      if (queryClient.getQueryData(["roomPreview", data.room.toLowerCase()])) {
         queryClient.setQueryData(["fullPost", data.id], {
           ...data,
           comments: [],

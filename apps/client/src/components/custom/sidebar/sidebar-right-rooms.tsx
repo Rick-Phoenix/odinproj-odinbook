@@ -40,9 +40,7 @@ const RoomsIndexSidebarContent = () => {
             <TableBody>
               <TableRow>
                 <TableCell>Member since:</TableCell>
-                <TableCell className="text-right">
-                  {format(new Date(createdAt), "dd MMM y")}
-                </TableCell>
+                <TableCell className="text-right">{format(new Date(createdAt), "dd MMM y")}</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Total likes:</TableCell>
@@ -102,9 +100,7 @@ const RoomSidebarContent = () => {
     shouldThrow: false,
   });
   const roomName = roomsIndexParam?.roomName || roomPostParam?.roomName!;
-  const room: Room | undefined =
-    queryClient.getQueryData(["room", roomName]) ||
-    queryClient.getQueryData(["roomPreview", roomName]);
+  const room: Room | undefined = queryClient.getQueryData(["roomPreview", roomName?.toLowerCase()]);
   if (!room) return <SidebarSkeleton />;
   return (
     <>
