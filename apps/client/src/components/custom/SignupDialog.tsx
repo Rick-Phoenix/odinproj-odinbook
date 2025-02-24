@@ -159,7 +159,7 @@ function SignupDialog() {
               selector={(state) => [state.errorMap]}
               children={([errorMap]) =>
                 errorMap.onSubmit ? (
-                  <div>
+                  <div className="text-center">
                     <em>{errorMap.onSubmit?.toString()}</em>
                   </div>
                 ) : null

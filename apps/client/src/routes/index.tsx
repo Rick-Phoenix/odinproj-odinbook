@@ -11,9 +11,13 @@ import {
   useSpring,
 } from "motion/react";
 import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
+import Stack from "../components/custom/CardStack";
+import InfiniteScroll from "../components/custom/InfiniteScroll";
 import LoginDialog from "../components/custom/LoginDialog";
 import SignupDialog from "../components/custom/SignupDialog";
-import { ParallaxContent } from "../components/custom/TextParallax";
+import GradientText from "../components/custom/TextGradient";
+import Threads from "../components/custom/Threads";
+import { Card } from "../components/ui/card";
 import { cn } from "../utils/shadcn-helper";
 export const Route = createFileRoute("/")({
   beforeLoad: async ({ context }) => {
@@ -33,7 +37,7 @@ function Index() {
     <div className="min-h-[90vh] w-full">
       <BackgroundGradientAnimation
         interactive={false}
-        className="flex w-full flex-col items-center justify-center gap-4 p-4"
+        className="relative flex w-full flex-col items-center justify-center gap-4 p-4"
         gradientBackgroundEnd="rgb(30, 41, 59)"
         gradientBackgroundStart="rgb(2, 8, 23)"
       >
@@ -55,12 +59,14 @@ function Index() {
             gradientBackgroundEnd="rgb(30, 41, 59)"
             gradientBackgroundStart="rgb(38, 98, 217)"
           />
+
           <Drag />
         </div>
         <span className="z-20 mb-2 text-3xl italic leading-tight tracking-tight">
-          One app for exchanging
+          Exchange
           <FlipWords
-            words={["ideas", "connections", "goods", "passions", "news", "opinions", "deals"]}
+            words={["passions", "connections", "deals", "views", "opinions", "solutions"]}
+            duration={2000}
             className="text-3xl"
           />
         </span>
@@ -68,8 +74,34 @@ function Index() {
           <SignupDialog />
           <LoginDialog />
         </div>
+        <div className="absolute -bottom-[100px] z-20 h-[500px] w-full opacity-20">
+          <Threads amplitude={3} color={[59, 65, 73]} />
+        </div>
       </BackgroundGradientAnimation>
-      <ParallaxContent />
+      <div className="relative grid h-[500px] grid-cols-2 grid-rows-2">
+        <div className="z-10 col-start-2 self-end pb-3 text-6xl">
+          An <GradientText>ocean</GradientText> <br /> of passions
+        </div>
+        <div className="z-10 col-start-2 text-2xl">
+          Nexus is a community for communities. A place for sharing passions, ideas, solutions and much more. Every user
+          can create their own Room, which is a space dedicated to any topic imaginable.
+        </div>
+        <div className="absolute top-0 z-0 size-full">
+          <InfiniteScroll items={[{ content: <Card>Oh hello there</Card> }]} isTilted autoplay />
+        </div>
+      </div>
+      <div className="flex justify-center gap-44 p-8">
+        <Stack sendToBackOnClick autoCycle />
+        <div className="flex flex-col justify-center">
+          <h1 className="text-5xl">Make Deals</h1>
+          <div className="flex">
+            Sell stuff
+            {/*Nexus Marketplace is just the digital flea market that you were looking for. While you are browsing rooms or
+            waiting for a fellow Nexer to reply to a message, you can quickly hop into Marketplace and check out the new
+            listings for collectibles, tech and much more.{" "}*/}
+          </div>
+        </div>
+      </div>
       <div className="m-4 mb-20 flex items-center justify-center gap-4 text-2xl">
         <button className="relative p-[3px]">
           <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-sky-600 to-teal-500" />
@@ -200,10 +232,7 @@ const FlipWords = ({
           scale: 2,
           position: "absolute",
         }}
-        className={cn(
-          "relative z-10 inline-block px-2 text-left text-neutral-900 dark:text-neutral-100",
-          className
-        )}
+        className={cn("relative z-10 inline-block px-2 text-left text-neutral-900 dark:text-neutral-100", className)}
         key={currentWord}
       >
         {/* edit suggested by Sajal: https://x.com/DewanganSajal */}
@@ -297,9 +326,7 @@ const BackgroundGradientAnimation = ({
       }
       setCurX(curX + (tgX - curX) / 20);
       setCurY(curY + (tgY - curY) / 20);
-      interactiveRef.current.style.transform = `translate(${Math.round(
-        curX
-      )}px, ${Math.round(curY)}px)`;
+      interactiveRef.current.style.transform = `translate(${Math.round(curX)}px, ${Math.round(curY)}px)`;
     }
 
     move();
@@ -329,12 +356,7 @@ const BackgroundGradientAnimation = ({
         <defs>
           <filter id="blurMe">
             <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-            <feColorMatrix
-              in="blur"
-              mode="matrix"
-              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8"
-              result="goo"
-            />
+            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
             <feBlend in="SourceGraphic" in2="goo" />
           </filter>
         </defs>
@@ -471,12 +493,7 @@ const TypewriterEffect = ({
     );
   };
   return (
-    <div
-      className={cn(
-        "text-center text-base font-bold sm:text-xl md:text-3xl lg:text-5xl",
-        className
-      )}
-    >
+    <div className={cn("text-center text-base font-bold sm:text-xl md:text-3xl lg:text-5xl", className)}>
       {renderWords()}
       <motion.span
         initial={{
@@ -490,10 +507,7 @@ const TypewriterEffect = ({
           repeat: Infinity,
           repeatType: "reverse",
         }}
-        className={cn(
-          "inline-block h-4 w-[4px] rounded-sm bg-blue-500 md:h-6 lg:h-10",
-          cursorClassName
-        )}
+        className={cn("inline-block h-4 w-[4px] rounded-sm bg-blue-500 md:h-6 lg:h-10", cursorClassName)}
       ></motion.span>
     </div>
   );

@@ -6,6 +6,18 @@ settings:
 
 catalogs:
   default:
+    drizzle-kit:
+      specifier: 0.30.3
+      version: 0.30.3
+    drizzle-orm:
+      specifier: 0.39.0
+      version: 0.39.0
+    drizzle-zod:
+      specifier: 0.5.1
+      version: 0.5.1
+    hono:
+      specifier: ^4.6.15
+      version: 4.6.15
     typescript:
       specifier: ^5.7.2
       version: 5.7.2
@@ -119,12 +131,18 @@ importers:
       eslint-config-prettier:
         specifier: ^9.1.0
         version: 9.1.0(eslint@9.17.0(jiti@2.4.2))
+      gsap:
+        specifier: ^3.12.7
+        version: 3.12.7
       lucide-react:
         specifier: ^0.471.0
         version: 0.471.0(react@19.0.0)
       motion:
         specifier: ^11.18.1
         version: 11.18.1(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
+      ogl:
+        specifier: ^1.0.11
+        version: 1.0.11
       radashi:
         specifier: ^12.3.3
         version: 12.3.3
@@ -4899,6 +4917,9 @@ packages:
     resolution: {integrity: sha512-YAmNsgsi1uQ7Ai3T4FFkMoskqbLEUPRajAmrn8FclwZQQnV98NLrNWjQ3n2+i1pANxdO3n6wsNEkKq5XrYy0Ow==}
     engines: {node: '>=0.10.0'}
 
+  gsap@3.12.7:
+    resolution: {integrity: sha512-V4GsyVamhmKefvcAKaoy0h6si0xX7ogwBoBSs2CTJwt7luW0oZzC0LhdkyuKV8PJAXr7Yaj8pMjCKD4GJ+eEMg==}
+
   gulp-sourcemaps@1.6.0:
     resolution: {integrity: sha512-NjRy6+Qb5K1xbwOvPviD3uA4KSq2zsalPL+4vxPQPuL+kKzHjXJL10/kLaESic3LmBto8VIBHr3gIN3F9AjnhA==}
 
@@ -6058,6 +6079,9 @@ packages:
 
   obuf@1.1.2:
     resolution: {integrity: sha512-PX1wu0AmAdPqOL1mWhqmlOd8kOIZQwGZw6rh7uby9fTc5lhaOWFLX3I6R1hrF9k3zUY40e6igsLGkDXK92LJNg==}
+
+  ogl@1.0.11:
+    resolution: {integrity: sha512-kUpC154AFfxi16pmZUK4jk3J+8zxwTWGPo03EoYA8QPbzikHoaC82n6pNTbd+oEaJonaE8aPWBlX7ad9zrqLsA==}
 
   ohash@1.1.4:
     resolution: {integrity: sha512-FlDryZAahJmEF3VR3w1KogSEdWX3WhA5GPakFx4J81kEAiHyLMpdLLElS8n8dfNadMgAne/MywcvmogzscVt4g==}
@@ -12904,6 +12928,8 @@ snapshots:
       split-string: 1.0.1
       union-value: 1.0.1
 
+  gsap@3.12.7: {}
+
   gulp-sourcemaps@1.6.0:
     dependencies:
       convert-source-map: 1.9.0
@@ -14176,6 +14202,8 @@ snapshots:
       es-object-atoms: 1.0.0
 
   obuf@1.1.2: {}
+
+  ogl@1.0.11: {}
 
   ohash@1.1.4: {}
 

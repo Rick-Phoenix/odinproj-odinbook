@@ -141,7 +141,8 @@ export async function fetchUserProfile(userId: string, username: string) {
     where(user, { eq }) {
       return and(
         eq(lowercase(user.username), username.toLocaleLowerCase()),
-        ne(user.id, "deleted")
+        ne(user.id, "deleted"),
+        ne(user.id, userId)
       );
     },
     columns: {

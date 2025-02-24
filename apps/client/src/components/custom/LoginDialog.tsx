@@ -111,12 +111,7 @@ function LoginDialog() {
             </div>
             <div className="flex gap-3">
               <form.Subscribe
-                selector={(state) => [
-                  state.canSubmit,
-                  state.isSubmitting,
-                  state.isTouched,
-                  state.isSubmitted,
-                ]}
+                selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched, state.isSubmitted]}
                 children={([canSubmit, isSubmitting, isTouched, isSubmitted]) => {
                   return (
                     <>
@@ -147,7 +142,7 @@ function LoginDialog() {
               selector={(state) => [state.errorMap]}
               children={([errorMap]) =>
                 errorMap.onSubmit ? (
-                  <div>
+                  <div className="text-center">
                     <em>{errorMap.onSubmit?.toString()}</em>
                   </div>
                 ) : null

@@ -29,8 +29,8 @@ export const ParallaxContent = () => {
     <div className="bg-[hsl(219, 41%, 13%)]">
       <TextParallaxContent
         imgUrl="https://res.cloudinary.com/dqjizh49f/image/upload/v1740062357/Nexus/je1guzrymohmwrcsgdfn.png"
-        subheading="Participate"
-        heading="Be part of a community."
+        subheading=""
+        heading="Connect."
       >
         <ParallaxTextContent
           heading={<RoomsHeading />}
