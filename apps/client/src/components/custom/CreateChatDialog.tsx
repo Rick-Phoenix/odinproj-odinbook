@@ -3,6 +3,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState, type FC, type ReactNode } from "react";
 import { z } from "zod";
+import { useUser } from "../../hooks/auth";
 import { type Chat } from "../../lib/api-client";
 import { profileQueryOptions } from "../../lib/queries/queryOptions";
 import { Button } from "../ui/button";
@@ -14,6 +15,7 @@ const CreateChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { username } = useUser()!;
 
   const form = useForm({
     defaultValues: {
@@ -21,6 +23,7 @@ const CreateChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
     },
     validators: {
       onSubmitAsync: async ({ value: { contactUsername } }) => {
+        if (contactUsername.toLowerCase() === username.toLowerCase()) return "You cannot message yourself 😅";
         const chat = queryClient
           .getQueryData<Chat[]>(["chats"])!
           .find((chat) => chat.contact.username === contactUsername);
@@ -69,11 +72,7 @@ const CreateChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
               children={(field) => (
                 <>
                   <Label htmlFor="contactUsername">Contact Username:</Label>
-                  <Input
-                    name="contactUsername"
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    required
-                  />
+                  <Input name="contactUsername" onChange={(e) => field.handleChange(e.target.value)} required />
                 </>
               )}
             ></form.Field>
@@ -93,7 +92,7 @@ const CreateChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
               selector={(state) => [state.errorMap]}
               children={([errorMap]) =>
                 errorMap.onSubmit ? (
-                  <div>
+                  <div className="text-center">
                     <em>{errorMap.onSubmit?.toString()}</em>
                   </div>
                 ) : null

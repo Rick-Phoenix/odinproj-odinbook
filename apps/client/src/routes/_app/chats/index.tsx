@@ -44,7 +44,7 @@ function RouteComponent() {
         <header className="flex h-28 w-full items-center justify-between rounded-xl border bg-muted-foreground/30 p-8 hover:text-foreground">
           <h2 className="text-3xl font-semibold">Chats</h2>
           <CreateChatDialog>
-            <Button variant={"ghost"} size={"icon"} className="p-6 [&_svg]:size-10" title="New Chat">
+            <Button variant={"ghost"} size={"icon"} className="min-w-12 p-2 [&_svg]:size-10" title="New Chat">
               <SquarePen />
             </Button>
           </CreateChatDialog>
@@ -74,7 +74,7 @@ const ChatPreview: FC<{
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const unreadMessages = useUnreadMessages(chatId, lastMessage?.id || 0);
+  const unreadMessages = useUnreadMessages(chatId);
 
   const handleDelete = useMutation({
     mutationKey: ["chatDelete", chatId],

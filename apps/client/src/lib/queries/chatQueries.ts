@@ -1,5 +1,5 @@
 import { queryOptions, type MutationOptions } from "@tanstack/react-query";
-import { api, wsRPC, type Chat } from "../api-client";
+import { api, wsRPC, type Chat, type Message } from "../api-client";
 import { queryClient } from "./queryClient";
 
 export function cacheChats(chats: Chat[]) {
@@ -64,12 +64,22 @@ export const chatMutationOptions = (
   },
 });
 
-export function cacheChat(chat: Chat) {
-  const lastMessageId = Number(chat.messages.at(-1)?.id);
-  const lastReadMessageId = Number(localStorage.getItem(`lastMessageRead-${chat.id}`)) || 0;
-  if (lastReadMessageId < lastMessageId) {
-    queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) => (old ? [...old, chat.id] : [chat.id]));
+const markAsUnread = (chatId: number) =>
+  queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) => (old ? [...old, chatId] : [chatId]));
+function markUnreadMessages(chatId: number, lastMessage: Message | undefined, lastRead: string | null) {
+  if (!lastMessage) return;
+  if (lastRead) {
+    const lastReadTime = new Date(lastRead);
+    const lastMessageTime = new Date(lastMessage.createdAt);
+    if (lastMessageTime > lastReadTime) return markAsUnread(chatId);
   }
+
+  const lastReadMessageId = Number(localStorage.getItem(`lastMessageRead-${chatId}`));
+  if (lastReadMessageId < lastMessage.id) markAsUnread(chatId);
+}
+
+export function cacheChat(chat: Chat) {
+  markUnreadMessages(chat.id, chat.messages.at(-1), chat.lastRead);
 
   queryClient.setQueryDefaults(["chat", chat.id], {
     queryFn: async () => {

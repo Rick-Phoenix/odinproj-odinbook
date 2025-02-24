@@ -79,6 +79,7 @@ export const chatInstances = pgTable(
     createdAt: timestamp("createdAt", { mode: "string" }).defaultNow().notNull(),
     firstMessageId: integer("firstMessageId").notNull().default(0),
     isDeleted: boolean("isDeleted").notNull().default(false),
+    lastRead: timestamp("lastRead", { mode: "string", withTimezone: true, precision: 3 }),
   },
   (t) => [
     primaryKey({

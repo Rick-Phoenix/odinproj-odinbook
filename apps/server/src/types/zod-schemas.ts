@@ -28,6 +28,7 @@ export const chatSchema = createSelectSchema(chats).extend({
     avatarUrl: z.string(),
     id: z.string(),
   }),
+  lastRead: z.string().datetime().nullable(),
 });
 
 export const commentSchema = createSelectSchema(comments).extend({

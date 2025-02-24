@@ -69,6 +69,7 @@ export async function fetchUserData(userId: string) {
             },
           },
         },
+        columns: { lastRead: true },
       },
     },
     extras: (f) => ({
@@ -100,7 +101,11 @@ export async function fetchUserData(userId: string) {
   if (userData)
     return {
       ...userData,
-      ownChats: userData.ownChats.map((chat) => ({ contact: chat.contact, ...chat.chat })),
+      ownChats: userData.ownChats.map((chat) => ({
+        contact: chat.contact,
+        ...chat.chat,
+        lastRead: chat.lastRead,
+      })),
     };
 
   return userData;
@@ -203,11 +208,11 @@ export async function getUserChats(userId: string) {
         },
       },
     },
-    columns: {},
+    columns: { lastRead: true },
     orderBy: (f) => desc(f.createdAt),
   });
 
-  return chats.map((item) => ({ contact: item.contact, ...item.chat }));
+  return chats.map((item) => ({ contact: item.contact, ...item.chat, lastRead: item.lastRead }));
 }
 
 export async function getSingleChat(userId: string, chatId: number) {
@@ -240,10 +245,10 @@ export async function getSingleChat(userId: string, chatId: number) {
         },
       },
     },
-    columns: {},
+    columns: { lastRead: true },
   });
 
-  if (chat) return { contact: chat.contact, ...chat.chat };
+  if (chat) return { contact: chat.contact, ...chat.chat, lastRead: chat.lastRead };
 
   return chat;
 }

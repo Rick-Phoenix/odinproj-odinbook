@@ -62,6 +62,7 @@ export const userQueryOptions = {
       listingsSaved.map((list) => list.listing)
     );
 
+    console.log("🚀 ~ queryFn: ~ ownChats:", ownChats);
     return userData;
   },
 };
