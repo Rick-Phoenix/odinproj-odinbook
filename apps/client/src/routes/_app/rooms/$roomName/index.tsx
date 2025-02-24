@@ -81,7 +81,7 @@ function RouteComponent() {
         prefetchedPosts = getNextPostsByLikes({ cursorLikes, cursorTime, room: roomName.toLowerCase() });
       }
 
-      if (prefetchedPosts.length >= 10)
+      if (prefetchedPosts.length >= 3)
         return {
           posts: prefetchedPosts,
           cursor: getPostsCursor(prefetchedPosts),
@@ -318,9 +318,7 @@ const SubscribeButton: FC<{
     },
     onSuccess: () => {
       queryClient.setQueryData(["roomSubs"], (old: string[]) =>
-        isSubscribed
-          ? old.filter((room) => room.toLowerCase() !== roomName.toLowerCase())
-          : [...old, roomName.toLowerCase()]
+        isSubscribed ? old.filter((room) => room.toLowerCase() !== roomName.toLowerCase()) : [...old, roomName]
       );
       setUserIsSubscribed((old) => !old);
     },

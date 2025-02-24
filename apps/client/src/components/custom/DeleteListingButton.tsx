@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "@tanstack/react-router";
 import { X } from "lucide-react";
 import { type FC } from "react";
+import { useToast } from "../../hooks/use-toast";
 import { api, type Listing } from "../../lib/api-client";
 import {
   AlertDialog,
@@ -17,7 +19,10 @@ import { Button } from "../ui/button";
 
 const DeleteListingButton: FC<{
   listing: Listing;
-}> = ({ listing }) => {
+  withText?: boolean;
+}> = ({ listing, withText }) => {
+  const { toast } = useToast();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const handleDeleteListing = useMutation({
     mutationKey: ["listingCreated", listing.id],
@@ -32,10 +37,10 @@ const DeleteListingButton: FC<{
       return data;
     },
     onSuccess: () => {
-      queryClient.setQueryData(["listingsCreated"], (old: Listing[]) =>
-        old.filter((lis) => lis.id !== listing.id),
-      );
+      queryClient.setQueryData(["listingsCreated"], (old: Listing[]) => old.filter((lis) => lis.id !== listing.id));
       queryClient.setQueryData(["listing", listing.id], null);
+      toast({ title: "Listing cancelled successfully.", duration: 2000 });
+      navigate({ to: "/marketplace" });
     },
   });
 
@@ -44,29 +49,20 @@ const DeleteListingButton: FC<{
       <AlertDialogTrigger asChild>
         <Button
           variant={"ghost"}
-          className={
-            "rounded-full p-6 hover:bg-muted-foreground/50 [&_svg]:size-8"
-          }
+          className={"rounded-full p-6 text-xl hover:bg-muted-foreground/50 [&_svg]:size-8"}
           title="Remove Listing"
         >
-          <X />
+          <X /> {withText && "Delete"}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
-          <AlertDialogTitle>
-            Are you sure you want to delete this listing?
-          </AlertDialogTitle>
-          <AlertDialogDescription>
-            This action cannot be undone.
-          </AlertDialogDescription>
+          <AlertDialogTitle>Are you sure you want to delete this listing?</AlertDialogTitle>
+          <AlertDialogDescription>This action cannot be undone.</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction
-            disabled={handleDeleteListing.isPending}
-            onClick={() => handleDeleteListing.mutate()}
-          >
+          <AlertDialogAction disabled={handleDeleteListing.isPending} onClick={() => handleDeleteListing.mutate()}>
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>

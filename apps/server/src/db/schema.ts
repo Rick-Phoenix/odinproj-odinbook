@@ -206,6 +206,7 @@ export const savedListings = pgTable(
     listingId: integer("listingId")
       .notNull()
       .references(() => listings.id, { onDelete: "cascade" }),
+    createdAt: timestamp("createdAt", { mode: "string", withTimezone: true }).defaultNow(),
   },
   (t) => [uniqueIndex("uniqueUserSavedListingIndex").on(t.listingId, t.userId)]
 );

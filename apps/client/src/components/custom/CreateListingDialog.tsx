@@ -71,7 +71,7 @@ const CreateListingDialog = () => {
     },
     onSuccess(data, variables, context) {
       queryClient.setQueryData(["listing", data.id], data);
-      queryClient.setQueryData(["listingsCreated"], (old: Listing[]) => [...old, data]);
+      queryClient.setQueryData(["listingsCreated"], (old: Listing[]) => [data, ...old]);
       navigate({
         to: "/marketplace/$category/$itemId",
         params: { category: data.category, itemId: data.id },
@@ -90,8 +90,8 @@ const CreateListingDialog = () => {
           <DialogTitle>Create a new listing</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Insert the details for your listing. A well defined photo and detailed description will
-          help you to sell your item faster.
+          Insert the details for your listing. A well defined photo and detailed description will help you to sell your
+          item faster.
         </DialogDescription>
         <form
           onSubmit={(e) => {
@@ -179,9 +179,7 @@ const CreateListingDialog = () => {
                         <Select
                           name={field.name}
                           value={field.state.value}
-                          onValueChange={(e) =>
-                            field.handleChange(e as (typeof schemas.marketplaceCategories)[number])
-                          }
+                          onValueChange={(e) => field.handleChange(e as (typeof schemas.marketplaceCategories)[number])}
                           required
                         >
                           <SelectTrigger>
@@ -211,9 +209,7 @@ const CreateListingDialog = () => {
                         <Select
                           name={field.name}
                           value={field.state.value}
-                          onValueChange={(e) =>
-                            field.handleChange(e as (typeof schemas.itemConditions)[number])
-                          }
+                          onValueChange={(e) => field.handleChange(e as (typeof schemas.itemConditions)[number])}
                           required
                         >
                           <SelectTrigger>
@@ -277,12 +273,7 @@ const CreateListingDialog = () => {
               ></form.Field>
             </div>
             <form.Subscribe
-              selector={(state) => [
-                state.canSubmit,
-                state.isSubmitting,
-                state.isTouched,
-                state.isSubmitted,
-              ]}
+              selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched, state.isSubmitted]}
               children={([canSubmit, isSubmitting, isTouched, isSubmitted]) => {
                 return (
                   <DialogFooter>

@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
+import DeleteListingButton from "../../../../components/custom/DeleteListingButton";
 import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
 import SaveListingButton from "../../../../components/custom/SaveListingButton";
 import { Button } from "../../../../components/ui/button";
@@ -79,9 +80,7 @@ function RouteComponent() {
                   </TableRow>
                   <TableRow>
                     <TableCell>Listed On</TableCell>
-                    <TableCell className="text-right">
-                      {format(new Date(listing.createdAt), "dd MMM y")}
-                    </TableCell>
+                    <TableCell className="text-right">{format(new Date(listing.createdAt), "dd MMM y")}</TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Location</TableCell>
@@ -101,7 +100,9 @@ function RouteComponent() {
                   <SaveListingButton listing={listing} />
                 </div>
               </>
-            ) : null}
+            ) : (
+              <DeleteListingButton listing={listing} withText={true} />
+            )}
           </div>
           <div className="flex size-full flex-col gap-10 p-2 pt-0">
             <div className="justify-center text-center text-lg">{listing.description}</div>

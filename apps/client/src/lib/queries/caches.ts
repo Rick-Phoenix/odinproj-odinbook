@@ -1,5 +1,6 @@
 import type { Post, PostBasic, PostFull } from "../api-client";
 import { queryClient } from "./queryClient";
+import { sortPosts } from "./queryOptions";
 
 export const postsTimeSlotsMap = new Map<string, Map<string, Set<number>>>();
 export const postsLikesSlotsMap = new Map<string, Map<number, Set<number>>>();
@@ -104,7 +105,7 @@ export function getNextPostsByTime(
   opts: { cursorTime: string } & ({ room: string; fromFeed?: never } | { fromFeed: true; room?: never })
 ) {
   const nextPosts = [] as PostBasic[];
-  for (let i = 1; i <= 72; i++) {
+  for (let i = 1; i <= 24; i++) {
     const timeSlot = getNextTimeSlot(opts.cursorTime, i);
     const posts = !opts.fromFeed
       ? getCachedPostsInTimeSlot(timeSlot, opts.room.toLowerCase())
@@ -122,7 +123,6 @@ function getCachedPostsInTimeSlot(timeSlot: string, room: string, fromFeed?: boo
   if (fromFeed) nextSlotIds = feedTimeSlotsMap.get(timeSlot);
   else {
     const roomCache = postsTimeSlotsMap.get(room.toLowerCase());
-
     nextSlotIds = roomCache?.get(timeSlot);
   }
   if (!nextSlotIds) return [];
@@ -132,7 +132,7 @@ function getCachedPostsInTimeSlot(timeSlot: string, room: string, fromFeed?: boo
     if (post) posts.push(post);
   });
 
-  return posts;
+  return sortPosts(posts, "createdAt");
 }
 
 export function getPostsCursor(post: Post[]) {

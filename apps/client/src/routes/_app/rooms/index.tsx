@@ -42,7 +42,6 @@ function RouteComponent() {
   const { orderBy } = Route.useSearch();
   const { totalPosts, initialPosts } = Route.useLoaderData();
   const initialCursor = getPostsCursor(initialPosts);
-  console.log("🚀 ~ RouteComponent ~ initialPosts:", initialPosts);
 
   const spinnerRef = useRef<HTMLDivElement>(null);
 
@@ -61,7 +60,7 @@ function RouteComponent() {
         prefetchedPosts = getNextPostsByLikes({ cursorLikes, cursorTime, fromFeed: true });
       }
 
-      if (prefetchedPosts.length >= 10)
+      if (prefetchedPosts.length >= 3)
         return {
           posts: prefetchedPosts,
           cursor: getPostsCursor(prefetchedPosts),
@@ -85,6 +84,7 @@ function RouteComponent() {
       for (const post of posts) cachePost(post);
       if (prefetchedPosts.length) {
         const newPageIds = new Set<number>(posts.map((p) => p.id));
+
         prefetchedPosts.forEach((p, i) => {
           if (newPageIds.has(p.id)) prefetchedPosts.slice(i, 1);
         });

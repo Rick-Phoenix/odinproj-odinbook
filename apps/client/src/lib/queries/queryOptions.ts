@@ -33,7 +33,7 @@ export const userQueryOptions = {
       for (const room of rooms) {
         queryClient.setQueryData(["roomPreview", room.name.toLowerCase()], room);
         queryClient.setQueryData(["roomSubs"], (old: string[] | undefined) =>
-          !old ? [room.name.toLowerCase()] : [...old, room.name.toLowerCase()]
+          !old ? [room.name] : [...old, room.name]
         );
       }
     }

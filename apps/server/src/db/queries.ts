@@ -34,11 +34,13 @@ export async function fetchUserData(userId: string) {
     with: {
       listingsCreated: {
         where: (f, { eq }) => eq(f.sold, false),
+        orderBy: (f) => desc(f.createdAt),
       },
       listingsSaved: {
         with: {
           listing: { extras: { isSaved: sql<boolean>`true`.as("isSaved") } },
         },
+        orderBy: (f) => desc(f.createdAt),
       },
       ownChats: {
         where: (f) => eq(f.isDeleted, false),
@@ -62,6 +64,7 @@ export async function fetchUserData(userId: string) {
                       )
                     `
                   ),
+                orderBy: (f) => asc(f.createdAt),
               },
             },
           },
@@ -161,6 +164,7 @@ export async function fetchUserProfile(userId: string, username: string) {
           ...isSaved(userId, f.id),
           seller: sql<string>`${username}::text`.as("seller"),
         }),
+        orderBy: (f) => desc(f.createdAt),
       },
       roomSubscriptions: true,
     },
@@ -194,6 +198,7 @@ export async function getUserChats(userId: string) {
                   )
                 `
               ),
+            orderBy: (f) => asc(f.createdAt),
           },
         },
       },

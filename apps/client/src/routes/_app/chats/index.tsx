@@ -22,6 +22,7 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "../../../components/ui/context-menu";
+import { useToast } from "../../../hooks/use-toast";
 import { useChats } from "../../../hooks/useChats";
 import { useUnreadMessages } from "../../../hooks/useUnreadMessages";
 import { api, type Chat, type Message } from "../../../lib/api-client";
@@ -43,12 +44,7 @@ function RouteComponent() {
         <header className="flex h-28 w-full items-center justify-between rounded-xl border bg-muted-foreground/30 p-8 hover:text-foreground">
           <h2 className="text-3xl font-semibold">Chats</h2>
           <CreateChatDialog>
-            <Button
-              variant={"ghost"}
-              size={"icon"}
-              className="p-6 [&_svg]:size-10"
-              title="New Chat"
-            >
+            <Button variant={"ghost"} size={"icon"} className="p-6 [&_svg]:size-10" title="New Chat">
               <SquarePen />
             </Button>
           </CreateChatDialog>
@@ -76,6 +72,7 @@ const ChatPreview: FC<{
   chatId: number;
 }> = ({ contactName, contactAvatar, lastMessage, chatId }) => {
   const queryClient = useQueryClient();
+  const { toast } = useToast();
 
   const unreadMessages = useUnreadMessages(chatId, lastMessage?.id || 0);
 
@@ -93,12 +90,9 @@ const ChatPreview: FC<{
     },
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ["chat", chatId], exact: true });
-      queryClient.setQueryData(["chats"], (old: Chat[]) =>
-        old.filter((chat) => chat.id !== chatId)
-      );
-      queryClient.setQueryData(["unreadMessages"], (old: number[]) =>
-        old.filter((id) => id !== chatId)
-      );
+      queryClient.setQueryData(["chats"], (old: Chat[]) => old.filter((chat) => chat.id !== chatId));
+      queryClient.setQueryData(["unreadMessages"], (old: number[]) => old.filter((id) => id !== chatId));
+      toast({ title: "Chat deleted successfully.", duration: 3000 });
     },
   });
 
@@ -112,9 +106,7 @@ const ChatPreview: FC<{
             className="flex h-28 w-full items-center justify-between gap-8 rounded-xl border bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
           >
             <div className="relative h-full">
-              {unreadMessages && (
-                <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
-              )}
+              {unreadMessages && <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />}
               <Avatar className="h-full w-auto">
                 <AvatarImage src={contactAvatar} alt={`${contactName} profile picture`} />
               </Avatar>
@@ -123,13 +115,9 @@ const ChatPreview: FC<{
               {contactName !== "[deleted]" ? (
                 <div className="text-lg font-semibold">{contactName}</div>
               ) : (
-                <div className="text-lg font-semibold italic text-muted-foreground">
-                  Deleted User
-                </div>
+                <div className="text-lg font-semibold italic text-muted-foreground">Deleted User</div>
               )}
-              <div className="line-clamp-1 text-end font-semibold text-muted-foreground">
-                {lastMessage?.text}
-              </div>
+              <div className="line-clamp-1 text-end font-semibold text-muted-foreground">{lastMessage?.text}</div>
             </div>
           </Link>
         </ContextMenuTrigger>

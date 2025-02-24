@@ -34,21 +34,14 @@ const ChatsSidebarContent = () => {
 };
 
 const ChatPreview: FC<{ chat: Chat }> = ({ chat }) => {
-  const lastMessage = Number(chat.messages.at(-1)?.id);
-  const unreadMessages = useUnreadMessages(chat.id, lastMessage);
+  const unreadMessages = useUnreadMessages(chat.id);
   return (
     <li>
       <SidebarMenuButton asChild className="size-full">
         {chat.contact.username !== "[deleted]" ? (
-          <Link
-            className="flex items-center justify-between gap-2"
-            to="/chats/$chatId"
-            params={{ chatId: chat.id }}
-          >
+          <Link className="flex items-center justify-between gap-2" to="/chats/$chatId" params={{ chatId: chat.id }}>
             <div className="relative">
-              {unreadMessages && (
-                <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
-              )}
+              {unreadMessages && <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />}
               <Avatar className="h-14 w-auto">
                 <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
                 <AvatarFallback>{chat.contact.username}</AvatarFallback>
@@ -59,9 +52,7 @@ const ChatPreview: FC<{ chat: Chat }> = ({ chat }) => {
         ) : (
           <div className="flex items-center justify-between gap-2">
             <div className="relative">
-              {unreadMessages && (
-                <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
-              )}
+              {unreadMessages && <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />}
               <Avatar className="h-14 w-auto">
                 <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
                 <AvatarFallback>{chat.contact.username}</AvatarFallback>

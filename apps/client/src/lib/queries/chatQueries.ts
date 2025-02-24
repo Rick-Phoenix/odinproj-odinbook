@@ -68,9 +68,7 @@ export function cacheChat(chat: Chat) {
   const lastMessageId = Number(chat.messages.at(-1)?.id);
   const lastReadMessageId = Number(localStorage.getItem(`lastMessageRead-${chat.id}`)) || 0;
   if (lastReadMessageId < lastMessageId) {
-    queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) =>
-      old ? [...old, chat.id] : [chat.id]
-    );
+    queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) => (old ? [...old, chat.id] : [chat.id]));
   }
 
   queryClient.setQueryDefaults(["chat", chat.id], {
@@ -102,9 +100,8 @@ chatWebSocket.addEventListener("message", async (e) => {
     });
   }
 
-  if (location.pathname.split("/")[1].toLowerCase() !== "chats") {
-    queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) =>
-      old ? [...old, chatId] : [chatId]
-    );
+  const [, section, currentChatId] = location.pathname.split("/");
+  if (section.toLowerCase() !== "chats" || +currentChatId !== chatId) {
+    queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) => (old ? [...old, chatId] : [chatId]));
   }
 });

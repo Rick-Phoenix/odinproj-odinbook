@@ -4,10 +4,7 @@ import { PiStar, PiStarFill } from "react-icons/pi";
 import { api, type Listing } from "../../lib/api-client";
 import { Button } from "../ui/button";
 
-const SaveListingButton: FC<{ listing: Listing; inPreview?: boolean }> = ({
-  listing,
-  inPreview,
-}) => {
+const SaveListingButton: FC<{ listing: Listing; inPreview?: boolean }> = ({ listing, inPreview }) => {
   const [isSaved, setIsSaved] = useState(listing.isSaved);
   const queryClient = useQueryClient();
   const handleSaveListing = useMutation({
@@ -25,9 +22,7 @@ const SaveListingButton: FC<{ listing: Listing; inPreview?: boolean }> = ({
     },
     onSuccess: () => {
       queryClient.setQueryData(["listingsSaved"], (old: Listing[]) => {
-        return isSaved
-          ? old.filter((lis) => lis.id !== listing.id)
-          : [...old, { ...listing, isSaved: true }];
+        return isSaved ? old.filter((lis) => lis.id !== listing.id) : [{ ...listing, isSaved: true }, ...old];
       });
       queryClient.setQueryData(["listing"], { ...listing, isSaved: !isSaved });
       setIsSaved((old) => !old);
