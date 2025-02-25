@@ -8,19 +8,21 @@ export default {
   content: ["./index.html", "./src/**/*.{tsx,js,jsx}"],
   theme: {
     extend: {
+      translate: {
+        101: "101%",
+      },
       animation: {
         first: "moveVertical 30s ease infinite",
         second: "moveInCircle 20s reverse infinite",
         third: "moveInCircle 40s linear infinite",
         fourth: "moveHorizontal 40s ease infinite",
         fifth: "moveInCircle 20s ease infinite",
-        marquee: "marquee var(--duration) linear infinite",
-        "marquee-vertical": "marquee-vertical var(--duration) linear infinite",
+        marquee: "marquee 15s linear infinite",
       },
       keyframes: {
         marquee: {
-          from: { transform: "translateX(0)" },
-          to: { transform: "translateX(calc(-100% - var(--gap)))" },
+          from: { transform: "translateX(0%)" },
+          to: { transform: "translateX(-50%)" },
         },
         "marquee-vertical": {
           from: { transform: "translateY(0)" },

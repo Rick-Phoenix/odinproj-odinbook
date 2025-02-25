@@ -50,6 +50,11 @@ header {
   border-left: 12px solid transparent;
 }
 
+.message-user.mock::before,
+.message-contact.mock::before {
+  border-top: 8px solid hsl(var(--foreground));
+}
+
 .connector.active {
   border-color: white;
 }

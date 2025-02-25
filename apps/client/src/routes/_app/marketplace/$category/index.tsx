@@ -2,8 +2,8 @@ import { schemas } from "@nexus/shared-schemas";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
-import ListingPreview from "../../../../components/custom/ListingPreview";
+import InsetScrollArea from "../../../../components/dialogs/custom/inset-scrollarea";
+import ListingPreview from "../../../../components/dialogs/custom/ListingPreview";
 import { Button } from "../../../../components/ui/button";
 import { listingsByCategoryQueryOptions } from "../../../../lib/queries/queryOptions";
 
@@ -34,11 +34,7 @@ function RouteComponent() {
   const sortedListings = listings
     .slice()
     .sort((a, b) =>
-      orderBy === "cheapest"
-        ? a.price - b.price
-        : new Date(a.createdAt) > new Date(b.createdAt)
-          ? -1
-          : 1
+      orderBy === "cheapest" ? a.price - b.price : new Date(a.createdAt) > new Date(b.createdAt) ? -1 : 1
     );
   return (
     <InsetScrollArea>

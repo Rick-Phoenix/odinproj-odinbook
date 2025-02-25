@@ -7,7 +7,7 @@ import { Send } from "lucide-react";
 import { title } from "radashi";
 import { useEffect, useRef } from "react";
 import { z } from "zod";
-import StaticInset from "../../../components/custom/static-inset";
+import StaticInset from "../../../components/dialogs/custom/static-inset";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";

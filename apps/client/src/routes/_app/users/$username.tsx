@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { format } from "date-fns";
 import type { FC } from "react";
-import InsetScrollArea from "../../../components/custom/inset-scrollarea";
+import InsetScrollArea from "../../../components/dialogs/custom/inset-scrollarea";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
 import { type Listing } from "../../../lib/api-client";
@@ -37,10 +37,7 @@ function RouteComponent() {
           </Avatar>
           <h3 className="w-fit text-2xl font-semibold">{username}</h3>
         </header>
-        <Tabs
-          defaultValue="rooms"
-          className="size-full min-h-64 max-w-full rounded-b-xl bg-muted/50 p-6"
-        >
+        <Tabs defaultValue="rooms" className="size-full min-h-64 max-w-full rounded-b-xl bg-muted/50 p-6">
           <TabsList className="flex w-full [&_button]:flex-grow">
             <TabsTrigger value="rooms">Rooms</TabsTrigger>
             <TabsTrigger value="marketplace" className="">
@@ -50,13 +47,7 @@ function RouteComponent() {
           <TabsContent value="rooms">
             {postingHistory.map((item, i) => {
               return "title" in item ? (
-                <PostPreview
-                  key={i}
-                  room={item.room.name}
-                  title={item.title}
-                  text={item.text}
-                  postId={item.id}
-                />
+                <PostPreview key={i} room={item.room.name} title={item.title} text={item.text} postId={item.id} />
               ) : (
                 <CommentPreview
                   key={i}
@@ -119,11 +110,7 @@ const PostPreview: FC<{
   return (
     <div className="mt-4 flex h-fit w-full gap-8 rounded-xl border bg-muted p-6 py-4 hover:bg-muted-foreground/30 hover:text-foreground">
       <div className="grid w-full grid-cols-1 grid-rows-[auto_1fr]">
-        <Link
-          to={"/rooms/$roomName"}
-          params={{ roomName: room }}
-          search={{ orderBy: "likesCount" }}
-        >
+        <Link to={"/rooms/$roomName"} params={{ roomName: room }} search={{ orderBy: "likesCount" }}>
           r/{room}
         </Link>
         <Link
@@ -150,11 +137,7 @@ const CommentPreview: FC<{
     <div className="mt-4 flex h-fit w-full gap-8 rounded-xl border bg-muted p-6 py-4 hover:bg-muted-foreground/30 hover:text-foreground">
       <div className="grid w-full auto-rows-min grid-cols-1">
         <div className="flex gap-2">
-          <Link
-            to={"/rooms/$roomName"}
-            params={{ roomName: room }}
-            search={{ orderBy: "likesCount" }}
-          >
+          <Link to={"/rooms/$roomName"} params={{ roomName: room }} search={{ orderBy: "likesCount" }}>
             r/{room}
           </Link>
           <div> | </div>

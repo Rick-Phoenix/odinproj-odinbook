@@ -3,15 +3,9 @@ import * as React from "react";
 
 import { NavMain } from "@/components/nav-main";
 import { NavUser } from "@/components/nav-user";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarMenu,
-  SidebarMenuItem,
-} from "@/components/ui/sidebar";
-import CreatePostSidebarDialog from "./custom/CreatePostSidebarDialog";
-import CreateRoomDialog from "./custom/sidebar/create-room-dialog";
+import { Sidebar, SidebarContent, SidebarHeader, SidebarMenu, SidebarMenuItem } from "@/components/ui/sidebar";
+import CreatePostSidebarDialog from "./dialogs/custom/CreatePostSidebarDialog";
+import CreateRoomDialog from "./dialogs/custom/sidebar/create-room-dialog";
 
 const data = {
   navMain: [

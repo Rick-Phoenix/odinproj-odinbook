@@ -111,8 +111,11 @@
   .transform-center {
     @apply left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 transform;
   }
+  .center-y {
+    @apply top-1/2 -translate-y-1/2 transform;
+  }
   .absolute-center {
-    @apply transform-center absolute;
+    @apply absolute transform-center;
   }
   .scrollbar-hidden::-webkit-scrollbar {
     display: none;

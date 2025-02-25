@@ -5,7 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Pencil } from "lucide-react";
 import { useRef } from "react";
 import { PiGithubLogoFill } from "react-icons/pi";
-import InsetScrollArea from "../../components/custom/inset-scrollarea";
+import InsetScrollArea from "../../components/dialogs/custom/inset-scrollarea";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -134,11 +134,7 @@ const PasswordEdit = () => {
 
   const handlePasswordChange = useMutation({
     mutationKey: ["userPassword"],
-    mutationFn: async (value: {
-      oldPassword: string;
-      newPassword: string;
-      passConfirm: string;
-    }) => {
+    mutationFn: async (value: { oldPassword: string; newPassword: string; passConfirm: string }) => {
       const res = await api.users.edit.password.$post({
         json: { ...value },
       });
@@ -375,8 +371,7 @@ const ProfilePictureEdit = () => {
       onSubmitAsync: async ({ value }) => {
         if (!value.avatar) return "";
         if (!(value.avatar instanceof File)) return "Invalid file format.";
-        if (value.avatar.size > 1000000)
-          return "The profile picture must be 1 megabyte or smaller.";
+        if (value.avatar.size > 1000000) return "The profile picture must be 1 megabyte or smaller.";
         try {
           await handleAvatarUpdate.mutateAsync(value as { avatar: File });
           return null;

@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import DeleteListingButton from "../../../components/custom/DeleteListingButton";
-import InsetScrollArea from "../../../components/custom/inset-scrollarea";
-import ListingPreview from "../../../components/custom/ListingPreview";
-import MarkAsSoldButton from "../../../components/custom/MarkAsSoldButton";
+import DeleteListingButton from "../../../components/dialogs/custom/DeleteListingButton";
+import InsetScrollArea from "../../../components/dialogs/custom/inset-scrollarea";
+import ListingPreview from "../../../components/dialogs/custom/ListingPreview";
+import MarkAsSoldButton from "../../../components/dialogs/custom/MarkAsSoldButton";
 import type { Listing } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/marketplace/myListings")({
@@ -29,9 +29,7 @@ function RouteComponent() {
             </ListingPreview>
           ))
         ) : (
-          <div className="p-4 text-center italic">
-            No listings have been created yet.
-          </div>
+          <div className="p-4 text-center italic">No listings have been created yet.</div>
         )}
       </section>
     </InsetScrollArea>

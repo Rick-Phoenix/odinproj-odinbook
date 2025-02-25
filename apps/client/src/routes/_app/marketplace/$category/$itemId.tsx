@@ -1,9 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { format } from "date-fns";
-import DeleteListingButton from "../../../../components/custom/DeleteListingButton";
-import InsetScrollArea from "../../../../components/custom/inset-scrollarea";
-import SaveListingButton from "../../../../components/custom/SaveListingButton";
+import DeleteListingButton from "../../../../components/dialogs/custom/DeleteListingButton";
+import InsetScrollArea from "../../../../components/dialogs/custom/inset-scrollarea";
+import SaveListingButton from "../../../../components/dialogs/custom/SaveListingButton";
 import { Button } from "../../../../components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../../components/ui/popover";
 import { Table, TableBody, TableCell, TableRow } from "../../../../components/ui/table";
