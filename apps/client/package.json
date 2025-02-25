@@ -41,6 +41,8 @@
     "@tanstack/react-router": "^1.101.0",
     "@tanstack/zod-adapter": "^1.101.0",
     "@tanstack/zod-form-adapter": "^0.41.1",
+    "@types/aos": "^3.0.7",
+    "aos": "^2.3.4",
     "class-variance-authority": "^0.7.1",
     "classnames": "^2.5.1",
     "clsx": "^2.1.1",

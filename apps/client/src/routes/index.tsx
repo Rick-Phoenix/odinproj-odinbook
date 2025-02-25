@@ -1,5 +1,7 @@
 import { userQueryOptions } from "@/lib/queries/queryOptions";
 import { createFileRoute, redirect } from "@tanstack/react-router";
+import { init } from "aos";
+import "aos/dist/aos.css";
 import {
   AnimatePresence,
   frame,
@@ -8,17 +10,21 @@ import {
   useAnimate,
   useInView,
   useMotionValue,
+  useMotionValueEvent,
+  useScroll,
   useSpring,
 } from "motion/react";
 import { type RefObject, useCallback, useEffect, useRef, useState } from "react";
 import Stack from "../components/custom/CardStack";
 import InfiniteScroll from "../components/custom/InfiniteScroll";
 import LoginDialog from "../components/custom/LoginDialog";
+import CircularText from "../components/custom/RotatingText";
 import SignupDialog from "../components/custom/SignupDialog";
 import GradientText from "../components/custom/TextGradient";
 import Threads from "../components/custom/Threads";
 import { Card } from "../components/ui/card";
 import { cn } from "../utils/shadcn-helper";
+
 export const Route = createFileRoute("/")({
   beforeLoad: async ({ context }) => {
     const user = await context.queryClient.ensureQueryData(userQueryOptions);
@@ -33,6 +39,9 @@ export const Route = createFileRoute("/")({
 });
 
 function Index() {
+  useEffect(() => {
+    init();
+  }, []);
   return (
     <div className="min-h-[90vh] w-full">
       <BackgroundGradientAnimation
@@ -74,15 +83,27 @@ function Index() {
           <SignupDialog />
           <LoginDialog />
         </div>
-        <div className="absolute -bottom-[100px] z-20 h-[500px] w-full opacity-20">
+        <div className="absolute -bottom-[100px] z-10 h-[500px] w-full opacity-20">
           <Threads amplitude={3} color={[59, 65, 73]} />
         </div>
       </BackgroundGradientAnimation>
       <div className="relative grid h-[500px] grid-cols-2 grid-rows-2">
         <div className="z-10 col-start-2 self-end pb-3 text-6xl">
-          An <GradientText>ocean</GradientText> <br /> of passions
+          <div className="inline-block" data-aos="fade-down" data-aos-duration="1500">
+            An
+          </div>{" "}
+          <div className="inline-block" data-aos="fade-left" data-aos-duration="3000">
+            <GradientText>ocean</GradientText>
+          </div>
+          <br />{" "}
+          <div className="inline-block" data-aos="fade-up" data-aos-duration="1500">
+            of
+          </div>{" "}
+          <div className="inline-block" data-aos="fade-left" data-aos-duration="2000">
+            passions
+          </div>
         </div>
-        <div className="z-10 col-start-2 text-2xl">
+        <div className="z-10 col-start-2 text-2xl" data-aos="fade-left" data-aos-duration="3000">
           Nexus is a community for communities. A place for sharing passions, ideas, solutions and much more. Every user
           can create their own Room, which is a space dedicated to any topic imaginable.
         </div>
@@ -90,29 +111,90 @@ function Index() {
           <InfiniteScroll items={[{ content: <Card>Oh hello there</Card> }]} isTilted autoplay />
         </div>
       </div>
-      <div className="flex justify-center gap-44 p-8">
-        <Stack sendToBackOnClick autoCycle />
-        <div className="flex flex-col justify-center">
-          <h1 className="text-5xl">Make Deals</h1>
-          <div className="flex">
-            Sell stuff
-            {/*Nexus Marketplace is just the digital flea market that you were looking for. While you are browsing rooms or
-            waiting for a fellow Nexer to reply to a message, you can quickly hop into Marketplace and check out the new
-            listings for collectibles, tech and much more.{" "}*/}
-          </div>
+      <div className="grid grid-cols-2 grid-rows-2 justify-center gap-x-28 p-8">
+        <div
+          className="row-span-2 justify-self-end"
+          data-aos="fade-right"
+          data-aos-duration="3000"
+          data-aos-anchor="#deals-header"
+        >
+          <Stack autoCycle />
+        </div>
+        <h1 className="self-end pb-3 text-6xl" id="deals-header" data-aos="fade-down" data-aos-duration="2000">
+          A digital flea market
+        </h1>
+        <div className="col-start-2 flex text-2xl" data-aos="fade-left" data-aos-duration="2500">
+          A digital neighborhood needs its own garage sales. Nexus offers a marketplace section, where you can buy or
+          sell your items easily and free of charge.
         </div>
       </div>
-      <div className="m-4 mb-20 flex items-center justify-center gap-4 text-2xl">
-        <button className="relative p-[3px]">
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-sky-600 to-teal-500" />
-          <div className="group relative rounded-[6px] bg-gray-950 px-8 py-2 font-semibold text-white transition duration-200 hover:bg-transparent">
-            Come join us!
-          </div>
-        </button>
+      <ChatContainer messages={["Hello there", "General Kenobi.", "Good to see you here."]} />
+      <div className="relative mt-12">
+        <CircularText text={"*DISCOVER*SHARE*LEARN"} />
+        <div className="text-2xl absolute-center">
+          <button className="relative p-[3px]">
+            <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-sky-600 to-teal-500" />
+            <div className="group relative rounded-[6px] bg-gray-950 px-8 py-2 font-semibold text-white transition duration-200 hover:bg-transparent">
+              Come join us!
+            </div>
+          </button>
+        </div>
       </div>
     </div>
   );
 }
+
+const ChatContainer = ({ messages }: { messages: string[] }) => {
+  const containerRef = useRef(null);
+  const { scrollYProgress } = useScroll({ container: containerRef });
+  const [activeMessages, setActiveMessages] = useState<number[]>([]);
+
+  useMotionValueEvent(scrollYProgress, "change", (scrollPctg) => {
+    messages.forEach((m, i, arr) => {
+      const breakPoint = i / arr.length;
+      if (scrollPctg >= breakPoint && !activeMessages.includes(i)) setActiveMessages((old) => [...old, i]);
+      if (scrollPctg < breakPoint && activeMessages.includes(i))
+        setActiveMessages((old) => old.filter((ind) => ind !== i));
+    });
+  });
+
+  return (
+    <div ref={containerRef} className="relative my-10 h-[30vh] w-full overflow-y-auto px-8 scrollbar-hidden">
+      <div className="grid-4 gap-x-28">
+        <div className="relative col-start-2 row-span-2 w-fit">
+          <div className="sticky top-0 flex flex-col gap-3">
+            <span className="text-6xl">Connect</span>
+            <span className="text-2xl">Our chat is really cool</span>
+          </div>
+        </div>
+
+        <div className="relative row-span-2 row-start-1 h-[100vh]">
+          <motion.div className="sticky top-0 flex flex-col px-5">
+            {messages.map((message, index) => {
+              const alignSelf = index % 2 ? "end" : "start";
+              return (
+                <motion.div
+                  className="size-fit bg-foreground"
+                  key={index}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: activeMessages.includes(index) ? 1 : 0 }}
+                  style={{
+                    padding: "12px 16px",
+                    borderRadius: "20px",
+                    color: "black",
+                    alignSelf,
+                  }}
+                >
+                  {message}
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 function Drag() {
   const ref = useRef<HTMLDivElement>(null);
