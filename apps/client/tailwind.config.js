@@ -18,8 +18,13 @@ export default {
         fourth: "moveHorizontal 40s ease infinite",
         fifth: "moveInCircle 20s ease infinite",
         marquee: "marquee 15s linear infinite",
+        "background-position-spin": "background-position-spin 3000ms infinite alternate",
       },
       keyframes: {
+        "background-position-spin": {
+          "0%": { backgroundPosition: "top center" },
+          "100%": { backgroundPosition: "bottom center" },
+        },
         marquee: {
           from: { transform: "translateX(0%)" },
           to: { transform: "translateX(-50%)" },
@@ -131,7 +136,9 @@ export default {
 
 function addVariablesForColors({ addBase, theme }) {
   let allColors = flattenColorPalette(theme("colors"));
-  let newVars = Object.fromEntries(Object.entries(allColors).map(([key, val]) => [`--${key}`, val]));
+  let newVars = Object.fromEntries(
+    Object.entries(allColors).map(([key, val]) => [`--${key}`, val])
+  );
 
   addBase({
     ":root": newVars,

@@ -4,9 +4,9 @@ import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { useEffect, useRef, useState, type FC } from "react";
 import { TbSpaces } from "react-icons/tb";
 import { z } from "zod";
+import ButtonGesture from "../../../../components/animations/gestures";
 import InsetScrollArea from "../../../../components/dialogs/custom/inset-scrollarea";
 import { PostPreview } from "../../../../components/dialogs/custom/post-preview";
-import ButtonGesture from "../../../../components/motion/gestures";
 import { Avatar, AvatarImage } from "../../../../components/ui/avatar";
 import { Button } from "../../../../components/ui/button";
 import {

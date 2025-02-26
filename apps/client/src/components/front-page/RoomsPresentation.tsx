@@ -1,8 +1,8 @@
 import { init } from "aos";
 import { useEffect } from "react";
-import InfiniteScroll from "../dialogs/custom/InfiniteScroll";
-import GradientText from "../dialogs/custom/TextGradient";
 import { Card } from "../ui/card";
+import InfiniteScroll from "./InfiniteScroll";
+import GradientText from "./TextGradient";
 
 export default function RoomsPresentation() {
   useEffect(() => {

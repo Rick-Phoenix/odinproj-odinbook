@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, type FC } from "react";
 import { PiThumbsUpBold, PiThumbsUpFill } from "react-icons/pi";
 import { api, type Comment } from "../../../lib/api-client";
-import ButtonGesture from "../../motion/gestures";
+import ButtonGesture from "../../animations/gestures";
 import { Button } from "../../ui/button";
 
 const CommentLikeButton: FC<{

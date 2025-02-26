@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { MessageCircleMore, Share } from "lucide-react";
 import { type FC, type MouseEventHandler } from "react";
-import ButtonGesture from "../../motion/gestures";
+import ButtonGesture from "../../animations/gestures";
 import { Button } from "../../ui/button";
 
 export function ShareButton() {
