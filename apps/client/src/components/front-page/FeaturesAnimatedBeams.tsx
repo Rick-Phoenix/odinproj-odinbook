@@ -11,7 +11,7 @@ import {
 } from "react-icons/tb";
 import { cn } from "../../utils/shadcn-helper";
 import AnimatedBeam from "../animations/AnimatedBeams";
-import FloatingDiv from "../animations/FloatingDix";
+import FloatingDiv from "../animations/FloatingDiv";
 
 const Circle = forwardRef<
   HTMLDivElement,
@@ -21,11 +21,15 @@ const Circle = forwardRef<
     <div
       ref={ref}
       className={cn(
-        "group relative z-10 size-12 rounded-full border-2 bg-white p-3 shadow-[0_0_20px_-12px_rgba(0,0,0,0.8)] flex-center",
+        "group relative z-10 size-12 rounded-full bg-gradient-to-t from-slate-500 to-teal-500 p-3 shadow-[0_0_20px_-12px_rgba(0,0,0,0.8)] flex-center",
         className
       )}
     >
-      <span className="z-10">{children}</span>
+      <div
+        className="absolute -z-50 rounded-full bg-white"
+        style={{ width: "calc(100% - 5px)", height: "calc(100% - 5px)" }}
+      ></div>
+      <span className="z-20">{children}</span>
       {text && (
         <div className="absolute left-[calc(100%+0.5rem)] z-50 min-w-[100px] max-w-fit rounded-xl bg-foreground p-2 text-center text-xs italic text-muted opacity-0 transition-opacity duration-500 flex-center group-hover:opacity-100">
           {text}
@@ -47,7 +51,9 @@ export function FeaturesAnimatedBeams({ className }: { className?: string }) {
   const div6Ref = useRef<HTMLDivElement>(null);
   const div7Ref = useRef<HTMLDivElement>(null);
 
-  const duration = 3;
+  const duration = 10;
+  const gradientStartColor = "#9c40ff";
+  const gradientStopColor = "#106e88";
 
   useEffect(() => {
     init();
@@ -113,36 +119,48 @@ export function FeaturesAnimatedBeams({ className }: { className?: string }) {
         fromRef={div1Ref}
         toRef={div6Ref}
         duration={duration}
+        gradientStartColor={gradientStartColor}
+        gradientStopColor={gradientStopColor}
       />
       <AnimatedBeam
         containerRef={containerRef}
         fromRef={div2Ref}
         toRef={div6Ref}
         duration={duration}
+        gradientStartColor={gradientStartColor}
+        gradientStopColor={gradientStopColor}
       />
       <AnimatedBeam
         containerRef={containerRef}
         fromRef={div3Ref}
         toRef={div6Ref}
         duration={duration}
+        gradientStartColor={gradientStartColor}
+        gradientStopColor={gradientStopColor}
       />
       <AnimatedBeam
         containerRef={containerRef}
         fromRef={div4Ref}
         toRef={div6Ref}
         duration={duration}
+        gradientStartColor={gradientStartColor}
+        gradientStopColor={gradientStopColor}
       />
       <AnimatedBeam
         containerRef={containerRef}
         fromRef={div5Ref}
         toRef={div6Ref}
         duration={duration}
+        gradientStartColor={gradientStartColor}
+        gradientStopColor={gradientStopColor}
       />
       <AnimatedBeam
         containerRef={containerRef}
         fromRef={div6Ref}
         toRef={div7Ref}
         duration={duration}
+        gradientStartColor={gradientStartColor}
+        gradientStopColor={gradientStopColor}
       />
     </div>
   );
