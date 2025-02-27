@@ -8,11 +8,17 @@ import { api } from "../../../lib/api-client";
 import { formatFormErrors, singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 import { Button } from "../../ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "../../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "../../ui/dialog";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 
-function LoginDialog() {
+function LoginDialog({ disableClose }: { disableClose?: boolean }) {
   const [open, setOpen] = useState(false);
   const form = useForm({
     defaultValues: {
@@ -46,8 +52,13 @@ function LoginDialog() {
     onSuccess: () => (location.href = "/"),
   });
 
+  const handleDialogState = () => {
+    if (open && disableClose) return;
+    else setOpen(!open);
+  };
+
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleDialogState} defaultOpen={!disableClose}>
       <DialogTrigger asChild>
         <button className="relative p-[3px]">
           <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-sky-600 to-teal-500" />
@@ -111,7 +122,12 @@ function LoginDialog() {
             </div>
             <div className="flex gap-3">
               <form.Subscribe
-                selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched, state.isSubmitted]}
+                selector={(state) => [
+                  state.canSubmit,
+                  state.isSubmitting,
+                  state.isTouched,
+                  state.isSubmitted,
+                ]}
                 children={([canSubmit, isSubmitting, isTouched, isSubmitted]) => {
                   return (
                     <>

@@ -39,7 +39,7 @@ export const PostPreview: FC<{
         <Link
           to="/rooms/$roomName"
           params={{ roomName }}
-          className="h-fit min-w-fit text-nowrap rounded-3xl border bg-primary/50 p-2 px-4 hover:bg-primary"
+          className="h-fit min-w-fit text-nowrap rounded-3xl border bg-primary/50 p-2 px-4 transition-colors hover:bg-primary"
         >
           r/{roomName}
         </Link>

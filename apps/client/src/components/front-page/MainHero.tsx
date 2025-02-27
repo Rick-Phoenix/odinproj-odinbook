@@ -3,6 +3,7 @@ import SignupDialog from "../dialogs/custom/SignupDialog";
 import { BackgroundGradientAnimation } from "./BackgroundGradientAnimation";
 import FlipWords from "./ChangingWords";
 import DraggableElement from "./DraggableElement";
+import GradientText from "./TextGradient";
 import Threads from "./Threads";
 
 export default function MainHero() {
@@ -13,6 +14,11 @@ export default function MainHero() {
       gradientBackgroundEnd="rgb(30, 41, 59)"
       gradientBackgroundStart="rgb(2, 8, 23)"
     >
+      <div className="absolute top-2 text-[8rem]">
+        <GradientText colors={["#40ffaa", "#4079ff", "#e5e7eb00", "#40ffaa", "#4079ff"]}>
+          nexus
+        </GradientText>
+      </div>
       <div
         className="relative size-[500px] bg-black"
         style={{
@@ -23,7 +29,6 @@ export default function MainHero() {
           gradientBackgroundEnd="rgb(30, 41, 59)"
           gradientBackgroundStart="rgb(38, 98, 217)"
         />
-
         <DraggableElement />
       </div>
       <span className="z-20 mb-2 text-3xl italic leading-tight tracking-tight">

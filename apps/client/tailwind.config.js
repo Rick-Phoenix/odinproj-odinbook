@@ -19,8 +19,13 @@ export default {
         fifth: "moveInCircle 20s ease infinite",
         marquee: "marquee 15s linear infinite",
         "background-position-spin": "background-position-spin 3000ms infinite alternate",
+        gradient: "gradient 8s linear infinite alternate",
       },
       keyframes: {
+        gradient: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "100%": { backgroundPosition: "100% 50%" },
+        },
         "background-position-spin": {
           "0%": { backgroundPosition: "top center" },
           "100%": { backgroundPosition: "bottom center" },
