@@ -9,7 +9,7 @@ export default function RoomsPresentation() {
     init();
   }, []);
   return (
-    <div className="relative grid h-[500px] grid-cols-2 grid-rows-2">
+    <div className="relative grid h-svh grid-cols-2 grid-rows-2">
       <div className="z-10 col-start-2 self-end pb-3 text-6xl">
         <div className="inline-block" data-aos="fade-down" data-aos-duration="1500">
           An
@@ -26,8 +26,9 @@ export default function RoomsPresentation() {
         </div>
       </div>
       <div className="z-10 col-start-2 text-2xl" data-aos="fade-left" data-aos-duration="3000">
-        Nexus is a community for communities. A place for sharing passions, ideas, solutions and much more. Every user
-        can create their own Room, which is a space dedicated to any topic imaginable.
+        Nexus is a community for communities. A place for sharing passions, ideas, solutions and
+        much more. Every user can create their own Room, which is a space dedicated to any topic
+        imaginable.
       </div>
       <div className="absolute top-0 z-0 size-full">
         <InfiniteScroll items={[{ content: <Card>Oh hello there</Card> }]} isTilted autoplay />

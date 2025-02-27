@@ -3,7 +3,7 @@ import { createFileRoute, redirect } from "@tanstack/react-router";
 import { init } from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
-import { FeaturesAnimatedBeams } from "../components/front-page/FeaturesAnimatedBeams";
+import FeaturesAnimatedBeams from "../components/front-page/FeaturesCircles";
 import FrontPageFooter from "../components/front-page/FrontPageFooter";
 import MainHero from "../components/front-page/MainHero";
 import MarketplacePresentation from "../components/front-page/MarketplacePresentation";

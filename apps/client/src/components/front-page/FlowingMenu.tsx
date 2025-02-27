@@ -1,6 +1,5 @@
 import { gsap } from "gsap";
 import React from "react";
-import Particles from "../front-page/Particles";
 
 interface MenuItemProps {
   link: string;
@@ -31,7 +30,12 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
 
   const animationDefaults = { duration: 0.6, ease: "expo" };
 
-  const findClosestEdge = (mouseX: number, mouseY: number, width: number, height: number): "top" | "bottom" => {
+  const findClosestEdge = (
+    mouseX: number,
+    mouseY: number,
+    width: number,
+    height: number
+  ): "top" | "bottom" => {
     const topEdgeDist = Math.pow(mouseX - width / 2, 2) + Math.pow(mouseY, 2);
     const bottomEdgeDist = Math.pow(mouseX - width / 2, 2) + Math.pow(mouseY - height, 2);
     return topEdgeDist < bottomEdgeDist ? "top" : "bottom";
@@ -40,7 +44,12 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
   const handleMouseEnter = (ev: React.MouseEvent<HTMLAnchorElement>) => {
     if (!itemRef.current || !marqueeRef.current || !marqueeInnerRef.current) return;
     const rect = itemRef.current.getBoundingClientRect();
-    const edge = findClosestEdge(ev.clientX - rect.left, ev.clientY - rect.top, rect.width, rect.height);
+    const edge = findClosestEdge(
+      ev.clientX - rect.left,
+      ev.clientY - rect.top,
+      rect.width,
+      rect.height
+    );
 
     const tl = gsap.timeline({ defaults: animationDefaults });
     tl.set(marqueeRef.current, { y: edge === "top" ? "-101%" : "101%" })
@@ -51,18 +60,26 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
   const handleMouseLeave = (ev: React.MouseEvent<HTMLAnchorElement>) => {
     if (!itemRef.current || !marqueeRef.current || !marqueeInnerRef.current) return;
     const rect = itemRef.current.getBoundingClientRect();
-    const edge = findClosestEdge(ev.clientX - rect.left, ev.clientY - rect.top, rect.width, rect.height);
+    const edge = findClosestEdge(
+      ev.clientX - rect.left,
+      ev.clientY - rect.top,
+      rect.width,
+      rect.height
+    );
 
     const tl = gsap.timeline({ defaults: animationDefaults }) as TimelineMax;
-    tl.to(marqueeRef.current, { y: edge === "top" ? "-101%" : "101%" }).to(marqueeInnerRef.current, {
-      y: edge === "top" ? "101%" : "-101%",
-    });
+    tl.to(marqueeRef.current, { y: edge === "top" ? "-101%" : "101%" }).to(
+      marqueeInnerRef.current,
+      { y: edge === "top" ? "101%" : "-101%" }
+    );
   };
 
   const repeatedMarqueeContent = React.useMemo(() => {
     return Array.from({ length: 4 }).map((_, idx) => (
       <React.Fragment key={idx}>
-        <span className="p-[1vh_1vw_0] text-[4vh] font-normal uppercase leading-[1.2] text-[#060606]">{text}</span>
+        <span className="p-[1vh_1vw_0] text-[4vh] font-normal uppercase leading-[1.2] text-[#060606]">
+          {text}
+        </span>
         <div
           className="mx-[2vw] my-[2em] h-[7vh] w-[200px] rounded-[50px] bg-cover bg-center p-[1em_0]"
           style={{ backgroundImage: `url(${image})` }}
@@ -72,7 +89,10 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
   }, [text, image]);
 
   return (
-    <div className="relative flex-1 overflow-hidden text-center shadow-[0_-1px_0_0_#fff]" ref={itemRef}>
+    <div
+      className="relative flex-1 overflow-hidden text-center shadow-[0_-1px_0_0_#fff]"
+      ref={itemRef}
+    >
       <a
         className="relative flex h-full cursor-pointer items-center justify-center text-[4vh] font-semibold uppercase text-white no-underline hover:text-[#060606] focus:text-white focus-visible:text-[#060606]"
         href={link}
@@ -86,9 +106,8 @@ const MenuItem: React.FC<MenuItemProps> = ({ link, text, image }) => {
         ref={marqueeRef}
       >
         <div className="flex h-full w-[200%]" ref={marqueeInnerRef}>
-          <div className="relative flex h-full w-[200%] items-center bg-black will-change-transform">
-            {/*{repeatedMarqueeContent}*/}
-            <Particles />
+          <div className="relative flex h-full w-[200%] animate-marquee items-center will-change-transform">
+            {repeatedMarqueeContent}
           </div>
         </div>
       </div>

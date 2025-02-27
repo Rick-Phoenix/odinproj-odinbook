@@ -29,10 +29,15 @@ const Circle = forwardRef<
         className="absolute -z-50 rounded-full bg-white"
         style={{ width: "calc(100% - 5px)", height: "calc(100% - 5px)" }}
       ></div>
-      <span className="z-20">{children}</span>
+      <span className="z-10">{children}</span>
       {text && (
-        <div className="absolute left-[calc(100%+0.5rem)] z-50 min-w-[100px] max-w-fit rounded-xl bg-foreground p-2 text-center text-xs italic text-muted opacity-0 transition-opacity duration-500 flex-center group-hover:opacity-100">
-          {text}
+        <div className="absolute left-[calc(100%+0.5rem)] z-20 aspect-video min-w-[100px] max-w-fit rounded-xl bg-gradient-to-t from-slate-500 to-teal-500 text-center text-xs italic text-muted opacity-0 transition-opacity duration-500 flex-center group-hover:opacity-100">
+          <div
+            className="relative size-full rounded-xl bg-white p-1"
+            style={{ width: "calc(100% - 2px)", height: "calc(100% - 2px)" }}
+          >
+            <div className="absolute left-0 top-0 size-full px-1 flex-center">{text}</div>
+          </div>
         </div>
       )}
     </div>
@@ -41,7 +46,7 @@ const Circle = forwardRef<
 
 Circle.displayName = "Circle";
 
-export function FeaturesAnimatedBeams({ className }: { className?: string }) {
+export default function FeaturesAnimatedBeams({ className }: { className?: string }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const div1Ref = useRef<HTMLDivElement>(null);
   const div2Ref = useRef<HTMLDivElement>(null);

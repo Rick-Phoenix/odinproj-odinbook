@@ -115,7 +115,7 @@ function NormalEffect({
   index: number;
   alwaysVisibleCount: number;
 }) {
-  return <>{text.slice(0, Math.max(index, Math.min(text.length, alwaysVisibleCount ?? 1))) + "🤔"}</>;
+  return <>{text.slice(0, Math.max(index, Math.min(text.length, alwaysVisibleCount ?? 1)))}</>;
 }
 
 enum TypingDirection {
@@ -123,7 +123,15 @@ enum TypingDirection {
   Backward = -1,
 }
 
-function CursorWrapper({ visible, children, waiting }: { visible?: boolean; waiting?: boolean; children: ReactNode }) {
+function CursorWrapper({
+  visible,
+  children,
+  waiting,
+}: {
+  visible?: boolean;
+  waiting?: boolean;
+  children: ReactNode;
+}) {
   const [on, setOn] = useState(true);
   useEffect(() => {
     const interval = setInterval(() => {

@@ -40,7 +40,9 @@ const RoomsIndexSidebarContent = () => {
             <TableBody>
               <TableRow>
                 <TableCell>Member since:</TableCell>
-                <TableCell className="text-right">{format(new Date(createdAt), "dd MMM y")}</TableCell>
+                <TableCell className="text-right">
+                  {format(new Date(createdAt), "dd MMM y")}
+                </TableCell>
               </TableRow>
               <TableRow>
                 <TableCell>Total likes:</TableCell>
@@ -104,7 +106,7 @@ const RoomSidebarContent = () => {
   if (!room) return <SidebarSkeleton />;
   return (
     <>
-      <div className="center flex h-32 p-6 pb-0">
+      <div className="h-32 p-6 pb-0 flex-center">
         <Avatar className="h-full w-auto">
           <AvatarImage src={room.avatar} alt={`${room.name} avatar`} />
         </Avatar>

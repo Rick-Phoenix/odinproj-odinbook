@@ -26,7 +26,12 @@ import {
 } from "../../../../components/ui/dropdown-menu";
 import { useUser } from "../../../../hooks/auth";
 import { api, type PostBasic } from "../../../../lib/api-client";
-import { cachePost, getNextPostsByLikes, getNextPostsByTime, getPostsCursor } from "../../../../lib/queries/caches";
+import {
+  cachePost,
+  getNextPostsByLikes,
+  getNextPostsByTime,
+  getPostsCursor,
+} from "../../../../lib/queries/caches";
 import { roomPostsQueryOptions, sortPosts } from "../../../../lib/queries/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../../utils/async-throttle";
 import { getTotalPosts } from "../../../../utils/extract-array";
@@ -42,7 +47,9 @@ export const Route = createFileRoute("/_app/rooms/$roomName/")({
   loader: async ({ context: { queryClient }, params, deps: { orderBy } }) => {
     try {
       const { roomName } = params;
-      const { posts: initialPosts, ...room } = await queryClient.fetchQuery(roomPostsQueryOptions(roomName, orderBy));
+      const { posts: initialPosts, ...room } = await queryClient.fetchQuery(
+        roomPostsQueryOptions(roomName, orderBy)
+      );
       return {
         room,
         initialPosts,
@@ -78,7 +85,11 @@ function RouteComponent() {
       if (orderBy === "createdAt") {
         prefetchedPosts = getNextPostsByTime({ cursorTime, room: roomName.toLowerCase() });
       } else {
-        prefetchedPosts = getNextPostsByLikes({ cursorLikes, cursorTime, room: roomName.toLowerCase() });
+        prefetchedPosts = getNextPostsByLikes({
+          cursorLikes,
+          cursorTime,
+          room: roomName.toLowerCase(),
+        });
       }
 
       if (prefetchedPosts.length >= 3)
@@ -121,7 +132,8 @@ function RouteComponent() {
     },
     initialPageParam: initialCursor,
     getNextPageParam: (lastPage, pages) => {
-      if (getTotalPosts(pages) >= totalPosts || pages.length >= Math.ceil(totalPosts / 20)) return null;
+      if (getTotalPosts(pages) >= totalPosts || pages.length >= Math.ceil(totalPosts / 20))
+        return null;
       return lastPage.cursor;
     },
     initialData: {
@@ -160,7 +172,7 @@ function RouteComponent() {
   return (
     <InsetScrollArea onScroll={posts.length >= 20 ? handleScroll : undefined}>
       <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
-        <header className="flex h-28 w-full items-center justify-between rounded-xl border bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground">
+        <header className="flex h-32 w-full items-center justify-between rounded-xl border bg-muted p-8 py-4">
           <Avatar className="h-full w-auto">
             <AvatarImage src={avatar} alt={`${roomName} avatar`} />
           </Avatar>
@@ -275,8 +287,12 @@ const RoomFounderMenu: FC<{
         </DropdownMenu>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-center">Are you sure you want to delete this room?</DialogTitle>
-            <DialogDescription>All the content belonging to this room will be permanently deleted.</DialogDescription>
+            <DialogTitle className="text-center">
+              Are you sure you want to delete this room?
+            </DialogTitle>
+            <DialogDescription>
+              All the content belonging to this room will be permanently deleted.
+            </DialogDescription>
           </DialogHeader>
           <div className="flex justify-center gap-3">
             <DialogClose asChild>
@@ -318,7 +334,9 @@ const SubscribeButton: FC<{
     },
     onSuccess: () => {
       queryClient.setQueryData(["roomSubs"], (old: string[]) =>
-        isSubscribed ? old.filter((room) => room.toLowerCase() !== roomName.toLowerCase()) : [...old, roomName]
+        isSubscribed
+          ? old.filter((room) => room.toLowerCase() !== roomName.toLowerCase())
+          : [...old, roomName]
       );
       setUserIsSubscribed((old) => !old);
     },
@@ -330,7 +348,7 @@ const SubscribeButton: FC<{
         <Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size={"lg"} variant={"outline"}>
+              <Button size={"lg"} variant={"outline"} className="bg-primary/50 hover:bg-primary">
                 Subscribed
               </Button>
             </DropdownMenuTrigger>
@@ -342,7 +360,9 @@ const SubscribeButton: FC<{
           </DropdownMenu>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle className="text-center">Are you sure you want to unsubcribe?</DialogTitle>
+              <DialogTitle className="text-center">
+                Are you sure you want to unsubcribe?
+              </DialogTitle>
             </DialogHeader>
             <div className="flex justify-center gap-3">
               <DialogClose asChild>
@@ -351,7 +371,11 @@ const SubscribeButton: FC<{
                 </Button>
               </DialogClose>
               <DialogClose asChild>
-                <Button variant={"destructive"} onClick={() => subscribeMutation.mutate()} size={"lg"}>
+                <Button
+                  variant={"destructive"}
+                  onClick={() => subscribeMutation.mutate()}
+                  size={"lg"}
+                >
                   Continue
                 </Button>
               </DialogClose>
