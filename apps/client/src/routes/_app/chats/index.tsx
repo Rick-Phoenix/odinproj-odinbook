@@ -15,7 +15,6 @@ import {
   AlertDialogTrigger,
 } from "../../../components/ui/alert-dialog";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
-import { Button } from "../../../components/ui/button";
 import {
   ContextMenu,
   ContextMenuContent,
@@ -40,13 +39,16 @@ function RouteComponent() {
 
   return (
     <InsetScrollArea>
-      <section className="grid min-h-[75vh] max-w-full flex-1 grid-cols-1 grid-rows-6 gap-4 rounded-xl border bg-muted/50 p-4">
-        <header className="flex h-28 w-full items-center justify-between rounded-xl border bg-muted-foreground/30 p-8 hover:text-foreground">
+      <section className="grid min-h-[75vh] max-w-full flex-1 grid-cols-1 grid-rows-6 gap-4 rounded-xl border bg-gray-800/20 p-4">
+        <header className="flex h-28 w-full items-center justify-between rounded-xl border bg-gray-800 p-8 hover:text-foreground">
           <h2 className="text-3xl font-semibold">Chats</h2>
           <CreateChatDialog>
-            <Button variant={"ghost"} size={"icon"} className="min-w-12 p-2 [&_svg]:size-10" title="New Chat">
+            <button
+              className="w-fit min-w-16 rounded-xl bg-transparent p-1 transition-colors flex-center hover:bg-background [&_svg]:size-10"
+              title="New Chat"
+            >
               <SquarePen />
-            </Button>
+            </button>
           </CreateChatDialog>
         </header>
         {chats.length
@@ -90,8 +92,12 @@ const ChatPreview: FC<{
     },
     onSuccess: () => {
       queryClient.removeQueries({ queryKey: ["chat", chatId], exact: true });
-      queryClient.setQueryData(["chats"], (old: Chat[]) => old.filter((chat) => chat.id !== chatId));
-      queryClient.setQueryData(["unreadMessages"], (old: number[]) => old.filter((id) => id !== chatId));
+      queryClient.setQueryData(["chats"], (old: Chat[]) =>
+        old.filter((chat) => chat.id !== chatId)
+      );
+      queryClient.setQueryData(["unreadMessages"], (old: number[]) =>
+        old.filter((id) => id !== chatId)
+      );
       toast({ title: "Chat deleted successfully.", duration: 3000 });
     },
   });
@@ -103,11 +109,13 @@ const ChatPreview: FC<{
           <Link
             to={"/chats/$chatId"}
             params={{ chatId }}
-            className="flex h-28 w-full items-center justify-between gap-8 rounded-xl border bg-muted p-8 hover:bg-muted-foreground/30 hover:text-foreground"
+            className="flex h-28 w-full items-center justify-between gap-8 rounded-xl border bg-muted p-8 transition-colors hover:bg-muted-foreground/30 hover:text-foreground"
           >
             <div className="relative h-full">
-              {unreadMessages && <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />}
-              <Avatar className="h-full w-auto">
+              {unreadMessages && (
+                <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
+              )}
+              <Avatar className="h-full w-auto border-2 border-primary">
                 <AvatarImage src={contactAvatar} alt={`${contactName} profile picture`} />
               </Avatar>
             </div>
@@ -115,9 +123,13 @@ const ChatPreview: FC<{
               {contactName !== "[deleted]" ? (
                 <div className="text-lg font-semibold">{contactName}</div>
               ) : (
-                <div className="text-lg font-semibold italic text-muted-foreground">Deleted User</div>
+                <div className="text-lg font-semibold italic text-muted-foreground">
+                  Deleted User
+                </div>
               )}
-              <div className="line-clamp-1 text-end font-semibold text-muted-foreground">{lastMessage?.text}</div>
+              <div className="line-clamp-1 text-end font-semibold text-muted-foreground">
+                {lastMessage?.text}
+              </div>
             </div>
           </Link>
         </ContextMenuTrigger>

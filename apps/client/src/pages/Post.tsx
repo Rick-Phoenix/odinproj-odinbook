@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useRef, useState, type FC, type MouseEventHandler } from "react";
+import PostComment from "../components/comment";
 import { CommentButton, ShareButton } from "../components/dialogs/custom/buttons";
-import PostComment from "../components/dialogs/custom/comment";
 import CommentInput from "../components/dialogs/custom/comment-input";
 import PostLikeButton from "../components/dialogs/custom/PostLikeButton";
 import { Button } from "../components/ui/button";
@@ -11,6 +11,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../components/ui/dropdown-menu";
 import { Separator } from "../components/ui/separator";
@@ -22,7 +23,15 @@ export function renderComments(comments: Comment[], startingRow: number, startin
     const children = c?.children;
     const gridClassName = `col-start-${startingColumn} row-start-${row} grid grid-cols-[auto_1fr] items-center ${startingColumn !== 1 || row !== 1 ? "pt-8" : " "} ${startingColumn === 1 ? "col-end-3" : " "}`;
     const isLast = i === arr.length - 1;
-    return <PostComment key={c.id} c={c} gridClassName={gridClassName} initialChildren={children} isLast={isLast} />;
+    return (
+      <PostComment
+        key={c.id}
+        c={c}
+        gridClassName={gridClassName}
+        initialChildren={children}
+        isLast={isLast}
+      />
+    );
   });
 }
 
@@ -55,7 +64,11 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
   const sortedComments = rootComments
     .slice()
     .sort((a, b) =>
-      orderBy === "likesCount" ? b.likesCount - a.likesCount : new Date(a.createdAt) > new Date(b.createdAt) ? -1 : 1
+      orderBy === "likesCount"
+        ? b.likesCount - a.likesCount
+        : new Date(a.createdAt) > new Date(b.createdAt)
+          ? -1
+          : 1
     );
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -68,27 +81,31 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
   };
 
   return (
-    <section className="min-h-svh w-full min-w-0 overflow-x-auto break-words rounded-xl border bg-muted/50">
+    <section className="min-h-svh w-full min-w-0 overflow-x-auto break-words rounded-xl border bg-gray-800/20">
       <CardHeader className="flex max-w-full flex-row justify-between gap-4 break-all">
-        <div className="flex flex-col">
+        <div className="flex w-full flex-col">
+          <Link
+            to="/rooms/$roomName"
+            params={{ roomName: post.room.name }}
+            className="mb-2 flex w-fit flex-col rounded-2xl bg-primary/50 p-1 px-3 transition-colors hover:bg-primary"
+          >
+            r/{post.room.name}
+          </Link>
           <CardTitle className="min-w-0 max-w-full break-words text-2xl">{post.title}</CardTitle>
-          <CardDescription>
+          <CardDescription className="relative">
             {post.author === "[deleted]" ? (
               <span className="italic">Deleted User</span>
             ) : (
-              <Link to="/users/$username" params={{ username: post.author }}>
+              <Link
+                to="/users/$username"
+                className="flex w-fit -translate-x-2 rounded-2xl p-1 px-2 transition-colors hover:bg-muted-foreground/50 hover:text-foreground"
+                params={{ username: post.author }}
+              >
                 @{post.author}
               </Link>
             )}
           </CardDescription>
         </div>
-        <Link
-          to="/rooms/$roomName"
-          params={{ roomName: post.room.name }}
-          className="h-fit text-nowrap rounded-xl bg-muted p-2 px-4 hover:bg-muted-foreground/30"
-        >
-          r/{post.room.name}
-        </Link>
       </CardHeader>
       <Separator />
       <CardContent className="pt-4">{post.text}</CardContent>
@@ -109,7 +126,9 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
           <span className="border-b-2 font-semibold">Comments</span>
           <SortComments orderBy={orderBy} />
         </div>
-        <div className="grid grid-cols-[2.5rem_1fr] items-center">{renderComments(sortedComments, 1, 1)}</div>
+        <div className="grid grid-cols-[2.5rem_1fr] items-center">
+          {renderComments(sortedComments, 1, 1)}
+        </div>
       </div>
     </section>
   );
@@ -120,19 +139,33 @@ const SortComments: FC<{ orderBy: "likesCount" | "createdAt" }> = ({ orderBy }) 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant={"outline"} className="rounded-2xl px-6">
+        <Button
+          variant={"outline"}
+          className="rounded-2xl bg-accent px-6 hover:bg-background hover:text-accent-foreground"
+        >
           Sorted By: {selection}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="flex flex-col rounded-lg p-2 text-center *:flex *:w-full *:justify-center">
+      <DropdownMenuContent className="flex flex-col rounded-lg text-center *:flex *:w-full *:justify-center">
         <DropdownMenuLabel>Sort By</DropdownMenuLabel>
-        <DropdownMenuItem className="px-4" asChild>
-          <Link to="." from="/rooms/$roomName/posts/$postId" replace={true} search={{ orderBy: "createdAt" }}>
+        <DropdownMenuSeparator className="mx-0" />
+        <DropdownMenuItem className="mb-2 px-4" asChild>
+          <Link
+            to="."
+            from="/rooms/$roomName/posts/$postId"
+            replace={true}
+            search={{ orderBy: "createdAt" }}
+          >
             ✨ Most Recent
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem className="px-4" asChild>
-          <Link to="." from="/rooms/$roomName/posts/$postId" replace={true} search={{ orderBy: "likesCount" }}>
+          <Link
+            to="."
+            from="/rooms/$roomName/posts/$postId"
+            replace={true}
+            search={{ orderBy: "likesCount" }}
+          >
             🚀 Most Popular
           </Link>
         </DropdownMenuItem>

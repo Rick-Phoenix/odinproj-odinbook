@@ -34,11 +34,15 @@ function RouteComponent() {
   const sortedListings = listings
     .slice()
     .sort((a, b) =>
-      orderBy === "cheapest" ? a.price - b.price : new Date(a.createdAt) > new Date(b.createdAt) ? -1 : 1
+      orderBy === "cheapest"
+        ? a.price - b.price
+        : new Date(a.createdAt) > new Date(b.createdAt)
+          ? -1
+          : 1
     );
   return (
     <InsetScrollArea>
-      <section className="grid min-h-[75vh] max-w-full flex-1 auto-rows-fr grid-cols-1 grid-rows-[auto] rounded-xl border bg-muted/50">
+      <section className="grid min-h-[75vh] max-w-full flex-1 auto-rows-fr grid-cols-1 grid-rows-[auto] rounded-xl border bg-gray-800/20">
         <div className="flex h-12 items-center justify-center gap-3 rounded-xl bg-primary/80 p-1">
           <Button
             className="h-full flex-1 hover:bg-popover"

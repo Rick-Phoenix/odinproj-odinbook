@@ -18,7 +18,12 @@ import {
   AlertDialogTrigger,
 } from "../../ui/alert-dialog";
 import { Button } from "../../ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "../../ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "../../ui/dropdown-menu";
 import { Textarea } from "../../ui/textarea";
 import CommentLikeButton from "./comment-like-button";
 
@@ -88,10 +93,14 @@ const CommentButtons: FC<{
   return (
     <div className="flex flex-col gap-1">
       <div className="flex gap-2">
-        <CommentLikeButton commentId={commentId} initialIsLiked={initialIsLiked} initialLikeCount={initialLikeCount} />
+        <CommentLikeButton
+          commentId={commentId}
+          initialIsLiked={initialIsLiked}
+          initialLikeCount={initialLikeCount}
+        />
         <Button
           variant={"ghost"}
-          className="flex w-fit items-center gap-2 rounded-3xl p-6"
+          className="flex w-fit items-center gap-2 rounded-3xl p-6 hover:text-primary"
           onClick={() => setIsReplying(true)}
         >
           <MessageCircleMore /> Reply
@@ -171,7 +180,10 @@ const CommentOptions: FC<{ commentId: number }> = ({ commentId }) => {
     <AlertDialog>
       <DropdownMenu modal={false}>
         <DropdownMenuTrigger asChild>
-          <Button variant={"ghost"} className="flex w-fit items-center gap-2 rounded-3xl p-6">
+          <Button
+            variant={"ghost"}
+            className="flex w-fit items-center gap-2 rounded-3xl p-6 hover:text-primary"
+          >
             <EllipsisVertical />
           </Button>
         </DropdownMenuTrigger>

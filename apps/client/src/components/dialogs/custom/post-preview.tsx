@@ -10,10 +10,10 @@ import PostLikeButton from "./PostLikeButton";
 
 export const PostPreview: FC<{
   post: PostBasic;
-}> = ({ post: { title, room: roomName, text, id: postId, author, createdAt, isLiked, likesCount } }) => {
+}> = ({ post: { title, room: roomName, text, id: postId, author, createdAt } }) => {
   return (
-    <div className="flex max-h-[50%] min-h-min flex-col justify-between rounded-xl border bg-gray-900">
-      <CardHeader className="flex flex-row justify-between gap-4 pb-0">
+    <div className="flex max-h-[50%] min-h-min flex-col justify-between rounded-xl border bg-gray-800/20">
+      <CardHeader className="flex flex-row justify-between gap-4 p-8 pb-3">
         <div className="flex flex-col">
           <Link to="/rooms/$roomName/posts/$postId" params={{ roomName, postId }}>
             <CardTitle className="line-clamp-4 text-2xl">{title}</CardTitle>
@@ -39,13 +39,13 @@ export const PostPreview: FC<{
         <Link
           to="/rooms/$roomName"
           params={{ roomName }}
-          className="h-fit min-w-fit text-nowrap rounded-xl border bg-muted p-2 px-4 hover:bg-muted-foreground/30"
+          className="h-fit min-w-fit text-nowrap rounded-3xl border bg-primary/50 p-2 px-4 hover:bg-primary"
         >
           r/{roomName}
         </Link>
       </CardHeader>
       <Separator className="my-2" />
-      <CardContent className="line-clamp-6">{text}</CardContent>
+      <CardContent className="line-clamp-6 p-8">{text}</CardContent>
       <Separator />
       <div className="flex p-3">
         <PostLikeButton postId={postId} />

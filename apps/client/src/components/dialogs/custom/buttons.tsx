@@ -6,7 +6,7 @@ import { Button } from "../../ui/button";
 
 export function ShareButton() {
   return (
-    <Button variant={"ghost"} asChild className="flex-1 p-6">
+    <Button variant={"ghost"} asChild className="flex-1 p-6 hover:text-primary">
       <ButtonGesture>
         <Share />
         Share
@@ -21,7 +21,7 @@ export const CommentButton: FC<{
   onClick?: MouseEventHandler;
 }> = ({ roomName, postId, onClick }) => {
   return (
-    <Button variant={"ghost"} asChild className="flex-1 p-6" onClick={onClick}>
+    <Button variant={"ghost"} asChild className="flex-1 p-6 hover:text-primary" onClick={onClick}>
       <Link to="/rooms/$roomName/posts/$postId" params={{ roomName, postId }}>
         <ButtonGesture className="flex gap-2">
           <MessageCircleMore />

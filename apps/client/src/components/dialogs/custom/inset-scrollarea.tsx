@@ -17,7 +17,9 @@ export default function InsetScrollArea({
       onScroll={onScroll}
       className="h-full w-full min-w-0 max-w-full flex-1 [&>[data-radix-scroll-area-viewport]]:max-h-[calc(100vh-200px)]"
     >
-      <div className="flex min-w-0 max-w-full flex-1 flex-col gap-4 p-8 !pt-2 pb-6 lg:pt-2 xl:p-16">{children}</div>
+      <div className="flex min-w-0 max-w-full flex-1 flex-col gap-5 p-8 !pt-2 pb-6 lg:pt-2 xl:p-16">
+        {children}
+      </div>
     </ScrollArea>
   );
 }

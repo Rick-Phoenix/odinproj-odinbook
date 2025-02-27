@@ -8,16 +8,16 @@ const ListingPreview: FC<{
   children?: ReactNode;
 }> = ({ listing, children }) => {
   return (
-    <div className="group size-full p-4">
+    <div className="size-full p-4">
       <div
-        className={`flex h-48 items-center gap-4 rounded-lg border bg-muted p-3 ${listing.sold ? "line-through" : ""}`}
+        className={`group flex h-48 items-center gap-4 rounded-lg border bg-muted/90 p-3 transition-colors hover:bg-muted ${listing.sold ? "line-through" : ""}`}
       >
         <Link
           to="/marketplace/$category/$itemId"
           params={{ category: listing.category, itemId: listing.id }}
           className="size-36 justify-self-center p-4"
         >
-          <img src={listing.picUrl} className="aspect-square object-contain" />
+          <img src={listing.picUrl} className="aspect-square rounded-sm object-contain" />
         </Link>
         <Link
           to="/marketplace/$category/$itemId"

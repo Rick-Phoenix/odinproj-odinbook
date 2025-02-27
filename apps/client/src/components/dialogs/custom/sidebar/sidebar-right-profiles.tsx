@@ -17,7 +17,9 @@ const UserProfileSidebarContent = () => {
   });
   const navigate = useNavigate();
 
-  const profile = queryClient.getQueryData(["profile", profileParams?.username]) as Profile | undefined;
+  const profile = queryClient.getQueryData(["profile", profileParams?.username]) as
+    | Profile
+    | undefined;
 
   if (!profileParams?.username || !profile) return <SidebarSkeleton />;
 
@@ -36,8 +38,8 @@ const UserProfileSidebarContent = () => {
   };
   return (
     <>
-      <div className="center flex h-32 p-6 pb-0">
-        <Avatar className="h-full w-auto">
+      <div className="h-32 p-6 pb-0 flex-center">
+        <Avatar className="h-full w-auto border-2 border-primary">
           <AvatarImage src={profile.avatarUrl} alt={`${profile.username} profile picture`} />
         </Avatar>
       </div>
@@ -53,7 +55,7 @@ const UserProfileSidebarContent = () => {
         </div>
       </div>
       <SidebarMenu>
-        <Button variant={"outline"} onClick={handleSendMessage} className="mx-2 flex items-center">
+        <Button onClick={handleSendMessage} className="mx-2 flex items-center">
           <MessageSquare />
           <span>Send Message</span>
         </Button>

@@ -48,10 +48,14 @@ const CommentLikeButton: FC<{
       onClick={() => {
         likeMutation.mutate();
       }}
-      className="min-w-fit rounded-3xl p-6 px-8"
+      className="group min-w-fit rounded-3xl p-6 px-8 hover:text-primary"
     >
       <ButtonGesture>
-        {isLiked ? <PiThumbsUpFill /> : <PiThumbsUpBold />}
+        {isLiked ? (
+          <PiThumbsUpFill className="fill-primary/70 transition-colors group-hover:fill-primary" />
+        ) : (
+          <PiThumbsUpBold />
+        )}
         {likeCount}
       </ButtonGesture>
     </Button>

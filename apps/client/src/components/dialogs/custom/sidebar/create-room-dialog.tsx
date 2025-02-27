@@ -81,7 +81,7 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
           <DialogTrigger>Create Room</DialogTrigger>
         </SidebarMenuSubButton>
       ) : (
-        <Button size={"lg"} asChild className="mb-3 h-12 w-full cursor-pointer">
+        <Button size={"lg"} asChild className="h-12 w-full cursor-pointer">
           <DialogTrigger>Create Room</DialogTrigger>
         </Button>
       )}
@@ -90,7 +90,8 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
           <DialogTitle>Create a new Room</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Rooms are spaces where you can share your ideas and passions with other members of the community.
+          Rooms are spaces where you can share your ideas and passions with other members of the
+          community.
         </DialogDescription>
         <form
           onSubmit={(e) => {
@@ -131,7 +132,9 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
                       <Select
                         name={field.name}
                         value={field.state.value}
-                        onValueChange={(e) => field.handleChange(e as (typeof schemas.roomCategoriesArray)[number])}
+                        onValueChange={(e) =>
+                          field.handleChange(e as (typeof schemas.roomCategoriesArray)[number])
+                        }
                         required
                       >
                         <SelectTrigger className="w-[180px]">
@@ -194,7 +197,12 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
               ></form.Field>
             </div>
             <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched, state.isSubmitted]}
+              selector={(state) => [
+                state.canSubmit,
+                state.isSubmitting,
+                state.isTouched,
+                state.isSubmitted,
+              ]}
               children={([canSubmit, isSubmitting, isTouched, isSubmitted]) => {
                 return (
                   <DialogFooter>

@@ -22,11 +22,14 @@ const RoomsIndexSidebarContent = () => {
     <>
       {activePage === mainSection && (
         <>
-          <div className="p-4">
-            <CreateRoomDialog />
-            <SidebarSeparator className="mx-0" />
-            <h4 className="mt-2 text-center text-lg font-semibold">Suggested Rooms</h4>
-
+          <div className="py-4 pb-2">
+            <div className="px-4">
+              <CreateRoomDialog />
+            </div>
+            <SidebarSeparator className="mx-0 mt-4" />
+          </div>
+          <div className="pb-4">
+            <h4 className="text-center text-lg font-semibold">Suggested Rooms</h4>
             <ul className="flex flex-col justify-center gap-2 pt-6">
               {suggestedRooms &&
                 suggestedRooms.map((room) => (
@@ -37,7 +40,7 @@ const RoomsIndexSidebarContent = () => {
           <SidebarSeparator className="mx-0" />
           <div className="p-4 text-center text-lg font-semibold">Your Stats</div>
           <Table className="w-full">
-            <TableBody>
+            <TableBody className="p-2">
               <TableRow>
                 <TableCell>Member since:</TableCell>
                 <TableCell className="text-right">
@@ -73,14 +76,14 @@ const RoomsIndexSidebarContent = () => {
 const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({ roomAvatar, roomName }) => {
   return (
     <li>
-      <SidebarMenuButton asChild className="size-full">
+      <SidebarMenuButton asChild className="size-full p-3 transition-colors hover:bg-slate-950">
         <Link
           className="flex items-center justify-between gap-2"
           to="/rooms/$roomName"
           params={{ roomName }}
           search={{ orderBy: "likesCount" }}
         >
-          <Avatar>
+          <Avatar className="border-2 border-primary">
             <AvatarImage src={roomAvatar} alt={roomName} />
             <AvatarFallback>{roomName}</AvatarFallback>
           </Avatar>
@@ -107,7 +110,7 @@ const RoomSidebarContent = () => {
   return (
     <>
       <div className="h-32 p-6 pb-0 flex-center">
-        <Avatar className="h-full w-auto">
+        <Avatar className="h-full w-auto border-2 border-primary">
           <AvatarImage src={room.avatar} alt={`${room.name} avatar`} />
         </Avatar>
       </div>

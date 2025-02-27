@@ -16,7 +16,10 @@ const ChatsSidebarContent = () => {
       {
         <SidebarMenu>
           <CreateChatDialog>
-            <Button variant={"outline"} size={"lg"} className="[&_svg]:size-5">
+            <Button
+              size={"lg"}
+              className="bg-primary/50 transition-colors hover:bg-primary [&_svg]:size-5"
+            >
               <Plus />
               <span>Create Chat</span>
             </Button>
@@ -37,12 +40,18 @@ const ChatPreview: FC<{ chat: Chat }> = ({ chat }) => {
   const unreadMessages = useUnreadMessages(chat.id);
   return (
     <li>
-      <SidebarMenuButton asChild className="size-full">
+      <SidebarMenuButton asChild className="size-full transition-colors">
         {chat.contact.username !== "[deleted]" ? (
-          <Link className="flex items-center justify-between gap-2" to="/chats/$chatId" params={{ chatId: chat.id }}>
+          <Link
+            className="flex items-center justify-between gap-2"
+            to="/chats/$chatId"
+            params={{ chatId: chat.id }}
+          >
             <div className="relative">
-              {unreadMessages && <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />}
-              <Avatar className="h-14 w-auto">
+              {unreadMessages && (
+                <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
+              )}
+              <Avatar className="h-14 w-auto border-2 border-primary">
                 <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
                 <AvatarFallback>{chat.contact.username}</AvatarFallback>
               </Avatar>
@@ -52,7 +61,9 @@ const ChatPreview: FC<{ chat: Chat }> = ({ chat }) => {
         ) : (
           <div className="flex items-center justify-between gap-2">
             <div className="relative">
-              {unreadMessages && <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />}
+              {unreadMessages && (
+                <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
+              )}
               <Avatar className="h-14 w-auto">
                 <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
                 <AvatarFallback>{chat.contact.username}</AvatarFallback>

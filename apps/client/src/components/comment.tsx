@@ -3,12 +3,12 @@ import { Link } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { PlusCircle } from "lucide-react";
 import { useEffect, useState, type FC, type MouseEventHandler } from "react";
-import { useUser } from "../../../hooks/auth";
-import type { Comment } from "../../../lib/api-client";
-import { renderComments } from "../../../pages/Post";
-import { Button } from "../../ui/button";
-import { Separator } from "../../ui/separator";
-import CommentButtons from "./CommentButtons";
+import { useUser } from "../hooks/auth";
+import type { Comment } from "../lib/api-client";
+import { renderComments } from "../pages/Post";
+import CommentButtons from "./dialogs/custom/CommentButtons";
+import { Button } from "./ui/button";
+import { Separator } from "./ui/separator";
 
 const PostComment: FC<{
   c: Comment;
@@ -55,17 +55,28 @@ const PostComment: FC<{
   if (isFolded)
     return (
       <div className={gridClassName}>
-        <div className={`relative col-start-1 row-start-1 flex h-10 w-10 justify-center rounded-full`}>
+        <div
+          className={`relative col-start-1 row-start-1 flex h-10 w-10 justify-center rounded-full`}
+        >
           {isNested && <span className={connectorClass} id={`connector-${c.parentCommentId}`} />}
-          <Button onClick={() => setIsFolded(false)} size={"icon"} variant={"outline"} className="rounded-full">
+          <Button
+            onClick={() => setIsFolded(false)}
+            size={"icon"}
+            variant={"outline"}
+            className="rounded-full"
+          >
             <PlusCircle />
           </Button>
         </div>
         <div className="col-start-2 row-start-1 flex flex-col pl-4">
           <div className="flex gap-4">
-            <Link to="/users/$username" params={{ username: c.author.username }}>
-              {c.author.username}
-            </Link>
+            {c.author.username !== "[deleted]" ? (
+              <Link to="/users/$username" params={{ username: c.author.username }}>
+                {c.author.username}
+              </Link>
+            ) : (
+              <span className="italic text-muted-foreground">Deleted User</span>
+            )}
           </div>
           <div className="text-sm">{format(new Date(c.createdAt), "dd MMM y | HH:MM")}</div>
         </div>
@@ -74,11 +85,20 @@ const PostComment: FC<{
 
   return (
     <div className={gridClassName}>
-      <div className={`relative col-start-1 row-start-1 flex size-10 justify-center rounded-full bg-foreground`}>
+      <div
+        className={`relative col-start-1 row-start-1 flex size-10 justify-center rounded-full bg-foreground`}
+      >
         {isNested && <span className={connectorClass} id={`connector-${c.parentCommentId}`} />}
         {c.author.username !== "[deleted]" ? (
-          <Link to="/users/$username" className="size-full" params={{ username: c.author.username }}>
-            <img src={c.author.avatarUrl} className="size-full rounded-full object-cover" />
+          <Link
+            to="/users/$username"
+            className="size-full"
+            params={{ username: c.author.username }}
+          >
+            <img
+              src={c.author.avatarUrl}
+              className="size-full rounded-full border-2 border-primary object-cover"
+            />
           </Link>
         ) : (
           <div className="size-full">

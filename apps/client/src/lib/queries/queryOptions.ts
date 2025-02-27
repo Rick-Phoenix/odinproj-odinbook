@@ -62,7 +62,6 @@ export const userQueryOptions = {
       listingsSaved.map((list) => list.listing)
     );
 
-    console.log("🚀 ~ queryFn: ~ ownChats:", ownChats);
     return userData;
   },
 };
@@ -85,7 +84,10 @@ export const listingQueryOptions = (itemId: number) => {
   });
 };
 
-export const listingsByCategoryQueryOptions = (category: ListingCategory, orderBy: "cheapest" | "mostRecent") => {
+export const listingsByCategoryQueryOptions = (
+  category: ListingCategory,
+  orderBy: "cheapest" | "mostRecent"
+) => {
   return queryOptions({
     queryKey: ["listings", category],
     queryFn: async () => {
@@ -164,6 +166,10 @@ export const sortPosts = (array: PostBasic[], orderBy: "likesCount" | "createdAt
   return array
     .slice()
     .sort((a, b) =>
-      orderBy === "likesCount" ? b.likesCount - a.likesCount : new Date(a.createdAt) > new Date(b.createdAt) ? -1 : 1
+      orderBy === "likesCount"
+        ? b.likesCount - a.likesCount
+        : new Date(a.createdAt) > new Date(b.createdAt)
+          ? -1
+          : 1
     );
 };

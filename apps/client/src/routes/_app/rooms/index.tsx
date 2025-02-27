@@ -16,7 +16,12 @@ import { PostPreview } from "../../../components/dialogs/custom/post-preview";
 import { Button } from "../../../components/ui/button";
 import { CardTitle } from "../../../components/ui/card";
 import { api, type InitialFeed, type PostBasic, type SortingOrder } from "../../../lib/api-client";
-import { cachePost, getNextPostsByLikes, getNextPostsByTime, getPostsCursor } from "../../../lib/queries/caches";
+import {
+  cachePost,
+  getNextPostsByLikes,
+  getNextPostsByTime,
+  getPostsCursor,
+} from "../../../lib/queries/caches";
 import { sortPosts } from "../../../lib/queries/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../utils/async-throttle";
 import { getTotalPosts } from "../../../utils/extract-array";
@@ -101,7 +106,8 @@ function RouteComponent() {
     },
     initialPageParam: initialCursor,
     getNextPageParam: (lastPage, pages) => {
-      if (getTotalPosts(pages) >= totalPosts || pages.length >= Math.ceil(totalPosts / 20)) return null;
+      if (getTotalPosts(pages) >= totalPosts || pages.length >= Math.ceil(totalPosts / 20))
+        return null;
       return lastPage.cursor;
     },
     initialData: {
@@ -143,7 +149,7 @@ function RouteComponent() {
   return (
     <InsetScrollArea onScroll={handleScroll}>
       <TrendingCarousel posts={mostTrendingPosts} />
-      <div className="flex h-12 items-center justify-center gap-3 rounded-xl bg-primary/80 p-1">
+      <div className="flex h-12 items-center justify-center gap-3 rounded-xl border bg-primary/80 p-1">
         <Button
           className="h-full flex-1 hover:bg-popover"
           variant={"secondary"}
@@ -171,9 +177,11 @@ function RouteComponent() {
           Most Popular
         </Button>
       </div>
-      {posts.map((post) => (
-        <PostPreview key={post.id} post={post} />
-      ))}
+      <div className="flex flex-col gap-8">
+        {posts.map((post) => (
+          <PostPreview key={post.id} post={post} />
+        ))}
+      </div>
 
       <div role="status" className="hidden justify-center" ref={spinnerRef}>
         <svg
@@ -196,7 +204,8 @@ function RouteComponent() {
       </div>
 
       <div className="text-center text-sm italic text-muted-foreground">
-        {!feedQuery.hasNextPage && "Hungry for more? Subscribe to more rooms to get more posts in your feed."}
+        {!feedQuery.hasNextPage &&
+          "Hungry for more? Subscribe to more rooms to get more posts in your feed."}
       </div>
     </InsetScrollArea>
   );
@@ -209,7 +218,7 @@ const TrendingCard: FC<{
   postId: number;
 }> = ({ likesCount, title, roomName, postId }) => {
   return (
-    <div className="group flex aspect-video w-full rounded-xl bg-muted/50 p-4 hover:bg-muted">
+    <div className="group flex aspect-video w-full rounded-xl border bg-gray-700/20 p-4 hover:bg-muted">
       <div className="flex h-full flex-1 flex-col justify-end">
         <Link
           to={"/rooms/$roomName/posts/$postId"}
@@ -218,9 +227,11 @@ const TrendingCard: FC<{
         >
           <div className="flex items-center justify-end gap-2 self-end">
             <div className="max-w-[10ch] truncate">{likesCount}</div>
-            <Heart className="min-w-fit group-hover:fill-white" />
+            <Heart className="min-w-fit stroke-primary group-hover:fill-primary" />
           </div>
-          <CardTitle className="line-clamp-2 max-w-full scroll-m-20 lg:line-clamp-5">{title}</CardTitle>
+          <CardTitle className="line-clamp-2 max-w-full scroll-m-20 lg:line-clamp-5">
+            {title}
+          </CardTitle>
         </Link>
         <Link
           to="/rooms/$roomName"
@@ -302,7 +313,12 @@ const TrendingCarousel: FC<{ posts: PostBasic[] }> = ({ posts }) => {
             >
               {posts.map((post) => (
                 <SwiperSlide key={post.id}>
-                  <TrendingCard likesCount={post.likesCount} postId={post.id} title={post.title} roomName={post.room} />
+                  <TrendingCard
+                    likesCount={post.likesCount}
+                    postId={post.id}
+                    title={post.title}
+                    roomName={post.room}
+                  />
                 </SwiperSlide>
               ))}
             </Swiper>

@@ -48,10 +48,14 @@ const PostLikeButton: FC<{
       onClick={() => {
         likeMutation.mutate();
       }}
-      className="w-full flex-1 justify-center p-6"
+      className="group w-full flex-1 justify-center p-6 hover:text-primary"
     >
       <ButtonGesture>
-        {isLiked ? <PiThumbsUpFill /> : <PiThumbsUpBold />}
+        {isLiked ? (
+          <PiThumbsUpFill className="fill-primary/70 transition-colors group-hover:fill-primary" />
+        ) : (
+          <PiThumbsUpBold />
+        )}
         {likeCount}
       </ButtonGesture>
     </Button>
