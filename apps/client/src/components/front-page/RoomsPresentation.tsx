@@ -1,6 +1,6 @@
 import { init } from "aos";
-import { useEffect } from "react";
-import { Card } from "../ui/card";
+import { useEffect, type FC } from "react";
+import { Card, CardDescription, CardTitle } from "../ui/card";
 import InfiniteScroll from "./InfiniteScroll";
 import GradientText from "./TextGradient";
 
@@ -8,31 +8,86 @@ export default function RoomsPresentation() {
   useEffect(() => {
     init();
   }, []);
+
+  const rooms = [
+    {
+      title: "Electronics Enthusiasts",
+      description: "Some people have never shocked themselves. We are not those people.",
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740768748/Nexus/dqzz5nxzsgv2068gylit.jpg",
+    },
+    {
+      title: "Distinguished Gentlemen",
+      description: "An exclusive club reserved for the most refined gentlemen in town.",
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740768478/Nexus/zrpnlu4bl7rprmkiegph.jpg",
+    },
+    {
+      title: "Retro Gamers",
+      description: "The perfect spot for those to live and breathe in 8-bit.",
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740768655/Nexus/oam5w7g0yupojxflmbfr.jpg",
+    },
+    {
+      title: "CatsDoingCatThings",
+      description: "Blep.",
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740765945/Nexus/onq5fwrpusix7ytd5i0d.jpg",
+    },
+    {
+      title: "Hikers",
+      description: "Exploration is a state of mind. Adventure calls!",
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740768903/Nexus/hg769lz1sdcg3p3lw5zj.jpg",
+    },
+    {
+      title: "Trains",
+      description: "We just really like trains, that's all.",
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740769024/Nexus/qoscupmwi7paq2xnntyh.jpg",
+    },
+  ];
   return (
     <div className="relative grid h-svh grid-cols-2 grid-rows-2">
       <div className="z-10 col-start-2 self-end pb-3 text-6xl">
         <div className="inline-block" data-aos="fade-down" data-aos-duration="1500">
-          An
+          A
         </div>{" "}
         <div className="inline-block" data-aos="fade-left" data-aos-duration="3000">
-          <GradientText>ocean</GradientText>
+          <GradientText>community</GradientText>
         </div>
         <br />{" "}
         <div className="inline-block" data-aos="fade-up" data-aos-duration="1500">
-          of
+          for
         </div>{" "}
         <div className="inline-block" data-aos="fade-left" data-aos-duration="2000">
-          passions
+          communities
         </div>
       </div>
       <div className="z-10 col-start-2 text-2xl" data-aos="fade-left" data-aos-duration="3000">
-        Nexus is a community for communities. A place for sharing passions, ideas, solutions and
-        much more. Every user can create their own Room, which is a space dedicated to any topic
-        imaginable.
+        Rooms are the core section of Nexus. Each Room is a space where users can cultivate their
+        passions, exchange ideas, share their knowledge and learn from others{" "}
+        <em>(while sharing all of their best cat memes)</em>.
       </div>
       <div className="absolute top-0 z-0 size-full">
-        <InfiniteScroll items={[{ content: <Card>Oh hello there</Card> }]} isTilted autoplay />
+        <InfiniteScroll
+          items={rooms.map((r, i) => ({
+            content: <InfiniteScrollCard img={r.img} title={r.title} description={r.description} />,
+          }))}
+          isTilted
+          autoplay
+        />
       </div>
     </div>
   );
 }
+
+const InfiniteScrollCard: FC<{ img: string; title: string; description: string }> = ({
+  description,
+  img,
+  title,
+}) => {
+  return (
+    <Card className="flex size-full items-center gap-3 border-none p-2 pt-0">
+      <img src={img} className="size-20 rounded-full border-2 border-primary object-cover" />
+      <div className="flex flex-1 flex-col gap-2 p-1 text-center">
+        <CardTitle className="">{title}</CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </div>
+    </Card>
+  );
+};

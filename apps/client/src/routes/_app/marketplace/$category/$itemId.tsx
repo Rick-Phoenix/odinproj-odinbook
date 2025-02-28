@@ -49,7 +49,7 @@ function RouteComponent() {
         <div className="grid grid-cols-1 grid-rows-[auto_1fr] justify-center gap-x-8 p-8 xl:grid-cols-[auto_1fr] xl:grid-rows-1">
           <div className="flex flex-col items-center gap-5">
             <div className="grid max-h-full w-full min-w-0 max-w-80 justify-center [--swiper-navigation-color:hsl(var(--primary))] [&_.swiper]:max-w-full">
-              <img src={listing.picUrl} alt={listing.title} />
+              <img src={listing.picUrl} className="rounded-sm" alt={listing.title} />
             </div>
             <div className="flex max-w-80 flex-col items-center gap-5 break-words">
               <h2 className="text-2xl">${listing.price}</h2>
@@ -80,7 +80,9 @@ function RouteComponent() {
                   </TableRow>
                   <TableRow>
                     <TableCell>Listed On</TableCell>
-                    <TableCell className="text-right">{format(new Date(listing.createdAt), "dd MMM y")}</TableCell>
+                    <TableCell className="text-right">
+                      {format(new Date(listing.createdAt), "dd MMM y")}
+                    </TableCell>
                   </TableRow>
                   <TableRow>
                     <TableCell>Location</TableCell>

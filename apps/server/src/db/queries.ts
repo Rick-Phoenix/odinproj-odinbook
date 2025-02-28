@@ -414,6 +414,7 @@ export async function fetchSuggestedListings(
       .from(listings)
       .innerJoin(users, eq(listings.sellerId, users.id))
       .where(and(ne(listings.sellerId, userId), eq(listings.sold, false)))
+      .orderBy(desc(listings.createdAt))
       .limit(10);
   } else {
     suggestedListings = await db
@@ -431,6 +432,7 @@ export async function fetchSuggestedListings(
           ne(listings.sellerId, userId)
         )
       )
+      .orderBy(desc(listings.createdAt))
       .limit(10);
   }
   return suggestedListings;

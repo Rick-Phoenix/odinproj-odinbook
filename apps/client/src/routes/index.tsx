@@ -45,7 +45,7 @@ function Index() {
       </div>
       <RoomsPresentation />
       <div data-aos="fade-up" data-aos-duration="2000">
-        <MockChat messages={["Hello there!", "General Kenobi.", "Good to see you here."]} />
+        <MockChat messages={["Hello there!", "General Kenobi.", "You are a bold one."]} />
       </div>
       <MarketplacePresentation />
       <FrontPageFooter />

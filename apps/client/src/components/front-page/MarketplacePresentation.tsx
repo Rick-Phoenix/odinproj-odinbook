@@ -1,6 +1,7 @@
 import { init } from "aos";
 import { useEffect } from "react";
 import Stack from "./CardStack";
+import GradientText from "./TextGradient";
 
 export default function MarketplacePresentation() {
   useEffect(() => {
@@ -22,11 +23,11 @@ export default function MarketplacePresentation() {
         data-aos="fade-down"
         data-aos-duration="2000"
       >
-        A hub for collectors and hobbyists
+        An open <GradientText>marketplace</GradientText> for collectors and hobbyists
       </h1>
       <div className="col-start-2 flex text-2xl" data-aos="fade-left" data-aos-duration="2500">
-        A digital neighborhood needs its own garage sales. Nexus offers a marketplace section, where
-        you can buy or sell your items easily and free of charge.
+        As a digital neighborhood, Nexus has its own form of garage sales. In the marketplace
+        section, you can buy items from other Nexers (or sell your own) at no additional cost.
       </div>
     </div>
   );

@@ -91,27 +91,27 @@ export default function FeaturesAnimatedBeams({ className }: { className?: strin
         </div>
         <div className="flex flex-col justify-center gap-2">
           <FloatingDiv>
-            <Circle ref={div3Ref} text="Forge new friendships">
+            <Circle ref={div3Ref} text={"Forge new connections &#128591;"}>
               <Icons.friends />
             </Circle>
           </FloatingDiv>
           <FloatingDiv>
-            <Circle ref={div1Ref} text="Create new connections">
+            <Circle ref={div1Ref} text={"Exchange views and ideas &#128161;"}>
               <Icons.messenger />
             </Circle>
           </FloatingDiv>
           <FloatingDiv>
-            <Circle ref={div2Ref} text="Share exciting content">
+            <Circle ref={div2Ref} text={"Share exciting content &#128064;"}>
               <Icons.share />
             </Circle>
           </FloatingDiv>
           <FloatingDiv>
-            <Circle ref={div4Ref} text="Find new passions">
+            <Circle ref={div4Ref} text={"Cultivate your passions &#127878;"}>
               <Icons.hobbies />
             </Circle>
           </FloatingDiv>
           <FloatingDiv>
-            <Circle ref={div5Ref} text="Find great deals">
+            <Circle ref={div5Ref} text={"Find great deals &#128142;"}>
               <Icons.deals />
             </Circle>
           </FloatingDiv>

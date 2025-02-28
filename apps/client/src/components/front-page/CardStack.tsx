@@ -77,16 +77,38 @@ export default function Stack({
   sendToBackOnClick = false,
   autoCycle = false,
 }: StackProps) {
-  const [cards, setCards] = useState(
-    cardsData.length
-      ? cardsData
-      : [
-          { id: 1, img: "https://images.unsplash.com/photo-1480074568708-e7b720bb3f09?q=80&w=500&auto=format" },
-          { id: 2, img: "https://images.unsplash.com/photo-1449844908441-8829872d2607?q=80&w=500&auto=format" },
-          { id: 3, img: "https://images.unsplash.com/photo-1452626212852-811d58933cae?q=80&w=500&auto=format" },
-          { id: 4, img: "https://images.unsplash.com/photo-1572120360610-d971b9d7767c?q=80&w=500&auto=format" },
-        ]
-  );
+  const [cards, setCards] = useState([
+    {
+      id: 1,
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740763642/Nexus/z3ixh0pi1udti743ut80.jpg",
+      title: "Professional Microphone",
+      price: 120,
+    },
+    {
+      id: 2,
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740763643/Nexus/wsnmvsdi5srbtqkx70gy.jpg",
+      title: "Mechanical Keyboard",
+      price: 85,
+    },
+    {
+      id: 3,
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740763643/Nexus/yn3fg4auxygm6cegwutr.jpg",
+      title: "DSLR Camera",
+      price: 700,
+    },
+    {
+      id: 4,
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740763643/Nexus/sbc3snegbypxz2fmxohc.jpg",
+      title: "iPhone",
+      price: 750,
+    },
+    {
+      id: 6,
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740763643/Nexus/xmj4ps3bbutupdhnfjra.jpg",
+      title: "Acoustic Guitar",
+      price: 200,
+    },
+  ]);
 
   const sendToBack = (id: number) => {
     setCards((prev) => {
@@ -119,7 +141,7 @@ export default function Stack({
             isFront={index === cards.length - 1}
           >
             <motion.div
-              className="overflow-hidden rounded-2xl border-4 border-white"
+              className="group flex flex-col items-center justify-center gap-5 rounded-xl border-2 border-primary bg-gray-800 p-6 py-10 text-center"
               onClick={() => sendToBackOnClick && sendToBack(card.id)}
               animate={{
                 rotateZ: (cards.length - index - 1) * 4 + randomRotate,
@@ -137,7 +159,17 @@ export default function Stack({
                 height: cardDimensions.height,
               }}
             >
-              <img src={card.img} alt={`card-${card.id}`} className="pointer-events-none h-full w-full object-cover" />
+              <img
+                src={card.img}
+                alt={`card-${card.id}`}
+                className="h-fit max-h-[200px] w-fit max-w-full rounded-md object-contain"
+              />
+              <h4 className="line-clamp-2 min-w-0 max-w-full scroll-m-20 break-words text-2xl tracking-tight transition-all group-hover:underline">
+                {card.title}
+              </h4>
+              <h4 className="max-w-[6ch] text-center text-xl font-semibold leading-7">
+                ${card.price}
+              </h4>
             </motion.div>
           </CardRotate>
         );

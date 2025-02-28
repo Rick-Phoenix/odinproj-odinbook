@@ -145,7 +145,16 @@ const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
       observer.kill();
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [items, autoplay, autoplaySpeed, autoplayDirection, pauseOnHover, isTilted, tiltDirection, negativeMargin]);
+  }, [
+    items,
+    autoplay,
+    autoplaySpeed,
+    autoplayDirection,
+    pauseOnHover,
+    isTilted,
+    tiltDirection,
+    negativeMargin,
+  ]);
 
   return (
     <>
@@ -175,7 +184,7 @@ const InfiniteScroll: React.FC<InfiniteScrollProps> = ({
           }}
         >
           {items.map((item, i) => (
-            <div className="infinite-scroll-item" key={i}>
+            <div className="infinite-scroll-item border-primary" key={i}>
               {item.content}
             </div>
           ))}
