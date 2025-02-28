@@ -8,7 +8,7 @@ export const BackgroundGradientAnimation = ({
   secondColor = "86, 3, 252",
   thirdColor = "100, 220, 255",
   fourthColor = "3, 252, 157",
-  fifthColor = "3, 10, 107",
+  fifthColor = "3, 125, 107",
   pointerColor = "140, 100, 255",
   size = "80%",
   blendingValue = "hard-light",
@@ -88,7 +88,12 @@ export const BackgroundGradientAnimation = ({
         <defs>
           <filter id="blurMe">
             <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-            <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
+            <feColorMatrix
+              in="blur"
+              mode="matrix"
+              values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8"
+              result="goo"
+            />
             <feBlend in="SourceGraphic" in2="goo" />
           </filter>
         </defs>

@@ -9,6 +9,7 @@ import MainHero from "../components/front-page/MainHero";
 import MarketplacePresentation from "../components/front-page/MarketplacePresentation";
 import { MockChat } from "../components/front-page/MockChat";
 import RoomsPresentation from "../components/front-page/RoomsPresentation";
+import GradientText from "../components/front-page/TextGradient";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async ({ context }) => {
@@ -34,7 +35,7 @@ function Index() {
       <div className="my-12 flex flex-col items-center">
         <div className="text-5xl">
           <div data-aos="fade-right" className="inline-block" data-aos-duration="3000">
-            One hub,
+            One <GradientText>hub</GradientText>,
           </div>{" "}
           <div data-aos="fade-left" className="inline-block" data-aos-duration="4000">
             many features

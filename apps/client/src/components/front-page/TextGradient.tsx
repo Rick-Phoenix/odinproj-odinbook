@@ -1,35 +1,45 @@
-import { type ReactNode } from "react";
+import { motion } from "motion/react";
 
 interface GradientTextProps {
-  children: ReactNode;
+  children: React.ReactNode;
   className?: string;
   colors?: string[];
-  animationSpeed?: number;
+  durationSec?: number;
   showBorder?: boolean;
+  animationType?: "linear" | "rotate" | "wave";
+  gradientAngle?: number;
 }
 
 export default function GradientText({
   children,
   className = "",
   colors = ["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"],
-  animationSpeed = 8,
+  durationSec: animationSpeed = 8,
   showBorder = false,
+  animationType = "linear",
+  gradientAngle = Math.random() * 360,
 }: GradientTextProps) {
+  const cos = Math.max(Math.abs(Math.cos((gradientAngle * Math.PI) / 180)), 0.1);
+  const sin = Math.max(Math.abs(Math.sin((gradientAngle * Math.PI) / 180)), 0.1);
+  const bgWidth = `calc((200%) / ${cos})`;
+  const bgHeight = `calc((200%) / ${sin})`;
+  const backgroundSize = `${bgWidth} ${bgHeight}`;
+
   const gradientStyle = {
-    backgroundImage: `linear-gradient(to right, ${colors.join(", ")})`,
-    animationDuration: `${animationSpeed}s`,
+    backgroundImage: `linear-gradient(${gradientAngle}deg, ${colors.join(", ")})`,
   };
 
   return (
     <div
-      className={`relative mx-auto inline-flex max-w-fit flex-row items-center justify-center overflow-hidden rounded-[1.25rem] font-medium backdrop-blur transition-shadow duration-500 ${className}`}
+      className={`relative mx-auto inline-flex max-w-fit flex-row items-center justify-center overflow-hidden font-medium backdrop-blur transition-shadow ${className}`}
     >
-      {showBorder && (
-        <div
-          className="animate-gradient pointer-events-none absolute inset-0 z-0 bg-cover"
+      {/*{showBorder && (
+        <motion.div
+          className="pointer-events-none absolute inset-0 z-0 bg-cover"
           style={{
             ...gradientStyle,
-            backgroundSize: "300% 100%",
+            backgroundSize,
+            backgroundPosition: `${backGroundX.get()}% 50%`,
           }}
         >
           <div
@@ -41,39 +51,29 @@ export default function GradientText({
               top: "50%",
               transform: "translate(-50%, -50%)",
             }}
-          ></div>
-        </div>
-      )}
-      <div
-        className="z-2 animate-gradient relative inline-block bg-cover text-transparent"
+          />
+        </motion.div>
+      )}*/}
+
+      <motion.div
+        className="z-[2] text-transparent"
+        animate={{
+          backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
+        }}
+        transition={{
+          duration: animationSpeed * 2,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
         style={{
           ...gradientStyle,
+          backgroundSize,
           backgroundClip: "text",
           WebkitBackgroundClip: "text",
-          backgroundSize: "300% 100%",
         }}
       >
         {children}
-      </div>
+      </motion.div>
     </div>
   );
 }
-
-// tailwind.config.js
-// module.exports = {
-//   theme: {
-//     extend: {
-//       keyframes: {
-//         gradient: {
-//           '0%': { backgroundPosition: '0% 50%' },
-//           '50%': { backgroundPosition: '100% 50%' },
-//           '100%': { backgroundPosition: '0% 50%' },
-//         },
-//       },
-//       animation: {
-//         gradient: 'gradient 8s linear infinite'
-//       },
-//     },
-//   },
-//   plugins: [],
-// };

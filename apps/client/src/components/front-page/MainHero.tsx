@@ -15,7 +15,11 @@ export default function MainHero() {
       gradientBackgroundStart="rgb(2, 8, 23)"
     >
       <div className="absolute top-2 text-[8rem]">
-        <GradientText colors={["#40ffaa", "#4079ff", "#e5e7eb00", "#40ffaa", "#4079ff"]}>
+        <GradientText
+          colors={["#40ffaa", "#4079ff", "#e5e7eb00", "#40ffaa", "#4079ff"]}
+          gradientAngle={120}
+          durationSec={10}
+        >
           nexus
         </GradientText>
       </div>
