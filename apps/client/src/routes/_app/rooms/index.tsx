@@ -229,7 +229,7 @@ const TrendingCard: FC<{
             <div className="max-w-[10ch] truncate">{likesCount}</div>
             <Heart className="min-w-fit stroke-primary group-hover:fill-primary" />
           </div>
-          <CardTitle className="line-clamp-2 max-w-full scroll-m-20 lg:line-clamp-5">
+          <CardTitle className="line-clamp-2 max-w-full scroll-m-20 pb-1 lg:line-clamp-5">
             {title}
           </CardTitle>
         </Link>

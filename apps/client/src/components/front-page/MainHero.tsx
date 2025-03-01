@@ -1,10 +1,10 @@
 import LoginDialog from "../dialogs/custom/LoginDialog";
 import SignupDialog from "../dialogs/custom/SignupDialog";
 import { BackgroundGradientAnimation } from "./BackgroundGradientAnimation";
-import FlipWords from "./ChangingWords";
 import DraggableElement from "./DraggableElement";
 import GradientText from "./TextGradient";
 import Threads from "./Threads";
+import TypingText from "./TypingText";
 
 export default function MainHero() {
   return (
@@ -35,13 +35,8 @@ export default function MainHero() {
         />
         <DraggableElement />
       </div>
-      <span className="z-20 mb-2 text-3xl italic leading-tight tracking-tight">
-        Exchange
-        <FlipWords
-          words={["passions", "connections", "deals", "views", "opinions", "solutions"]}
-          duration={2000}
-          className="text-3xl"
-        />
+      <span className="z-20 mb-2 font-[montserrat] text-4xl font-thin italic leading-tight tracking-tight">
+        <TypingText grow={true} waitTime={2000} delay={50} />
       </span>
       <div className="z-20 flex gap-4">
         <SignupDialog />

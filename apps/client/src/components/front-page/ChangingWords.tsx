@@ -56,7 +56,10 @@ const FlipWords = ({
           scale: 2,
           position: "absolute",
         }}
-        className={cn("relative z-10 inline-block px-2 text-left text-neutral-900 dark:text-neutral-100", className)}
+        className={cn(
+          "relative z-10 inline-block px-2 text-left text-neutral-900 dark:text-neutral-100",
+          className
+        )}
         key={currentWord}
       >
         {/* edit suggested by Sajal: https://x.com/DewanganSajal */}
@@ -80,7 +83,7 @@ const FlipWords = ({
                   delay: wordIndex * 0.3 + letterIndex * 0.05,
                   duration: 0.2,
                 }}
-                className="inline-block"
+                className="inline-block text-muted-foreground"
               >
                 {letter}
               </motion.span>

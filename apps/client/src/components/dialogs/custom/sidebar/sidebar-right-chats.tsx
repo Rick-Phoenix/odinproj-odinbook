@@ -52,7 +52,11 @@ const ChatPreview: FC<{ chat: Chat }> = ({ chat }) => {
                 <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
               )}
               <Avatar className="h-14 w-auto border-2 border-primary">
-                <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
+                <AvatarImage
+                  src={chat.contact.avatarUrl}
+                  className="object-cover"
+                  alt={chat.contact.username}
+                />
                 <AvatarFallback>{chat.contact.username}</AvatarFallback>
               </Avatar>
             </div>
@@ -65,7 +69,11 @@ const ChatPreview: FC<{ chat: Chat }> = ({ chat }) => {
                 <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
               )}
               <Avatar className="h-14 w-auto">
-                <AvatarImage src={chat.contact.avatarUrl} alt={chat.contact.username} />
+                <AvatarImage
+                  src={chat.contact.avatarUrl}
+                  className="object-cover"
+                  alt={chat.contact.username}
+                />
                 <AvatarFallback>{chat.contact.username}</AvatarFallback>
               </Avatar>
             </div>

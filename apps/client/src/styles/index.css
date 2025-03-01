@@ -8,6 +8,8 @@
   min-width: 0px;
   overflow-wrap: break-word;
   max-width: 100%;
+  font-family: "Lexend", ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
 }
 
 body {

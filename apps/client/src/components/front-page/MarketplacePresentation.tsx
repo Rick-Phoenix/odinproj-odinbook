@@ -25,9 +25,12 @@ export default function MarketplacePresentation() {
       >
         An open <GradientText>marketplace</GradientText> for collectors and hobbyists
       </h1>
-      <div className="col-start-2 flex text-2xl" data-aos="fade-left" data-aos-duration="2500">
-        As a digital neighborhood, Nexus has its own form of garage sales. In the marketplace
-        section, you can buy items from other Nexers (or sell your own) at no additional cost.
+      <div className="col-start-2 text-2xl" data-aos="fade-left" data-aos-duration="2500">
+        Like a true digital neighborhood, Nexus has its own form of garage sales. In the marketplace
+        section , you can buy items from other Nexers (or sell your own){" "}
+        <span className="inline-block underline decoration-primary underline-offset-4">
+          at no additional cost.{" "}
+        </span>
       </div>
     </div>
   );

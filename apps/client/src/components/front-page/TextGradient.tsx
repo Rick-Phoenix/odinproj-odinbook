@@ -14,7 +14,7 @@ export default function GradientText({
   children,
   className = "",
   colors = ["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"],
-  durationSec: animationSpeed = 8,
+  durationSec = 8,
   showBorder = false,
   animationType = "linear",
   gradientAngle = Math.random() * 360,
@@ -28,6 +28,8 @@ export default function GradientText({
   const gradientStyle = {
     backgroundImage: `linear-gradient(${gradientAngle}deg, ${colors.join(", ")})`,
   };
+
+  const animation = `gradient ${durationSec}s linear infinite alternate`;
 
   return (
     <div
@@ -57,19 +59,12 @@ export default function GradientText({
 
       <motion.div
         className="z-[2] text-transparent"
-        animate={{
-          backgroundPosition: ["0% 0%", "100% 100%", "0% 0%"],
-        }}
-        transition={{
-          duration: animationSpeed * 2,
-          repeat: Infinity,
-          ease: "easeInOut",
-        }}
         style={{
           ...gradientStyle,
           backgroundSize,
           backgroundClip: "text",
           WebkitBackgroundClip: "text",
+          animation,
         }}
       >
         {children}

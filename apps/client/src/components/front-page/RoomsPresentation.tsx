@@ -59,9 +59,13 @@ export default function RoomsPresentation() {
         </div>
       </div>
       <div className="z-10 col-start-2 text-2xl" data-aos="fade-left" data-aos-duration="3000">
-        Rooms are the core section of Nexus. Each Room is a space where users can cultivate their
-        passions, exchange ideas, share their knowledge and learn from others{" "}
-        <em>(while sharing all of their best cat memes)</em>.
+        <span className="underline decoration-primary underline-offset-4">Rooms</span> are the core
+        section of Nexus. Each Room is a space where users can cultivate their passions, exchange
+        ideas, share their knowledge and learn from others.
+        <br />
+        <em className="text-sm font-light text-muted-foreground">
+          (while sharing all of their best cat memes)
+        </em>
       </div>
       <div className="absolute top-0 z-0 size-full">
         <InfiniteScroll

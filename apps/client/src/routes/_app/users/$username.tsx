@@ -34,7 +34,11 @@ function RouteComponent() {
       <section className="grid min-h-[80vh] max-w-full grid-rows-[auto_1fr] items-center gap-2 rounded-xl border bg-muted/50">
         <header className="flex h-56 w-full items-center justify-center gap-8 rounded-xl border-2 border-primary bg-muted p-8 hover:text-foreground">
           <Avatar className="h-full w-auto border-2 border-primary">
-            <AvatarImage src={avatarUrl} alt={`${avatarUrl} profile picture`} />
+            <AvatarImage
+              src={avatarUrl}
+              className="object-cover"
+              alt={`${avatarUrl} profile picture`}
+            />
           </Avatar>
           <h3 className="w-fit rounded-xl bg-blue-500 p-2 text-2xl font-semibold text-background">
             {username}
@@ -154,7 +158,7 @@ const CommentPreview: FC<{
   return (
     <div className="mt-4 flex h-fit w-full gap-8 rounded-xl border bg-muted p-6 py-4 hover:bg-muted/80 hover:text-foreground">
       <div className="grid w-full auto-rows-min grid-cols-1">
-        <div className="flex gap-2">
+        <div className="mb-1 flex gap-2">
           <Link
             to={"/rooms/$roomName"}
             params={{ roomName: room }}
@@ -171,8 +175,6 @@ const CommentPreview: FC<{
             {postTitle}
           </Link>
         </div>
-        <Separator className="my-1 rounded-3xl bg-background/30" />
-
         <Link
           to={"/rooms/$roomName/posts/$postId"}
           params={{ postId, roomName: room }}

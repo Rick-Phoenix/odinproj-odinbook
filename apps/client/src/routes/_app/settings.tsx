@@ -424,7 +424,7 @@ const ProfilePictureEdit = () => {
         <div className="flex h-fit flex-col items-center gap-2 text-center">
           <h2 className="text-lg font-semibold">Profile Picture</h2>
           <div className="relative">
-            <img src={avatarUrl} className="size-44 rounded-full" />
+            <img src={avatarUrl} className="size-44 rounded-full object-cover" />
 
             <Button
               size={"sm"}

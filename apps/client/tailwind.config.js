@@ -23,8 +23,8 @@ export default {
       },
       keyframes: {
         gradient: {
-          "0%": { backgroundPosition: "0% 50%" },
-          "100%": { backgroundPosition: "100% 50%" },
+          "0%": { backgroundPosition: "0% 0%" },
+          "100%": { backgroundPosition: "100% 100%" },
         },
         "background-position-spin": {
           "0%": { backgroundPosition: "top center" },

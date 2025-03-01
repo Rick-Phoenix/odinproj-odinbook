@@ -61,8 +61,8 @@ function LoginDialog({ disableClose }: { disableClose?: boolean }) {
     <Dialog open={open} onOpenChange={handleDialogState} defaultOpen={!disableClose}>
       <DialogTrigger asChild>
         <button className="relative p-[3px]">
-          <div className="absolute inset-0 rounded-lg bg-gradient-to-r from-sky-600 to-teal-500" />
-          <div className="group relative rounded-[6px] bg-gray-950 px-8 py-2 font-semibold text-white transition duration-200 hover:bg-transparent">
+          <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-sky-600 to-teal-500" />
+          <div className="group relative rounded-2xl bg-gray-950 px-8 py-2 font-semibold text-white transition duration-200 hover:bg-transparent hover:text-black">
             Log In
           </div>
         </button>

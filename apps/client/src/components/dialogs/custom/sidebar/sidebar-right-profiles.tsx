@@ -40,7 +40,11 @@ const UserProfileSidebarContent = () => {
     <>
       <div className="h-32 p-6 pb-0 flex-center">
         <Avatar className="h-full w-auto border-2 border-primary">
-          <AvatarImage src={profile.avatarUrl} alt={`${profile.username} profile picture`} />
+          <AvatarImage
+            src={profile.avatarUrl}
+            className="object-cover"
+            alt={`${profile.username} profile picture`}
+          />
         </Avatar>
       </div>
       <div className="p-4 pt-0 text-center text-lg font-semibold">{profile.username}</div>

@@ -35,7 +35,7 @@ const MarketplaceSidebarContent = () => {
                 to="/marketplace/$category/$itemId"
                 params={{ itemId: lis.id, category: lis.category }}
               >
-                <img src={lis.picUrl} className="size-12 min-w-12 rounded-sm" />
+                <img src={lis.picUrl} className="size-12 min-w-12 rounded-sm object-contain" />
                 <span className="text-ellipsis">{lis.title}</span>
               </Link>
             </SidebarMenuButton>
@@ -55,7 +55,7 @@ const MarketplaceSidebarContent = () => {
                 to="/marketplace/$category/$itemId"
                 params={{ itemId: lis.id, category: lis.category }}
               >
-                <img src={lis.picUrl} className="size-12 min-w-12 rounded-sm" />
+                <img src={lis.picUrl} className="size-12 min-w-12 rounded-sm object-contain" />
                 <span className="text-ellipsis">{lis.title}</span>
               </Link>
             </SidebarMenuButton>
@@ -71,7 +71,7 @@ const MarketplaceSidebarContent = () => {
       <div className="p-4 pb-0 text-center text-lg font-semibold">{seller}</div>
       <div className="h-32 p-6 pb-0 flex-center">
         <Avatar className="h-full w-auto">
-          <AvatarImage src={picUrl} alt={`${seller} profile picture`} />
+          <AvatarImage className="object-cover" src={picUrl} alt={`${seller} profile picture`} />
         </Avatar>
       </div>
       <div className="p-4 pt-0 text-center text-lg font-semibold">{seller}</div>

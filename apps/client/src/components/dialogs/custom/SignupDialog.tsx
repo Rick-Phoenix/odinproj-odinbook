@@ -8,7 +8,13 @@ import { api } from "../../../lib/api-client";
 import { formatFormErrors, singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 import { Button } from "../../ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "../../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogTitle,
+  DialogTrigger,
+} from "../../ui/dialog";
 import { Input } from "../../ui/input";
 import { Label } from "../../ui/label";
 
@@ -50,7 +56,7 @@ function SignupDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="rounded-md border-2 border-transparent bg-gradient-to-r from-sky-600 to-teal-500 px-8 py-2 font-bold text-white transition duration-200 hover:border-teal-500 hover:bg-white hover:text-black">
+        <button className="rounded-2xl bg-gradient-to-r from-sky-600 to-teal-500 px-8 py-2 font-bold text-white transition duration-200 hover:border-teal-500 hover:text-black">
           Sign Up
         </button>
       </DialogTrigger>
@@ -129,7 +135,12 @@ function SignupDialog() {
               ></form.Field>
             </div>
             <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched, state.isSubmitted]}
+              selector={(state) => [
+                state.canSubmit,
+                state.isSubmitting,
+                state.isTouched,
+                state.isSubmitted,
+              ]}
               children={([canSubmit, isSubmitting, isTouched, isSubmitted]) => {
                 return (
                   <>

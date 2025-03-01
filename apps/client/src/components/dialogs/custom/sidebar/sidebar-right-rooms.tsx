@@ -84,7 +84,7 @@ const SuggestedRoom: FC<{ roomAvatar: string; roomName: string }> = ({ roomAvata
           search={{ orderBy: "likesCount" }}
         >
           <Avatar className="border-2 border-primary">
-            <AvatarImage src={roomAvatar} alt={roomName} />
+            <AvatarImage className="object-cover" src={roomAvatar} alt={roomName} />
             <AvatarFallback>{roomName}</AvatarFallback>
           </Avatar>
           <p>r/{roomName}</p>
@@ -111,7 +111,7 @@ const RoomSidebarContent = () => {
     <>
       <div className="h-32 p-6 pb-0 flex-center">
         <Avatar className="h-full w-auto border-2 border-primary">
-          <AvatarImage src={room.avatar} alt={`${room.name} avatar`} />
+          <AvatarImage className="object-cover" src={room.avatar} alt={`${room.name} avatar`} />
         </Avatar>
       </div>
       <Link

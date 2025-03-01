@@ -52,8 +52,11 @@ export const MockChat = ({ messages }: { messages: string[] }) => {
               </span>
             </span>
             <span className="text-2xl">
-              With its integrated chat functionality, Nexus is built to enable users to create and
-              foster new connections.
+              With its{" "}
+              <span className="underline decoration-primary underline-offset-4">
+                integrated chat
+              </span>{" "}
+              functionality, Nexus is built to enable users to create and foster new connections.
             </span>
           </div>
         </div>

@@ -5,7 +5,7 @@ interface TypingTextProps {
   /**
    * Text to type
    */
-  text: string;
+  textInitial?: string;
 
   /**
    * Delay between typing each character or word (smooth mode) in milliseconds
@@ -148,7 +148,7 @@ function CursorWrapper({
 }
 
 function Type({
-  text,
+  textInitial,
   repeat,
   cursor,
   delay,
@@ -160,6 +160,9 @@ function Type({
   onComplete,
   hideCursorOnComplete,
 }: TypingTextProps) {
+  const phrases = ["Connect", "Share", "Evolve", "Create", "Learn", "Discover"];
+  const [phrasesIndex, setPhrasesIndex] = useState(0);
+  const [text, setText] = useState(phrases[0]);
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<TypingDirection>(TypingDirection.Forward);
   const [isComplete, setIsComplete] = useState(false);
@@ -191,29 +194,37 @@ function Type({
 
     if (index >= total && repeat) {
       timeout = setTimeout(() => {
+        setIsComplete(true);
         setDirection(-1);
       }, waitTime);
     }
 
     if (index <= 0 && repeat) {
       timeout = setTimeout(() => {
-        setDirection(1);
+        setDirection(() => 1);
+        if (isComplete) {
+          setPhrasesIndex((i) => {
+            const newIndex = (i + 1) % phrases.length;
+            setText(() => phrases[newIndex]);
+            return newIndex;
+          });
+          //setText(() => phrases[phrasesIndex]);
+        }
       }, waitTime);
     }
     return () => clearTimeout(timeout);
   }, [index, total, repeat, waitTime]);
 
   useEffect(() => {
-    if (index === total && !repeat) {
+    if (index === total) {
       setIsComplete(true);
-      onComplete?.();
     }
   }, [index, total, repeat, onComplete]);
 
   const waitingNextCycle = index === total || index === 0;
 
   return (
-    <div className={cn("relative font-mono", className)}>
+    <div className={cn("relative", className)}>
       {!grow && <div className="invisible">{text}</div>}
       <div
         className={cn({
@@ -237,13 +248,13 @@ function Type({
 }
 
 export default function TypingText({
-  text,
+  textInitial,
   repeat = true,
   cursor = <Blinker />,
-  delay = 32,
+  delay = 100,
   className,
   grow = false,
-  alwaysVisibleCount = 1,
+  alwaysVisibleCount = 0,
   smooth = false,
   waitTime,
   onComplete,
@@ -251,12 +262,12 @@ export default function TypingText({
 }: TypingTextProps) {
   return (
     <Type
-      key={text}
+      key={textInitial}
       delay={delay ?? 32}
       waitTime={waitTime ?? 1000}
       grow={grow}
       repeat={repeat}
-      text={text}
+      textInitial={textInitial}
       cursor={cursor}
       className={className}
       smooth={smooth}
