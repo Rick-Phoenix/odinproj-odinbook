@@ -36,6 +36,11 @@ export default function RoomsPresentation() {
       img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740768903/Nexus/hg769lz1sdcg3p3lw5zj.jpg",
     },
     {
+      title: "Tabletop Fanatics",
+      description: "Player rolls to touch grass. Natural one.",
+      img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740827502/Nexus/y5tj34ngcn2bmxkgz7f5.jpg",
+    },
+    {
       title: "Trains",
       description: "We just really like trains, that's all.",
       img: "https://res.cloudinary.com/dqjizh49f/image/upload/v1740769024/Nexus/qoscupmwi7paq2xnntyh.jpg",
@@ -74,6 +79,7 @@ export default function RoomsPresentation() {
           }))}
           isTilted
           autoplay
+          negativeMargin="-1rem"
         />
       </div>
     </div>

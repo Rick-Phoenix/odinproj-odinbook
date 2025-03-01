@@ -1,6 +1,6 @@
 import { alreadyLoggedError } from "@/utils/response-schemas";
 import { createRoute } from "@hono/zod-openapi";
-import { verifySync } from "@node-rs/argon2";
+import { verify } from "@node-rs/argon2";
 import {
   BAD_REQUEST,
   CONFLICT,
@@ -66,7 +66,7 @@ export const loginHandler: AppRouteHandler<typeof login> = async (c) => {
     return c.json(errors.userNotFound.content, NOT_FOUND);
   }
 
-  if (!user.hash || !verifySync(user.hash, password)) {
+  if (!user.hash || !(await verify(user.hash, password))) {
     return c.json(errors.wrongPassword.content, BAD_REQUEST);
   }
 

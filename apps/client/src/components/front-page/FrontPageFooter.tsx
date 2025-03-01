@@ -18,8 +18,8 @@ export default function FrontPageFooter() {
         <div className="text-2xl absolute-center">
           <button data-aos="fade-up" data-aos-duration="2000" className="relative p-[3px]">
             <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-sky-600 to-teal-500" />
-            <div className="group relative rounded-xl bg-gray-950 px-8 py-2 font-semibold text-white transition duration-200 hover:bg-transparent">
-              Come join us!
+            <div className="group relative rounded-xl bg-gray-950 px-8 py-2 text-3xl font-semibold text-white transition duration-200 hover:bg-transparent hover:text-black">
+              Join us!
             </div>
           </button>
         </div>
