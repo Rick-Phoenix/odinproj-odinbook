@@ -1,9 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import InsetScrollArea from "../../../components/dialogs/custom/inset-scrollarea";
-import ListingPreview from "../../../components/dialogs/custom/ListingPreview";
-import SaveListingButton from "../../../components/dialogs/custom/SaveListingButton";
+import ListingPreview from "../../../components/content-sections/ListingPreview";
+import SaveListingButton from "../../../components/custom-ui-blocks/buttons/SaveListingButton";
+import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import type { Listing } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/marketplace/savedListings")({
@@ -12,7 +12,9 @@ export const Route = createFileRoute("/_app/marketplace/savedListings")({
 
 function RouteComponent() {
   const queryClient = useQueryClient();
-  const [savedListings, setSavedListings] = useState(queryClient.getQueryData(["listingsSaved"]) as Listing[]);
+  const [savedListings, setSavedListings] = useState(
+    queryClient.getQueryData(["listingsSaved"]) as Listing[]
+  );
 
   return (
     <InsetScrollArea>
@@ -20,7 +22,9 @@ function RouteComponent() {
         {savedListings.length ? (
           savedListings.map((lis) => (
             <ListingPreview key={lis.id} listing={lis}>
-              <div onClick={() => setSavedListings(savedListings.filter((list) => list.id !== lis.id))}>
+              <div
+                onClick={() => setSavedListings(savedListings.filter((list) => list.id !== lis.id))}
+              >
                 <SaveListingButton listing={lis} inPreview={true} />
               </div>
             </ListingPreview>

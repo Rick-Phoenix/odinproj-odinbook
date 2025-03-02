@@ -1,9 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import DeleteListingButton from "../../../components/dialogs/custom/DeleteListingButton";
-import InsetScrollArea from "../../../components/dialogs/custom/inset-scrollarea";
-import ListingPreview from "../../../components/dialogs/custom/ListingPreview";
-import MarkAsSoldButton from "../../../components/dialogs/custom/MarkAsSoldButton";
+import ListingPreview from "../../../components/content-sections/ListingPreview";
+import DeleteListingButton from "../../../components/custom-ui-blocks/buttons/DeleteListingButton";
+import MarkAsSoldButton from "../../../components/custom-ui-blocks/buttons/MarkAsSoldButton";
+import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import type { Listing } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/marketplace/myListings")({

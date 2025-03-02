@@ -2,8 +2,8 @@ import { schemas } from "@nexus/shared-schemas";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
-import InsetScrollArea from "../../../../components/dialogs/custom/inset-scrollarea";
-import ListingPreview from "../../../../components/dialogs/custom/ListingPreview";
+import ListingPreview from "../../../../components/content-sections/ListingPreview";
+import InsetScrollArea from "../../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import { Button } from "../../../../components/ui/button";
 import { listingsByCategoryQueryOptions } from "../../../../lib/queries/queryOptions";
 

@@ -4,8 +4,8 @@ import { motion, useSpring, useTransform } from "motion/react";
 import { type FC, type MouseEvent, type MouseEventHandler } from "react";
 import { Autoplay, EffectCoverflow, Mousewheel, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import CreateListingDialog from "../../../components/dialogs/custom/CreateListingDialog";
-import InsetScrollArea from "../../../components/dialogs/custom/inset-scrollarea";
+import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
+import CreateListingDialog from "../../../components/dialogs/CreateListingDialog";
 import { api, type Listing, type ListingCategory } from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/marketplace/")({

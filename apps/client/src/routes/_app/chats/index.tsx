@@ -2,8 +2,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { SquarePen } from "lucide-react";
 import { type FC } from "react";
-import CreateChatDialog from "../../../components/dialogs/custom/CreateChatDialog";
-import InsetScrollArea from "../../../components/dialogs/custom/inset-scrollarea";
+import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
+import CreateChatDialog from "../../../components/dialogs/CreateChatDialog";
 import {
   AlertDialog,
   AlertDialogAction,

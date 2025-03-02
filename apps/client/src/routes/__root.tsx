@@ -3,8 +3,8 @@ import { createRootRouteWithContext, Link, Outlet, useLocation } from "@tanstack
 import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { TbSpaces } from "react-icons/tb";
 import type { User } from "../lib/api-client";
-import ErrorComponent from "../pages/ErrorComponent";
-import NotFoundComponent from "../pages/NotFoundComponent";
+import ErrorComponent from "../pages/ErrorPage";
+import NotFoundComponent from "../pages/NotFoundPage";
 
 interface RouterAppContext {
   queryClient: QueryClient;

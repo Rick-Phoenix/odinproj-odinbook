@@ -1,7 +1,7 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { format } from "date-fns";
 import type { FC } from "react";
-import InsetScrollArea from "../../../components/dialogs/custom/inset-scrollarea";
+import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Separator } from "../../../components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";

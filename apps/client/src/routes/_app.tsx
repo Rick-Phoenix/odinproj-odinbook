@@ -1,6 +1,6 @@
 import { userQueryOptions } from "@/lib/queries/queryOptions";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
-import SidebarWrapper from "../components/dialogs/custom/sidebar/sidebar-wrapper";
+import SidebarWrapper from "../components/custom-ui-blocks/sidebar/SidebarWrapper";
 
 export const Route = createFileRoute("/_app")({
   component: RouteComponent,

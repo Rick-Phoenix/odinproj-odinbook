@@ -4,9 +4,9 @@ import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { useEffect, useRef, useState, type FC } from "react";
 import { TbSpaces } from "react-icons/tb";
 import { z } from "zod";
-import ButtonGesture from "../../../../components/animations/gestures";
-import InsetScrollArea from "../../../../components/dialogs/custom/inset-scrollarea";
-import { PostPreview } from "../../../../components/dialogs/custom/post-preview";
+import ButtonGesture from "../../../../components/animations/ButtonGesture";
+import { PostPreview } from "../../../../components/content-sections/PostPreview";
+import InsetScrollArea from "../../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import { Avatar, AvatarImage } from "../../../../components/ui/avatar";
 import { Button } from "../../../../components/ui/button";
 import {
@@ -34,7 +34,7 @@ import {
 } from "../../../../lib/queries/caches";
 import { roomPostsQueryOptions, sortPosts } from "../../../../lib/queries/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../../utils/async-throttle";
-import { getTotalPosts } from "../../../../utils/extract-array";
+import { getTotalPosts } from "../../../../utils/get-total-posts";
 
 const searchInputs = z.object({
   orderBy: fallback(z.enum(["likesCount", "createdAt"]), "likesCount").default("likesCount"),

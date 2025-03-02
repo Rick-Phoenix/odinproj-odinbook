@@ -11,8 +11,8 @@ import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState, type FC } from "react";
 import { Autoplay, Mousewheel, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
-import InsetScrollArea from "../../../components/dialogs/custom/inset-scrollarea";
-import { PostPreview } from "../../../components/dialogs/custom/post-preview";
+import { PostPreview } from "../../../components/content-sections/PostPreview";
+import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import { Button } from "../../../components/ui/button";
 import { CardTitle } from "../../../components/ui/card";
 import { api, type InitialFeed, type PostBasic, type SortingOrder } from "../../../lib/api-client";
@@ -24,7 +24,7 @@ import {
 } from "../../../lib/queries/caches";
 import { sortPosts } from "../../../lib/queries/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../utils/async-throttle";
-import { getTotalPosts } from "../../../utils/extract-array";
+import { getTotalPosts } from "../../../utils/get-total-posts";
 
 export const Route = createFileRoute("/_app/rooms/")({
   component: RouteComponent,

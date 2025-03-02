@@ -5,7 +5,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Pencil } from "lucide-react";
 import { useRef } from "react";
 import { PiGithubLogoFill } from "react-icons/pi";
-import InsetScrollArea from "../../components/dialogs/custom/inset-scrollarea";
+import InsetScrollArea from "../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import {
   AlertDialog,
   AlertDialogAction,

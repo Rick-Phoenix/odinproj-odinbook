@@ -5,7 +5,7 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Send } from "lucide-react";
 import { type FC, useEffect, useRef } from "react";
-import StaticInset from "../../../components/dialogs/custom/static-inset";
+import StaticInset from "../../../components/custom-ui-blocks/inset-area/StaticInset";
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
