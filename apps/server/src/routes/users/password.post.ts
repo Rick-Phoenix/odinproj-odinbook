@@ -32,7 +32,7 @@ const errors = {
 
 export const modifyUserPassword = createRoute({
   path: "/password",
-  method: "patch",
+  method: "post",
   tags,
   request: {
     body: jsonContentRequired(updatePasswordSchema, "The data for the new password."),

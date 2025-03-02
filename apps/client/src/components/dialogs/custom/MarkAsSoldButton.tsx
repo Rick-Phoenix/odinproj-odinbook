@@ -22,8 +22,8 @@ const MarkAsSoldButton: FC<{
   const handleMarkAsSold = useMutation({
     mutationKey: ["listingCreated", listing.id],
     mutationFn: async () => {
-      const res = await api.market.listings.sold.$post({
-        json: { listingId: listing.id },
+      const res = await api.listings[":itemId"].sold.$patch({
+        param: { itemId: listing.id },
       });
       if (!res.ok) {
         throw new Error("Error while saving or removing this listing.");
@@ -32,7 +32,9 @@ const MarkAsSoldButton: FC<{
       return data;
     },
     onSuccess: () => {
-      queryClient.setQueryData(["listingsCreated"], (old: Listing[]) => old.filter((lis) => lis.id !== listing.id));
+      queryClient.setQueryData(["listingsCreated"], (old: Listing[]) =>
+        old.filter((lis) => lis.id !== listing.id)
+      );
       queryClient.setQueryData(["listing", listing.id], {
         ...listing,
         isSold: true,
@@ -58,7 +60,10 @@ const MarkAsSoldButton: FC<{
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction disabled={handleMarkAsSold.isPending} onClick={() => handleMarkAsSold.mutate()}>
+          <AlertDialogAction
+            disabled={handleMarkAsSold.isPending}
+            onClick={() => handleMarkAsSold.mutate()}
+          >
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>

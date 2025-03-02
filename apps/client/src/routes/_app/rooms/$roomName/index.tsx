@@ -322,7 +322,7 @@ const SubscribeButton: FC<{
     mutationKey: ["subscription", roomName],
     mutationFn: async () => {
       const action = !userIsSubscribed ? "add" : "remove";
-      const res = await api.rooms[":roomName"].subscribe.$post({
+      const res = await api.rooms[":roomName"].subscriptions.$patch({
         param: { roomName },
         query: { action },
       });

@@ -8,7 +8,7 @@ import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindi
 const tags = ["market"];
 
 export const saveListing = createRoute({
-  path: "/savedListings/{itemId}",
+  path: "/{itemId}/save",
   method: "patch",
   tags,
   request: {

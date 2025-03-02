@@ -1,7 +1,7 @@
 import { createRouter } from "../../lib/create-app";
 import type { AppBindingsWithUser } from "../../types/app-bindings";
 import { modifyUserProfile, modifyUserProfileHandler } from "./avatar.patch";
-import { modifyUserPassword, modifyUserPasswordHandler } from "./password.patch";
+import { modifyUserPassword, modifyUserPasswordHandler } from "./password.post";
 import { modifyUserStatus, modifyUserStatusHandler } from "./status.patch";
 import { deleteUser, deleteUserHandler } from "./user.delete";
 import { user, userHandler } from "./user.get";

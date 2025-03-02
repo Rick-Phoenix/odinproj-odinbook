@@ -4,7 +4,7 @@ import { createRoom, createRoomHandler } from "./#rooms-index.post";
 import { deleteRoom, deleteRoomHandler } from "./roomName.delete";
 import { getPosts, getPostsHandler } from "./roomName.posts.get";
 import { createPost, createPostHandler } from "./roomName.posts.post";
-import { subscribe, subscribeHandler } from "./roomName.subscription.patch";
+import { subscribe, subscribeHandler } from "./roomName.subscriptions.patch";
 
 export const roomsRouter = createRouter<AppBindingsWithUser>()
   .openapi(subscribe, subscribeHandler)

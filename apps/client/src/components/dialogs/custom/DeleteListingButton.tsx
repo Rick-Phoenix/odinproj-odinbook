@@ -27,8 +27,8 @@ const DeleteListingButton: FC<{
   const handleDeleteListing = useMutation({
     mutationKey: ["listingCreated", listing.id],
     mutationFn: async () => {
-      const res = await api.market.listings.delete.$post({
-        json: { listingId: listing.id },
+      const res = await api.listings[":itemId"].$delete({
+        param: { listingId: listing.id },
       });
       if (!res.ok) {
         throw new Error("Error while saving or removing this listing.");
@@ -37,7 +37,9 @@ const DeleteListingButton: FC<{
       return data;
     },
     onSuccess: () => {
-      queryClient.setQueryData(["listingsCreated"], (old: Listing[]) => old.filter((lis) => lis.id !== listing.id));
+      queryClient.setQueryData(["listingsCreated"], (old: Listing[]) =>
+        old.filter((lis) => lis.id !== listing.id)
+      );
       queryClient.setQueryData(["listing", listing.id], null);
       toast({ title: "Listing cancelled successfully.", duration: 2000 });
       navigate({ to: "/marketplace" });
@@ -62,7 +64,10 @@ const DeleteListingButton: FC<{
         </AlertDialogHeader>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
-          <AlertDialogAction disabled={handleDeleteListing.isPending} onClick={() => handleDeleteListing.mutate()}>
+          <AlertDialogAction
+            disabled={handleDeleteListing.isPending}
+            onClick={() => handleDeleteListing.mutate()}
+          >
             Continue
           </AlertDialogAction>
         </AlertDialogFooter>

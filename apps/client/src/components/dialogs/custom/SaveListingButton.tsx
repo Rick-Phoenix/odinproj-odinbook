@@ -4,13 +4,16 @@ import { PiStar, PiStarFill } from "react-icons/pi";
 import { api, type Listing } from "../../../lib/api-client";
 import { Button } from "../../ui/button";
 
-const SaveListingButton: FC<{ listing: Listing; inPreview?: boolean }> = ({ listing, inPreview }) => {
+const SaveListingButton: FC<{ listing: Listing; inPreview?: boolean }> = ({
+  listing,
+  inPreview,
+}) => {
   const [isSaved, setIsSaved] = useState(listing.isSaved);
   const queryClient = useQueryClient();
   const handleSaveListing = useMutation({
     mutationKey: ["savedListing", listing.id],
     mutationFn: async () => {
-      const res = await api.market.listings[":itemId"].save.$post({
+      const res = await api.listings[":itemId"].save.$patch({
         param: { itemId: listing.id },
         query: { action: isSaved ? "remove" : "add" },
       });
@@ -22,7 +25,9 @@ const SaveListingButton: FC<{ listing: Listing; inPreview?: boolean }> = ({ list
     },
     onSuccess: () => {
       queryClient.setQueryData(["listingsSaved"], (old: Listing[]) => {
-        return isSaved ? old.filter((lis) => lis.id !== listing.id) : [{ ...listing, isSaved: true }, ...old];
+        return isSaved
+          ? old.filter((lis) => lis.id !== listing.id)
+          : [{ ...listing, isSaved: true }, ...old];
       });
       queryClient.setQueryData(["listing"], { ...listing, isSaved: !isSaved });
       setIsSaved((old) => !old);

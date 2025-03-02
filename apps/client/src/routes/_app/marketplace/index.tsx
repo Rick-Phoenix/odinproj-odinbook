@@ -12,7 +12,7 @@ export const Route = createFileRoute("/_app/marketplace/")({
   component: RouteComponent,
   loader: async (c) => {
     const { favoriteListingsCategory } = c.context.user!;
-    const res = await api.market.listings.suggested.$get({
+    const res = await api.listings.suggested.$get({
       query: { category: favoriteListingsCategory || undefined },
     });
     const data = await res.json();

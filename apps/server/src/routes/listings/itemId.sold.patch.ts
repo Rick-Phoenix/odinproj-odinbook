@@ -9,16 +9,16 @@ import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindi
 
 const tags = ["listings"];
 
+const inputs = { params: z.object({ itemId: z.number() }) };
+
 export const markListingAsSold = createRoute({
   path: "/{itemId}/sold",
   method: "patch",
   tags,
-  request: {
-    body: jsonContent(z.object({ listingId: z.number() }), "The listing id."),
-  },
+  request: inputs,
   responses: {
     [OK]: jsonContent(z.string(), "A confirmation message."),
-    [UNPROCESSABLE_ENTITY]: inputErrorResponse(z.object({ listingId: z.number() })),
+    [UNPROCESSABLE_ENTITY]: inputErrorResponse(inputs.params),
     [INTERNAL_SERVER_ERROR]: internalServerError.template,
   },
 });
@@ -28,7 +28,7 @@ export const markListingAsSoldHandler: AppRouteHandler<
   AppBindingsWithUser
 > = async (c) => {
   const userId = getUserId(c);
-  const { listingId } = c.req.valid("json");
-  await updateListing(userId, listingId);
+  const { itemId } = c.req.valid("param");
+  await updateListing(userId, itemId);
   return c.json("OK", OK);
 };

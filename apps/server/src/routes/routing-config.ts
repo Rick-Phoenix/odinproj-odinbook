@@ -7,8 +7,8 @@ import { authRouter } from "./auth/__auth-router";
 import { chatRouter } from "./chats/__chats-router";
 import { listingsRouter } from "./listings/__listings-router";
 import { postsRouter } from "./posts/__posts-router";
-import { roomsRouter } from "./rooms/__rooms-router.ts";
-import { userRouter } from "./users/__users-router.ts";
+import { roomsRouter } from "./rooms/__rooms-router";
+import { userRouter } from "./users/__users-router";
 
 const app = createRouter();
 

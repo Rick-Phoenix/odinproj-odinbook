@@ -139,7 +139,7 @@ const PasswordEdit = () => {
       newPassword: string;
       passConfirm: string;
     }) => {
-      const res = await api.users.edit.password.$post({
+      const res = await api.users.password.$post({
         json: { ...value },
       });
       const resData = await res.json();
@@ -278,7 +278,7 @@ const StatusEdit = () => {
   const handleStatusUpdate = useMutation({
     mutationKey: ["userStatus"],
     mutationFn: async (value: { status: string }) => {
-      const res = await api.users.edit.status.$post({
+      const res = await api.users.status.$patch({
         json: { status: value.status },
       });
       const resData = await res.json();
@@ -391,7 +391,7 @@ const ProfilePictureEdit = () => {
   const handleAvatarUpdate = useMutation({
     mutationKey: ["userAvatar"],
     mutationFn: async (value: { avatar: File }) => {
-      const res = await api.users.edit.avatar.$post({
+      const res = await api.users.avatar.$patch({
         form: {
           avatar: value.avatar,
         },

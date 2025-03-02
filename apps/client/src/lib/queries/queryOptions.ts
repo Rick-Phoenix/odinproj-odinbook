@@ -72,7 +72,7 @@ export const listingQueryOptions = (itemId: number) => {
   return queryOptions({
     queryKey: ["listing", itemId],
     queryFn: async () => {
-      const res = await api.market.listings.listing[":itemId"].$get({
+      const res = await api.listings[":itemId"].$get({
         param: { itemId },
       });
       const data = await res.json();
@@ -91,7 +91,7 @@ export const listingsByCategoryQueryOptions = (
   return queryOptions({
     queryKey: ["listings", category],
     queryFn: async () => {
-      const res = await api.market.listings.$get({
+      const res = await api.listings.$get({
         query: { category, orderBy },
       });
       const data = await res.json();

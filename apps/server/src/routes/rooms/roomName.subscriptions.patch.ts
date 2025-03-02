@@ -18,7 +18,7 @@ const inputs = {
 };
 
 export const subscribe = createRoute({
-  path: "/{roomName}/subscription",
+  path: "/{roomName}/subscriptions",
   method: "patch",
   tags,
   request: inputs,

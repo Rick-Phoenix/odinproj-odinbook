@@ -57,7 +57,7 @@ const CreateListingDialog = () => {
             type: pic.type,
           })
         : null;
-      const res = await api.market.listings.$post({
+      const res = await api.listings.$post({
         form: {
           ...inputs,
           ...(file && { pic: file }),
@@ -90,8 +90,8 @@ const CreateListingDialog = () => {
           <DialogTitle>Create a new listing</DialogTitle>
         </DialogHeader>
         <DialogDescription>
-          Insert the details for your listing. A well defined photo and detailed description will help you to sell your
-          item faster.
+          Insert the details for your listing. A well defined photo and detailed description will
+          help you to sell your item faster.
         </DialogDescription>
         <form
           onSubmit={(e) => {
@@ -179,7 +179,9 @@ const CreateListingDialog = () => {
                         <Select
                           name={field.name}
                           value={field.state.value}
-                          onValueChange={(e) => field.handleChange(e as (typeof schemas.marketplaceCategories)[number])}
+                          onValueChange={(e) =>
+                            field.handleChange(e as (typeof schemas.marketplaceCategories)[number])
+                          }
                           required
                         >
                           <SelectTrigger>
@@ -209,7 +211,9 @@ const CreateListingDialog = () => {
                         <Select
                           name={field.name}
                           value={field.state.value}
-                          onValueChange={(e) => field.handleChange(e as (typeof schemas.itemConditions)[number])}
+                          onValueChange={(e) =>
+                            field.handleChange(e as (typeof schemas.itemConditions)[number])
+                          }
                           required
                         >
                           <SelectTrigger>
@@ -273,7 +277,12 @@ const CreateListingDialog = () => {
               ></form.Field>
             </div>
             <form.Subscribe
-              selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched, state.isSubmitted]}
+              selector={(state) => [
+                state.canSubmit,
+                state.isSubmitting,
+                state.isTouched,
+                state.isSubmitted,
+              ]}
               children={([canSubmit, isSubmitting, isTouched, isSubmitted]) => {
                 return (
                   <DialogFooter>

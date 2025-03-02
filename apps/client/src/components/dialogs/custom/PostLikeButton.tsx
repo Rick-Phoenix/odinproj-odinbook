@@ -19,7 +19,7 @@ const PostLikeButton: FC<{
     mutationKey: ["postLike", postId],
     mutationFn: async () => {
       const action = !isLiked ? "add" : "remove";
-      const res = await api.posts[":postId"].like.$post({
+      const res = await api.posts[":postId"].likes.$patch({
         param: { postId },
         query: { action },
       });
