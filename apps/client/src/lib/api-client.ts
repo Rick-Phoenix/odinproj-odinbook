@@ -56,7 +56,6 @@ export const api = RPC("/api");
 export const wsRPC = RPC("ws://localhost:5173/");
 
 export {
-  chatSchema,
   insertCommentSchema,
   insertListingSchema,
   insertMessageSchema,
@@ -66,9 +65,7 @@ export {
   itemConditions,
   loginValidationSchema,
   marketplaceCategories,
-  messagesSchema,
   roomCategoriesArray,
   updatePasswordSchema,
   updateStatusSchema,
-  userDataSchema,
 };

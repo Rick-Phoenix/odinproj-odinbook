@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { title } from "radashi";
-import { useActivePage } from "../../../hooks/use-active-page";
+import { useActivePage } from "../../../hooks/useActivePage";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -29,7 +29,9 @@ export default function InsetHeader() {
                       <BreadcrumbPage>{title(mainSection)}</BreadcrumbPage>
                     </Link>
                   ) : (
-                    <Link to={mainSection === "users" ? "." : mainSection}>{title(mainSection)}</Link>
+                    <Link to={mainSection === "users" ? "." : mainSection}>
+                      {title(mainSection)}
+                    </Link>
                   ))}
               </BreadcrumbLink>
             </BreadcrumbItem>

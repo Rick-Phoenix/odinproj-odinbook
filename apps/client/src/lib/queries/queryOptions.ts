@@ -1,7 +1,7 @@
 import { queryOptions } from "@tanstack/react-query";
 import { api, type ListingCategory, type PostBasic } from "../api-client";
 import { cachePost } from "./caches";
-import { cacheChats } from "./chatQueries";
+import { cacheChat } from "./chatQueries";
 import { queryClient } from "./queryClient";
 
 // USER
@@ -25,7 +25,7 @@ export const userQueryOptions = {
       ...userData
     } = data;
 
-    cacheChats(ownChats);
+    ownChats.forEach(cacheChat);
 
     const initialFeedTrending = posts[19].likesCount === 0 ? posts : posts.slice(0, 20);
 

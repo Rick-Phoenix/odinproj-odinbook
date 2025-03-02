@@ -8,20 +8,20 @@ import tsconfigPaths from "vite-tsconfig-paths";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
+    TanStackRouterVite({ autoCodeSplitting: true }),
     react({
       babel: {
         plugins: [["babel-plugin-react-compiler"]],
       },
     }),
     tsconfigPaths({ root: import.meta.dirname }),
-    TanStackRouterVite(),
     checker({ typescript: { tsconfigPath: "./tsconfig.json" } }),
     visualizer({
       open: true,
       template: "treemap",
       brotliSize: true,
       gzipSize: true,
-      projectRoot: ".",
+      projectRoot: "/home/rick/nexus/apps/client",
     }),
   ],
   build: {

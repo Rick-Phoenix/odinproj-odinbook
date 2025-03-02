@@ -6,9 +6,9 @@ export interface ThrottledFunction {
 function throttleAsync(
   fn: (...args: any[]) => any,
   delay: number,
-  leading: boolean,
+  leading: boolean
 ): ThrottledFunction {
-  let timeoutId: number;
+  let timeoutId: NodeJS.Timeout;
   const accumulator: (() => void)[] = [];
   let isLeading = leading;
 

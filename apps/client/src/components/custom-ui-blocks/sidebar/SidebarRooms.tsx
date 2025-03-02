@@ -4,7 +4,7 @@ import { Link, useParams } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { type FC } from "react";
 import { useUser } from "../../../hooks/auth";
-import { useActivePage } from "../../../hooks/use-active-page";
+import { useActivePage } from "../../../hooks/useActivePage";
 import { type Room } from "../../../lib/api-client";
 import CreatePostDialog from "../../dialogs/CreatePostDialog";
 import CreateRoomDialog from "../../dialogs/CreateRoomDialog";

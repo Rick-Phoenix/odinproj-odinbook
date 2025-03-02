@@ -21,8 +21,8 @@ import {
   ContextMenuItem,
   ContextMenuTrigger,
 } from "../../../components/ui/context-menu";
-import { useToast } from "../../../hooks/use-toast";
 import { useChats } from "../../../hooks/useChats";
+import { useToast } from "../../../hooks/useToast";
 import { useUnreadMessages } from "../../../hooks/useUnreadMessages";
 import { api, type Chat, type Message } from "../../../lib/api-client";
 import { chatsQueryOptions } from "../../../lib/queries/chatQueries";

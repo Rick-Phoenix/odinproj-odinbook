@@ -172,7 +172,7 @@ function Type({
 
   useEffect(() => {
     // eslint-disable-next-line prefer-const
-    let interval: number;
+    let interval: NodeJS.Timeout;
 
     const startTyping = () => {
       setIndex((prevDir) => {
@@ -190,7 +190,7 @@ function Type({
   }, [total, direction, delay]);
 
   useEffect(() => {
-    let timeout: number;
+    let timeout: NodeJS.Timeout;
 
     if (index >= total && repeat) {
       timeout = setTimeout(() => {

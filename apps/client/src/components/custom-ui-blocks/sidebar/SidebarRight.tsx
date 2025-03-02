@@ -1,7 +1,7 @@
 import { Sidebar, SidebarContent, SidebarHeader, SidebarSeparator } from "@/components/ui/sidebar";
 import { title } from "radashi";
 import * as React from "react";
-import { useActivePage } from "../../../hooks/use-active-page";
+import { useActivePage } from "../../../hooks/useActivePage";
 import { ScrollArea } from "../../ui/scroll-area";
 import ChatsSidebarContent from "./SidebarChats";
 import MarketplaceSidebarContent from "./SidebarMarketplace";

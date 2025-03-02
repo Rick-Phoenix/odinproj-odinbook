@@ -21,7 +21,7 @@ import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import { SidebarMenuSubButton } from "../ui/sidebar";
 
-export const CreatePostSidebarDialog = () => {
+const CreatePostSidebarDialog = () => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const subs = queryClient.getQueryData(["roomSubs"]) as string[] | undefined;

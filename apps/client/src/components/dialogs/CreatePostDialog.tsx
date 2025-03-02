@@ -19,7 +19,7 @@ import {
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-export const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
+const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
   const [open, setOpen] = useState(false);
   const queryClient = useQueryClient();
   const navigate = useNavigate();

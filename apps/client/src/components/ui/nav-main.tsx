@@ -17,7 +17,7 @@ import { Link } from "@tanstack/react-router";
 import { ChevronRight, MessagesSquare, type LucideIcon } from "lucide-react";
 import { title } from "radashi";
 import type { FC, JSX } from "react";
-import { useActivePage } from "../../hooks/use-active-page";
+import { useActivePage } from "../../hooks/useActivePage";
 
 export function NavMain({
   items,

@@ -2,11 +2,11 @@ import type { Post, PostBasic, PostFull } from "../api-client";
 import { queryClient } from "./queryClient";
 import { sortPosts } from "./queryOptions";
 
-export const postsTimeSlotsMap = new Map<string, Map<string, Set<number>>>();
-export const postsLikesSlotsMap = new Map<string, Map<number, Set<number>>>();
+const postsTimeSlotsMap = new Map<string, Map<string, Set<number>>>();
+const postsLikesSlotsMap = new Map<string, Map<number, Set<number>>>();
 
-export const feedTimeSlotsMap = new Map<string, Set<number>>();
-export const feedLikesSlotsMap = new Map<number, Set<number>>();
+const feedTimeSlotsMap = new Map<string, Set<number>>();
+const feedLikesSlotsMap = new Map<number, Set<number>>();
 
 function storeIdInCache<T extends number | string>(
   cache: Map<string, Map<T, Set<number>>>,
@@ -17,7 +17,9 @@ function storeIdInCache<T extends number | string>(
   if (!cache.get(room)) cache.set(room, new Map());
   const innerCache = cache.get(room);
   const slot =
-    typeof slotValue === "string" ? getPostTimeSlot(slotValue) : (Math.floor((slotValue as number) / 10) as T);
+    typeof slotValue === "string"
+      ? getPostTimeSlot(slotValue)
+      : (Math.floor((slotValue as number) / 10) as T);
   if (!innerCache?.has(slot as T)) innerCache?.set(slot as T, new Set([id]));
   else {
     const slotValues = innerCache.get(slot as T);
@@ -39,7 +41,8 @@ function storeIdInFeedCache(timeValue: string, likesValue: number, id: number) {
 }
 
 export function cachePost(post: PostBasic | PostFull) {
-  const room = typeof post.room === "string" ? post.room.toLowerCase() : post.room.name.toLowerCase();
+  const room =
+    typeof post.room === "string" ? post.room.toLowerCase() : post.room.name.toLowerCase();
   const isFullPost = typeof post.room !== "string";
   storeIdInCache(postsTimeSlotsMap, post.createdAt, room, post.id);
   storeIdInCache(postsLikesSlotsMap, post.likesCount, room, post.id);
@@ -70,7 +73,12 @@ export function getNextPostsByLikes(
   return posts;
 }
 
-function getCachedPostsInLikesSlot(likesSlot: number, cursorTime: string, roomName: string, fromFeed?: boolean) {
+function getCachedPostsInLikesSlot(
+  likesSlot: number,
+  cursorTime: string,
+  roomName: string,
+  fromFeed?: boolean
+) {
   const posts = [] as PostBasic[];
   const room = roomName.toLowerCase();
   let nextSlotIds: Set<number> | undefined;
@@ -102,7 +110,10 @@ function getNextTimeSlot(cursorTime: string, offset: number = 1) {
 }
 
 export function getNextPostsByTime(
-  opts: { cursorTime: string } & ({ room: string; fromFeed?: never } | { fromFeed: true; room?: never })
+  opts: { cursorTime: string } & (
+    | { room: string; fromFeed?: never }
+    | { fromFeed: true; room?: never }
+  )
 ) {
   const nextPosts = [] as PostBasic[];
   for (let i = 1; i <= 24; i++) {

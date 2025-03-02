@@ -2,13 +2,6 @@ import { queryOptions, type MutationOptions } from "@tanstack/react-query";
 import { api, wsRPC, type Chat, type Message } from "../api-client";
 import { queryClient } from "./queryClient";
 
-export function cacheChats(chats: Chat[]) {
-  queryClient.setQueryDefaults(["chats"], { queryFn: chatsQueryOptions.queryFn });
-  for (const chat of chats) {
-    cacheChat(chat);
-  }
-}
-
 export const chatsQueryOptions = {
   queryKey: ["chats"],
   queryFn: async () => {
@@ -65,8 +58,14 @@ export const chatMutationOptions = (
 });
 
 const markAsUnread = (chatId: number) =>
-  queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) => (old ? [...old, chatId] : [chatId]));
-function markUnreadMessages(chatId: number, lastMessage: Message | undefined, lastRead: string | null) {
+  queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) =>
+    old ? [...old, chatId] : [chatId]
+  );
+function markUnreadMessages(
+  chatId: number,
+  lastMessage: Message | undefined,
+  lastRead: string | null
+) {
   if (!lastMessage) return;
   if (lastRead) {
     const lastReadTime = new Date(lastRead);
@@ -112,6 +111,8 @@ chatWebSocket.addEventListener("message", async (e) => {
 
   const [, section, currentChatId] = location.pathname.split("/");
   if (section.toLowerCase() !== "chats" || +currentChatId !== chatId) {
-    queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) => (old ? [...old, chatId] : [chatId]));
+    queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) =>
+      old ? [...old, chatId] : [chatId]
+    );
   }
 });
