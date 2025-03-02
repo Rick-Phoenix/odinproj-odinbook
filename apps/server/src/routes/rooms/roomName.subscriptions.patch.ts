@@ -46,12 +46,12 @@ export const subscribeHandler: AppRouteHandler<typeof subscribe, AppBindingsWith
   return c.json(okResponse.content, OK);
 };
 
-export async function addSubscription(userId: string, room: string) {
+async function addSubscription(userId: string, room: string) {
   const query = await db.insert(subs).values({ userId, room }).onConflictDoNothing();
   return query.rowCount;
 }
 
-export async function removeSubscription(userId: string, room: string) {
+async function removeSubscription(userId: string, room: string) {
   const query = await db.delete(subs).where(and(eq(subs.room, room), eq(subs.userId, userId)));
   return query.rowCount;
 }

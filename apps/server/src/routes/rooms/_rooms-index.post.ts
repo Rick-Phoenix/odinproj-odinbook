@@ -5,7 +5,8 @@ import { encodeBase64 } from "@oslojs/encoding";
 import { v2 as cloudinary } from "cloudinary";
 import { CONFLICT, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
-import { insertRoom } from "../../db/queries";
+import db from "../../db/db-config";
+import { type RoomCategories, rooms } from "../../db/schema";
 import { customError } from "../../schemas/response-schemas";
 import { insertRoomSchema, roomSchema } from "../../schemas/zod-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
@@ -61,3 +62,12 @@ export const createRoomHandler: AppRouteHandler<typeof createRoom, AppBindingsWi
   if (room === undefined) return c.json(roomExistsError.content, CONFLICT);
   return c.json({ ...room, isSubscribed: true }, OK);
 };
+
+async function insertRoom(userId: string, name: string, category: RoomCategories, avatar?: string) {
+  const [room] = await db
+    .insert(rooms)
+    .values({ creatorId: userId, name, category, avatar })
+    .onConflictDoNothing()
+    .returning();
+  return room as typeof room | undefined;
+}

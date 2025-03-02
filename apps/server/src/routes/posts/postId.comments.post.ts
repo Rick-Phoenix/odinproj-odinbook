@@ -43,7 +43,7 @@ export const commentReplyHandler: AppRouteHandler<
   return c.json(withAuthor, OK);
 };
 
-export async function insertComment(
+async function insertComment(
   userId: string,
   postId: number,
   text: string,

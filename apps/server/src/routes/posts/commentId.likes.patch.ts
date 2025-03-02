@@ -46,12 +46,12 @@ export const registerCommentLikeHandler: AppRouteHandler<
   return c.json(okResponse.content, OK);
 };
 
-export async function insertCommentLike(userId: string, commentId: number) {
+async function insertCommentLike(userId: string, commentId: number) {
   const query = await db.insert(commentLikes).values({ userId, commentId });
   return query.rowCount;
 }
 
-export async function removeCommentLike(userId: string, commentId: number) {
+async function removeCommentLike(userId: string, commentId: number) {
   const query = await db
     .delete(commentLikes)
     .where(and(eq(commentLikes.userId, userId), eq(commentLikes.commentId, commentId)));

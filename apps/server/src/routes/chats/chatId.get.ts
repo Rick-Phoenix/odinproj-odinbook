@@ -1,8 +1,9 @@
 import { inputErrorResponse, notFoundError, numberParamSchema } from "@/schemas/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
+import { asc, gte, sql } from "drizzle-orm";
 import { NOT_FOUND, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
-import { getSingleChat } from "../../db/queries";
+import db from "../../db/db-config";
 import { chatSchema } from "../../schemas/zod-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
 
@@ -33,3 +34,41 @@ export const getChatHandler: AppRouteHandler<typeof getChat, AppBindingsWithUser
   if (!chat) return c.json(notFoundError.content, NOT_FOUND);
   return c.json(chat, OK);
 };
+
+async function getSingleChat(userId: string, chatId: number) {
+  const chat = await db.query.chatInstances.findFirst({
+    where(chat, { eq, and }) {
+      return and(eq(chat.ownerId, userId), eq(chat.chatId, chatId), eq(chat.isDeleted, false));
+    },
+    with: {
+      contact: { columns: { username: true, avatarUrl: true, id: true } },
+      chat: {
+        with: {
+          messages: {
+            where: (f) =>
+              gte(
+                f.id,
+                sql<number>`
+                  (
+                    SELECT
+                      "firstMessageId"
+                    FROM
+                      "chatInstances"
+                    WHERE
+                      "chatInstances"."chatId" = ${f.chatId}
+                      AND "chatInstances"."ownerId" = ${userId}
+                  )
+                `
+              ),
+            orderBy: (f) => asc(f.createdAt),
+          },
+        },
+      },
+    },
+    columns: { lastRead: true },
+  });
+
+  if (chat) return { contact: chat.contact, ...chat.chat, lastRead: chat.lastRead };
+
+  return chat;
+}

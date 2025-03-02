@@ -46,7 +46,7 @@ export const getPostsHandler: AppRouteHandler<typeof getPosts, AppBindingsWithUs
   return c.json(posts, OK);
 };
 
-export async function fetchRoomPosts(
+async function fetchRoomPosts(
   userId: string,
   roomName: string,
   orderBy: "likesCount" | "createdAt" = "likesCount",

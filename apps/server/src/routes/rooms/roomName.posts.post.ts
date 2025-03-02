@@ -39,7 +39,7 @@ export const createPostHandler: AppRouteHandler<typeof createPost, AppBindingsWi
   return c.json(post, OK);
 };
 
-export async function insertPost(
+async function insertPost(
   authorId: string,
   authorUsername: string,
   room: string,

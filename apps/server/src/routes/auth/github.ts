@@ -14,7 +14,6 @@ import {
   UNPROCESSABLE_ENTITY,
 } from "stoker/http-status-codes";
 import db from "../../db/db-config";
-import { findUserByOauthCredentials } from "../../db/queries";
 import { users } from "../../db/schema";
 import { createSession } from "../../lib/auth";
 import type { AppRouteHandler } from "../../types/app-bindings";
@@ -142,3 +141,11 @@ export const githubCallbackHandler: AppRouteHandler<typeof githubCallback> = asy
   await createSession(c, user.id);
   return c.redirect("/");
 };
+
+export async function findUserByOauthCredentials(provider: string, id: number) {
+  return await db.query.users.findFirst({
+    where(user, { eq, and }) {
+      return and(eq(user.oauthProvider, provider), eq(user.oauthId, id));
+    },
+  });
+}

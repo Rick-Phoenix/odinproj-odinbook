@@ -14,7 +14,7 @@ import {
 } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import db from "../../db/db-config";
-import { emailIsNotAvailable, usernameIsNotAvailable } from "../../db/queries";
+import { lowercase } from "../../db/db-methods";
 import { users } from "../../db/schema";
 import { createSession } from "../../lib/auth";
 import { customError } from "../../schemas/response-schemas";
@@ -79,3 +79,20 @@ export const signupHandler: AppRouteHandler<typeof signup> = async (c) => {
   await createSession(c, userId);
   return c.json(registeredUser, CREATED);
 };
+
+export async function emailIsNotAvailable(email: string): Promise<boolean> {
+  const result = await db.query.users.findFirst({
+    where: (existingUser, { eq }) => eq(existingUser.email, email),
+  });
+
+  return result !== undefined;
+}
+
+export async function usernameIsNotAvailable(username: string): Promise<boolean> {
+  const result = await db.query.users.findFirst({
+    where: (existingUser, { eq }) =>
+      eq(lowercase(existingUser.username), username.toLocaleLowerCase()),
+  });
+
+  return result !== undefined;
+}

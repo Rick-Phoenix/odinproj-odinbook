@@ -1,10 +1,10 @@
 import { getUserId } from "@/lib/auth";
 import { inputErrorResponse, numberParamSchema } from "@/schemas/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
+import { and, eq } from "drizzle-orm";
 import { INTERNAL_SERVER_ERROR, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import db from "../../db/db-config";
-import { removePostLike } from "../../db/queries";
 import { postLikes } from "../../db/schema";
 import { internalServerError } from "../../schemas/response-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
@@ -47,7 +47,13 @@ export const registerLikeHandler: AppRouteHandler<
   return c.json("OK", OK);
 };
 
-export async function insertPostLike(userId: string, postId: number) {
+async function insertPostLike(userId: string, postId: number) {
   const query = await db.insert(postLikes).values({ userId, postId });
   return query.rowCount;
+}
+
+async function removePostLike(userId: string, postId: number) {
+  return await db
+    .delete(postLikes)
+    .where(and(eq(postLikes.userId, userId), eq(postLikes.postId, postId)));
 }

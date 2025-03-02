@@ -1,8 +1,10 @@
 import { getUserId } from "@/lib/auth";
 import { createRoute, z } from "@hono/zod-openapi";
+import { eq } from "drizzle-orm";
 import { INTERNAL_SERVER_ERROR, OK } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import { updateUserStatus } from "../../db/queries";
+import db from "../../db/db-config";
+import { users } from "../../db/schema";
 import { internalServerError } from "../../schemas/response-schemas";
 import { updateStatusSchema } from "../../schemas/zod-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
@@ -32,3 +34,12 @@ export const modifyUserStatusHandler: AppRouteHandler<
   if (!newStatus) return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
   return c.json({ newStatus }, OK);
 };
+
+async function updateUserStatus(userId: string, status: string) {
+  const [newStatus] = await db
+    .update(users)
+    .set({ status })
+    .where(eq(users.id, userId))
+    .returning({ newStatus: users.status });
+  return newStatus;
+}

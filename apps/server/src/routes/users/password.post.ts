@@ -1,6 +1,7 @@
-import { verifyPasswordHash } from "@/lib/auth";
+import { hashPassword, verifyPasswordHash } from "@/lib/auth";
 import { inputErrorResponse, okResponse } from "@/schemas/response-schemas";
 import { createRoute } from "@hono/zod-openapi";
+import { and, eq, ne } from "drizzle-orm";
 import {
   BAD_REQUEST,
   FORBIDDEN,
@@ -9,7 +10,8 @@ import {
   UNPROCESSABLE_ENTITY,
 } from "stoker/http-status-codes";
 import { jsonContentRequired } from "stoker/openapi/helpers";
-import { updateUserPassword } from "../../db/queries";
+import db from "../../db/db-config";
+import { sessions, users } from "../../db/schema";
 import { customError, internalServerError } from "../../schemas/response-schemas";
 import { updatePasswordSchema } from "../../schemas/zod-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
@@ -60,3 +62,15 @@ export const modifyUserPasswordHandler: AppRouteHandler<
   if (!passwordChange) return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
   return c.json(okResponse.content, OK);
 };
+
+async function updateUserPassword(userId: string, sessionId: string, password: string) {
+  const hash = await hashPassword(password);
+  const [{ newHash }] = await db
+    .update(users)
+    .set({ hash })
+    .where(eq(users.id, userId))
+    .returning({ newHash: users.hash });
+  if (!newHash) return false;
+  await db.delete(sessions).where(and(eq(sessions.userId, userId), ne(sessions.id, sessionId)));
+  return true;
+}

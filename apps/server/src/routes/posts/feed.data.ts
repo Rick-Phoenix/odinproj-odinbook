@@ -39,7 +39,7 @@ export const getFeedHandler: AppRouteHandler<typeof getFeed, AppBindingsWithUser
   return c.json(posts, OK);
 };
 
-export async function fetchFeed(
+async function fetchFeed(
   userId: string,
   cursorLikes: number,
   cursorTime: string,
