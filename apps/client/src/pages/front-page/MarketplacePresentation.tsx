@@ -1,7 +1,7 @@
 import { init } from "aos";
 import { useEffect } from "react";
-import Stack from "../animations/CardStack";
-import GradientText from "../animations/TextGradient";
+import Stack from "../../components/animations/CardStack";
+import GradientText from "../../components/animations/TextGradient";
 
 export default function MarketplacePresentation() {
   useEffect(() => {

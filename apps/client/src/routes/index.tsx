@@ -4,12 +4,12 @@ import { init } from "aos";
 import "aos/dist/aos.css";
 import { useEffect } from "react";
 import GradientText from "../components/animations/TextGradient";
-import FeaturesAnimatedBeams from "../components/front-page/FeaturesCircles";
-import FrontPageFooter from "../components/front-page/FrontPageFooter";
-import MainHero from "../components/front-page/MainHero";
-import MarketplacePresentation from "../components/front-page/MarketplacePresentation";
-import { MockChat } from "../components/front-page/MockChat";
-import RoomsPresentation from "../components/front-page/RoomsPresentation";
+import FeaturesAnimatedBeams from "../pages/front-page/FeaturesCircles";
+import FrontPageFooter from "../pages/front-page/FrontPageFooter";
+import MainHero from "../pages/front-page/MainHero";
+import MarketplacePresentation from "../pages/front-page/MarketplacePresentation";
+import { MockChat } from "../pages/front-page/MockChat";
+import RoomsPresentation from "../pages/front-page/RoomsPresentation";
 
 export const Route = createFileRoute("/")({
   beforeLoad: async ({ context }) => {

@@ -1,9 +1,15 @@
-import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { HandCoins } from "lucide-react";
-import { api, type Listing, type ListingInputs } from "../../lib/api-client";
+import {
+  api,
+  insertListingSchema,
+  itemConditions,
+  marketplaceCategories,
+  type Listing,
+  type ListingInputs,
+} from "../../lib/api-client";
 import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
 import { Button } from "../ui/button";
@@ -35,7 +41,7 @@ const CreateListingDialog = () => {
       condition: "New",
     },
     validators: {
-      onSubmit: schemas.insertListingSchema,
+      onSubmit: insertListingSchema,
       onSubmitAsync: async ({ value }) => {
         try {
           await handleCreateListing.mutateAsync(value);
@@ -180,7 +186,7 @@ const CreateListingDialog = () => {
                           name={field.name}
                           value={field.state.value}
                           onValueChange={(e) =>
-                            field.handleChange(e as (typeof schemas.marketplaceCategories)[number])
+                            field.handleChange(e as (typeof marketplaceCategories)[number])
                           }
                           required
                         >
@@ -188,7 +194,7 @@ const CreateListingDialog = () => {
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                           <SelectContent>
-                            {schemas.marketplaceCategories.map((cat, i) => (
+                            {marketplaceCategories.map((cat, i) => (
                               <SelectItem key={i} value={cat} className="cursor-pointer">
                                 {cat}
                               </SelectItem>
@@ -212,7 +218,7 @@ const CreateListingDialog = () => {
                           name={field.name}
                           value={field.state.value}
                           onValueChange={(e) =>
-                            field.handleChange(e as (typeof schemas.itemConditions)[number])
+                            field.handleChange(e as (typeof itemConditions)[number])
                           }
                           required
                         >
@@ -220,7 +226,7 @@ const CreateListingDialog = () => {
                             <SelectValue placeholder="Select a category" />
                           </SelectTrigger>
                           <SelectContent>
-                            {schemas.itemConditions.map((cond, i) => (
+                            {itemConditions.map((cond, i) => (
                               <SelectItem key={i} value={cond}>
                                 {cond}
                               </SelectItem>

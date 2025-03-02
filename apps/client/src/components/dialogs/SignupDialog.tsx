@@ -1,10 +1,9 @@
-import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { PiGithubLogoFill } from "react-icons/pi";
 import { handleGithubLogin } from "../../hooks/auth";
-import { api } from "../../lib/api-client";
+import { api, insertUserSchema } from "../../lib/api-client";
 import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
 import { Button } from "../ui/button";
@@ -21,7 +20,7 @@ function SignupDialog() {
       email: "",
     },
     validators: {
-      onSubmit: schemas.insertUserSchema,
+      onSubmit: insertUserSchema,
       onSubmitAsync: async ({ value }) => {
         try {
           await handleSignup.mutateAsync(value);

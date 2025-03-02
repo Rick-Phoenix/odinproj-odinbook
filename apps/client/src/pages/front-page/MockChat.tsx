@@ -1,6 +1,6 @@
 import { motion, useMotionValueEvent, useScroll } from "motion/react";
 import { useRef, useState } from "react";
-import GradientText from "../animations/TextGradient";
+import GradientText from "../../components/animations/TextGradient";
 
 export const MockChat = ({ messages }: { messages: string[] }) => {
   const containerRef = useRef<HTMLDivElement>(null);

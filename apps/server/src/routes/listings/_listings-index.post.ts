@@ -3,11 +3,14 @@ import { inputErrorResponse } from "@/schemas/response-schemas";
 import { createRoute } from "@hono/zod-openapi";
 import { encodeBase64 } from "@oslojs/encoding";
 import { v2 as cloudinary } from "cloudinary";
+import { eq, sql } from "drizzle-orm";
 import { INTERNAL_SERVER_ERROR, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
-import { insertListing } from "../../db/queries";
+import db from "../../db/db-config";
+import { withCTEColumns } from "../../db/db-methods";
+import { listings, users } from "../../db/schema";
 import { internalServerError } from "../../schemas/response-schemas";
-import { insertListingSchema, listingSchema } from "../../schemas/zod-schemas";
+import { insertListingSchema, listingSchema, type ListingInputs } from "../../schemas/zod-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
 
 const tags = ["listings"];
@@ -60,3 +63,19 @@ export const createListingHandler: AppRouteHandler<
   if (!listing) return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
   return c.json(listing, OK);
 };
+
+async function insertListing(inputs: { sellerId: string } & ListingInputs) {
+  const insertQuery = db
+    .$with("inserted_listing")
+    .as(db.insert(listings).values(inputs).returning());
+  const [listing] = await db
+    .with(insertQuery)
+    .select({
+      ...withCTEColumns(listings, insertQuery),
+      seller: users.username,
+      isSaved: sql<boolean>`${false}`,
+    })
+    .from(insertQuery)
+    .innerJoin(users, eq(users.id, insertQuery.sellerId));
+  return listing;
+}

@@ -1,9 +1,12 @@
 import { getUserId } from "@/lib/auth";
 import { numberParamSchema } from "@/schemas/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
+import { eq, getTableColumns } from "drizzle-orm";
 import { NOT_FOUND, OK } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
-import { fetchListing } from "../../db/queries";
+import db from "../../db/db-config";
+import { listings, users } from "../../db/schema";
+import { isSaved } from "../../db/subqueries";
 import { notFoundError } from "../../schemas/response-schemas";
 import { listingSchema } from "../../schemas/zod-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
@@ -30,3 +33,17 @@ export const itemIdHandler: AppRouteHandler<typeof itemId, AppBindingsWithUser> 
   if (!listing) return c.json(notFoundError.content, NOT_FOUND);
   return c.json(listing, OK);
 };
+
+async function fetchListing(userId: string, id: number) {
+  const [listing] = await db
+    .select({
+      ...getTableColumns(listings),
+      seller: users.username,
+      ...isSaved(userId, listings.id),
+    })
+    .from(listings)
+    .innerJoin(users, eq(listings.sellerId, users.id))
+    .where(eq(listings.id, id));
+
+  return listing;
+}

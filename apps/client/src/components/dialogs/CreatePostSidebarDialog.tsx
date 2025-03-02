@@ -1,10 +1,9 @@
-import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { z } from "zod";
-import { api } from "../../lib/api-client";
+import { api, insertPostSchema } from "../../lib/api-client";
 import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
 import { Button } from "../ui/button";
@@ -34,7 +33,7 @@ export const CreatePostSidebarDialog = () => {
       roomName: subs?.[0] || "",
     },
     validators: {
-      onChange: schemas.insertPostSchema.extend({ roomName: z.string() }),
+      onChange: insertPostSchema.extend({ roomName: z.string() }),
       onSubmit: ({ value }) =>
         subs?.find((r) => r === value.roomName)
           ? undefined

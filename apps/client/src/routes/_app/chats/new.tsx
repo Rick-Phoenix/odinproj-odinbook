@@ -1,4 +1,3 @@
-import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
@@ -12,7 +11,7 @@ import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Button } from "../../../components/ui/button";
 import { Input } from "../../../components/ui/input";
 import { ScrollArea } from "../../../components/ui/scroll-area";
-import { api } from "../../../lib/api-client";
+import { api, insertMessageSchema } from "../../../lib/api-client";
 import { chatWebSocket, singleChatQueryOptions } from "../../../lib/queries/chatQueries";
 import { queryClient } from "../../../lib/queries/queryClient";
 import { profileQueryOptions } from "../../../lib/queries/queryOptions";
@@ -47,7 +46,7 @@ function RouteComponent() {
           if (errorTypeGuard(error)) return error.message;
         }
       },
-      onSubmit: schemas.insertMessageSchema,
+      onSubmit: insertMessageSchema,
     },
     validatorAdapter: singleErrorsAdapter,
   });

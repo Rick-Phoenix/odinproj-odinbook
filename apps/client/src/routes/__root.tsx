@@ -1,6 +1,5 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Link, Outlet, useLocation } from "@tanstack/react-router";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { TbSpaces } from "react-icons/tb";
 import type { User } from "../lib/api-client";
 import ErrorComponent from "../pages/ErrorPage";
@@ -32,7 +31,6 @@ function Root() {
       )}
       <hr />
       <Outlet />
-      <TanStackRouterDevtools />
     </>
   );
 }

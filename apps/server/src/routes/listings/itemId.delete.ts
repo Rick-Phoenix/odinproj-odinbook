@@ -37,7 +37,7 @@ export const deleteListingHandler: AppRouteHandler<
   return c.json(okResponse.content, OK);
 };
 
-export async function removeListing(userId: string, listingId: number) {
+async function removeListing(userId: string, listingId: number) {
   const query = await db
     .delete(listings)
     .where(and(eq(listings.sellerId, userId), eq(listings.id, listingId)));

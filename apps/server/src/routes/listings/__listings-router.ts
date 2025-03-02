@@ -1,7 +1,7 @@
 import { createRouter } from "../../lib/create-app";
 import type { AppBindingsWithUser } from "../../types/app-bindings";
-import { getListings, getListingsHandler } from "./#listings-index.get";
-import { createListing, createListingHandler } from "./#listings-index.post";
+import { getListings, getListingsHandler } from "./_listings-index.get";
+import { createListing, createListingHandler } from "./_listings-index.post";
 import { deleteListing, deleteListingHandler } from "./itemId.delete";
 import { itemId, itemIdHandler } from "./itemId.get";
 import { markListingAsSold, markListingAsSoldHandler } from "./itemId.sold.patch";

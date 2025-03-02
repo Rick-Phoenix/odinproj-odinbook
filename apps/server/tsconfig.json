@@ -3,18 +3,14 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    // "rootDir": "./"
     "paths": {
       "@/*": ["./src/*"]
     },
     "types": ["node", "hono"],
     "resolveJsonModule": true,
     "noEmit": true,
-    // "sourceMap": true,
     "inlineSourceMap": true,
-    // "emitDeclarationOnly": true,
-    // "composite": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["src", "drizzle.config.ts", "scripts", "src/routes/chats/#chats-index.get.ts"]
+  "include": ["src", "drizzle.config.ts", "scripts", "src/routes/chats/_chats-index.get.ts"]
 }

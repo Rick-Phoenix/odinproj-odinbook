@@ -1,6 +1,6 @@
 import { createRouter } from "../../lib/create-app";
 import type { AppBindingsWithUser } from "../../types/app-bindings";
-import { createRoom, createRoomHandler } from "./#rooms-index.post";
+import { createRoom, createRoomHandler } from "./_rooms-index.post";
 import { deleteRoom, deleteRoomHandler } from "./roomName.delete";
 import { getPosts, getPostsHandler } from "./roomName.posts.get";
 import { createPost, createPostHandler } from "./roomName.posts.post";

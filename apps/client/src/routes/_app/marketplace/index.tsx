@@ -1,4 +1,3 @@
-import { schemas } from "@nexus/shared-schemas";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useSpring, useTransform } from "motion/react";
 import { type FC, type MouseEvent, type MouseEventHandler } from "react";
@@ -6,7 +5,12 @@ import { Autoplay, EffectCoverflow, Mousewheel, Pagination } from "swiper/module
 import { Swiper, SwiperSlide } from "swiper/react";
 import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import CreateListingDialog from "../../../components/dialogs/CreateListingDialog";
-import { api, type Listing, type ListingCategory } from "../../../lib/api-client";
+import {
+  api,
+  marketplaceCategories,
+  type Listing,
+  type ListingCategory,
+} from "../../../lib/api-client";
 
 export const Route = createFileRoute("/_app/marketplace/")({
   component: RouteComponent,
@@ -39,7 +43,7 @@ function RouteComponent() {
           Browse By Category
         </h2>
         <div className="grid w-full auto-rows-[5rem] grid-cols-2 gap-8 p-8">
-          {schemas.marketplaceCategories.map((cat) => (
+          {marketplaceCategories.map((cat) => (
             <CategoryCard key={cat} category={cat} />
           ))}
         </div>

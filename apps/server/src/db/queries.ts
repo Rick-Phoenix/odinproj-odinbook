@@ -1,13 +1,11 @@
 import { hashPassword } from "@/lib/auth";
 import { and, asc, desc, eq, getTableColumns, gte, ne, sql } from "drizzle-orm";
-import type { ListingInputs } from "../schemas/zod-schemas";
 import db from "./db-config";
-import { lowercase, withCTEColumns } from "./db-methods";
+import { lowercase } from "./db-methods";
 import {
   listings,
   postLikes,
   rooms,
-  savedListings,
   sessions,
   users,
   type MarketplaceCategory,
@@ -306,54 +304,6 @@ export async function removePostLike(userId: string, postId: number) {
     .where(and(eq(postLikes.userId, userId), eq(postLikes.postId, postId)));
 }
 
-export async function insertListing(inputs: { sellerId: string } & ListingInputs) {
-  const insertQuery = db
-    .$with("inserted_listing")
-    .as(db.insert(listings).values(inputs).returning());
-  const [listing] = await db
-    .with(insertQuery)
-    .select({
-      ...withCTEColumns(listings, insertQuery),
-      seller: users.username,
-      isSaved: sql<boolean>`${false}`,
-    })
-    .from(insertQuery)
-    .innerJoin(users, eq(users.id, insertQuery.sellerId));
-  return listing;
-}
-
-export async function fetchListing(userId: string, id: number) {
-  const [listing] = await db
-    .select({
-      ...getTableColumns(listings),
-      seller: users.username,
-      ...isSaved(userId, listings.id),
-    })
-    .from(listings)
-    .innerJoin(users, eq(listings.sellerId, users.id))
-    .where(eq(listings.id, id));
-
-  return listing;
-}
-
-export async function fetchListingsByCategory(
-  userId: string,
-  category: MarketplaceCategory,
-  orderBy: "cheapest" | "mostRecent"
-) {
-  const listingsByCategory = await db
-    .select({
-      ...getTableColumns(listings),
-      seller: users.username,
-      ...isSaved(userId, listings.id),
-    })
-    .from(listings)
-    .innerJoin(users, eq(listings.sellerId, users.id))
-    .where(and(eq(listings.sold, false), eq(listings.category, category)))
-    .orderBy(orderBy === "cheapest" ? asc(listings.price) : desc(listings.createdAt));
-  return listingsByCategory;
-}
-
 export async function fetchSuggestedListings(
   userId: string,
   category: MarketplaceCategory | undefined
@@ -391,23 +341,6 @@ export async function fetchSuggestedListings(
       .limit(10);
   }
   return suggestedListings;
-}
-
-export async function insertSavedListing(userId: string, listingId: number) {
-  await db.insert(savedListings).values({ userId, listingId });
-}
-
-export async function deleteSavedListing(userId: string, listingId: number) {
-  await db
-    .delete(savedListings)
-    .where(and(eq(savedListings.userId, userId), eq(savedListings.listingId, listingId)));
-}
-
-export async function updateListing(userId: string, listingId: number) {
-  await db
-    .update(listings)
-    .set({ sold: true })
-    .where(and(eq(listings.sellerId, userId), eq(listings.id, listingId)));
 }
 
 export async function updateUserAvatar(userId: string, avatarUrl: string) {

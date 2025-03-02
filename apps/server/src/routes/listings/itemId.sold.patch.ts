@@ -1,9 +1,10 @@
 import { getUserId } from "@/lib/auth";
-import { inputErrorResponse } from "@/schemas/response-schemas";
+import { inputErrorResponse, okResponse } from "@/schemas/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
+import { and, eq } from "drizzle-orm";
 import { INTERNAL_SERVER_ERROR, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
-import { jsonContent } from "stoker/openapi/helpers";
-import { updateListing } from "../../db/queries";
+import db from "../../db/db-config";
+import { listings } from "../../db/schema";
 import { internalServerError } from "../../schemas/response-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
 
@@ -17,7 +18,7 @@ export const markListingAsSold = createRoute({
   tags,
   request: inputs,
   responses: {
-    [OK]: jsonContent(z.string(), "A confirmation message."),
+    [OK]: okResponse.template,
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(inputs.params),
     [INTERNAL_SERVER_ERROR]: internalServerError.template,
   },
@@ -29,6 +30,16 @@ export const markListingAsSoldHandler: AppRouteHandler<
 > = async (c) => {
   const userId = getUserId(c);
   const { itemId } = c.req.valid("param");
-  await updateListing(userId, itemId);
-  return c.json("OK", OK);
+  const queryResult = await markItemAsSold(userId, itemId);
+  if (!queryResult) return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
+  return c.json(okResponse.content, OK);
 };
+
+async function markItemAsSold(userId: string, listingId: number) {
+  const query = await db
+    .update(listings)
+    .set({ sold: true })
+    .where(and(eq(listings.sellerId, userId), eq(listings.id, listingId)));
+
+  return query.rowCount;
+}

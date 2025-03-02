@@ -9,9 +9,9 @@ import {
   TbUpload,
   TbUserPlus,
 } from "react-icons/tb";
+import AnimatedBeam from "../../components/animations/AnimatedBeams";
+import FloatingDiv from "../../components/animations/FloatingDiv";
 import { cn } from "../../utils/shadcn-helper";
-import AnimatedBeam from "../animations/AnimatedBeams";
-import FloatingDiv from "../animations/FloatingDiv";
 
 const Circle = forwardRef<
   HTMLDivElement,

@@ -1,10 +1,10 @@
-import { BackgroundGradientAnimation } from "../animations/BackgroundGradientAnimation";
-import DraggableElement from "../animations/DraggableElement";
-import GradientText from "../animations/TextGradient";
-import Threads from "../animations/Threads";
-import TypingText from "../animations/TypingText";
-import LoginDialog from "../dialogs/LoginDialog";
-import SignupDialog from "../dialogs/SignupDialog";
+import { BackgroundGradientAnimation } from "../../components/animations/BackgroundGradientAnimation";
+import DraggableElement from "../../components/animations/DraggableElement";
+import GradientText from "../../components/animations/TextGradient";
+import Threads from "../../components/animations/Threads";
+import TypingText from "../../components/animations/TypingText";
+import LoginDialog from "../../components/dialogs/LoginDialog";
+import SignupDialog from "../../components/dialogs/SignupDialog";
 
 export default function MainHero() {
   return (

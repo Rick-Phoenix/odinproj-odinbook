@@ -1,17 +1,17 @@
-import { schemas } from "@nexus/shared-schemas";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import ListingPreview from "../../../../components/content-sections/ListingPreview";
 import InsetScrollArea from "../../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import { Button } from "../../../../components/ui/button";
+import { marketplaceCategories } from "../../../../lib/api-client";
 import { listingsByCategoryQueryOptions } from "../../../../lib/queries/queryOptions";
 
 const searchParams = z.object({
   orderBy: fallback(z.enum(["cheapest", "mostRecent"]), "mostRecent").default("mostRecent"),
 });
 const pathParams = z.object({
-  category: z.enum(schemas.marketplaceCategories),
+  category: z.enum(marketplaceCategories),
 });
 
 export const Route = createFileRoute("/_app/marketplace/$category/")({

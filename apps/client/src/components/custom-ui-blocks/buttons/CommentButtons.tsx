@@ -1,9 +1,8 @@
-import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { EllipsisVertical, MessageCircleMore } from "lucide-react";
 import { useState, type FC } from "react";
-import { api, type Comment } from "../../../lib/api-client";
+import { api, insertCommentSchema, type Comment } from "../../../lib/api-client";
 import { singleErrorsAdapter } from "../../../utils/form-utils";
 import { errorTypeGuard } from "../../../utils/type-guards";
 import {
@@ -61,7 +60,7 @@ const CommentButtons: FC<{
           if (errorTypeGuard(error)) return error.message;
         }
       },
-      onSubmit: schemas.insertCommentSchema.pick({ text: true }),
+      onSubmit: insertCommentSchema.pick({ text: true }),
     },
     validatorAdapter: singleErrorsAdapter,
     onSubmit() {

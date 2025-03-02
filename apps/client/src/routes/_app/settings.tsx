@@ -1,4 +1,3 @@
-import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -23,7 +22,7 @@ import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { useUser } from "../../hooks/auth";
 import { useToast } from "../../hooks/use-toast";
-import { api, type User } from "../../lib/api-client";
+import { api, updatePasswordSchema, updateStatusSchema, type User } from "../../lib/api-client";
 import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
 
@@ -119,7 +118,7 @@ const PasswordEdit = () => {
       passConfirm: "",
     },
     validators: {
-      onSubmit: schemas.updatePasswordSchema,
+      onSubmit: updatePasswordSchema,
       onSubmitAsync: async ({ value }) => {
         try {
           await handlePasswordChange.mutateAsync(value);
@@ -262,7 +261,7 @@ const StatusEdit = () => {
       status: status || "",
     },
     validators: {
-      onChange: schemas.updateStatusSchema,
+      onChange: updateStatusSchema,
       onSubmitAsync: async ({ value }) => {
         try {
           await handleStatusUpdate.mutateAsync(value);

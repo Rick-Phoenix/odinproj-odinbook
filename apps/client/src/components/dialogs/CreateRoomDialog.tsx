@@ -1,9 +1,8 @@
-import { schemas } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import type { FC } from "react";
-import { api, roomCategories, type RoomInputs } from "../../lib/api-client";
+import { api, insertRoomSchema, roomCategoriesArray, type RoomInputs } from "../../lib/api-client";
 import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
 import { Button } from "../ui/button";
@@ -31,7 +30,7 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
       description: "",
     },
     validators: {
-      onChange: schemas.insertRoomSchema,
+      onChange: insertRoomSchema,
       onSubmitAsync: async ({ value }) => {
         try {
           await handleCreateRoom.mutateAsync(value);
@@ -133,7 +132,7 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
                         name={field.name}
                         value={field.state.value}
                         onValueChange={(e) =>
-                          field.handleChange(e as (typeof schemas.roomCategoriesArray)[number])
+                          field.handleChange(e as (typeof roomCategoriesArray)[number])
                         }
                         required
                       >
@@ -141,7 +140,7 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                         <SelectContent>
-                          {roomCategories.map((cat, i) => (
+                          {roomCategoriesArray.map((cat, i) => (
                             <SelectItem key={i} value={cat} className="cursor-pointer">
                               {cat}
                             </SelectItem>
