@@ -1,9 +1,8 @@
-import { createRoute, z } from "@hono/zod-openapi";
+import { createRoute } from "@hono/zod-openapi";
 import { OK, UNAUTHORIZED } from "stoker/http-status-codes";
-import { jsonContent } from "stoker/openapi/helpers";
 import { invalidateSession } from "../../lib/auth";
+import { customError, okResponse } from "../../schemas/response-schemas";
 import type { AppRouteHandler } from "../../types/app-bindings";
-import { customError } from "../../utils/response-schemas";
 
 const tags = ["auth"];
 
@@ -21,7 +20,7 @@ export const logout = createRoute({
   method: "post",
   tags,
   responses: {
-    [OK]: jsonContent(z.string(), "Success message."),
+    [OK]: okResponse.template,
     [UNAUTHORIZED]: errors.userNotLoggedIn.template,
   },
 });
@@ -32,5 +31,5 @@ export const logoutHandler: AppRouteHandler<typeof logout> = async (c) => {
   }
 
   await invalidateSession(c, c.var.session.id);
-  return c.json("User logged out succesfully.", OK);
+  return c.json(okResponse.content, OK);
 };

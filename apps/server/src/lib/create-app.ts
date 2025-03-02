@@ -1,8 +1,8 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { onError } from "stoker/middlewares";
-import { pinoLogger } from "../middlewares/pino-logger";
 import type { AppBindings } from "../types/app-bindings";
+import { pinoLogger } from "./pino-logger";
 
 export function createRouter<AB extends AppBindings = AppBindings>() {
   return new OpenAPIHono<AB>({

@@ -1,4 +1,4 @@
-import { alreadyLoggedError } from "@/utils/response-schemas";
+import { alreadyLoggedError, inputErrorResponse } from "@/schemas/response-schemas";
 import { createRoute } from "@hono/zod-openapi";
 import { verify } from "@node-rs/argon2";
 import {
@@ -9,13 +9,12 @@ import {
   UNPROCESSABLE_ENTITY,
 } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
+import db from "../../db/db-config";
 import { lowercase } from "../../db/db-methods";
-import db from "../../db/dbConfig";
 import { createSession } from "../../lib/auth";
+import { customError } from "../../schemas/response-schemas";
+import { loginValidationSchema, userSchema } from "../../schemas/zod-schemas";
 import type { AppRouteHandler } from "../../types/app-bindings";
-import { loginValidationSchema, userSchema } from "../../types/zod-schemas";
-import { inputErrorResponse } from "../../utils/inputErrorResponse";
-import { customError } from "../../utils/response-schemas";
 
 const tags = ["auth"];
 
@@ -34,7 +33,7 @@ const errors = {
     },
     BAD_REQUEST
   ),
-  default: inputErrorResponse(loginValidationSchema),
+  inputError: inputErrorResponse(loginValidationSchema),
   userAlreadyLoggedIn: alreadyLoggedError,
 };
 
@@ -46,10 +45,10 @@ export const login = createRoute({
     body: jsonContentRequired(loginValidationSchema, "The user's credentials."),
   },
   responses: {
-    [OK]: jsonContent(userSchema, "The user object."),
+    [OK]: jsonContent(userSchema, "The user's data."),
     [NOT_FOUND]: errors.userNotFound.template,
     [BAD_REQUEST]: errors.wrongPassword.template,
-    [UNPROCESSABLE_ENTITY]: errors.default,
+    [UNPROCESSABLE_ENTITY]: errors.inputError,
     [CONFLICT]: errors.userAlreadyLoggedIn.template,
   },
 });

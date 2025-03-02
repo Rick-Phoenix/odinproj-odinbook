@@ -1,14 +1,11 @@
 import { serveStatic } from "@hono/node-server/serve-static";
 import { v2 as cloudinary } from "cloudinary";
 import { csrf } from "hono/csrf";
-import configureOpenApiReference from "./lib/configure-open-api-reference.js";
 import createApp from "./lib/create-app.js";
+import configureOpenApiReference from "./lib/openapi-config.js";
 import { registerUser } from "./middlewares/auth-middleware";
-import {
-  protectRoute,
-  rejectIfAlreadyLogged,
-} from "./middlewares/auth-middleware.js";
-import { apiRoutes } from "./routes/routingConfig.js";
+import { protectRoute, rejectIfAlreadyLogged } from "./middlewares/auth-middleware.js";
+import { apiRoutes } from "./routes/routing-config.js";
 import env from "./types/env.js";
 
 const app = createApp();

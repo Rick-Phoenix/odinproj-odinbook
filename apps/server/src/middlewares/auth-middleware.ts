@@ -3,12 +3,12 @@ import { encodeHexLowerCase } from "@oslojs/encoding";
 import { eq } from "drizzle-orm";
 import { getCookie } from "hono/cookie";
 import { CONFLICT, UNAUTHORIZED } from "stoker/http-status-codes";
+import db from "../db/db-config";
 import { entryExists } from "../db/db-methods";
-import db from "../db/dbConfig";
 import { sessions, users } from "../db/schema";
 import { invalidateSession } from "../lib/auth";
+import { alreadyLoggedError } from "../schemas/response-schemas";
 import type { AppContext, AppMiddleware } from "../types/app-bindings";
-import { alreadyLoggedError } from "../utils/response-schemas";
 
 export const protectRoute: AppMiddleware = async (c, next) => {
   if (c.req.path.startsWith("/api/auth")) return await next();
@@ -55,9 +55,7 @@ export async function fetchUser(sessionToken: string | undefined) {
   let session = null;
 
   if (sessionToken) {
-    const sessionId = encodeHexLowerCase(
-      sha256(new TextEncoder().encode(sessionToken))
-    );
+    const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(sessionToken)));
 
     const result = await db
       .select({ user: users, session: sessions })

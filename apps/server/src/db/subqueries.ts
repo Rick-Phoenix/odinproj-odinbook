@@ -1,8 +1,8 @@
 import { eq, sql } from "drizzle-orm";
 import type { PgColumn } from "drizzle-orm/pg-core";
-import type { BasicPost, RoomData } from "../types/zod-schemas";
+import type { BasicPost, RoomData } from "../schemas/zod-schemas";
+import db from "./db-config";
 import { lowercase } from "./db-methods";
-import db from "./dbConfig";
 import { listings, postLikes, posts, rooms, subs } from "./schema";
 
 export const totalPostsFromUserSubs = (userId: string) =>

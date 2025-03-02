@@ -1,21 +1,25 @@
-import { alreadyLoggedError } from "@/utils/response-schemas";
+import { hashPassword } from "@/lib/auth";
+import {
+  alreadyLoggedError,
+  inputErrorResponse,
+  internalServerError,
+} from "@/schemas/response-schemas";
 import { createRoute } from "@hono/zod-openapi";
 import { webcrypto } from "crypto";
 import {
   CONFLICT,
   CREATED,
+  INTERNAL_SERVER_ERROR,
   UNPROCESSABLE_ENTITY,
 } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
-import db from "../../db/dbConfig";
+import db from "../../db/db-config";
 import { emailIsNotAvailable, usernameIsNotAvailable } from "../../db/queries";
 import { users } from "../../db/schema";
 import { createSession } from "../../lib/auth";
+import { customError } from "../../schemas/response-schemas";
+import { insertUserSchema, userSchema } from "../../schemas/zod-schemas";
 import type { AppRouteHandler } from "../../types/app-bindings";
-import { insertUserSchema, userSchema } from "../../types/zod-schemas";
-import { inputErrorResponse } from "../../utils/inputErrorResponse";
-import { hashPassword } from "../../utils/password";
-import { customError } from "../../utils/response-schemas";
 
 const tags = ["auth"];
 
@@ -42,15 +46,13 @@ export const signup = createRoute({
   method: "post",
   tags,
   request: {
-    body: jsonContentRequired(
-      insertUserSchema,
-      "The credentials for signing up."
-    ),
+    body: jsonContentRequired(insertUserSchema, "The credentials for signing up."),
   },
   responses: {
-    [CREATED]: jsonContent(userSchema, "Success message."),
+    [CREATED]: jsonContent(userSchema, "The data for the new user."),
     [CONFLICT]: errors.usernameIsTaken.template,
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(insertUserSchema),
+    [INTERNAL_SERVER_ERROR]: internalServerError.template,
   },
 });
 
@@ -72,10 +74,8 @@ export const signupHandler: AppRouteHandler<typeof signup> = async (c) => {
     ...rest,
   };
 
-  const [registeredUser] = await db
-    .insert(users)
-    .values(hashedUser)
-    .returning();
+  const [registeredUser] = await db.insert(users).values(hashedUser).returning();
+  if (!registeredUser) return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
   await createSession(c, userId);
   return c.json(registeredUser, CREATED);
 };

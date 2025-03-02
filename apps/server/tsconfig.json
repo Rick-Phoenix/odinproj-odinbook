@@ -16,5 +16,5 @@
     // "composite": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["src", "drizzle.config.ts", "scripts"]
+  "include": ["src", "drizzle.config.ts", "scripts", "src/routes/chats/#chats-index.get.ts"]
 }

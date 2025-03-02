@@ -1,19 +1,25 @@
-import { internalServerError } from "@/utils/response-schemas";
+import {
+  badRequestError,
+  inputErrorResponse,
+  internalServerError,
+} from "@/schemas/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
 import { encodeBase64 } from "@oslojs/encoding";
 import { webcrypto } from "crypto";
 import { deleteCookie, getCookie, setCookie } from "hono/cookie";
-import { BAD_REQUEST, MOVED_TEMPORARILY } from "stoker/http-status-codes";
-import db from "../../db/dbConfig";
+import {
+  BAD_REQUEST,
+  INTERNAL_SERVER_ERROR,
+  MOVED_TEMPORARILY,
+  UNPROCESSABLE_ENTITY,
+} from "stoker/http-status-codes";
+import db from "../../db/db-config";
 import { findUserByOauthCredentials } from "../../db/queries";
 import { users } from "../../db/schema";
 import { createSession } from "../../lib/auth";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import env from "../../types/env";
-import type {
-  githubTokenResponse,
-  githubUserData,
-} from "../../types/oauth-responses";
+import type { githubTokenResponse, githubUserData } from "../../types/oauth-responses";
 
 const tags = ["auth"];
 
@@ -44,32 +50,32 @@ export const githubHandler: AppRouteHandler<typeof github> = (c) => {
   return c.redirect(authorizationURL);
 };
 
+const inputs = z.object({
+  code: z.string(),
+  state: z.string(),
+});
+
 export const githubCallback = createRoute({
   path: "/github/callback",
   method: "get",
   tags,
   request: {
-    query: z.object({
-      code: z.string(),
-      state: z.string(),
-    }),
+    query: inputs,
   },
   responses: {
-    [BAD_REQUEST]: internalServerError.template,
+    [UNPROCESSABLE_ENTITY]: inputErrorResponse(inputs),
     [MOVED_TEMPORARILY]: {
-      description: "Redirecting to the client's main page.",
+      description: "Redirecting to the app's home page.",
     },
+    [BAD_REQUEST]: badRequestError.template,
   },
 });
 
-export const githubCallbackHandler: AppRouteHandler<
-  typeof githubCallback
-> = async (c) => {
+export const githubCallbackHandler: AppRouteHandler<typeof githubCallback> = async (c) => {
   const { code, state } = c.req.valid("query");
   const storedState = getCookie(c, "github_oauth_state");
 
-  if (state !== storedState)
-    return c.json(internalServerError.content, BAD_REQUEST);
+  if (state !== storedState) return c.json(badRequestError.content, BAD_REQUEST);
 
   deleteCookie(c, "github_oauth_state");
 
@@ -79,28 +85,22 @@ export const githubCallbackHandler: AppRouteHandler<
     redirect_uri: env.GITHUB_CALLBACK_URI,
   });
 
-  const accessTokenRequest = await fetch(
-    "https://github.com/login/oauth/access_token",
-    {
-      method: "POST",
-      body,
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-        Accept: "application/json",
-        Authorization: `Basic ${encodeBase64(
-          new TextEncoder().encode(
-            env.GITHUB_CLIENT_ID + ":" + env.GITHUB_CLIENT_SECRET
-          )
-        )}`,
-      },
-    }
-  );
+  const accessTokenRequest = await fetch("https://github.com/login/oauth/access_token", {
+    method: "POST",
+    body,
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Accept: "application/json",
+      Authorization: `Basic ${encodeBase64(
+        new TextEncoder().encode(env.GITHUB_CLIENT_ID + ":" + env.GITHUB_CLIENT_SECRET)
+      )}`,
+    },
+  });
 
-  const accessTokenResponse =
-    (await accessTokenRequest.json()) as githubTokenResponse;
+  const accessTokenResponse = (await accessTokenRequest.json()) as githubTokenResponse;
 
   if ("error" in accessTokenResponse) {
-    return c.json(internalServerError.content, BAD_REQUEST);
+    return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
   }
 
   const accessToken = accessTokenResponse.access_token;
@@ -128,15 +128,13 @@ export const githubCallbackHandler: AppRouteHandler<
       id: webcrypto.randomUUID(),
       email,
       avatarUrl,
-      username:
-        githubUsername.length <= 31
-          ? githubUsername
-          : githubUsername.slice(0, 31),
+      username: githubUsername.length <= 31 ? githubUsername : githubUsername.slice(0, 31),
       oauthId: githubUserId,
       oauthProvider: "github",
     };
 
     const [newUser] = await db.insert(users).values(userDetails).returning();
+    if (!newUser) return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
 
     user = newUser;
   }

@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import db from "./dbConfig";
+import db from "./db-config";
 
 export const initialFeedQuery = async (userId: string) => {
   return await db.execute(sql`(WITH

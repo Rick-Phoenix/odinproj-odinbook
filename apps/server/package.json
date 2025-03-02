@@ -4,8 +4,8 @@
   "type": "module",
   "version": "1.0.0",
   "exports": {
-    "./routes": "./src/routes/routingConfig.ts",
-    "./schemas": "./src/types/zod-schemas.ts"
+    "./routes": "./src/routes/routing-config.ts",
+    "./schemas": "./src/schemas/zod-schemas.ts"
   },
   "scripts": {
     "build": "npx tsc",

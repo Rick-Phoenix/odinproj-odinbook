@@ -1,18 +1,14 @@
+import { hashPassword } from "@/lib/auth";
 import { and, asc, desc, eq, getTableColumns, gte, ne, sql } from "drizzle-orm";
-import type { ListingInputs } from "../types/zod-schemas";
-import { hashPassword } from "../utils/password";
+import type { ListingInputs } from "../schemas/zod-schemas";
+import db from "./db-config";
 import { lowercase, withCTEColumns } from "./db-methods";
-import db from "./dbConfig";
 import {
-  commentLikes,
-  comments,
   listings,
   postLikes,
-  posts,
   rooms,
   savedListings,
   sessions,
-  subs,
   users,
   type MarketplaceCategory,
   type RoomCategories,
@@ -274,33 +270,6 @@ export async function fetchPost(userId: string, postId: number) {
   return post;
 }
 
-export async function insertPost(
-  authorId: string,
-  authorUsername: string,
-  room: string,
-  title: string,
-  text: string
-) {
-  const [post] = await db
-    .insert(posts)
-    .values({ authorId, room, title, text })
-    .returning({
-      ...getTableColumns(posts),
-    });
-
-  if (post) return { ...post, isLiked: true, author: authorUsername };
-
-  return post;
-}
-
-export async function addSubscription(userId: string, room: string) {
-  await db.insert(subs).values({ userId, room }).onConflictDoNothing();
-}
-
-export async function removeSubscription(userId: string, room: string) {
-  await db.delete(subs).where(and(eq(subs.room, room), eq(subs.userId, userId)));
-}
-
 export async function insertRoom(
   userId: string,
   name: string,
@@ -331,24 +300,10 @@ export async function findUserByOauthCredentials(provider: string, id: number) {
   });
 }
 
-export async function insertPostLike(userId: string, postId: number) {
-  return await db.insert(postLikes).values({ userId, postId });
-}
-
 export async function removePostLike(userId: string, postId: number) {
   return await db
     .delete(postLikes)
     .where(and(eq(postLikes.userId, userId), eq(postLikes.postId, postId)));
-}
-
-export async function insertCommentLike(userId: string, commentId: number) {
-  return await db.insert(commentLikes).values({ userId, commentId });
-}
-
-export async function removeCommentLike(userId: string, commentId: number) {
-  return await db
-    .delete(commentLikes)
-    .where(and(eq(commentLikes.userId, userId), eq(commentLikes.commentId, commentId)));
 }
 
 export async function insertListing(inputs: { sellerId: string } & ListingInputs) {
@@ -448,28 +403,11 @@ export async function deleteSavedListing(userId: string, listingId: number) {
     .where(and(eq(savedListings.userId, userId), eq(savedListings.listingId, listingId)));
 }
 
-export async function removeListing(userId: string, listingId: number) {
-  await db.delete(listings).where(and(eq(listings.sellerId, userId), eq(listings.id, listingId)));
-}
-
 export async function updateListing(userId: string, listingId: number) {
   await db
     .update(listings)
     .set({ sold: true })
     .where(and(eq(listings.sellerId, userId), eq(listings.id, listingId)));
-}
-
-export async function insertComment(
-  userId: string,
-  postId: number,
-  text: string,
-  parentCommentId?: number
-) {
-  const [comment] = await db
-    .insert(comments)
-    .values({ userId, postId, text, parentCommentId })
-    .returning();
-  return { ...comment, isLiked: true, likesCount: 1 };
 }
 
 export async function updateUserAvatar(userId: string, avatarUrl: string) {

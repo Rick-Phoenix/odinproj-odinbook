@@ -1,1 +1,0 @@
-export const result = new Map<number, string>({});
