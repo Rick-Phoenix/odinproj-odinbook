@@ -17,7 +17,7 @@ const queryInputs = z.object({
 });
 
 export const getSuggestedListings = createRoute({
-  path: "/suggested",
+  path: "/suggested/data",
   method: "get",
   tags,
   request: {

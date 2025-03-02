@@ -9,6 +9,12 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Heart } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState, type FC } from "react";
+// @ts-expect-error
+import "swiper/css";
+// @ts-expect-error
+import "swiper/css/pagination";
+// @ts-expect-error
+import "swiper/css/scrollbar";
 import { Autoplay, Mousewheel, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { PostPreview } from "../../../components/content-sections/PostPreview";

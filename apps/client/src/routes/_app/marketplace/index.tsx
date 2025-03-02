@@ -1,6 +1,12 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useSpring, useTransform } from "motion/react";
 import { type FC, type MouseEvent, type MouseEventHandler } from "react";
+// @ts-expect-error
+import "swiper/css";
+// @ts-expect-error
+import "swiper/css/effect-coverflow";
+// @ts-expect-error
+import "swiper/css/pagination";
 import { Autoplay, EffectCoverflow, Mousewheel, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
@@ -16,7 +22,7 @@ export const Route = createFileRoute("/_app/marketplace/")({
   component: RouteComponent,
   loader: async (c) => {
     const { favoriteListingsCategory } = c.context.user!;
-    const res = await api.listings.suggested.$get({
+    const res = await api.listings.suggested.data.$get({
       query: { category: favoriteListingsCategory || undefined },
     });
     const data = await res.json();
