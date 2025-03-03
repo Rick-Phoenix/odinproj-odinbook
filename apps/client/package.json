@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "build": "NODE_ENV=production tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "lintconfig": "eslint-config-inspector",
@@ -62,6 +62,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
+    "@fullhuman/postcss-purgecss": "^7.0.2",
     "@tanstack/eslint-plugin-query": "^5.62.16",
     "@tanstack/eslint-plugin-router": "^1.92.7",
     "@tanstack/router-devtools": "^1.95.3",
@@ -72,6 +73,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "babel-plugin-react-compiler": "19.0.0-beta-27714ef-20250124",
+    "cssnano": "^7.0.6",
     "eslint": "^9.15.0",
     "eslint-plugin-import": "^2.31.0",
     "eslint-plugin-react": "^7.37.2",

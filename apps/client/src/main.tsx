@@ -10,6 +10,7 @@ import ReactDOM from "react-dom/client";
 import { useSuspenseUser } from "./hooks/auth";
 import { queryClient } from "./lib/queries/queryClient";
 import { router } from "./lib/router/routerProvider";
+import "./styles/index.css";
 
 function InnerApp() {
   const user = useSuspenseUser();

@@ -39,7 +39,7 @@ if (env.NODE_ENV === "development") {
 }
 if (env.NODE_ENV === "production") {
   app.get("*", serveStatic({ root: "./public" }));
-  app.get("*", serveStatic({ path: "./public/index.html" }));
+  app.get("*", serveStatic({ path: "./src/index.html" }));
 }
 
 export default app;

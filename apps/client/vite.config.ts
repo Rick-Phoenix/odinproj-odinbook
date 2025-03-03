@@ -1,6 +1,10 @@
+import { purgeCSSPlugin } from "@fullhuman/postcss-purgecss";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
+import autoprefixer from "autoprefixer";
+import cssnano from "cssnano";
 import { visualizer } from "rollup-plugin-visualizer";
+import tailwindcss from "tailwindcss";
 import { defineConfig } from "vite";
 import checker from "vite-plugin-checker";
 import Inspect from "vite-plugin-inspect";
@@ -18,7 +22,7 @@ export default defineConfig({
     tsconfigPaths({ root: import.meta.dirname }),
     checker({ typescript: { tsconfigPath: "./tsconfig.json" } }),
     visualizer({
-      open: true,
+      open: false,
       template: "treemap",
       brotliSize: true,
       gzipSize: true,
@@ -38,6 +42,22 @@ export default defineConfig({
           zod: ["zod"],
         },
       },
+    },
+  },
+  css: {
+    postcss: {
+      plugins: [
+        tailwindcss(),
+        autoprefixer(),
+        purgeCSSPlugin({
+          content: ["./index.html", "./src/**/*.{tsx,js,jsx}"],
+          fontFace: true,
+          keyframes: true,
+          variables: true,
+          safelist: [/row-end-\d+/],
+        }),
+        cssnano({ preset: "default" }),
+      ],
     },
   },
   server: {

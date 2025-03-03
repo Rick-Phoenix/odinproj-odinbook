@@ -6,6 +6,7 @@ import cssplugin from "./cssplugin";
 export default {
   darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{tsx,js,jsx}"],
+  css: ["./src/styles/index.css", "./src/styles/globals.css"],
   theme: {
     extend: {
       translate: {
