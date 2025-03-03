@@ -35,10 +35,10 @@ app.route("/api", apiRoutes);
 
 // Static Assets Serving
 if (env.NODE_ENV === "development") {
-  app.get("*", serveStatic({ path: "./src/index.html" }));
+  app.get("*", serveStatic({ path: "./src/dev.index.html" }));
 }
 if (env.NODE_ENV === "production") {
-  app.get("*", serveStatic({ root: "./public" }));
+  app.get("*", serveStatic({ root: "./_static" }));
   app.get("*", serveStatic({ path: "./src/index.html" }));
 }
 

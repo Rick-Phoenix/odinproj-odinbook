@@ -4,3 +4,4 @@ dist
 triggers.sql
 .vite-inspect
 stats.html
+_static

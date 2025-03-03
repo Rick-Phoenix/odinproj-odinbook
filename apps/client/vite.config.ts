@@ -1,4 +1,3 @@
-import { purgeCSSPlugin } from "@fullhuman/postcss-purgecss";
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import autoprefixer from "autoprefixer";
@@ -10,6 +9,7 @@ import checker from "vite-plugin-checker";
 import Inspect from "vite-plugin-inspect";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+//import { purgeCSSPlugin } from "@fullhuman/postcss-purgecss";
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
@@ -31,7 +31,7 @@ export default defineConfig({
     Inspect({}),
   ],
   build: {
-    outDir: "../server/public",
+    outDir: "../server/_static",
     emptyOutDir: true,
     manifest: true,
     modulePreload: { polyfill: true },
@@ -49,13 +49,13 @@ export default defineConfig({
       plugins: [
         tailwindcss(),
         autoprefixer(),
-        purgeCSSPlugin({
-          content: ["./index.html", "./src/**/*.{tsx,js,jsx}"],
-          fontFace: true,
-          keyframes: true,
-          variables: true,
-          safelist: [/row-end-\d+/],
-        }),
+        //purgeCSSPlugin({
+        //  content: ["./index.html", "./src/**/*.{tsx,js,jsx}"],
+        //  fontFace: true,
+        //  keyframes: true,
+        //  variables: true,
+        //  safelist: [/row-end-\d+/],
+        //}),
         cssnano({ preset: "default" }),
       ],
     },
