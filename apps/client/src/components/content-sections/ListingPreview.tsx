@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { format } from "date-fns";
 import type { FC, ReactNode } from "react";
-import type { Listing } from "../../lib/api-client";
+import type { Listing } from "../../lib/db-types";
 
 const ListingPreview: FC<{
   listing: Listing;

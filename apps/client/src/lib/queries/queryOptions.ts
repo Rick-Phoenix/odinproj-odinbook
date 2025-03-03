@@ -1,5 +1,6 @@
 import { queryOptions } from "@tanstack/react-query";
-import { api, type ListingCategory, type PostBasic } from "../api-client";
+import type { ListingCategory, PostBasic } from "../db-types";
+import { api } from "../hono-RPC";
 import { cachePost } from "./caches";
 import { cacheChat } from "./chatQueries";
 import { queryClient } from "./queryClient";
@@ -105,7 +106,7 @@ export const listingsByCategoryQueryOptions = (
 
 export const profileQueryOptions = (username: string) =>
   queryOptions({
-    queryKey: ["profile", username],
+    queryKey: ["profile", username.toLowerCase()],
     queryFn: async () => {
       const res = await api.users[":username"].$get({ param: { username } });
       const data = await res.json();

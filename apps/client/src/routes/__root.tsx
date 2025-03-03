@@ -1,7 +1,7 @@
 import type { QueryClient } from "@tanstack/react-query";
 import { createRootRouteWithContext, Link, Outlet, useLocation } from "@tanstack/react-router";
 import { TbSpaces } from "react-icons/tb";
-import type { User } from "../lib/api-client";
+import type { User } from "../lib/db-types";
 import ErrorComponent from "../pages/ErrorPage";
 import NotFoundComponent from "../pages/NotFoundPage";
 

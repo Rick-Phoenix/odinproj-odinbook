@@ -1,5 +1,6 @@
 import { queryOptions, type MutationOptions } from "@tanstack/react-query";
-import { api, wsRPC, type Chat, type Message } from "../api-client";
+import type { Chat, Message } from "../db-types";
+import { api, wsRPC } from "../hono-RPC";
 import { queryClient } from "./queryClient";
 
 export const chatsQueryOptions = {

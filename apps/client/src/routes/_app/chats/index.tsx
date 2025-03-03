@@ -24,7 +24,8 @@ import {
 import { useChats } from "../../../hooks/useChats";
 import { useToast } from "../../../hooks/useToast";
 import { useUnreadMessages } from "../../../hooks/useUnreadMessages";
-import { api, type Chat, type Message } from "../../../lib/api-client";
+import type { Chat, Message } from "../../../lib/db-types";
+import { api } from "../../../lib/hono-RPC";
 import { chatsQueryOptions } from "../../../lib/queries/chatQueries";
 
 export const Route = createFileRoute("/_app/chats/")({

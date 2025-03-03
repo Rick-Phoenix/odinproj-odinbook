@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { BadgeDollarSign } from "lucide-react";
 import { type FC } from "react";
-import { api, type Listing } from "../../../lib/api-client";
+import type { Listing } from "../../../lib/db-types";
+import { api } from "../../../lib/hono-RPC";
 import {
   AlertDialog,
   AlertDialogAction,

@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { PlusCircle } from "lucide-react";
 import { useEffect, useState, type FC, type MouseEventHandler } from "react";
 import { useUser } from "../../hooks/auth";
-import type { Comment } from "../../lib/api-client";
+import type { Comment } from "../../lib/db-types";
 import CommentButtons from "../custom-ui-blocks/buttons/CommentButtons";
 import { Button } from "../ui/button";
 import { Separator } from "../ui/separator";

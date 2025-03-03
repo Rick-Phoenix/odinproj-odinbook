@@ -1,4 +1,4 @@
-import RPC, {
+import {
   basicPostSchema,
   chatSchema,
   commentSchema,
@@ -21,7 +21,7 @@ import RPC, {
   updateStatusSchema,
   userDataSchema,
 } from "@nexus/shared-schemas";
-import { z } from "zod";
+import type { z } from "zod";
 
 export type Message = z.infer<typeof messagesSchema>;
 export type Chat = z.infer<typeof chatSchema>;
@@ -43,18 +43,7 @@ export type Comment = z.infer<typeof commentSchema> & {
 };
 export type LikeData = { isLiked: boolean; likesCount: number };
 export type Post = PostBasic | PostFull;
-const userDataWithoutExtras = userDataSchema.omit({
-  subsContent: true,
-  listingsCreated: true,
-  listingsSaved: true,
-  ownChats: true,
-});
 export type User = z.infer<typeof userDataWithoutExtras>;
-
-export const api = RPC("/api");
-
-export const wsRPC = RPC("ws://localhost:5173/");
-
 export {
   insertCommentSchema,
   insertListingSchema,
@@ -69,3 +58,9 @@ export {
   updatePasswordSchema,
   updateStatusSchema,
 };
+const userDataWithoutExtras = userDataSchema.omit({
+  subsContent: true,
+  listingsCreated: true,
+  listingsSaved: true,
+  ownChats: true,
+});

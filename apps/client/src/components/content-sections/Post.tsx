@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useRef, useState, type FC, type MouseEventHandler } from "react";
-import type { Comment, PostFull } from "../../lib/api-client";
+import type { Comment, PostFull } from "../../lib/db-types";
 import { CommentButton, ShareButton } from "../custom-ui-blocks/buttons/PostButtons";
 import PostLikeButton from "../custom-ui-blocks/buttons/PostLikeButton";
 import CommentInput from "../custom-ui-blocks/input/CommentInput";

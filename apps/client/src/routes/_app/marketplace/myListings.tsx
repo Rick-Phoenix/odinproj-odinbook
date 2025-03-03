@@ -4,7 +4,7 @@ import ListingPreview from "../../../components/content-sections/ListingPreview"
 import DeleteListingButton from "../../../components/custom-ui-blocks/buttons/DeleteListingButton";
 import MarkAsSoldButton from "../../../components/custom-ui-blocks/buttons/MarkAsSoldButton";
 import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
-import type { Listing } from "../../../lib/api-client";
+import type { Listing } from "../../../lib/db-types";
 
 export const Route = createFileRoute("/_app/marketplace/myListings")({
   component: RouteComponent,

@@ -21,7 +21,8 @@ import { PostPreview } from "../../../components/content-sections/PostPreview";
 import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import { Button } from "../../../components/ui/button";
 import { CardTitle } from "../../../components/ui/card";
-import { api, type InitialFeed, type PostBasic, type SortingOrder } from "../../../lib/api-client";
+import type { InitialFeed, PostBasic, SortingOrder } from "../../../lib/db-types";
+import { api } from "../../../lib/hono-RPC";
 import {
   cachePost,
   getNextPostsByLikes,

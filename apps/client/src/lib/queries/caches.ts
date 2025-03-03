@@ -1,4 +1,4 @@
-import type { Post, PostBasic, PostFull } from "../api-client";
+import type { Post, PostBasic, PostFull } from "../db-types";
 import { queryClient } from "./queryClient";
 import { sortPosts } from "./queryOptions";
 

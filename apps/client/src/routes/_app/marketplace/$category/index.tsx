@@ -1,10 +1,10 @@
+import { marketplaceCategories } from "@nexus/shared-schemas";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { z } from "zod";
 import ListingPreview from "../../../../components/content-sections/ListingPreview";
 import InsetScrollArea from "../../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import { Button } from "../../../../components/ui/button";
-import { marketplaceCategories } from "../../../../lib/api-client";
 import { listingsByCategoryQueryOptions } from "../../../../lib/queries/queryOptions";
 
 const searchParams = z.object({

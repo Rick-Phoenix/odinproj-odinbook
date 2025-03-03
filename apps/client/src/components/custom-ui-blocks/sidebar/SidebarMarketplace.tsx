@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
-import type { Listing } from "../../../lib/api-client";
+import type { Listing } from "../../../lib/db-types";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { SidebarHeader, SidebarMenuButton, SidebarSeparator } from "../../ui/sidebar";
@@ -75,7 +75,7 @@ const MarketplaceSidebarContent = () => {
         </Avatar>
       </div>
       <div className="p-4 pt-0 text-center text-lg font-semibold">{seller}</div>
-      <Button className="mx-2 bg-primary/50 transition-colors hover:bg-primary" asChild>
+      <Button className="mx-2" asChild>
         <Link to={"/users/$username"} params={{ username: seller }}>
           View Profile
         </Link>

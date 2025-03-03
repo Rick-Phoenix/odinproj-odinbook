@@ -5,7 +5,7 @@ import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/Ins
 import { Avatar, AvatarImage } from "../../../components/ui/avatar";
 import { Separator } from "../../../components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "../../../components/ui/tabs";
-import { type Listing } from "../../../lib/api-client";
+import type { Listing } from "../../../lib/db-types";
 import { profileQueryOptions } from "../../../lib/queries/queryOptions";
 
 export const Route = createFileRoute("/_app/users/$username")({

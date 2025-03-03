@@ -1,5 +1,6 @@
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
+//import { bundleStats } from "rollup-plugin-bundle-stats";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import checker from "vite-plugin-checker";
@@ -16,6 +17,7 @@ export default defineConfig({
     }),
     tsconfigPaths({ root: import.meta.dirname }),
     checker({ typescript: { tsconfigPath: "./tsconfig.json" } }),
+    //bundleStats(),
     visualizer({
       open: true,
       template: "treemap",
@@ -31,6 +33,11 @@ export default defineConfig({
     modulePreload: { polyfill: true },
     rollupOptions: {
       input: "./src/main.tsx",
+      output: {
+        manualChunks: {
+          zod: ["zod"],
+        },
+      },
     },
   },
   server: {

@@ -2,7 +2,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { MessageSquare } from "lucide-react";
-import { type Profile } from "../../../lib/api-client";
+import { useUser } from "../../../hooks/auth";
+import type { Profile } from "../../../lib/db-types";
 import { chatsQueryOptions } from "../../../lib/queries/chatQueries";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
@@ -16,14 +17,16 @@ const UserProfileSidebarContent = () => {
     shouldThrow: false,
   });
   const navigate = useNavigate();
-
-  const profile = queryClient.getQueryData(["profile", profileParams?.username]) as
+  const { username } = useUser()!;
+  const profile = queryClient.getQueryData(["profile", profileParams?.username?.toLowerCase()]) as
     | Profile
     | undefined;
 
   if (!profileParams?.username || !profile) return <SidebarSkeleton />;
+  const isUserOwnProfile = profile.username.toLowerCase() === username.toLowerCase();
 
   const handleSendMessage = async () => {
+    if (isUserOwnProfile) return;
     const chats = await queryClient.fetchQuery(chatsQueryOptions);
     const existingChat = chats.find((chat) => chat.contact.username === profile.username);
     if (existingChat)
@@ -58,12 +61,14 @@ const UserProfileSidebarContent = () => {
           <div>{`${format(new Date(profile.createdAt), "MMM do y")}`}</div>
         </div>
       </div>
-      <SidebarMenu>
-        <Button onClick={handleSendMessage} className="mx-2 flex items-center">
-          <MessageSquare />
-          <span>Send Message</span>
-        </Button>
-      </SidebarMenu>
+      {!isUserOwnProfile && (
+        <SidebarMenu>
+          <Button onClick={handleSendMessage} className="mx-2 flex items-center">
+            <MessageSquare />
+            <span>Send Message</span>
+          </Button>
+        </SidebarMenu>
+      )}
     </>
   );
 };

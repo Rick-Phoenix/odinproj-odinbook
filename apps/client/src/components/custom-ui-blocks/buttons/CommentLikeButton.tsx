@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, type FC } from "react";
 import { PiThumbsUpBold, PiThumbsUpFill } from "react-icons/pi";
-import { api, type Comment } from "../../../lib/api-client";
+import { type Comment } from "../../../lib/db-types";
+import { api } from "../../../lib/hono-RPC";
 import ButtonGesture from "../../animations/ButtonGesture";
 import { Button } from "../../ui/button";
 

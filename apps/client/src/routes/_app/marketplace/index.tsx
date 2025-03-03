@@ -1,3 +1,4 @@
+import { marketplaceCategories } from "@nexus/shared-schemas";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useSpring, useTransform } from "motion/react";
 import { type FC, type MouseEvent, type MouseEventHandler } from "react";
@@ -11,12 +12,8 @@ import { Autoplay, EffectCoverflow, Mousewheel, Pagination } from "swiper/module
 import { Swiper, SwiperSlide } from "swiper/react";
 import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import CreateListingDialog from "../../../components/dialogs/CreateListingDialog";
-import {
-  api,
-  marketplaceCategories,
-  type Listing,
-  type ListingCategory,
-} from "../../../lib/api-client";
+import type { Listing, ListingCategory } from "../../../lib/db-types";
+import { api } from "../../../lib/hono-RPC";
 
 export const Route = createFileRoute("/_app/marketplace/")({
   component: RouteComponent,

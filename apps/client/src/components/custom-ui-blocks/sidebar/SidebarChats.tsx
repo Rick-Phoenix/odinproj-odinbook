@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import type { FC } from "react";
 import { useChats } from "../../../hooks/useChats";
 import { useUnreadMessages } from "../../../hooks/useUnreadMessages";
-import type { Chat } from "../../../lib/api-client";
+import type { Chat } from "../../../lib/db-types";
 import CreateChatDialog from "../../dialogs/CreateChatDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";

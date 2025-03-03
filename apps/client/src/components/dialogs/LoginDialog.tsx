@@ -1,9 +1,10 @@
+import { loginValidationSchema } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { PiGithubLogoFill } from "react-icons/pi";
 import { handleGithubLogin } from "../../hooks/auth";
-import { api, loginValidationSchema } from "../../lib/api-client";
+import { api } from "../../lib/hono-RPC";
 import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
 import { Button } from "../ui/button";

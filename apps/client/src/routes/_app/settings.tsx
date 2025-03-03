@@ -1,3 +1,4 @@
+import { updatePasswordSchema, updateStatusSchema } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
@@ -22,7 +23,8 @@ import { Label } from "../../components/ui/label";
 import { Textarea } from "../../components/ui/textarea";
 import { useUser } from "../../hooks/auth";
 import { useToast } from "../../hooks/useToast";
-import { api, updatePasswordSchema, updateStatusSchema, type User } from "../../lib/api-client";
+import type { User } from "../../lib/db-types";
+import { api } from "../../lib/hono-RPC";
 import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
 

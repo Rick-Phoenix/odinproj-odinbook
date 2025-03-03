@@ -2,7 +2,7 @@ import { type FC } from "react";
 
 import { Link } from "@tanstack/react-router";
 import { format } from "date-fns";
-import type { PostBasic } from "../../lib/api-client";
+import type { PostBasic } from "../../lib/db-types";
 import { CommentButton, ShareButton } from "../custom-ui-blocks/buttons/PostButtons";
 import PostLikeButton from "../custom-ui-blocks/buttons/PostLikeButton";
 import { CardContent, CardDescription, CardHeader, CardTitle } from "../ui/card";

@@ -5,7 +5,7 @@ import { format } from "date-fns";
 import { type FC } from "react";
 import { useUser } from "../../../hooks/auth";
 import { useActivePage } from "../../../hooks/useActivePage";
-import { type Room } from "../../../lib/api-client";
+import type { Room } from "../../../lib/db-types";
 import CreatePostDialog from "../../dialogs/CreatePostDialog";
 import CreateRoomDialog from "../../dialogs/CreateRoomDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";

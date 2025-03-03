@@ -25,7 +25,8 @@ import {
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
 import { useUser } from "../../../../hooks/auth";
-import { api, type PostBasic } from "../../../../lib/api-client";
+import type { PostBasic } from "../../../../lib/db-types";
+import { api } from "../../../../lib/hono-RPC";
 import {
   cachePost,
   getNextPostsByLikes,

@@ -1,4 +1,4 @@
-import type { Chat } from "../lib/api-client";
+import type { Chat } from "../lib/db-types";
 import { useReactiveQueries } from "./useReactiveQueries";
 
 export function useChats() {
