@@ -4,6 +4,7 @@ import type { Listing } from "../../../lib/db-types";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { SidebarHeader, SidebarMenuButton, SidebarSeparator } from "../../ui/sidebar";
+import SidebarSkeleton from "./SidebarSkeleton";
 
 const MarketplaceSidebarContent = () => {
   const { itemId } = useParams({ strict: false });
@@ -64,7 +65,11 @@ const MarketplaceSidebarContent = () => {
       </>
     );
 
-  const { picUrl, seller } = queryClient.getQueryData(["listing", itemId]) as Listing;
+  const listing = queryClient.getQueryData<Listing>(["listing", itemId]);
+
+  if (!listing) return <SidebarSkeleton />;
+
+  const { picUrl, seller } = listing;
 
   return (
     <>

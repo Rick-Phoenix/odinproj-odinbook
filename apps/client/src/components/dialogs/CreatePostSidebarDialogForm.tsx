@@ -1,9 +1,9 @@
-import { insertPostSchema } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { type FC } from "react";
 import { z } from "zod";
+import { insertPostSchema } from "../../lib/db-types";
 import { api } from "../../lib/hono-RPC";
 import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";

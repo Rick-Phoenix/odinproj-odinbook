@@ -9,9 +9,7 @@
   },
   "dependencies": {
     "@nexus/hono-api": "workspace:*",
-    "drizzle-orm": "catalog:",
-    "hono": "catalog:",
-    "zod": "^3.24.1"
+    "hono": "catalog:"
   },
   "devDependencies": {
     "@nexus/eslint-config": "workspace:*",

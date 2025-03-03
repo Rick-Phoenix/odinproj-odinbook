@@ -10,7 +10,7 @@ const PostLikeButton: FC<{
   postId: number;
 }> = ({ postId }) => {
   const queryClient = useQueryClient();
-  const query = queryClient.getQueryData(["postLikes", postId]) as LikeData;
+  const query = queryClient.getQueryData<LikeData>(["postLikes", postId]);
   const initialIsLiked = query?.isLiked;
   const initialLikeCount = query?.likesCount;
   const [isLiked, setIsLiked] = useState(initialIsLiked || false);

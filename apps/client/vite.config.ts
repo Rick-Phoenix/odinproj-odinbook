@@ -1,9 +1,9 @@
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
-//import { bundleStats } from "rollup-plugin-bundle-stats";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import checker from "vite-plugin-checker";
+import Inspect from "vite-plugin-inspect";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 // https://vite.dev/config/
@@ -17,7 +17,6 @@ export default defineConfig({
     }),
     tsconfigPaths({ root: import.meta.dirname }),
     checker({ typescript: { tsconfigPath: "./tsconfig.json" } }),
-    //bundleStats(),
     visualizer({
       open: true,
       template: "treemap",
@@ -25,6 +24,7 @@ export default defineConfig({
       gzipSize: true,
       projectRoot: "/home/rick/nexus/apps/client",
     }),
+    Inspect({}),
   ],
   build: {
     outDir: "../server/public",

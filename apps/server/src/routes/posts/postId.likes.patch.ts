@@ -1,9 +1,8 @@
 import { getUserId } from "@/lib/auth";
-import { inputErrorResponse, numberParamSchema } from "@/schemas/response-schemas";
+import { inputErrorResponse, numberParamSchema, okResponse } from "@/schemas/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
 import { and, eq } from "drizzle-orm";
 import { INTERNAL_SERVER_ERROR, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
-import { jsonContent } from "stoker/openapi/helpers";
 import db from "../../db/db-config";
 import { postLikes } from "../../db/schema";
 import { internalServerError } from "../../schemas/response-schemas";
@@ -22,7 +21,7 @@ export const registerLike = createRoute({
   tags,
   request: inputs,
   responses: {
-    [OK]: jsonContent(z.string(), "A confirmation message."),
+    [OK]: okResponse.template,
     [UNPROCESSABLE_ENTITY]: inputErrorResponse(inputs.params.merge(inputs.query)),
     [INTERNAL_SERVER_ERROR]: internalServerError.template,
   },
@@ -44,7 +43,7 @@ export const registerLikeHandler: AppRouteHandler<
   }
 
   if (!queryResult) return c.json(internalServerError.content, INTERNAL_SERVER_ERROR);
-  return c.json("OK", OK);
+  return c.json(okResponse.content, OK);
 };
 
 async function insertPostLike(userId: string, postId: number) {
@@ -53,7 +52,8 @@ async function insertPostLike(userId: string, postId: number) {
 }
 
 async function removePostLike(userId: string, postId: number) {
-  return await db
+  const query = await db
     .delete(postLikes)
     .where(and(eq(postLikes.userId, userId), eq(postLikes.postId, postId)));
+  return query.rowCount;
 }
