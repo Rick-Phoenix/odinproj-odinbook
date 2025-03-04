@@ -10,11 +10,11 @@ export default function MainHero() {
   return (
     <BackgroundGradientAnimation
       interactive={false}
-      className="relative h-svh flex-col gap-4 p-4 flex-center"
+      className="relative max-h-svh flex-col p-4 flex-center"
       gradientBackgroundEnd="rgb(30, 41, 59)"
       gradientBackgroundStart="rgb(2, 8, 23)"
     >
-      <div className="absolute top-1 text-[8rem]">
+      <div className="text-[8rem] flex-center *:max-h-[8rem]">
         <GradientText
           colors={["#40ffaa", "#4079ff", "#e5e7eb00", "#40ffaa", "#4079ff"]}
           gradientAngle={120}
@@ -24,9 +24,9 @@ export default function MainHero() {
         </GradientText>
       </div>
       <div
-        className="relative size-[500px] bg-black"
+        className="relative -mt-4 size-[450px] bg-black"
         style={{
-          mask: `url("data:image/svg+xml, %3Csvg stroke='white' fill='none' strokeWidth='2' viewBox='0 0 24 24' strokeLinecap='round' strokeLinejoin='round' height='100%' width='100%' xmlns='http://www.w3.org/2000/svg' %3E%3Cpath d='M6.045 9.777a6 6 0 1 0 5.951 .023' %3E%3C/path%3E%3Cpath d='M11.997 20.196a6 6 0 1 0 -2.948 -5.97' %3E%3C/path%3E%3Cpath d='M17.95 9.785q .05 -.386 .05 -.785a6 6 0 1 0 -3.056 5.23'%3E%3C/path%3E%3C/svg%3E")`,
+          mask: `url("data:image/svg+xml, %3Csvg stroke='white' fill='none' strokeWidth='2' viewBox='0 0 24 24' strokeLinecap='round' strokeLinejoin='round' height='auto' width='auto' xmlns='http://www.w3.org/2000/svg' %3E%3Cpath d='M6.045 9.777a6 6 0 1 0 5.951 .023' %3E%3C/path%3E%3Cpath d='M11.997 20.196a6 6 0 1 0 -2.948 -5.97' %3E%3C/path%3E%3Cpath d='M17.95 9.785q .05 -.386 .05 -.785a6 6 0 1 0 -3.056 5.23'%3E%3C/path%3E%3C/svg%3E")`,
         }}
       >
         <BackgroundGradientAnimation
@@ -35,7 +35,7 @@ export default function MainHero() {
         />
         <DraggableElement />
       </div>
-      <span className="z-20 mb-2 font-[montserrat] text-4xl font-thin italic leading-tight tracking-tight">
+      <span className="-mt4 z-20 mb-8 font-[montserrat] text-4xl font-thin italic leading-tight tracking-tight">
         <TypingText grow={true} waitTime={2000} delay={50} />
       </span>
       <div className="z-20 flex gap-4">

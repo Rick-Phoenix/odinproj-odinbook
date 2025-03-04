@@ -1,11 +1,6 @@
-import { init } from "aos";
-import { useEffect } from "react";
 import CircularText from "../../components/animations/RotatingText";
 
 export default function FrontPageFooter() {
-  useEffect(() => {
-    init();
-  }, []);
   return (
     <>
       <div className="relative m-24">

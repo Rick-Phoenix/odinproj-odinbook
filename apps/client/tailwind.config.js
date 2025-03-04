@@ -5,7 +5,7 @@ import cssplugin from "./cssplugin";
 /** @type {import('tailwindcss').Config} */
 export default {
   darkMode: ["class"],
-  content: ["./index.html", "./src/**/*.{tsx,js,jsx}"],
+  content: ["./index.html", "./src/**/*.{tsx,js,jsx,ts}", "./src/**/*.css"],
   theme: {
     extend: {
       translate: {

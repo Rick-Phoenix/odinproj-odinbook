@@ -1,14 +1,9 @@
-import { init } from "aos";
-import { useEffect, type FC } from "react";
+import { type FC } from "react";
 import InfiniteScroll from "../../components/animations/InfiniteScroll";
 import GradientText from "../../components/animations/TextGradient";
 import { Card, CardDescription, CardTitle } from "../../components/ui/card";
 
 export default function RoomsPresentation() {
-  useEffect(() => {
-    init();
-  }, []);
-
   const rooms = [
     {
       title: "Electronics Enthusiasts",

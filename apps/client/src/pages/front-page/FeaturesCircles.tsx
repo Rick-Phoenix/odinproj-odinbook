@@ -1,6 +1,5 @@
-import { init } from "aos";
 import { MessageSquareText } from "lucide-react";
-import React, { forwardRef, useEffect, useRef } from "react";
+import React, { forwardRef, useRef } from "react";
 import { FaRegHandshake } from "react-icons/fa6";
 import {
   TbBallAmericanFootball,
@@ -59,10 +58,6 @@ export default function FeaturesAnimatedBeams({ className }: { className?: strin
   const duration = 10;
   const gradientStartColor = "#9c40ff";
   const gradientStopColor = "#106e88";
-
-  useEffect(() => {
-    init();
-  }, []);
 
   return (
     <div

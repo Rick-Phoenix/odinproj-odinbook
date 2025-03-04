@@ -35,6 +35,7 @@
     "@radix-ui/react-tabs": "^1.1.2",
     "@radix-ui/react-toast": "^1.2.6",
     "@radix-ui/react-tooltip": "^1.1.6",
+    "@tailwindcss/vite": "^4.0.9",
     "@tanstack/react-form": "^0.41.1",
     "@tanstack/react-query": "^5.63.0",
     "@tanstack/react-router": "^1.101.0",

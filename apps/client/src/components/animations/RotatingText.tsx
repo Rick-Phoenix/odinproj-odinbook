@@ -11,8 +11,8 @@ interface CircularTextProps {
 const CircularText: React.FC<CircularTextProps> = ({
   text,
   spinDuration = 20,
-  fontSizeRem = 2,
-  spacingRem = 0.5,
+  fontSizeRem = 1,
+  spacingRem = 1.5,
   containerClassName,
 }) => {
   const letters = Array.from(text);
