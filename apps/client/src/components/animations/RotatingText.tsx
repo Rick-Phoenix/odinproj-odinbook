@@ -1,123 +1,55 @@
-import { motion, useAnimation } from "motion/react";
-import React, { useEffect, useState } from "react";
+import React, { type CSSProperties } from "react";
 
 interface CircularTextProps {
   text: string;
   spinDuration?: number;
-  onHover?: "slowDown" | "speedUp" | "pause" | "goBonkers";
-  className?: string;
+  containerClassName?: string;
+  fontSizeRem?: number;
+  spacingRem?: number;
 }
-
-const getRotationTransition = (duration: number, from: number, loop: boolean = true) => ({
-  from: from,
-  to: from + 360,
-  ease: "linear",
-  duration: duration,
-  type: "tween",
-  repeat: loop ? Infinity : 0,
-});
-
-const getTransition = (duration: number, from: number) => ({
-  rotate: getRotationTransition(duration, from),
-  scale: {
-    type: "spring",
-    damping: 20,
-    stiffness: 300,
-  },
-});
 
 const CircularText: React.FC<CircularTextProps> = ({
   text,
   spinDuration = 20,
-  onHover = "speedUp",
-  className = "",
+  fontSizeRem = 2,
+  spacingRem = 0.5,
+  containerClassName,
 }) => {
   const letters = Array.from(text);
-  const controls = useAnimation();
-  const [currentRotation, setCurrentRotation] = useState(0);
-
-  useEffect(() => {
-    controls.start({
-      rotate: currentRotation + 360,
-      scale: 1,
-      transition: getTransition(spinDuration, currentRotation),
-    });
-  }, [spinDuration, controls, onHover, text]);
-
-  const handleHoverStart = () => {
-    if (!onHover) return;
-    switch (onHover) {
-      case "slowDown":
-        controls.start({
-          rotate: currentRotation + 360,
-          scale: 1,
-          transition: getTransition(spinDuration * 2, currentRotation),
-        });
-        break;
-      case "speedUp":
-        controls.start({
-          rotate: currentRotation + 360,
-          scale: 1,
-          transition: getTransition(spinDuration / 4, currentRotation),
-        });
-        break;
-      case "pause":
-        controls.start({
-          rotate: currentRotation,
-          scale: 1,
-          transition: {
-            rotate: { type: "spring", damping: 20, stiffness: 300 },
-            scale: { type: "spring", damping: 20, stiffness: 300 },
-          },
-        });
-        break;
-      case "goBonkers":
-        controls.start({
-          rotate: currentRotation + 360,
-          scale: 0.8,
-          transition: getTransition(spinDuration / 20, currentRotation),
-        });
-        break;
-      default:
-        break;
-    }
-  };
-
-  const handleHoverEnd = () => {
-    controls.start({
-      rotate: currentRotation + 360,
-      scale: 1,
-      transition: getTransition(spinDuration, currentRotation),
-    });
-  };
+  const containerSize = (letters.length * (fontSizeRem + spacingRem)) / Math.PI;
 
   return (
-    <motion.div
-      initial={{ rotate: 0 }}
-      className={`mx-auto h-[400px] w-[400px] origin-center cursor-pointer rounded-full text-center font-black text-white ${className}`}
-      animate={controls}
-      onUpdate={(latest) => setCurrentRotation(Number(latest.rotate))}
-      onMouseEnter={handleHoverStart}
-      onMouseLeave={handleHoverEnd}
+    <div
+      className={`relative ${containerClassName}`}
+      style={
+        {
+          "--total": `${letters.length}`,
+          fontSize: `${fontSizeRem}rem`,
+          "--inner-angle": `calc((360 / var(--total)) * 1deg)`,
+          "--radius": `calc(1 / sin(var(--inner-angle)) * -${fontSizeRem + spacingRem}rem)`,
+          width: `${containerSize + fontSizeRem}rem`,
+          height: `${containerSize + fontSizeRem}rem`,
+          animation: `spin ${spinDuration}s infinite linear`,
+        } as CSSProperties
+      }
     >
       {letters.map((letter, i) => {
-        const rotation = (360 / letters.length) * i;
-        const factor = Number((Math.PI / letters.length).toFixed(0));
-        const x = factor * i;
-        const y = factor * i;
-        const transform = `rotateZ(${rotation}deg) translate3d(${x}px, ${y}px, 0)`;
-
         return (
           <span
+            className="absolute left-1/2 top-1/2 min-w-min"
             key={i}
-            className="ease-[cubic-bezier(0,0,0,1)] absolute inset-0 inline-block text-2xl transition-all duration-500"
-            style={{ transform, WebkitTransform: transform }}
+            style={
+              {
+                "--index": `${i}`,
+                transform: `translate(-50%, -50%) rotate(calc(var(--inner-angle) * var(--index))) translateY(var(--radius))`,
+              } as CSSProperties
+            }
           >
             {letter}
           </span>
         );
       })}
-    </motion.div>
+    </div>
   );
 };
 

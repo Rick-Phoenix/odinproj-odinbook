@@ -11,9 +11,9 @@ export default function FrontPageFooter() {
       <div className="relative m-24">
         <CircularText
           text={"*DISCOVER*SHARE*LEARN"}
-          onHover="slowDown"
           data-aos="fade-up"
           data-aos-duration="2500"
+          containerClassName="mx-auto"
         />
         <div className="text-2xl absolute-center">
           <button data-aos="fade-up" data-aos-duration="2000" className="relative p-[3px]">

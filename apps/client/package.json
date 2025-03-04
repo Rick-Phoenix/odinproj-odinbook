@@ -43,6 +43,7 @@
     "@types/aos": "^3.0.7",
     "aos": "^2.3.4",
     "class-variance-authority": "^0.7.1",
+    "classnames": "^2.5.1",
     "clsx": "^2.1.1",
     "date-fns": "^4.1.0",
     "eslint-config-prettier": "^9.1.0",
@@ -62,7 +63,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.15.0",
-    "@fullhuman/postcss-purgecss": "^7.0.2",
     "@tanstack/eslint-plugin-query": "^5.62.16",
     "@tanstack/eslint-plugin-router": "^1.92.7",
     "@tanstack/router-devtools": "^1.95.3",

@@ -6,7 +6,6 @@ import cssplugin from "./cssplugin";
 export default {
   darkMode: ["class"],
   content: ["./index.html", "./src/**/*.{tsx,js,jsx}"],
-  css: ["./src/styles/index.css", "./src/styles/globals.css"],
   theme: {
     extend: {
       translate: {
@@ -18,26 +17,11 @@ export default {
         third: "moveInCircle 40s linear infinite",
         fourth: "moveHorizontal 40s ease infinite",
         fifth: "moveInCircle 20s ease infinite",
-        marquee: "marquee 15s linear infinite",
-        "background-position-spin": "background-position-spin 3000ms infinite alternate",
-        gradient: "gradient 8s linear infinite alternate",
+        spin: "spin 6s infinite linear",
       },
       keyframes: {
-        gradient: {
-          "0%": { backgroundPosition: "0% 0%" },
-          "100%": { backgroundPosition: "100% 100%" },
-        },
-        "background-position-spin": {
-          "0%": { backgroundPosition: "top center" },
-          "100%": { backgroundPosition: "bottom center" },
-        },
-        marquee: {
-          from: { transform: "translateX(0%)" },
-          to: { transform: "translateX(-50%)" },
-        },
-        "marquee-vertical": {
-          from: { transform: "translateY(0)" },
-          to: { transform: "translateY(calc(-100% - var(--gap)))" },
+        spin: {
+          "100%": { transform: "rotate(-360deg)" },
         },
         moveHorizontal: {
           "0%": {

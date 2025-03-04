@@ -25,11 +25,7 @@ export default function GradientText({
   const bgHeight = `calc((200%) / ${sin})`;
   const backgroundSize = `${bgWidth} ${bgHeight}`;
 
-  const gradientStyle = {
-    backgroundImage: `linear-gradient(${gradientAngle}deg, ${colors.join(", ")})`,
-  };
-
-  const animation = `gradient ${durationSec}s linear infinite alternate`;
+  const backgroundImage = `linear-gradient(${gradientAngle}deg, ${colors.join(", ")})`;
 
   return (
     <div
@@ -60,11 +56,17 @@ export default function GradientText({
       <motion.div
         className="z-[2] text-transparent"
         style={{
-          ...gradientStyle,
+          backgroundImage,
           backgroundSize,
           backgroundClip: "text",
           WebkitBackgroundClip: "text",
-          animation,
+        }}
+        animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
+        transition={{
+          duration: durationSec,
+          repeat: Infinity,
+          repeatType: "reverse",
+          ease: "linear",
         }}
       >
         {children}
