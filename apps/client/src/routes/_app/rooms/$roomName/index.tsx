@@ -2,9 +2,8 @@ import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-q
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
 import { fallback, zodValidator } from "@tanstack/zod-adapter";
 import { useEffect, useRef, useState, type FC } from "react";
-import { TbSpaces } from "react-icons/tb";
+import { TbBellPlus, TbBellRingingFilled, TbSpaces } from "react-icons/tb";
 import { z } from "zod";
-import ButtonGesture from "../../../../components/animations/ButtonGesture";
 import { PostPreview } from "../../../../components/content-sections/PostPreview";
 import InsetScrollArea from "../../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import { Avatar, AvatarImage } from "../../../../components/ui/avatar";
@@ -25,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from "../../../../components/ui/dropdown-menu";
 import { useUser } from "../../../../hooks/auth";
+import { useToast } from "../../../../hooks/useToast";
 import type { PostBasic } from "../../../../lib/db-types";
 import { api } from "../../../../lib/hono-RPC";
 import {
@@ -173,23 +173,29 @@ function RouteComponent() {
   return (
     <InsetScrollArea onScroll={posts.length >= 20 ? handleScroll : undefined}>
       <section className="flex h-full flex-col justify-between gap-8 rounded-xl bg-transparent">
-        <header className="flex h-32 w-full items-center justify-between rounded-xl border-2 border-primary bg-slate-900 p-8 py-4">
-          <Avatar className="h-full w-auto border-2 border-primary">
-            <AvatarImage src={avatar} alt={`${roomName} avatar`} />
+        <header className="flex h-32 w-full items-center rounded-xl border-2 border-primary bg-slate-900 p-4">
+          <Avatar className="h-full w-auto overflow-visible">
+            <AvatarImage
+              src={avatar}
+              alt={`${roomName} avatar`}
+              className="h-full w-auto rounded-full border-2 border-primary"
+            />
           </Avatar>
-          <Link
-            to="/rooms/$roomName"
-            params={{ roomName }}
-            search={{ orderBy: "likesCount" }}
-            className="text-center text-2xl font-semibold hover:underline"
-          >
-            r/{roomName}
-          </Link>
-          {userIsCreator ? (
-            <RoomFounderMenu roomName={roomName} />
-          ) : (
-            <SubscribeButton roomName={roomName} isSubscribed={isSubscribed} />
-          )}
+          <div className="flex h-full flex-1 flex-col items-center justify-between [&_svg]:size-5">
+            <Link
+              to="/rooms/$roomName"
+              params={{ roomName }}
+              search={{ orderBy: "likesCount" }}
+              className="text-center text-2xl font-semibold hover:underline"
+            >
+              r/{roomName}
+            </Link>
+            {userIsCreator ? (
+              <RoomFounderMenu roomName={roomName} />
+            ) : (
+              <SubscribeButton roomName={roomName} isSubscribed={isSubscribed} />
+            )}
+          </div>
         </header>
         <div className="flex h-12 items-center justify-center gap-3 rounded-xl bg-primary/80 p-1">
           <Button
@@ -331,31 +337,44 @@ const SubscribeButton: FC<{
       if (!res.ok) {
         throw new Error("Could not subscribe to the room. Try again later.");
       }
-      return data;
+      return action;
     },
-    onSuccess: () => {
+    onSuccess: (action) => {
       queryClient.setQueryData(["roomSubs"], (old: string[]) =>
         isSubscribed
           ? old.filter((room) => room.toLowerCase() !== roomName.toLowerCase())
           : [...old, roomName]
       );
       setUserIsSubscribed((old) => !old);
+      toast({
+        title:
+          action === "add"
+            ? `You are now subscribed to ${roomName}.`
+            : `You have unsubscribed from ${roomName}.`,
+      });
     },
   });
-
+  const { toast } = useToast();
   return (
     <>
       {userIsSubscribed ? (
         <Dialog>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button size={"lg"} variant={"outline"} className="bg-primary/50 hover:bg-primary">
-                Subscribed
+              <Button
+                size={"sm"}
+                type="button"
+                className="min-w-max rounded-xl bg-primary/70 p-2 flex-center"
+              >
+                Subscribed{" "}
+                <span className="-translate-y-[2px]">
+                  <TbBellRingingFilled />
+                </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DialogTrigger asChild>
-                <DropdownMenuItem className="w-full">Unsubcribe</DropdownMenuItem>
+                <DropdownMenuItem className="w-full">Unsubscribe</DropdownMenuItem>
               </DialogTrigger>
             </DropdownMenuContent>
           </DropdownMenu>
@@ -372,11 +391,7 @@ const SubscribeButton: FC<{
                 </Button>
               </DialogClose>
               <DialogClose asChild>
-                <Button
-                  variant={"destructive"}
-                  onClick={() => subscribeMutation.mutate()}
-                  size={"lg"}
-                >
+                <Button variant={"destructive"} onClick={() => subscribeMutation.mutate()}>
                   Continue
                 </Button>
               </DialogClose>
@@ -384,8 +399,16 @@ const SubscribeButton: FC<{
           </DialogContent>
         </Dialog>
       ) : (
-        <Button asChild size={"lg"} onClick={() => subscribeMutation.mutate()}>
-          <ButtonGesture>Subscribe</ButtonGesture>
+        <Button
+          size={"sm"}
+          type="button"
+          className="min-w-max rounded-xl p-2 flex-center"
+          onClick={() => subscribeMutation.mutate()}
+        >
+          Subscribe
+          <span className="-translate-y-[2px]">
+            <TbBellPlus />
+          </span>
         </Button>
       )}
     </>

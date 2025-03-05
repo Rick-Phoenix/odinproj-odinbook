@@ -1,6 +1,7 @@
 import { userQueryOptions } from "@/lib/queries/queryOptions";
 import { createFileRoute, Outlet, redirect } from "@tanstack/react-router";
 import SidebarWrapper from "../components/custom-ui-blocks/sidebar/SidebarWrapper";
+import { Toaster } from "../components/ui/toaster";
 
 export const Route = createFileRoute("/_app")({
   component: RouteComponent,
@@ -14,8 +15,11 @@ export const Route = createFileRoute("/_app")({
 
 function RouteComponent() {
   return (
-    <SidebarWrapper>
-      <Outlet />
-    </SidebarWrapper>
+    <>
+      <Toaster />
+      <SidebarWrapper>
+        <Outlet />
+      </SidebarWrapper>
+    </>
   );
 }
