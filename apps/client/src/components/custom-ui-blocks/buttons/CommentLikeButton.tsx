@@ -49,7 +49,7 @@ const CommentLikeButton: FC<{
       onClick={() => {
         likeMutation.mutate();
       }}
-      className="group min-w-fit rounded-3xl p-6 px-8 hover:text-primary"
+      className="group min-w-fit rounded-3xl px-8 hover:text-primary md:p-6"
     >
       <ButtonGesture>
         {isLiked ? (

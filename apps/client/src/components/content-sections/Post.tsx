@@ -81,7 +81,7 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
   };
 
   return (
-    <section className="min-h-svh w-full min-w-0 overflow-x-auto break-words rounded-xl border bg-gray-800/20">
+    <section className="min-h-svh w-full min-w-0 overflow-x-auto rounded-xl border bg-gray-800/20">
       <CardHeader className="flex max-w-full flex-row justify-between gap-4 break-all">
         <div className="flex w-full flex-col">
           <Link
@@ -91,7 +91,9 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
           >
             r/{post.room.name}
           </Link>
-          <CardTitle className="min-w-0 max-w-full break-words text-2xl">{post.title}</CardTitle>
+          <CardTitle className="min-w-0 max-w-full break-words text-2xl [word-break:break-word]">
+            {post.title}
+          </CardTitle>
           <CardDescription className="relative">
             {post.author === "[deleted]" ? (
               <span className="italic">Deleted User</span>
@@ -108,7 +110,7 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
         </div>
       </CardHeader>
       <Separator />
-      <CardContent className="pt-4">{post.text}</CardContent>
+      <CardContent className="p-4 md:p-6">{post.text}</CardContent>
       <Separator className="mt-1" />
       <div className="flex p-3">
         <PostLikeButton postId={post.id} />
@@ -121,12 +123,12 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
       </div>
       <Separator className="mt-1" />
 
-      <div className="p-6">
+      <div className="p-3 md:p-6">
         <div className="flex items-center gap-5 py-6">
           <span className="border-b-2 font-semibold">Comments</span>
           <SortComments orderBy={orderBy} />
         </div>
-        <div className="grid grid-cols-[2.5rem_1fr] items-center">
+        <div className="grid min-w-full grid-cols-[2.5rem_1fr] items-center overflow-x-scroll">
           {renderComments(sortedComments, 1, 1)}
         </div>
       </div>
@@ -143,7 +145,7 @@ const SortComments: FC<{ orderBy: "likesCount" | "createdAt" }> = ({ orderBy }) 
           variant={"outline"}
           className="rounded-2xl bg-accent px-6 hover:bg-background hover:text-accent-foreground"
         >
-          Sorted By: {selection}
+          Sort By: {selection}
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="flex flex-col rounded-lg text-center *:flex *:w-full *:justify-center">

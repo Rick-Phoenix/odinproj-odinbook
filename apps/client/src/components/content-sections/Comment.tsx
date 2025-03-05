@@ -78,7 +78,9 @@ const PostComment: FC<{
               <span className="italic text-muted-foreground">Deleted User</span>
             )}
           </div>
-          <div className="text-sm">{format(new Date(c.createdAt), "dd MMM y | HH:MM")}</div>
+          <div className="min-w-max text-sm">
+            {format(new Date(c.createdAt), "dd MMM y | HH:MM")}
+          </div>
         </div>
       </div>
     );
@@ -106,7 +108,7 @@ const PostComment: FC<{
           </div>
         )}
       </div>
-      <div className="col-start-2 row-start-1 flex flex-col pl-4">
+      <div className="col-start-2 row-start-1 flex min-w-max flex-col pl-4">
         <div className="flex gap-4">
           {c.author.username !== "[deleted]" ? (
             <Link to="/users/$username" params={{ username: c.author.username }}>
@@ -128,7 +130,7 @@ const PostComment: FC<{
         <Separator orientation="vertical" className="group-hover/sep:bg-white" />
       </div>
 
-      <div className="col-start-2 row-start-2 flex flex-col gap-2 pt-4">
+      <div className="col-start-2 row-start-2 flex min-w-max flex-col gap-2 pt-4 text-sm">
         <CommentText text={c.text} commentId={c.id} initialIsDeleted={c.isDeleted} />
         <CommentButtons
           parentCommentId={c.id}

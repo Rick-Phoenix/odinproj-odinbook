@@ -13,7 +13,7 @@ export const PostPreview: FC<{
 }> = ({ post: { title, room: roomName, text, id: postId, author, createdAt } }) => {
   return (
     <div className="flex max-h-[50%] min-h-min flex-col justify-between rounded-xl border bg-gray-800/20">
-      <CardHeader className="flex flex-row justify-between gap-4 p-8 pb-3">
+      <CardHeader className="flex flex-col justify-between gap-4 p-8 pb-3 md:flex-row">
         <div className="flex flex-col">
           <Link to="/rooms/$roomName/posts/$postId" params={{ roomName, postId }}>
             <CardTitle className="line-clamp-4 text-2xl">{title}</CardTitle>
@@ -39,7 +39,7 @@ export const PostPreview: FC<{
         <Link
           to="/rooms/$roomName"
           params={{ roomName }}
-          className="h-fit min-w-fit text-nowrap rounded-3xl border bg-primary/50 p-2 px-4 transition-colors hover:bg-primary"
+          className="h-fit w-fit min-w-fit text-nowrap rounded-3xl border bg-primary/50 p-2 px-4 transition-colors hover:bg-primary"
         >
           r/{roomName}
         </Link>

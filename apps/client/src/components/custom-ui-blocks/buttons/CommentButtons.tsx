@@ -100,7 +100,7 @@ const CommentButtons: FC<{
         />
         <Button
           variant={"ghost"}
-          className="flex w-fit items-center gap-2 rounded-3xl p-6 hover:text-primary"
+          className="flex min-w-fit items-center gap-2 rounded-3xl hover:text-primary md:p-6"
           onClick={() => setIsReplying(true)}
         >
           <MessageCircleMore /> Reply
@@ -182,7 +182,7 @@ const CommentOptions: FC<{ commentId: number }> = ({ commentId }) => {
         <DropdownMenuTrigger asChild>
           <Button
             variant={"ghost"}
-            className="flex w-fit items-center gap-2 rounded-3xl p-6 hover:text-primary"
+            className="flex min-w-max items-center gap-2 rounded-3xl hover:text-primary md:p-6"
           >
             <EllipsisVertical />
           </Button>
