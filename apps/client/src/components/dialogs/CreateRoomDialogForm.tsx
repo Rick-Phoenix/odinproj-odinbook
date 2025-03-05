@@ -94,7 +94,7 @@ const CreateRoomDialogForm = memo(() => {
                       name={field.name}
                       type="text"
                       value={field.state.value}
-                      placeholder="r/Allofthecats"
+                      placeholder="Title"
                       onChange={(e) => field.handleChange(e.target.value)}
                       required
                     />
@@ -170,6 +170,7 @@ const CreateRoomDialogForm = memo(() => {
                       type="text"
                       value={field.state.value}
                       onChange={(e) => field.handleChange(e.target.value)}
+                      placeholder="Description"
                       required
                     />
                     {field.state.meta.isTouched && formatFormErrors(field.state.meta.errors)}

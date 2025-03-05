@@ -151,7 +151,7 @@ export const loginValidationSchema = insertUserSchema.pick({
 });
 
 export const insertRoomSchema = z.object({
-  name: z.string().max(20, "The name cannot be longer than 20 characters."),
+  name: z.string().max(32, "The name cannot be longer than 20 characters."),
   description: z.string().max(150, "The description cannot be longer than 150 characters."),
   category: z.enum(roomCategoriesArray),
   avatar: z
@@ -162,10 +162,7 @@ export const insertRoomSchema = z.object({
 export { roomCategoriesArray } from "../db/schema";
 
 export const insertPostSchema = z.object({
-  title: z
-    .string()
-    .min(20, "The post's title must be at least 20 characters long.")
-    .max(100, "The title cannot be longer than 100 characters."),
+  title: z.string().max(100, "The title cannot be longer than 100 characters."),
   text: z
     .string()
     .min(20, "The post's content must be at least 20 characters long.")
@@ -188,11 +185,8 @@ export const insertSubscriptionSchema = createInsertSchema(subs).omit({
 
 export { itemConditions, marketplaceCategories } from "../db/schema";
 export const insertListingSchema = z.object({
-  title: z
-    .string()
-    .min(10, "The title must be at least 10 characters long.")
-    .max(30, "The title cannot be longer than 30 characters."),
-  description: z.string().max(250, "The description cannot be longer than 250 characters."),
+  title: z.string().max(32, "The title cannot be longer than 30 characters."),
+  description: z.string().max(255, "The description cannot be longer than 250 characters."),
   price: z.coerce
     .number()
     .positive()
@@ -218,13 +212,16 @@ export type ListingInputs = Omit<z.infer<typeof insertListingSchema>, "pic"> & {
 };
 
 export const insertMessageSchema = z.object({
-  text: z.string().min(1).max(1000),
+  text: z
+    .string()
+    .min(1, "Cannot send an empty message.")
+    .max(1000, "A message cannot be longer than 1000 characters."),
   receiverId: z.string(),
   chatId: z.number().optional(),
 });
 
 export const updateStatusSchema = z.object({
-  status: z.string().max(100, "The status cannot be longer than 100 characters."),
+  status: z.string().max(128, "The status cannot be longer than 100 characters."),
 });
 
 export const updateAvatarSchema = z.object({
