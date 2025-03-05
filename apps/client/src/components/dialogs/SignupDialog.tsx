@@ -50,7 +50,7 @@ function SignupDialog() {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="rounded-2xl bg-gradient-to-r from-sky-600 to-teal-500 px-8 py-2 font-bold text-white transition duration-200 hover:border-teal-500 hover:text-black">
+        <button className="rounded-2xl bg-gradient-to-r from-sky-600 to-teal-500 px-8 py-2 font-bold text-white transition-colors hover:text-black">
           Sign Up
         </button>
       </DialogTrigger>

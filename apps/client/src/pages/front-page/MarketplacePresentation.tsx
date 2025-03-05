@@ -13,14 +13,14 @@ export default function MarketplacePresentation() {
         <Stack autoCycle />
       </div>
       <h1
-        className="self-end pb-3 text-4xl"
+        className="self-end pb-3 text-5xl"
         id="deals-header"
         data-aos="fade-down"
         data-aos-duration="2000"
       >
         An open <GradientText>marketplace</GradientText> for collectors and hobbyists
       </h1>
-      <div className="col-start-2 text-xl" data-aos="fade-left" data-aos-duration="2500">
+      <div className="col-start-2 text-2xl" data-aos="fade-left" data-aos-duration="2500">
         Like a true digital neighborhood, Nexus has its own form of garage sales. In the marketplace
         section , you can buy items from other Nexers (or sell your own){" "}
         <span className="inline-block underline decoration-primary underline-offset-4">

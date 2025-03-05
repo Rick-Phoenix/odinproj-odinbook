@@ -45,13 +45,13 @@ export const MockChat = ({ messages }: { messages: string[] }) => {
       >
         <div className="col-start-2 row-span-2 w-fit">
           <div className="sticky flex flex-col gap-3 center-y">
-            <span className="text-4xl">
+            <span className="text-5xl">
               A place for creating{" "}
               <span data-aos="fade-left" data-aos-duration="3000">
                 <GradientText>connections</GradientText>
               </span>
             </span>
-            <span className="text-xl">
+            <span className="text-2xl">
               With its{" "}
               <span className="underline decoration-primary underline-offset-4">
                 integrated chat

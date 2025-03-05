@@ -20,7 +20,7 @@ const CircularText: React.FC<CircularTextProps> = ({
 
   return (
     <div
-      className={`relative ${containerClassName}`}
+      className={`relative will-change-transform ${containerClassName}`}
       style={
         {
           "--total": `${letters.length}`,

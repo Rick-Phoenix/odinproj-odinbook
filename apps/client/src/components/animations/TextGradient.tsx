@@ -24,11 +24,9 @@ export default function GradientText({
   const backgroundImage = `linear-gradient(${gradientAngle}deg, ${colors.join(", ")})`;
 
   return (
-    <div
-      className={`relative mx-auto inline-flex max-h-fit max-w-fit items-center overflow-hidden font-medium backdrop-blur transition-all ${className}`}
-    >
+    <div className={`relative inline-flex overflow-hidden font-medium backdrop-blur ${className}`}>
       <motion.div
-        className="z-[2] max-h-[inherit] text-transparent flex-center"
+        className="z-[2] text-transparent"
         style={{
           backgroundImage,
           backgroundSize,
