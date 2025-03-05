@@ -27,13 +27,13 @@ function CardRotate({ children, onSendToBack, sensitivity, autoCycle, isFront }:
   }
   useEffect(() => {
     if (autoCycle && isFront) {
-      const animationX = animate(x, targetX, { duration: 1 });
-      const animationY = animate(y, targetY, { duration: 1 });
+      const animationX = animate(x, targetX, { duration: 1.3 });
+      const animationY = animate(y, targetY, { duration: 1.3 });
 
       Promise.all([animationX, animationY]).then(() => {
         onSendToBack();
-        const animationX = animate(x, 0, { duration: 1 });
-        const animationY = animate(y, 0, { duration: 1 });
+        const animationX = animate(x, 0, { duration: 1.3 });
+        const animationY = animate(y, 0, { duration: 1.3 });
         Promise.all([animationX, animationY]);
       });
 
@@ -162,7 +162,7 @@ export default function Stack({
               <img
                 src={card.img}
                 alt={`card-${card.id}`}
-                className="h-fit max-h-[200px] w-fit max-w-full rounded-md object-contain"
+                className="pointer-events-none h-fit max-h-[200px] w-fit max-w-full rounded-md object-contain"
               />
               <h4 className="line-clamp-2 min-w-0 max-w-full scroll-m-20 break-words text-2xl tracking-tight transition-all group-hover:underline">
                 {card.title}

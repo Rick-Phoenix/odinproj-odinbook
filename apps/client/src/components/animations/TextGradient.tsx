@@ -24,25 +24,23 @@ export default function GradientText({
   const backgroundImage = `linear-gradient(${gradientAngle}deg, ${colors.join(", ")})`;
 
   return (
-    <div className={`relative inline-flex overflow-hidden font-medium backdrop-blur ${className}`}>
-      <motion.div
-        className="z-[2] text-transparent"
-        style={{
-          backgroundImage,
-          backgroundSize,
-          backgroundClip: "text",
-          WebkitBackgroundClip: "text",
-        }}
-        animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
-        transition={{
-          duration: durationSec,
-          repeat: Infinity,
-          repeatType: "reverse",
-          ease: "linear",
-        }}
-      >
-        {children}
-      </motion.div>
-    </div>
+    <motion.div
+      className={`z-[2] inline-flex overflow-hidden text-transparent ${className}`}
+      style={{
+        backgroundImage,
+        backgroundSize,
+        backgroundClip: "text",
+        WebkitBackgroundClip: "text",
+      }}
+      animate={{ backgroundPosition: ["0% 0%", "100% 100%"] }}
+      transition={{
+        duration: durationSec,
+        repeat: Infinity,
+        repeatType: "reverse",
+        ease: "linear",
+      }}
+    >
+      {children}
+    </motion.div>
   );
 }

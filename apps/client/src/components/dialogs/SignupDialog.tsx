@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } 
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-function SignupDialog() {
+function SignupDialog({ text }: { text?: string }) {
   const [open, setOpen] = useState(false);
   const form = useForm({
     defaultValues: {
@@ -51,7 +51,7 @@ function SignupDialog() {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button className="rounded-2xl bg-gradient-to-r from-sky-600 to-teal-500 px-8 py-2 font-bold text-white transition-colors hover:text-black">
-          Sign Up
+          {text || "Sign Up"}
         </button>
       </DialogTrigger>
       <DialogContent>

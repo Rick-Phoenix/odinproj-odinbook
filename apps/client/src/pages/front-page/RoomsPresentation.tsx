@@ -43,29 +43,31 @@ const rooms = [
 export default function RoomsPresentation() {
   return (
     <div className="relative grid h-svh grid-cols-2 grid-rows-2">
-      <div className="z-10 col-start-2 self-end pb-3 text-6xl">
-        <div className="inline-block" data-aos="fade-down" data-aos-duration="1500">
-          A
-        </div>{" "}
-        <div className="inline-block" data-aos="fade-left" data-aos-duration="3000">
-          <GradientText>community</GradientText>
+      <div className="z-10 col-span-2 row-span-2 flex flex-col justify-center p-4 pb-3 md:col-start-2 md:row-span-2 md:p-0">
+        <div className="text-5xl md:text-6xl">
+          <div className="inline-block" data-aos="fade-down" data-aos-duration="1500">
+            A
+          </div>{" "}
+          <div className="inline-block" data-aos="fade-left" data-aos-duration="3000">
+            <GradientText>community</GradientText>
+          </div>
+          <br />{" "}
+          <div className="inline-block" data-aos="fade-up" data-aos-duration="1500">
+            for
+          </div>{" "}
+          <div className="inline-block" data-aos="fade-left" data-aos-duration="2000">
+            communities
+          </div>
         </div>
-        <br />{" "}
-        <div className="inline-block" data-aos="fade-up" data-aos-duration="1500">
-          for
-        </div>{" "}
-        <div className="inline-block" data-aos="fade-left" data-aos-duration="2000">
-          communities
+        <div className="z-10 col-start-2 text-2xl" data-aos="fade-left" data-aos-duration="3000">
+          <span className="underline decoration-primary underline-offset-4">Rooms</span> are the
+          core section of Nexus. Each Room is a space where users can cultivate their passions,
+          exchange ideas, share their knowledge and learn from others.
+          <br />
+          <em className="text-sm font-light text-muted-foreground">
+            (while sharing all of their best cat memes)
+          </em>
         </div>
-      </div>
-      <div className="z-10 col-start-2 text-2xl" data-aos="fade-left" data-aos-duration="3000">
-        <span className="underline decoration-primary underline-offset-4">Rooms</span> are the core
-        section of Nexus. Each Room is a space where users can cultivate their passions, exchange
-        ideas, share their knowledge and learn from others.
-        <br />
-        <em className="text-sm font-light text-muted-foreground">
-          (while sharing all of their best cat memes)
-        </em>
       </div>
       <div className="absolute top-0 z-0 size-full">
         <InfiniteScroll

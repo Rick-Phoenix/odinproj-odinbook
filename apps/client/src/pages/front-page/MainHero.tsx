@@ -24,7 +24,7 @@ export default function MainHero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5, ease: "easeInOut" }}
-        className="text-[6rem] leading-none md:text-[8rem]"
+        className="overflow-hidden text-[7rem] font-medium leading-none md:text-[8rem]"
       >
         <GradientText
           colors={["#40ffaa", "#4079ff", "#e5e7eb00", "#40ffaa", "#4079ff"]}
@@ -38,7 +38,7 @@ export default function MainHero() {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 3, ease: "easeInOut" }}
-        className="relative size-[400px] bg-black"
+        className="relative size-[300px] bg-black md:size-[400px]"
         id="svgclip"
         style={{
           mask: `url("data:image/svg+xml, %3Csvg stroke='white' fill='none' strokeWidth='2' viewBox='2.5 2.5 19 19' strokeLinecap='round' strokeLinejoin='round' height='100%' width='100%' xmlns='http://www.w3.org/2000/svg' %3E%3Cpath d='M6.045 9.777a6 6 0 1 0 5.951 .023' %3E%3C/path%3E%3Cpath d='M11.997 20.196a6 6 0 1 0 -2.948 -5.97' %3E%3C/path%3E%3Cpath d='M17.95 9.785q .05 -.386 .05 -.785a6 6 0 1 0 -3.056 5.23'%3E%3C/path%3E%3C/svg%3E")`,

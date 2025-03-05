@@ -61,7 +61,7 @@ function LoginDialog({ disableClose }: { disableClose?: boolean }) {
           </div>
         </button>
       </DialogTrigger>
-      <DialogContent>
+      <DialogContent className="">
         <DialogTitle className="text-2xl">Login</DialogTitle>
         <DialogDescription>Enter your email below to login to your account</DialogDescription>
         <form
@@ -114,7 +114,7 @@ function LoginDialog({ disableClose }: { disableClose?: boolean }) {
                 }}
               ></form.Field>
             </div>
-            <div className="flex gap-3">
+            <div className="flex flex-col gap-3 md:flex-row">
               <form.Subscribe
                 selector={(state) => [
                   state.canSubmit,

@@ -14,8 +14,11 @@ import { cn } from "../../utils/shadcn-helper";
 
 const Circle = forwardRef<
   HTMLDivElement,
-  { className?: string; children?: React.ReactNode; text?: string }
->(({ className, children, text }, ref) => {
+  { className?: string; children?: React.ReactNode; text?: string; userCircle?: boolean }
+>(({ className, children, text, userCircle }, ref) => {
+  const circlePositioning = !userCircle
+    ? "-left-[calc(100%+3.5rem)] md:left-[calc(100%+0.5rem)]"
+    : "-top-[calc(100%+1rem)] ";
   return (
     <div
       ref={ref}
@@ -30,7 +33,9 @@ const Circle = forwardRef<
       ></div>
       <span className="z-10">{children}</span>
       {text && (
-        <div className="absolute left-[calc(100%+0.5rem)] z-20 aspect-video min-w-[100px] max-w-fit rounded-xl bg-gradient-to-t from-slate-500 to-teal-500 text-center text-xs italic text-muted opacity-0 transition-opacity duration-500 flex-center group-hover:opacity-100">
+        <div
+          className={`absolute ${circlePositioning} pointer-events-none z-20 aspect-video min-w-[100px] max-w-fit rounded-xl bg-gradient-to-t from-slate-500 to-teal-500 text-center text-xs italic text-muted opacity-0 transition-opacity duration-500 flex-center group-hover:opacity-100`}
+        >
           <div
             className="relative size-full rounded-xl bg-white p-1"
             style={{ width: "calc(100% - 2px)", height: "calc(100% - 2px)" }}
@@ -72,7 +77,7 @@ export default function FeaturesAnimatedBeams({ className }: { className?: strin
       <div className="flex size-full max-w-lg flex-row items-stretch justify-between gap-10 [&_svg]:size-8">
         <div className="flex flex-col justify-center">
           <FloatingDiv>
-            <Circle ref={div7Ref} text={"This is you! &#x1F389;"}>
+            <Circle ref={div7Ref} userCircle={true} text={"This is you! &#x1F389;"}>
               <Icons.user />
             </Circle>
           </FloatingDiv>

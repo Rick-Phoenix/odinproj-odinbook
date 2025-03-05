@@ -31,10 +31,10 @@ function Index() {
   }, []);
 
   return (
-    <div className="min-h-[90vh] w-full">
+    <div className="min-h-[90vh] w-full overflow-hidden">
       <MainHero />
       <div className="my-12 flex flex-col items-center">
-        <div className="text-5xl">
+        <div className="text-center text-5xl md:text-left">
           <div data-aos="fade-right" className="inline-block" data-aos-duration="3000">
             One <GradientText>hub</GradientText>,
           </div>{" "}
