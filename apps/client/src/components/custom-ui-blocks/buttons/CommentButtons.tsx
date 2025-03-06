@@ -110,7 +110,7 @@ const CommentButtons: FC<{
       {isReplying && (
         <>
           <form
-            className="flex w-full flex-1 flex-col items-center gap-1 rounded-3xl border p-2 has-[:focus]:border-foreground"
+            className="flex flex-1 flex-col items-center gap-1 rounded-3xl border p-2 has-[:focus]:border-foreground"
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -131,6 +131,16 @@ const CommentButtons: FC<{
               )}
             ></form.Field>
             <div className="flex w-full justify-end gap-2">
+              <form.Subscribe
+                selector={(state) => [state.errorMap]}
+                children={([errorMap]) =>
+                  errorMap.onSubmit ? (
+                    <div className="mt-3 flex w-full justify-center text-center">
+                      <em>{errorMap.onSubmit?.toString()}</em>
+                    </div>
+                  ) : null
+                }
+              />
               <Button
                 variant={"secondary"}
                 type="button"

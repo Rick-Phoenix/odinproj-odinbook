@@ -1,12 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import { MessageCircleMore, Share } from "lucide-react";
 import { type FC, type MouseEventHandler } from "react";
-import { isMobileViewport } from "../../../utils/isMobile";
+import { useIsMobile } from "../../../hooks/useMobile";
 import ButtonGesture from "../../animations/ButtonGesture";
 import { Button } from "../../ui/button";
 
 export function ShareButton() {
-  const isMobile = isMobileViewport();
+  const isMobile = useIsMobile();
   return (
     <Button variant={"ghost"} asChild className="flex-1 p-6 hover:text-primary">
       <ButtonGesture>
@@ -22,7 +22,7 @@ export const CommentButton: FC<{
   postId: number;
   onClick?: MouseEventHandler;
 }> = ({ roomName, postId, onClick }) => {
-  const isMobile = isMobileViewport();
+  const isMobile = useIsMobile();
   return (
     <Button variant={"ghost"} asChild className="flex-1 p-6 hover:text-primary" onClick={onClick}>
       <Link to="/rooms/$roomName/posts/$postId" params={{ roomName, postId }}>

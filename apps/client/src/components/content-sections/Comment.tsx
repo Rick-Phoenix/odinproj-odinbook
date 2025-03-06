@@ -130,7 +130,10 @@ const PostComment: FC<{
         <Separator orientation="vertical" className="group-hover/sep:bg-white" />
       </div>
 
-      <div className="col-start-2 row-start-2 flex min-w-max flex-col gap-2 pt-4 text-sm">
+      <div
+        className="col-start-2 row-start-2 flex max-w-none flex-col gap-2 pt-4 text-sm"
+        style={{ width: "clamp(300px, 100%, 500px)" }}
+      >
         <CommentText text={c.text} commentId={c.id} initialIsDeleted={c.isDeleted} />
         <CommentButtons
           parentCommentId={c.id}
