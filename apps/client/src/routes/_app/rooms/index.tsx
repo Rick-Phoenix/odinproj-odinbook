@@ -38,7 +38,7 @@ import { getLocalStorageBoolean, parseLocalStorage } from "../../../utils/localS
 
 const sortingTypes = ["likesCount", "createdAt"] as const;
 const sortingOrder = z.object({ orderBy: z.enum(sortingTypes) }).catch(() => ({
-  orderBy: parseLocalStorage("posts-feed-sorting", sortingTypes) || "likesCount",
+  orderBy: parseLocalStorage("preferred-posts-sorting", sortingTypes) || "likesCount",
 }));
 export const Route = createFileRoute("/_app/rooms/")({
   component: RouteComponent,
@@ -57,7 +57,7 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
   const { orderBy } = Route.useSearch();
-  localStorage.setItem(`posts-feed-sorting`, orderBy);
+  localStorage.setItem(`preferred-posts-sorting`, orderBy);
 
   const { totalPosts, initialPosts } = Route.useLoaderData();
   const initialCursor = getPostsCursor(initialPosts);

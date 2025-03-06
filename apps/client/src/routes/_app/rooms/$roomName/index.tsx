@@ -41,7 +41,7 @@ import { parseLocalStorage } from "../../../../utils/localStorageUtils";
 const sortingTypes = ["likesCount", "createdAt"] as const;
 const sortingOrder = z.object({ orderBy: z.enum(sortingTypes) }).catch(() => {
   return {
-    orderBy: parseLocalStorage(`posts-feed-sorting`, sortingTypes) || "likesCount",
+    orderBy: parseLocalStorage(`preferred-posts-sorting`, sortingTypes) || "likesCount",
   };
 });
 
@@ -74,6 +74,7 @@ function RouteComponent() {
   } = Route.useLoaderData();
   const userIsCreator = userId === creatorId;
   const { orderBy } = Route.useSearch();
+  localStorage.setItem(`preferred-posts-sorting`, orderBy);
 
   const initialCursor = getPostsCursor(initialPosts);
 

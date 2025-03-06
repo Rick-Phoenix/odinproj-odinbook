@@ -11,7 +11,7 @@ export default function MainHero() {
   return (
     <BackgroundGradientAnimation
       interactive={false}
-      className="relative flex min-h-screen flex-col items-center gap-4 p-4"
+      className="relative flex h-svh flex-col items-center gap-4 p-4"
       gradientBackgroundEnd="rgb(30, 41, 59)"
       gradientBackgroundStart="rgb(2, 8, 23)"
       firstColor="64, 121, 255"
