@@ -11,7 +11,7 @@ import { DialogFooter } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
-const CreatePostDialog: FC<{
+const CreatePostDialogForm: FC<{
   roomName: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }> = ({ roomName, setOpen }) => {
@@ -149,4 +149,4 @@ const CreatePostDialog: FC<{
   );
 };
 
-export default CreatePostDialog;
+export default CreatePostDialogForm;

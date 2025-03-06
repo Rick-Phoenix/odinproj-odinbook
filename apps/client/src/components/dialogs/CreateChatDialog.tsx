@@ -1,13 +1,9 @@
-import { lazy, Suspense, useMemo, useState, type FC, type ReactNode } from "react";
-import Spinner from "../custom-ui-blocks/Spinner";
+import { useState, type FC, type ReactNode } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "../ui/dialog";
-
-const DialogContentLazy = lazy(() => import("./CreateChatDialogForm"));
+import CreateChatDialogForm from "./CreateChatDialogForm";
 
 const CreateChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
   const [open, setOpen] = useState(false);
-
-  const DialogContentMemo = useMemo(() => DialogContentLazy, []);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
@@ -16,9 +12,7 @@ const CreateChatDialog: FC<{ children: ReactNode }> = ({ children }) => {
         <DialogHeader>
           <DialogTitle className="mb-4">Create Chat</DialogTitle>
         </DialogHeader>
-        <Suspense fallback={<Spinner />}>
-          {open && <DialogContentMemo setOpen={setOpen} />}
-        </Suspense>
+        <CreateChatDialogForm setOpen={setOpen} />
       </DialogContent>
     </Dialog>
   );
