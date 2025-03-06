@@ -14,7 +14,6 @@ import { SidebarTrigger } from "../../ui/sidebar";
 
 export default function InsetHeader() {
   const { mainSection, subSection, activePage } = useActivePage();
-  console.log("🚀 ~ InsetHeader ~ mainSection:", mainSection);
   return (
     <header className="flex h-16 shrink-0 items-center gap-2">
       <div className="flex flex-1 items-center gap-2 px-4">

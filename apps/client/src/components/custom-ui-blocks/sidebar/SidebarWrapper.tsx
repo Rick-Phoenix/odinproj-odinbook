@@ -12,7 +12,6 @@ export default function SidebarWrapper({ children }: { children: ReactNode }) {
         <InsetHeader />
         {children}
       </SidebarInset>
-
       <SidebarRight />
     </SidebarProvider>
   );

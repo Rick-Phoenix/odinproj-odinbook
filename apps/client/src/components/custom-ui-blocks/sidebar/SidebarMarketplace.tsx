@@ -25,42 +25,54 @@ const MarketplaceSidebarContent = () => {
       <>
         <SidebarHeader className="text-center text-lg font-semibold">Saved Listings</SidebarHeader>
         <ul className="flex flex-col justify-center gap-2 px-2">
-          {listingsSaved.map((lis) => (
-            <SidebarMenuButton
-              key={lis.id}
-              asChild
-              className="size-full transition-colors hover:font-semibold"
-            >
-              <Link
-                className="flex items-center justify-between gap-2"
-                to="/marketplace/$category/$itemId"
-                params={{ itemId: lis.id, category: lis.category }}
+          {listingsSaved.length > 0 ? (
+            listingsSaved.map((lis) => (
+              <SidebarMenuButton
+                key={lis.id}
+                asChild
+                className="size-full transition-colors hover:font-semibold"
               >
-                <img src={lis.picUrl} className="size-12 min-w-12 rounded-sm object-contain" />
-                <span className="text-ellipsis">{lis.title}</span>
-              </Link>
-            </SidebarMenuButton>
-          ))}
+                <Link
+                  className="flex items-center justify-between gap-2"
+                  to="/marketplace/$category/$itemId"
+                  params={{ itemId: lis.id, category: lis.category }}
+                >
+                  <img src={lis.picUrl} className="size-12 min-w-12 rounded-sm object-contain" />
+                  <span className="text-ellipsis">{lis.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            ))
+          ) : (
+            <span className="mx-auto text-xs font-thin italic md:text-sm">
+              The list of saved listings is empty.
+            </span>
+          )}
         </ul>
         <SidebarSeparator className="mx-0" />
         <SidebarHeader className="text-center text-lg font-semibold">Active Listings</SidebarHeader>
         <ul className="flex flex-col justify-center gap-2 px-2">
-          {listingsCreated.map((lis) => (
-            <SidebarMenuButton
-              key={lis.id}
-              asChild
-              className="size-full transition-colors hover:font-semibold"
-            >
-              <Link
-                className="flex items-center justify-between gap-2"
-                to="/marketplace/$category/$itemId"
-                params={{ itemId: lis.id, category: lis.category }}
+          {listingsCreated.length > 0 ? (
+            listingsCreated.map((lis) => (
+              <SidebarMenuButton
+                key={lis.id}
+                asChild
+                className="size-full transition-colors hover:font-semibold"
               >
-                <img src={lis.picUrl} className="size-12 min-w-12 rounded-sm object-contain" />
-                <span className="text-ellipsis">{lis.title}</span>
-              </Link>
-            </SidebarMenuButton>
-          ))}
+                <Link
+                  className="flex items-center justify-between gap-2"
+                  to="/marketplace/$category/$itemId"
+                  params={{ itemId: lis.id, category: lis.category }}
+                >
+                  <img src={lis.picUrl} className="size-12 min-w-12 rounded-sm object-contain" />
+                  <span className="text-ellipsis">{lis.title}</span>
+                </Link>
+              </SidebarMenuButton>
+            ))
+          ) : (
+            <span className="mx-auto text-xs font-thin italic md:text-sm">
+              There are no active listings at the moment.
+            </span>
+          )}
         </ul>
       </>
     );
