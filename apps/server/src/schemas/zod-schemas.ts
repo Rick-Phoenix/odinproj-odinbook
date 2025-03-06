@@ -199,7 +199,7 @@ export const insertListingSchema = z.object({
       while (i < stringNum.length && stringNum[i] === "0") i++;
       return Number(stringNum.slice(i).join(""));
     }),
-  location: z.string(),
+  location: z.string().max(64, "The location tag cannot be longer than 64 characters."),
   category: z.enum(marketplaceCategories),
   condition: z.enum(itemConditions),
   pic: z
