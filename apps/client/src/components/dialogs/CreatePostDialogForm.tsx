@@ -7,7 +7,7 @@ import { api } from "../../lib/hono-RPC";
 import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
 import { errorTypeGuard } from "../../utils/type-guards";
 import { Button } from "../ui/button";
-import { DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "../ui/dialog";
+import { DialogFooter } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
@@ -66,10 +66,6 @@ const CreatePostDialog: FC<{
   });
   return (
     <>
-      <DialogHeader>
-        <DialogTitle>Create Post</DialogTitle>
-        <DialogDescription>Make a new contribution to this community.</DialogDescription>
-      </DialogHeader>
       <form
         onSubmit={(e) => {
           e.preventDefault();

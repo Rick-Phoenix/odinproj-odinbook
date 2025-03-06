@@ -7,7 +7,6 @@ import { useUser } from "../../hooks/auth";
 import type { Chat } from "../../lib/db-types";
 import { profileQueryOptions } from "../../lib/queries/queryOptions";
 import { Button } from "../ui/button";
-import { DialogHeader, DialogTitle } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
@@ -57,56 +56,53 @@ const CreateChatDialogForm: FC<{ setOpen: React.Dispatch<React.SetStateAction<bo
 
   return (
     <>
-      <DialogHeader>
-        <DialogTitle className="mb-4">Create Chat</DialogTitle>
-        <form
-          className="flex flex-col gap-2"
-          onSubmit={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            form.handleSubmit();
-          }}
-        >
-          <form.Field
-            name="contactUsername"
-            children={(field) => (
-              <>
-                <Label htmlFor="contactUsername" className="mb-1 text-start">
-                  Contact Username:
-                </Label>
-                <Input
-                  name="contactUsername"
-                  className="mb-1"
-                  onChange={(e) => field.handleChange(e.target.value)}
-                  required
-                />
-              </>
-            )}
-          ></form.Field>
-          <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched]}
-            children={([canSubmit, isSubmitting, isTouched]) => (
-              <Button
-                type="submit"
-                aria-disabled={!canSubmit || isSubmitting || !isTouched}
-                disabled={!canSubmit || isSubmitting || !isTouched}
-              >
-                Create Chat
-              </Button>
-            )}
-          />
-          <form.Subscribe
-            selector={(state) => [state.errorMap]}
-            children={([errorMap]) =>
-              errorMap.onSubmit ? (
-                <div className="text-center">
-                  <em>{errorMap.onSubmit?.toString()}</em>
-                </div>
-              ) : null
-            }
-          />
-        </form>
-      </DialogHeader>
+      <form
+        className="flex flex-col gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          form.handleSubmit();
+        }}
+      >
+        <form.Field
+          name="contactUsername"
+          children={(field) => (
+            <>
+              <Label htmlFor="contactUsername" className="mb-1 text-start">
+                Contact Username:
+              </Label>
+              <Input
+                name="contactUsername"
+                className="mb-1"
+                onChange={(e) => field.handleChange(e.target.value)}
+                required
+              />
+            </>
+          )}
+        ></form.Field>
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched]}
+          children={([canSubmit, isSubmitting, isTouched]) => (
+            <Button
+              type="submit"
+              aria-disabled={!canSubmit || isSubmitting || !isTouched}
+              disabled={!canSubmit || isSubmitting || !isTouched}
+            >
+              Create Chat
+            </Button>
+          )}
+        />
+        <form.Subscribe
+          selector={(state) => [state.errorMap]}
+          children={([errorMap]) =>
+            errorMap.onSubmit ? (
+              <div className="text-center">
+                <em>{errorMap.onSubmit?.toString()}</em>
+              </div>
+            ) : null
+          }
+        />
+      </form>
     </>
   );
 };

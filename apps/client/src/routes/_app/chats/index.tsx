@@ -41,7 +41,7 @@ function RouteComponent() {
   return (
     <InsetScrollArea>
       <section className="grid min-h-[75vh] max-w-full flex-1 auto-rows-max grid-cols-1 grid-rows-[max-content] gap-4 rounded-xl border bg-gray-800/20 p-4">
-        <header className="flex h-28 w-full items-center justify-between rounded-xl border bg-gray-800 p-4 hover:text-foreground md:p-8">
+        <header className="flex h-[5.5rem] w-full items-center justify-between rounded-xl border bg-gray-800 p-4 hover:text-foreground md:h-24 md:p-8">
           <h2 className="text-3xl font-semibold">Chats</h2>
           <CreateChatDialog>
             <button
@@ -110,7 +110,7 @@ const ChatPreview: FC<{
           <Link
             to={"/chats/$chatId"}
             params={{ chatId }}
-            className="flex h-24 w-full items-center justify-between gap-8 rounded-xl border bg-muted p-6 transition-colors hover:bg-muted-foreground/30 hover:text-foreground md:h-28 md:p-8"
+            className="flex h-20 w-full items-center justify-between gap-4 rounded-xl border bg-muted p-4 transition-colors hover:bg-muted-foreground/30 hover:text-foreground md:h-24"
           >
             <div className="relative h-full">
               {unreadMessages && (

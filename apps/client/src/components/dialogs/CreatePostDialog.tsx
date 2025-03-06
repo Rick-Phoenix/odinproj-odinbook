@@ -2,7 +2,14 @@ import { Plus } from "lucide-react";
 import { lazy, Suspense, useMemo, useState, type FC } from "react";
 import Spinner from "../custom-ui-blocks/Spinner";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 
 const DialogContentLazy = lazy(() => import("./CreatePostDialogForm"));
 
@@ -18,6 +25,10 @@ const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Create Post</DialogTitle>
+          <DialogDescription>Make a new contribution to this community.</DialogDescription>
+        </DialogHeader>
         <Suspense fallback={<Spinner />}>
           {open && <DialogContentMemo setOpen={setOpen} roomName={roomName} />}
         </Suspense>

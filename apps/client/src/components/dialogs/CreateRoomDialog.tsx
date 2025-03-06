@@ -1,7 +1,14 @@
 import { lazy, Suspense, useMemo, useState, type FC } from "react";
 import Spinner from "../custom-ui-blocks/Spinner";
 import { Button } from "../ui/button";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import { SidebarMenuSubButton } from "../ui/sidebar";
 
 const DialogContentLazy = lazy(() => import("./CreateRoomDialogForm"));
@@ -28,6 +35,13 @@ const CreateRoomDialog: FC<{ inSidebar?: boolean }> = ({ inSidebar }) => {
       )}
 
       <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create a new Room</DialogTitle>
+        </DialogHeader>
+        <DialogDescription>
+          Rooms are spaces where you can share your ideas and passions with other members of the
+          community.
+        </DialogDescription>
         <Suspense fallback={<Spinner />}>{isDialogOpen && <DialogContentMemo />}</Suspense>
       </DialogContent>
     </Dialog>

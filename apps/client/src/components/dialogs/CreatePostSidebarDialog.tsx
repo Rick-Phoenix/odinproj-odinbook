@@ -1,6 +1,13 @@
 import { lazy, Suspense, useMemo, useState } from "react";
 import Spinner from "../custom-ui-blocks/Spinner";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import { SidebarMenuSubButton } from "../ui/sidebar";
 
 const DialogContentLazy = lazy(() => import("./CreatePostSidebarDialogForm"));
@@ -17,6 +24,10 @@ const CreatePostSidebarDialog = () => {
         </SidebarMenuSubButton>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
+        <DialogHeader>
+          <DialogTitle>Create Post</DialogTitle>
+          <DialogDescription>Make a new contribution to this community.</DialogDescription>
+        </DialogHeader>
         <Suspense fallback={<Spinner />}>
           {open && <DialogContentMemo setOpen={setOpen} />}
         </Suspense>
