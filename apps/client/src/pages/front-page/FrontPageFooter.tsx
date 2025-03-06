@@ -4,7 +4,7 @@ import SignupDialog from "../../components/dialogs/SignupDialog";
 export default function FrontPageFooter() {
   return (
     <>
-      <div className="relative m-24">
+      <div className="relative mx-auto my-24">
         <CircularText
           text={"*DISCOVER*SHARE*LEARN"}
           data-aos="fade-up"

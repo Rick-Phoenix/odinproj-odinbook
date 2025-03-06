@@ -75,11 +75,11 @@ export const MockChat = ({ messages }: { messages: string[] }) => {
           </div>
         </div>
 
-        <div className="relative row-start-1 w-full md:w-fit md:justify-self-end">
-          <motion.div className="sticky top-5 grid w-full auto-rows-auto grid-cols-[100%] gap-y-8 px-5 pl-2 text-sm md:grid-cols-2 md:pl-5 md:text-base">
+        <div className="relative row-start-1 w-full max-w-[20rem] md:justify-self-end">
+          <motion.div className="sticky top-5 grid w-full auto-rows-auto grid-cols-[100%] gap-y-8 px-5 pl-2 text-sm md:pl-5 md:text-base">
             {messages.map((message, index) => {
               const isLeft = !(index === 0);
-              const gridColumn = isLeft ? "col-start-2" : "col-start-1";
+              const gridColumn = "col-start-1";
               const textAlign = isLeft ? "end" : "start";
               const gridRowStart = index + 1;
               const msgType = isLeft

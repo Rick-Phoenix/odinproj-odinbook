@@ -11,6 +11,7 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
+  useSidebar,
 } from "@/components/ui/sidebar";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "@tanstack/react-router";
@@ -18,7 +19,6 @@ import { ChevronRight, MessagesSquare, type LucideIcon } from "lucide-react";
 import { title } from "radashi";
 import type { FC, JSX } from "react";
 import { useActivePage } from "../../hooks/useActivePage";
-import { useIsMobile } from "../../hooks/useMobile";
 import SidebarRightContent from "../custom-ui-blocks/sidebar/SidebarRightContent";
 
 export function NavMain({
@@ -36,7 +36,7 @@ export function NavMain({
   }[];
 }) {
   const { mainSection } = useActivePage();
-  const isMobile = useIsMobile();
+  const { isMobile, setOpenMobile } = useSidebar();
 
   return (
     <>
@@ -89,7 +89,14 @@ export function NavMain({
                             typeof subItem.url === "string" ? (
                               <SidebarMenuSubItem key={subItem.title}>
                                 <SidebarMenuSubButton asChild>
-                                  <Link to={subItem.url}>
+                                  <Link
+                                    to={subItem.url}
+                                    onClick={
+                                      ["My Listings", "Saved Listings"].includes(subItem.title)
+                                        ? () => setOpenMobile(false)
+                                        : undefined
+                                    }
+                                  >
                                     <span>{subItem.title}</span>
                                   </Link>
                                 </SidebarMenuSubButton>

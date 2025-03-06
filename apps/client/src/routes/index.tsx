@@ -30,7 +30,7 @@ function Index() {
   }, []);
 
   return (
-    <div className="min-h-[90vh] w-full overflow-hidden">
+    <div className="min-h-[90vh] max-w-full overflow-hidden">
       <MainHero />
       <div className="my-12 flex flex-col items-center">
         <div className="text-center text-5xl md:text-left">

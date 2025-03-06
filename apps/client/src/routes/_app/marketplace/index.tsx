@@ -134,12 +134,12 @@ const SuggestedListingsCarousel: FC<{
               spaceBetween: 10,
               slidesPerView: 1,
             },
+            768: {
+              spaceBetween: 15,
+              slidesPerView: 2,
+            },
             1024: {
               spaceBetween: 15,
-              slidesPerView: 1,
-            },
-            1400: {
-              spaceBetween: 30,
               slidesPerView: 3,
             },
           }}
