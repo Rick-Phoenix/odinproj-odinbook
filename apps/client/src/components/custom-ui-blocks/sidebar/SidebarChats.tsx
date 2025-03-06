@@ -15,17 +15,16 @@ const ChatsSidebarContent = () => {
     <>
       {
         <SidebarMenu>
-          <CreateChatDialog>
-            <Button
-              size={"lg"}
-              className="bg-primary/50 transition-colors hover:bg-primary [&_svg]:size-5"
-            >
-              <Plus />
-              <span>Create Chat</span>
-            </Button>
-          </CreateChatDialog>
+          <div className="flex justify-center p-3">
+            <CreateChatDialog>
+              <Button className="flex-1 bg-primary/50 transition-colors hover:bg-primary [&_svg]:size-5">
+                <Plus />
+                <span>Create Chat</span>
+              </Button>
+            </CreateChatDialog>
+          </div>
 
-          <ul className="flex flex-col justify-center gap-2 pt-6">
+          <ul className="flex flex-col justify-center gap-2 pt-2">
             {chats.map((chat) => (
               <ChatPreview key={chat.id} chat={chat} />
             ))}

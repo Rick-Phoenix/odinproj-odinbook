@@ -14,22 +14,23 @@ import { SidebarTrigger } from "../../ui/sidebar";
 
 export default function InsetHeader() {
   const { mainSection, subSection, activePage } = useActivePage();
+  console.log("🚀 ~ InsetHeader ~ mainSection:", mainSection);
   return (
     <header className="flex h-16 shrink-0 items-center gap-2">
-      <div className="flex items-center gap-2 px-4">
+      <div className="flex flex-1 items-center gap-2 px-4">
         <SidebarTrigger className="-ml-1" />
         <Separator orientation="vertical" className="mr-2 h-4" />
         <Breadcrumb>
           <BreadcrumbList>
-            <BreadcrumbItem className="hidden md:block">
+            <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 {mainSection &&
-                  (mainSection === activePage ? (
-                    <Link to={mainSection}>
+                  (mainSection === activePage || mainSection === "chats" ? (
+                    <Link to={mainSection} className="min-w-fit">
                       <BreadcrumbPage>{title(mainSection)}</BreadcrumbPage>
                     </Link>
                   ) : (
-                    <Link to={mainSection === "users" ? "." : mainSection}>
+                    <Link to={mainSection === "users" ? "." : mainSection} className="min-w-fit">
                       {title(mainSection)}
                     </Link>
                   ))}
@@ -37,7 +38,7 @@ export default function InsetHeader() {
             </BreadcrumbItem>
             {subSection && mainSection !== "chats" && (
               <>
-                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbSeparator />
                 <BreadcrumbItem>
                   <BreadcrumbLink asChild>
                     <Link to={mainSection + "/" + subSection}>

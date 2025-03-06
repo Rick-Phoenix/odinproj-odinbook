@@ -186,7 +186,7 @@ function RouteComponent() {
       </div>
       <div className="flex flex-col gap-8">
         {posts.map((post) => (
-          <PostPreview key={post.id} post={post} />
+          <PostPreview key={post.id} post={post} inFeed />
         ))}
       </div>
 

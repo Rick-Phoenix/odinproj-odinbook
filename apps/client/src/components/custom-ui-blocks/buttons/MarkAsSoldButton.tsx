@@ -18,7 +18,8 @@ import { Button } from "../../ui/button";
 
 const MarkAsSoldButton: FC<{
   listing: Listing;
-}> = ({ listing }) => {
+  withText?: boolean;
+}> = ({ listing, withText }) => {
   const queryClient = useQueryClient();
   const handleMarkAsSold = useMutation({
     mutationKey: ["listingCreated", listing.id],
@@ -47,11 +48,12 @@ const MarkAsSoldButton: FC<{
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button
-          variant={"ghost"}
-          className={"rounded-full p-6 hover:bg-muted-foreground/50 [&_svg]:size-8"}
+          className={
+            "w-fit rounded-full p-3 text-white opacity-70 transition-opacity hover:opacity-100 focus-visible:opacity-100 [&_svg]:size-6"
+          }
           title="Mark as sold"
         >
-          <BadgeDollarSign />
+          <BadgeDollarSign /> {withText && "Sold"}
         </Button>
       </AlertDialogTrigger>
       <AlertDialogContent>

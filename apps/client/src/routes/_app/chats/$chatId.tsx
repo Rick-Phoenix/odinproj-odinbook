@@ -122,7 +122,7 @@ function RouteComponent() {
         </ScrollArea>
 
         <form
-          className="flex items-center"
+          className="flex items-center rounded-xl border has-[:focus-visible]:ring-1 has-[:focus-visible]:ring-ring"
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
@@ -134,7 +134,7 @@ function RouteComponent() {
             children={(field) => (
               <>
                 <Input
-                  className="text-md rounded-l-xl rounded-r-none border-r-0 p-8"
+                  className="text-md rounded-l-xl rounded-r-none border-none p-8 focus-visible:ring-0"
                   name={field.name}
                   value={field.state.value}
                   onChange={(e) => field.handleChange(e.target.value)}
@@ -154,7 +154,7 @@ function RouteComponent() {
                 aria-disabled={!canSubmit || isSubmitting || !isTouched}
                 disabled={!canSubmit || isSubmitting || !isTouched}
                 variant={"ghost"}
-                className="aspect-square h-full rounded-l-none rounded-r-xl border border-l-0 hover:bg-muted-foreground/30 focus:bg-muted-foreground/30"
+                className="aspect-square h-full rounded-l-none rounded-r-xl border-none shadow-sm hover:bg-muted-foreground/30 focus:bg-muted-foreground/30"
               >
                 <Send />
               </Button>

@@ -71,9 +71,12 @@ const CreateChatDialogForm: FC<{ setOpen: React.Dispatch<React.SetStateAction<bo
             name="contactUsername"
             children={(field) => (
               <>
-                <Label htmlFor="contactUsername">Contact Username:</Label>
+                <Label htmlFor="contactUsername" className="mb-1 text-start">
+                  Contact Username:
+                </Label>
                 <Input
                   name="contactUsername"
+                  className="mb-1"
                   onChange={(e) => field.handleChange(e.target.value)}
                   required
                 />

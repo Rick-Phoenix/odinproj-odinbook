@@ -18,7 +18,7 @@ function RouteComponent() {
 
   return (
     <InsetScrollArea>
-      <section className="grid min-h-[75vh] max-w-full flex-1 auto-rows-fr grid-cols-1 grid-rows-[auto] rounded-xl bg-muted/50">
+      <section className="grid min-h-[75vh] max-w-full flex-1 auto-rows-fr grid-cols-1 grid-rows-[auto] gap-y-3 rounded-xl bg-muted/50 py-3 md:gap-y-6">
         {savedListings.length ? (
           savedListings.map((lis) => (
             <ListingPreview key={lis.id} listing={lis}>

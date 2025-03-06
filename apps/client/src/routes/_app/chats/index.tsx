@@ -40,8 +40,8 @@ function RouteComponent() {
 
   return (
     <InsetScrollArea>
-      <section className="grid min-h-[75vh] max-w-full flex-1 grid-cols-1 grid-rows-6 gap-4 rounded-xl border bg-gray-800/20 p-4">
-        <header className="flex h-28 w-full items-center justify-between rounded-xl border bg-gray-800 p-8 hover:text-foreground">
+      <section className="grid min-h-[75vh] max-w-full flex-1 auto-rows-max grid-cols-1 grid-rows-[max-content] gap-4 rounded-xl border bg-gray-800/20 p-4">
+        <header className="flex h-28 w-full items-center justify-between rounded-xl border bg-gray-800 p-4 hover:text-foreground md:p-8">
           <h2 className="text-3xl font-semibold">Chats</h2>
           <CreateChatDialog>
             <button
@@ -110,25 +110,25 @@ const ChatPreview: FC<{
           <Link
             to={"/chats/$chatId"}
             params={{ chatId }}
-            className="flex h-28 w-full items-center justify-between gap-8 rounded-xl border bg-muted p-8 transition-colors hover:bg-muted-foreground/30 hover:text-foreground"
+            className="flex h-24 w-full items-center justify-between gap-8 rounded-xl border bg-muted p-6 transition-colors hover:bg-muted-foreground/30 hover:text-foreground md:h-28 md:p-8"
           >
             <div className="relative h-full">
               {unreadMessages && (
                 <span className="absolute right-0 z-10 size-3 rounded-full bg-red-500" />
               )}
-              <Avatar className="h-full w-auto border-2 border-primary">
+              <Avatar className="min-h-full w-auto border-2 border-primary">
                 <AvatarImage src={contactAvatar} alt={`${contactName} profile picture`} />
               </Avatar>
             </div>
-            <div className="flex w-1/2 flex-col items-end gap-3">
+            <div className="flex w-1/2 flex-1 flex-col items-end gap-3">
               {contactName !== "[deleted]" ? (
-                <div className="text-lg font-semibold">{contactName}</div>
+                <div className="font-semibold md:text-lg">{contactName}</div>
               ) : (
-                <div className="text-lg font-semibold italic text-muted-foreground">
+                <div className="font-thin italic text-muted-foreground md:text-lg">
                   Deleted User
                 </div>
               )}
-              <div className="line-clamp-1 text-end font-semibold text-muted-foreground">
+              <div className="line-clamp-1 text-end text-sm font-semibold text-muted-foreground">
                 {lastMessage?.text}
               </div>
             </div>

@@ -51,8 +51,9 @@ const DeleteListingButton: FC<{
     <AlertDialog>
       <AlertDialogTrigger asChild>
         <Button
-          variant={"ghost"}
-          className={"rounded-full p-6 text-xl hover:bg-muted-foreground/50 [&_svg]:size-8"}
+          className={
+            "w-fit self-center rounded-full !bg-destructive p-3 text-white opacity-70 transition-opacity hover:opacity-100 focus-visible:opacity-100 [&_svg]:size-6"
+          }
           title="Remove Listing"
         >
           <X /> {withText && "Delete"}
@@ -66,6 +67,7 @@ const DeleteListingButton: FC<{
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction
+            className="bg-destructive/70 text-white hover:bg-destructive focus-visible:bg-destructive focus-visible:ring-destructive"
             disabled={handleDeleteListing.isPending}
             onClick={() => handleDeleteListing.mutate()}
           >
