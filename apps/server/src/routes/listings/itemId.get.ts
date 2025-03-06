@@ -38,7 +38,7 @@ async function fetchListing(userId: string, id: number) {
   const [listing] = await db
     .select({
       ...getTableColumns(listings),
-      seller: users.username,
+      seller: { username: users.username, avatarUrl: users.avatarUrl },
       ...isSaved(userId, listings.id),
     })
     .from(listings)

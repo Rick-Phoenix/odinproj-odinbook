@@ -14,6 +14,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
+import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import PostComment from "./Comment";
 
@@ -123,15 +124,17 @@ const Post: FC<{ post: PostFull; orderBy: "likesCount" | "createdAt" }> = ({ pos
       </div>
       <Separator className="mt-1" />
 
-      <div className="p-3 md:p-6">
+      <ScrollArea className="overflow-x-auto p-3 md:p-6">
         <div className="flex items-center gap-5 py-6">
           <span className="border-b-2 font-semibold">Comments</span>
           <SortComments orderBy={orderBy} />
         </div>
-        <div className="grid min-w-full grid-cols-[2.5rem_1fr] items-center overflow-x-scroll">
+
+        <div className="relative grid w-full min-w-full grid-cols-[2.5rem_1fr] items-center">
           {renderComments(sortedComments, 1, 1)}
         </div>
-      </div>
+        <ScrollBar orientation="horizontal" className="absolute bottom-0" />
+      </ScrollArea>
     </section>
   );
 };

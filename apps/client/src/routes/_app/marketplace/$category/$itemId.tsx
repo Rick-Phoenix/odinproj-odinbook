@@ -38,7 +38,7 @@ function RouteComponent() {
         to: "/chats/$chatId",
         params: { chatId: existingChat.id },
       });
-    navigate({ to: "/chats/new", search: { contactUsername: listing.seller } });
+    navigate({ to: "/chats/new", search: { contactUsername: listing.seller.username } });
   };
   return (
     <InsetScrollArea>
@@ -61,12 +61,15 @@ function RouteComponent() {
                       <Popover>
                         <PopoverTrigger asChild>
                           <Button variant="link" className="p-0 text-xl">
-                            {listing.seller}
+                            {listing.seller.username}
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent className="w-fit">
                           <Button variant={"ghost"} asChild>
-                            <Link to="/users/$username" params={{ username: listing.seller }}>
+                            <Link
+                              to="/users/$username"
+                              params={{ username: listing.seller.username }}
+                            >
                               View seller's profile
                             </Link>
                           </Button>
@@ -93,7 +96,7 @@ function RouteComponent() {
             </div>
             {listing.sold ? (
               <div className="italic">This item has been sold.</div>
-            ) : listing.seller !== username ? (
+            ) : listing.seller.username !== username ? (
               <>
                 <div className="mt-2 flex gap-3">
                   <Button onClick={handleSendMessage}>Contact</Button>

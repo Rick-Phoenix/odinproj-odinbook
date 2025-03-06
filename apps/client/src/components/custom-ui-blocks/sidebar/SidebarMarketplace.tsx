@@ -69,19 +69,25 @@ const MarketplaceSidebarContent = () => {
 
   if (!listing) return <SidebarSkeleton />;
 
-  const { picUrl, seller } = listing;
+  const {
+    seller: { username, avatarUrl },
+  } = listing;
 
   return (
     <>
-      <div className="p-4 pb-0 text-center text-lg font-semibold">{seller}</div>
+      <div className="p-4 pb-0 text-center text-lg font-semibold">{username}</div>
       <div className="h-32 p-6 pb-0 flex-center">
         <Avatar className="h-full w-auto">
-          <AvatarImage className="object-cover" src={picUrl} alt={`${seller} profile picture`} />
+          <AvatarImage
+            className="object-cover"
+            src={avatarUrl}
+            alt={`${username} profile picture`}
+          />
         </Avatar>
       </div>
-      <div className="p-4 pt-0 text-center text-lg font-semibold">{seller}</div>
+      <div className="p-4 pt-0 text-center text-lg font-semibold">{username}</div>
       <Button className="mx-2" asChild>
-        <Link to={"/users/$username"} params={{ username: seller }}>
+        <Link to={"/users/$username"} params={{ username }}>
           View Profile
         </Link>
       </Button>

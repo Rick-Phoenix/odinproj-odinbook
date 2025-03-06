@@ -32,15 +32,15 @@ function RouteComponent() {
   return (
     <InsetScrollArea>
       <section className="grid min-h-[80vh] max-w-full grid-rows-[auto_1fr] items-center gap-2 rounded-xl border bg-muted/50">
-        <header className="flex h-56 w-full items-center justify-center gap-8 rounded-xl border-2 border-primary bg-muted p-8 hover:text-foreground">
-          <Avatar className="h-full w-auto border-2 border-primary">
+        <header className="flex h-56 w-full flex-col items-center justify-center gap-3 rounded-xl border-2 border-primary bg-muted p-3 hover:text-foreground md:flex-row md:gap-8 md:p-8">
+          <Avatar className="max-h-full w-auto flex-1 border-2 border-primary">
             <AvatarImage
               src={avatarUrl}
               className="object-cover"
               alt={`${avatarUrl} profile picture`}
             />
           </Avatar>
-          <h3 className="w-fit rounded-xl bg-blue-500 p-2 text-2xl font-semibold text-background">
+          <h3 className="w-max text-nowrap break-keep rounded-xl bg-blue-500 p-2 text-2xl font-semibold text-background">
             {username}
           </h3>
         </header>
@@ -158,7 +158,7 @@ const CommentPreview: FC<{
   return (
     <div className="mt-4 flex h-fit w-full gap-8 rounded-xl border bg-muted p-6 py-4 hover:bg-muted/80 hover:text-foreground">
       <div className="grid w-full auto-rows-min grid-cols-1">
-        <div className="mb-1 flex gap-2">
+        <div className="mb-1 flex flex-col gap-2 md:flex-row">
           <Link
             to={"/rooms/$roomName"}
             params={{ roomName: room }}
