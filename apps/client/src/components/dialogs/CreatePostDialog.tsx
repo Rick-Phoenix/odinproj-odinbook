@@ -13,7 +13,7 @@ const CreatePostDialog: FC<{ roomName: string }> = ({ roomName }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button size={"lg"} className="mx-2 rounded-md">
+        <Button className="mx-4 rounded-md">
           <Plus /> New Post
         </Button>
       </DialogTrigger>

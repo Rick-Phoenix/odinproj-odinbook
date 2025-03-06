@@ -10,7 +10,6 @@ import CreatePostDialog from "../../dialogs/CreatePostDialog";
 import CreateRoomDialog from "../../dialogs/CreateRoomDialog";
 import { Avatar, AvatarFallback, AvatarImage } from "../../ui/avatar";
 import { SidebarMenuButton, SidebarSeparator } from "../../ui/sidebar";
-import { Table, TableBody, TableCell, TableRow } from "../../ui/table";
 import SidebarSkeleton from "./SidebarSkeleton";
 
 const RoomsIndexSidebarContent = () => {
@@ -39,32 +38,28 @@ const RoomsIndexSidebarContent = () => {
           </div>
           <SidebarSeparator className="mx-0" />
           <div className="p-4 text-center text-lg font-semibold">Your Stats</div>
-          <Table className="w-full">
-            <TableBody className="p-2">
-              <TableRow>
-                <TableCell>Member since:</TableCell>
-                <TableCell className="text-right">
-                  {format(new Date(createdAt), "dd MMM y")}
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Total likes:</TableCell>
-                <TableCell className="text-right">{totalLikes}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Total posts:</TableCell>
-                <TableCell className="text-right">{totalPosts}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Total rooms created:</TableCell>
-                <TableCell className="text-right">{totalRoomsCreated}</TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell>Total listings created:</TableCell>
-                <TableCell className="text-right">{totalListings}</TableCell>
-              </TableRow>
-            </TableBody>
-          </Table>
+          <div className="flex w-full flex-col gap-1 p-3 text-sm">
+            <div className="flex items-center justify-between">
+              <span>Member since:</span>
+              <span>{format(new Date(createdAt), "dd MMM y")}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Total likes:</span>
+              <span>{totalLikes}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Total posts:</span>
+              <span>{totalPosts}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Total rooms created:</span>
+              <span>{totalRoomsCreated}</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <span>Total listings created:</span>
+              <span>{totalListings}</span>
+            </div>
+          </div>
         </>
       )}
 
@@ -122,19 +117,20 @@ const RoomSidebarContent = () => {
         r/{room.name}
       </Link>
       <CreatePostDialog roomName={room.name} />
-      <Table className="w-full">
-        <TableBody>
-          <TableRow>
-            <TableCell>Active Members:</TableCell>
-            <TableCell className="text-right">{room.subsCount}</TableCell>
-          </TableRow>
-          <TableRow>
-            <TableCell>Created On:</TableCell>
-            <TableCell className="text-right">{`${format(new Date(room.createdAt), "MMM do y")}`}</TableCell>
-          </TableRow>
-        </TableBody>
-      </Table>
-      <div className="p-6">{room.description}</div>
+      <div className="mt-3 flex w-full flex-col gap-1 p-3 text-sm">
+        <div className="flex items-center justify-between">
+          <span>Active Members:</span>
+          <span>{room.subsCount}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span>Created On:</span>
+          <span>{`${format(new Date(room.createdAt), "MMM do y")}`}</span>
+        </div>
+      </div>
+      <h1 className="mx-auto mt-3 w-fit rounded-2xl bg-muted p-1 px-2 text-sm flex-center">
+        Description
+      </h1>
+      <div className="p-6 pt-0 text-center">{room.description}</div>
     </>
   );
 };
