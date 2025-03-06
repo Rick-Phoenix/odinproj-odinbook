@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronsUpDown, LogOut, SquareUserRound } from "lucide-react";
+import { ChevronsUpDown, LogOut, SquareUserRound, X } from "lucide-react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -18,18 +18,20 @@ import {
 } from "@/components/ui/sidebar";
 import { Link } from "@tanstack/react-router";
 import { handleLogout, useSuspenseUser } from "../../hooks/auth";
+import { Button } from "./button";
 
 export function NavUser() {
   const { isMobile, setOpenMobile } = useSidebar();
   const user = useSuspenseUser()!;
   return (
     <SidebarMenu>
-      <SidebarMenuItem>
+      <SidebarMenuItem className={isMobile ? "flex items-center justify-between" : ""}>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <SidebarMenuButton
               size="lg"
               className="transition-colors data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              style={{ width: isMobile ? "fit-content" : "100%" }}
             >
               <Avatar className="h-8 w-8 rounded-full border-2 border-primary">
                 <AvatarImage src={user.avatarUrl} alt={user.username} className="object-cover" />
@@ -39,7 +41,7 @@ export function NavUser() {
                 <span className="truncate font-semibold">{user.username}</span>
                 <span className="truncate text-xs">Online</span>
               </div>
-              <ChevronsUpDown className="ml-auto size-4" />
+              <ChevronsUpDown className={isMobile ? "ml-1 size-4" : "ml-auto size-4"} />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -69,6 +71,12 @@ export function NavUser() {
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
+        {isMobile && (
+          <Button size={"icon"} variant={"ghost"} onClick={() => setOpenMobile(false)}>
+            {" "}
+            <X />
+          </Button>
+        )}
       </SidebarMenuItem>
     </SidebarMenu>
   );

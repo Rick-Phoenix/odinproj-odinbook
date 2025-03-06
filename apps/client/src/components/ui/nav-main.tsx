@@ -102,7 +102,7 @@ export function NavMain({
           })}
         </SidebarMenu>
       </SidebarGroup>
-      {isMobile && (
+      {isMobile && mainSection !== "settings" && (
         <SidebarGroup>
           <SidebarGroupLabel>{title(mainSection)}</SidebarGroupLabel>
           <SidebarRightContent mainSection={mainSection} />

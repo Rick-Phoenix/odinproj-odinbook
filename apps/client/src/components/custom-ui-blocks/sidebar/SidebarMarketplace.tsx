@@ -43,7 +43,7 @@ const MarketplaceSidebarContent = () => {
               </SidebarMenuButton>
             ))
           ) : (
-            <span className="mx-auto text-xs font-thin italic md:text-sm">
+            <span className="mx-auto text-xs italic text-muted-foreground md:text-sm">
               The list of saved listings is empty.
             </span>
           )}
