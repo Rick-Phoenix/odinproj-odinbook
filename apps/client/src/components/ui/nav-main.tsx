@@ -37,6 +37,7 @@ export function NavMain({
 }) {
   const { mainSection } = useActivePage();
   const isMobile = useIsMobile();
+
   return (
     <>
       <SidebarGroup>
@@ -45,7 +46,14 @@ export function NavMain({
           {items.map((item) => {
             const isActive = title(mainSection) === item.title;
             return (
-              <Collapsible key={item.title} asChild defaultOpen={!isMobile}>
+              <Collapsible
+                key={item.title}
+                onOpenChange={(open) => {
+                  localStorage.setItem(`collapsible-${item.title}`, `${open}`);
+                }}
+                asChild
+                defaultOpen={localStorage.getItem(`collapsible-${item.title}`) === "true"}
+              >
                 <SidebarMenuItem>
                   <SidebarMenuButton
                     asChild

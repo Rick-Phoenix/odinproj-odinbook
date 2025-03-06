@@ -17,7 +17,6 @@ export const Route = createFileRoute("/")({
     if (user) {
       throw redirect({
         to: "/rooms",
-        search: { orderBy: "likesCount" },
         replace: true,
       });
     }

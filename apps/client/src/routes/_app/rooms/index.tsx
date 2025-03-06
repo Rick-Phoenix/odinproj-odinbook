@@ -6,6 +6,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { zodValidator } from "@tanstack/zod-adapter";
 import { Heart } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState, type FC } from "react";
@@ -17,11 +18,12 @@ import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import { Autoplay, Mousewheel, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { z } from "zod";
 import { PostPreview } from "../../../components/content-sections/PostPreview";
 import InsetScrollArea from "../../../components/custom-ui-blocks/inset-area/InsetScrollarea";
 import { Button } from "../../../components/ui/button";
 import { CardTitle } from "../../../components/ui/card";
-import type { InitialFeed, PostBasic, SortingOrder } from "../../../lib/db-types";
+import type { InitialFeed, PostBasic } from "../../../lib/db-types";
 import { api } from "../../../lib/hono-RPC";
 import {
   cachePost,
@@ -32,12 +34,15 @@ import {
 import { sortPosts } from "../../../lib/queries/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../utils/async-throttle";
 import { getTotalPosts } from "../../../utils/get-total-posts";
+import { getLocalStorageBoolean, parseLocalStorage } from "../../../utils/localStorageUtils";
 
+const sortingTypes = ["likesCount", "createdAt"] as const;
+const sortingOrder = z.object({ orderBy: z.enum(sortingTypes) }).catch(() => ({
+  orderBy: parseLocalStorage("posts-feed-sorting", sortingTypes) || "likesCount",
+}));
 export const Route = createFileRoute("/_app/rooms/")({
   component: RouteComponent,
-  validateSearch: (s) => ({
-    orderBy: (s.orderBy as SortingOrder) || "likesCount",
-  }),
+  validateSearch: zodValidator(sortingOrder),
   loaderDeps: ({ search }) => search,
   loader: async (c) => {
     const { posts: initialPosts, total: totalPosts } = c.context.queryClient.getQueryData([
@@ -52,6 +57,8 @@ function RouteComponent() {
   const queryClient = useQueryClient();
   const navigate = useNavigate({ from: Route.fullPath });
   const { orderBy } = Route.useSearch();
+  localStorage.setItem(`posts-feed-sorting`, orderBy);
+
   const { totalPosts, initialPosts } = Route.useLoaderData();
   const initialCursor = getPostsCursor(initialPosts);
 
@@ -254,7 +261,8 @@ const TrendingCard: FC<{
 };
 
 const TrendingCarousel: FC<{ posts: PostBasic[] }> = ({ posts }) => {
-  const [isVisible, setIsVisible] = useState(true);
+  const initialIsVisible = getLocalStorageBoolean("feed-carousel-open") ?? true;
+  const [isVisible, setIsVisible] = useState(initialIsVisible);
 
   return (
     <>
@@ -267,7 +275,11 @@ const TrendingCarousel: FC<{ posts: PostBasic[] }> = ({ posts }) => {
         <DropdownMenuContent>
           <DropdownMenuItem
             onClick={() => {
-              setIsVisible(!isVisible);
+              setIsVisible((old) => {
+                const newValue = !old;
+                localStorage.setItem("feed-carousel-open", `${newValue}`);
+                return newValue;
+              });
             }}
           >
             {isVisible ? "Hide" : "Show"} Trending

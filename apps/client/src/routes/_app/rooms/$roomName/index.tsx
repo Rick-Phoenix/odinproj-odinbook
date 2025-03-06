@@ -1,6 +1,6 @@
 import { useInfiniteQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, Link, notFound, useNavigate } from "@tanstack/react-router";
-import { fallback, zodValidator } from "@tanstack/zod-adapter";
+import { zodValidator } from "@tanstack/zod-adapter";
 import { useEffect, useRef, useState, type FC } from "react";
 import { TbBellPlus, TbBellRingingFilled, TbSpaces } from "react-icons/tb";
 import { z } from "zod";
@@ -36,14 +36,18 @@ import {
 import { roomPostsQueryOptions, sortPosts } from "../../../../lib/queries/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../../utils/async-throttle";
 import { getTotalPosts } from "../../../../utils/get-total-posts";
+import { parseLocalStorage } from "../../../../utils/localStorageUtils";
 
-const searchInputs = z.object({
-  orderBy: fallback(z.enum(["likesCount", "createdAt"]), "likesCount").default("likesCount"),
+const sortingTypes = ["likesCount", "createdAt"] as const;
+const sortingOrder = z.object({ orderBy: z.enum(sortingTypes) }).catch(() => {
+  return {
+    orderBy: parseLocalStorage(`posts-feed-sorting`, sortingTypes) || "likesCount",
+  };
 });
 
 export const Route = createFileRoute("/_app/rooms/$roomName/")({
   component: RouteComponent,
-  validateSearch: zodValidator(searchInputs),
+  validateSearch: zodValidator(sortingOrder),
   loaderDeps: ({ search }) => search,
   loader: async ({ context: { queryClient }, params, deps: { orderBy } }) => {
     try {
@@ -68,7 +72,6 @@ function RouteComponent() {
     room: { name: roomName, avatar, isSubscribed, creatorId, totalPosts },
     initialPosts,
   } = Route.useLoaderData();
-
   const userIsCreator = userId === creatorId;
   const { orderBy } = Route.useSearch();
 
