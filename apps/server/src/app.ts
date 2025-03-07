@@ -1,31 +1,10 @@
 import { serveStatic } from "@hono/node-server/serve-static";
-import { v2 as cloudinary } from "cloudinary";
-import { csrf } from "hono/csrf";
 import createApp from "./lib/create-app.js";
 import configureOpenApiReference from "./lib/openapi-config.js";
-import { registerUser } from "./middlewares/auth-middleware";
-import { protectRoute, rejectIfAlreadyLogged } from "./middlewares/auth-middleware.js";
 import { apiRoutes } from "./routes/routing-config.js";
-import env from "./types/env.js";
+import env from "./types/env";
 
 const app = createApp();
-
-// Global Middleware
-app.use(csrf());
-app.use(registerUser);
-app.use(async (c, next) => {
-  cloudinary.config({
-    api_key: env.CLOUDINARY_API_KEY,
-    api_secret: env.CLOUDINARY_API_SECRET,
-    cloud_name: env.CLOUDINARY_CLOUD_NAME,
-  });
-
-  await next();
-});
-
-// Route Specific Middleware
-app.use("/api/*", protectRoute);
-app.use("/api/auth/*", rejectIfAlreadyLogged);
 
 // OpenAPI Endpoints
 configureOpenApiReference(app);

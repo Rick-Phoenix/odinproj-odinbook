@@ -17,10 +17,10 @@ export type AppBindingsWithUser = AppBindings & { Variables: { user: User } };
 
 export type AppOpenAPI = OpenAPIHono<AppBindings>;
 
-export type AppRouteHandler<
-  R extends RouteConfig,
-  AB extends Env = AppBindings,
-> = RouteHandler<R, AB>;
+export type AppRouteHandler<R extends RouteConfig, AB extends Env = AppBindings> = RouteHandler<
+  R,
+  AB
+>;
 
 export type AppMiddleware = MiddlewareHandler<AppBindings>;
 

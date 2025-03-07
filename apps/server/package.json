@@ -8,15 +8,14 @@
     "./schemas": "./src/schemas/zod-schemas.ts"
   },
   "scripts": {
-    "build": "npx tsc",
-    "start": "tsx dist/index.js",
     "dev": "tsx watch src/index.ts",
     "debug": "tsx watch --inspect src/index.ts",
     "lintconfig": "eslint-config-inspector",
     "dpush": "drizzle-kit push",
     "dstudio": "drizzle-kit studio",
     "mkroute": "tsx ./scripts/newRoute.ts",
-    "mkrouter": "tsx ./scripts/newRouteGroup.ts"
+    "mkrouter": "tsx ./scripts/newRouteGroup.ts",
+    "test": "vitest"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
@@ -64,6 +63,7 @@
     "prettier-plugin-sql": "^0.18.1",
     "tsx": "^4.19.2",
     "typescript": "catalog:",
-    "typescript-eslint": "^8.18.1"
+    "typescript-eslint": "^8.18.1",
+    "vitest": "^3.0.8"
   }
 }

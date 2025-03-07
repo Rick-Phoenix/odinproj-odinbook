@@ -6,11 +6,11 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "types": ["node", "hono"],
+    "types": ["node", "hono", "vitest"],
     "resolveJsonModule": true,
     "noEmit": true,
     "inlineSourceMap": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["src", "drizzle.config.ts", "scripts", "src/routes/chats/_chats-index.get.ts"]
+  "include": ["src", "drizzle.config.ts", "scripts", "src/routes/chats/_chats-index.get.ts ", "vitest.config.ts"]
 }
