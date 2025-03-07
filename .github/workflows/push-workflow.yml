@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  test:
+  build_and_test:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
@@ -19,7 +19,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 23
-          cache: "pnpm"
+
+      - name: Cache pnpm dependencies
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: pnpm-${{ runner.os }}-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            pnpm-${{ runner.os }}-
 
       - name: Install Dependencies
         run: pnpm install
