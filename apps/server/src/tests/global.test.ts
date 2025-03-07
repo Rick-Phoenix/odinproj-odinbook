@@ -14,13 +14,14 @@ configureOpenApiReference(app);
 app.route("/api", apiRoutes);
 
 // Static Assets Serving
-if (env.NODE_ENV === "development") {
+if (env.NODE_ENV === "test") {
   app.get("*", serveStatic({ path: "./src/dev.index.html" }));
 }
-if (env.NODE_ENV === "production") {
-  app.get("*", serveStatic({ root: "./_static" }));
-  app.get("*", serveStatic({ path: "./src/index.html" }));
-}
+
+//if (env.NODE_ENV === "production") {
+//  app.get("*", serveStatic({ root: "./_static" }));
+//  app.get("*", serveStatic({ path: "./src/index.html" }));
+//}
 
 it("Rejects unauthenticated requests", async () => {
   const protectedRoutes = ["/api/users", "/api/chats", "/api/listings", "/api/posts", "/api/rooms"];
@@ -34,7 +35,11 @@ it("Allows unauthenticated requests for login and signup", async () => {
   const authRoutes = ["/api/auth/login", "/api/auth/signup"];
   for (const route of authRoutes) {
     const res = await app.request(route, { method: "POST" });
-    console.log(res.status);
     expect(res.status).not.toEqual(401);
   }
+});
+
+it("Serves static files for non-api routes", async () => {
+  const res = await app.request("/");
+  expect(res.headers.get("Content-Type")).toMatch(/text\/html/);
 });
