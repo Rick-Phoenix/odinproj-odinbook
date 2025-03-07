@@ -3,7 +3,7 @@ import { expect, it } from "vitest";
 import createApp from "../lib/create-app";
 import configureOpenApiReference from "../lib/openapi-config";
 import { apiRoutes } from "../routes/routing-config";
-import env from "../types/env";
+
 
 const app = createApp();
 
@@ -13,6 +13,7 @@ configureOpenApiReference(app);
 // Api Routes Configuration
 app.route("/api", apiRoutes);
 
+const {default:env}= await import("../types/env");
 // Static Assets Serving
 if (env.NODE_ENV === "test") {
   app.get("*", serveStatic({ path: "./src/dev.index.html" }));
