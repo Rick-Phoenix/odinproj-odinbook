@@ -131,7 +131,7 @@ const SuggestedListingsCarousel: FC<{
           loop={true}
           breakpoints={{
             320: {
-              spaceBetween: 10,
+              spaceBetween: 0,
               slidesPerView: 1,
             },
             768: {
@@ -156,6 +156,7 @@ const SuggestedListingsCarousel: FC<{
           coverflowEffect={{
             rotate: 50,
             slideShadows: false,
+            scale: 0.9,
           }}
         >
           {listings.map((lis, i) => {
