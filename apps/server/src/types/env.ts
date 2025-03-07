@@ -8,7 +8,7 @@ const EnvSchema = z.object({
   NODE_ENV: z.string().default("development"),
   PORT: z.coerce.number().default(3000),
   DATABASE_URL: z.string(),
-  LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]),
+  LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
   GITHUB_CALLBACK_URI: z.string(),
