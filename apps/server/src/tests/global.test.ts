@@ -1,28 +1,23 @@
 import { serveStatic } from "@hono/node-server/serve-static";
-import { expect, it } from "vitest";
+import { expect, it, vi } from "vitest";
 import createApp from "../lib/create-app";
-import configureOpenApiReference from "../lib/openapi-config";
 import { apiRoutes } from "../routes/routing-config";
-
+import env from "../types/env";
 
 const app = createApp();
-
-// OpenAPI Endpoints
-configureOpenApiReference(app);
 
 // Api Routes Configuration
 app.route("/api", apiRoutes);
 
-const {default:env}= await import("../types/env");
 // Static Assets Serving
-if (env.NODE_ENV === "test") {
+if (env.NODE_ENV === "development") {
   app.get("*", serveStatic({ path: "./src/dev.index.html" }));
 }
 
-//if (env.NODE_ENV === "production") {
-//  app.get("*", serveStatic({ root: "./_static" }));
-//  app.get("*", serveStatic({ path: "./src/index.html" }));
-//}
+if (env.NODE_ENV === "production") {
+  app.get("*", serveStatic({ root: "./_static" }));
+  app.get("*", serveStatic({ path: "./_static/index.html" }));
+}
 
 it("Rejects unauthenticated requests", async () => {
   const protectedRoutes = ["/api/users", "/api/chats", "/api/listings", "/api/posts", "/api/rooms"];
@@ -40,7 +35,42 @@ it("Allows unauthenticated requests for login and signup", async () => {
   }
 });
 
-it("Serves static files for non-api routes", async () => {
+it("Serves the dev.index.html file in development", async () => {
+  vi.mock("../types/env", () => ({
+    default: {
+      NODE_ENV: "development",
+      PORT: 3000,
+      DATABASE_URL: "",
+      LOG_LEVEL: "info",
+      GITHUB_CLIENT_ID: "",
+      GITHUB_CLIENT_SECRET: "",
+      GITHUB_CALLBACK_URI: "",
+      SESSION_ENCRYPTION_KEY: "",
+      CLOUDINARY_CLOUD_NAME: "",
+      CLOUDINARY_API_KEY: "",
+      CLOUDINARY_API_SECRET: "",
+    },
+  }));
+  const res = await app.request("/");
+  expect(res.headers.get("Content-Type")).toMatch(/text\/html/);
+});
+
+it("Serves from the _static folder in production", async () => {
+  vi.mock("../types/env", () => ({
+    default: {
+      NODE_ENV: "production",
+      PORT: 3000,
+      DATABASE_URL: "",
+      LOG_LEVEL: "info",
+      GITHUB_CLIENT_ID: "",
+      GITHUB_CLIENT_SECRET: "",
+      GITHUB_CALLBACK_URI: "",
+      SESSION_ENCRYPTION_KEY: "",
+      CLOUDINARY_CLOUD_NAME: "",
+      CLOUDINARY_API_KEY: "",
+      CLOUDINARY_API_SECRET: "",
+    },
+  }));
   const res = await app.request("/");
   expect(res.headers.get("Content-Type")).toMatch(/text\/html/);
 });

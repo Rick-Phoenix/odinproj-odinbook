@@ -18,7 +18,7 @@ if (env.NODE_ENV === "development") {
 }
 if (env.NODE_ENV === "production") {
   app.get("*", serveStatic({ root: "./_static" }));
-  app.get("*", serveStatic({ path: "./src/index.html" }));
+  app.get("*", serveStatic({ path: "./_static/index.html" }));
 }
 
 export default app;

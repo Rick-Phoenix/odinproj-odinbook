@@ -12,5 +12,12 @@
     "inlineSourceMap": true,
     "allowImportingTsExtensions": true
   },
-  "include": ["src", "drizzle.config.ts", "scripts", "src/routes/chats/_chats-index.get.ts ", "vitest.config.ts"]
+  "include": [
+    "src",
+    "drizzle.config.ts",
+    "scripts",
+    "src/routes/chats/_chats-index.get.ts ",
+    "vitest.config.ts",
+    "./_static/.vite/parse-manifest.ts"
+  ]
 }
