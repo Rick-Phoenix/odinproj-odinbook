@@ -27,7 +27,7 @@ export default defineConfig({
   ],
   build: {
     outDir: "../server/_static",
-    emptyOutDir: true,
+    emptyOutDir: false,
     manifest: true,
     modulePreload: { polyfill: true },
     rollupOptions: {

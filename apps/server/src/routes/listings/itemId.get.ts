@@ -21,7 +21,10 @@ export const itemId = createRoute({
     params: z.object({ itemId: numberParamSchema }),
   },
   responses: {
-    [OK]: jsonContent(listingSchema, "The data for the requested listing."),
+    [OK]: jsonContent(
+      listingSchema.extend({ seller: z.object({ username: z.string(), avatarUrl: z.string() }) }),
+      "The data for the requested listing."
+    ),
     [NOT_FOUND]: notFoundError.template,
   },
 });

@@ -2,11 +2,11 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState, type FC } from "react";
 import { PiStar, PiStarFill } from "react-icons/pi";
 import { useToast } from "../../../hooks/useToast";
-import type { Listing } from "../../../lib/db-types";
+import type { Listing, ListingWithSeller } from "../../../lib/db-types";
 import { api } from "../../../lib/hono-RPC";
 import { Button } from "../../ui/button";
 
-const SaveListingButton: FC<{ listing: Listing; inPreview?: boolean }> = ({
+const SaveListingButton: FC<{ listing: Listing | ListingWithSeller; inPreview?: boolean }> = ({
   listing,
   inPreview,
 }) => {

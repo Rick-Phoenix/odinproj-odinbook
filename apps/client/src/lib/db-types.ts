@@ -11,6 +11,7 @@ import {
   insertUserSchema,
   itemConditions,
   listingSchema,
+  listingWithSellerSchema,
   loginValidationSchema,
   marketplaceCategories,
   messagesSchema,
@@ -37,6 +38,7 @@ export interface InitialFeed {
 export type SortingOrder = "likesCount" | "createdAt";
 export type ListingInputs = z.infer<typeof insertListingSchema>;
 export type Listing = z.infer<typeof listingSchema>;
+export type ListingWithSeller = z.infer<typeof listingWithSellerSchema>;
 export type ListingCategory = (typeof marketplaceCategories)[number];
 export type Comment = z.infer<typeof commentSchema> & {
   children?: Comment[];

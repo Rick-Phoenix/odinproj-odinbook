@@ -13,6 +13,7 @@ export {
   insertUserSchema,
   itemConditions,
   listingSchema,
+  listingWithSellerSchema,
   loginValidationSchema,
   marketplaceCategories,
   messagesSchema,

@@ -18,6 +18,6 @@
     "scripts",
     "src/routes/chats/_chats-index.get.ts ",
     "vitest.config.ts",
-    "./_static/.vite/parse-manifest.ts"
+    "_static/parse-manifest.ts"
   ]
 }

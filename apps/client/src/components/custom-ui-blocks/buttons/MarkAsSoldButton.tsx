@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { BadgeDollarSign } from "lucide-react";
 import { type FC } from "react";
-import type { Listing } from "../../../lib/db-types";
+import type { Listing, ListingWithSeller } from "../../../lib/db-types";
 import { api } from "../../../lib/hono-RPC";
 import {
   AlertDialog,
@@ -17,7 +17,7 @@ import {
 import { Button } from "../../ui/button";
 
 const MarkAsSoldButton: FC<{
-  listing: Listing;
+  listing: Listing | ListingWithSeller;
   withText?: boolean;
 }> = ({ listing, withText }) => {
   const queryClient = useQueryClient();

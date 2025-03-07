@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link, useParams } from "@tanstack/react-router";
-import type { Listing } from "../../../lib/db-types";
+import type { Listing, ListingWithSeller } from "../../../lib/db-types";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
 import { SidebarHeader, SidebarMenuButton, SidebarSeparator } from "../../ui/sidebar";
@@ -77,7 +77,7 @@ const MarketplaceSidebarContent = () => {
       </>
     );
 
-  const listing = queryClient.getQueryData<Listing>(["listing", itemId]);
+  const listing = queryClient.getQueryData<ListingWithSeller>(["listing", itemId]);
 
   if (!listing) return <SidebarSkeleton />;
 

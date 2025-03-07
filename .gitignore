@@ -1,9 +1,9 @@
 node_modules
 .env
 dist
-!/packages/shared-schemas/dist
 triggers.sql
 .vite-inspect
 stats.html
-_static
+.vite
+assets
 *.tsbuildinfo
