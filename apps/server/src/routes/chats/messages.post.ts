@@ -1,11 +1,10 @@
-import { inputErrorResponse } from "@/schemas/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
 import { sql } from "drizzle-orm";
 import { INTERNAL_SERVER_ERROR, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import db from "../../db/db-config";
 import { messages } from "../../db/schema";
-import { internalServerError } from "../../schemas/response-schemas";
+import { inputErrorResponse, internalServerError } from "../../schemas/response-schemas";
 import { insertMessageSchema } from "../../schemas/zod-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
 

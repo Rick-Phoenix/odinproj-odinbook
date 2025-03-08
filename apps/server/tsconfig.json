@@ -4,11 +4,8 @@
     "outDir": "./dist",
     "jsx": "react-jsx",
     "jsxImportSource": "hono/jsx",
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "types": ["node", "hono", "vitest"],
     "resolveJsonModule": true
   },
-  "include": ["src", "drizzle.config.ts", "src/routes/chats/_chats-index.get.ts "]
+  "include": ["src", "drizzle.config.ts"]
 }

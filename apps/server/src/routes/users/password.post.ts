@@ -1,5 +1,3 @@
-import { hashPassword, verifyPasswordHash } from "@/lib/auth";
-import { inputErrorResponse, okResponse } from "@/schemas/response-schemas";
 import { createRoute } from "@hono/zod-openapi";
 import { and, eq, ne } from "drizzle-orm";
 import {
@@ -12,7 +10,13 @@ import {
 import { jsonContentRequired } from "stoker/openapi/helpers";
 import db from "../../db/db-config";
 import { sessions, users } from "../../db/schema";
-import { customError, internalServerError } from "../../schemas/response-schemas";
+import { hashPassword, verifyPasswordHash } from "../../lib/auth";
+import {
+  customError,
+  inputErrorResponse,
+  internalServerError,
+  okResponse,
+} from "../../schemas/response-schemas";
 import { updatePasswordSchema } from "../../schemas/zod-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
 

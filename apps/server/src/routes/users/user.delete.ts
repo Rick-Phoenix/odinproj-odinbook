@@ -1,9 +1,9 @@
-import { getUserId } from "@/lib/auth";
 import { createRoute } from "@hono/zod-openapi";
 import { eq } from "drizzle-orm";
 import { INTERNAL_SERVER_ERROR, OK } from "stoker/http-status-codes";
 import db from "../../db/db-config";
 import { users } from "../../db/schema";
+import { getUserId } from "../../lib/auth";
 import { internalServerError, okResponse } from "../../schemas/response-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
 

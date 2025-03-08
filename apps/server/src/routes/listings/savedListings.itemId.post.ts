@@ -1,10 +1,10 @@
-import { getUserId } from "@/lib/auth";
-import { internalServerError, numberParamSchema, okResponse } from "@/schemas/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
 import { and, eq } from "drizzle-orm";
 import { INTERNAL_SERVER_ERROR, OK } from "stoker/http-status-codes";
 import db from "../../db/db-config";
 import { savedListings } from "../../db/schema";
+import { getUserId } from "../../lib/auth";
+import { internalServerError, numberParamSchema, okResponse } from "../../schemas/response-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
 
 const tags = ["market"];

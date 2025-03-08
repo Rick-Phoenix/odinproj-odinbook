@@ -44,7 +44,9 @@
   FROM node:23.9-alpine
   WORKDIR /app
   
-  COPY --from=builder /app/pruned/dist/* ./
+  COPY --from=builder /app/pruned/dist/src ./src
+  COPY --from=builder /app/pruned/dist/package.json ./
+  COPY --from=builder /app/pruned/dist/drizzle.config.js ./
 
   COPY --from=builder /app/pruned/node_modules ./node_modules
 
