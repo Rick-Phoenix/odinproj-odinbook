@@ -11,7 +11,7 @@
     "lintconfig": "eslint-config-inspector",
     "debug": "vite --debug",
     "knip": "knip",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "overrides": {
     "@radix-ui/react-dismissable-layer": "^1.0.5",

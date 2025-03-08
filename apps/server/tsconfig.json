@@ -10,5 +10,5 @@
     "types": ["node", "hono", "vitest"],
     "resolveJsonModule": true
   },
-  "include": ["src", "drizzle.config.ts", "src/routes/chats/_chats-index.get.ts ", "_static/parse-manifest.ts"]
+  "include": ["src", "drizzle.config.ts", "src/routes/chats/_chats-index.get.ts "]
 }

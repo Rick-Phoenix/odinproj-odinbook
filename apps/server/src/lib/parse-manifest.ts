@@ -17,7 +17,9 @@ interface ManifestChunk {
 
 export async function parseManifest() {
   try {
-    const manifest = await readFile(path.resolve(import.meta.dirname, ".vite", "manifest.json"), { encoding: "utf-8" });
+    const manifest = await readFile(path.resolve(process.cwd(), "_static/.vite/manifest.json"), {
+      encoding: "utf-8",
+    });
     const parsedManifest = JSON.parse(manifest) as Manifest;
     const manifestEntries = Object.entries(parsedManifest);
     let entryChunk: ManifestChunk | undefined;
@@ -30,7 +32,9 @@ export async function parseManifest() {
 
     if (!entryChunk) throw new Error("Could not find the entry chunk.");
 
-    const cssModules = entryChunk.css!.map((cssModule) => `<link rel="stylesheet" href="${cssModule}"/>`).join("\n");
+    const cssModules = entryChunk
+      .css!.map((cssModule) => `<link rel="stylesheet" href="${cssModule}"/>`)
+      .join("\n");
 
     const entryJS = `<script type="module" src="${entryChunk.file}"></script>`;
     const htmlOutput = `<!DOCTYPE html>
@@ -49,7 +53,7 @@ export async function parseManifest() {
 </html>
     `;
 
-    await writeFile(path.resolve(import.meta.dirname, "index.html"), htmlOutput);
+    await writeFile(path.resolve(process.cwd(), "_static/index.html"), htmlOutput);
   } catch (error) {
     console.error("Error while reading the manifest");
     throw new Error(error as string);

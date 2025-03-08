@@ -8,7 +8,7 @@
     "./schemas": "./src/schemas/zod-schemas.ts"
   },
   "scripts": {
-    "build": "tsx ./_static/parse-manifest.ts && tsc",
+    "build": "tsc && node ./dist/src/lib/parse-manifest.js",
     "dev": "tsx watch src/index.ts",
     "debug": "tsx watch --inspect src/index.ts",
     "lintconfig": "eslint-config-inspector",
@@ -16,8 +16,8 @@
     "dstudio": "drizzle-kit studio",
     "mkroute": "tsx ./scripts/newRoute.ts",
     "mkrouter": "tsx ./scripts/newRouteGroup.ts",
-    "test": "vitest",
-    "start": "node ./dist/src/index.js"
+    "test": "vitest run",
+    "start": "node ./src/index.js"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
@@ -65,6 +65,7 @@
     "tsx": "^4.19.2",
     "typescript": "catalog:",
     "typescript-eslint": "^8.18.1",
+    "vite": "^6.0.7",
     "vitest": "^3.0.8"
   }
 }

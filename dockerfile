@@ -1,7 +1,7 @@
   # -----------------------------------
   # Base Stage
   # -----------------------------------
-  FROM node:23.9-slim as base
+  FROM node:23.9-slim AS base
 
   ENV PNPM_HOME="/pnpm"
   ENV PATH="$PNPM_HOME:$PATH"
@@ -14,11 +14,15 @@
     
   FROM base AS builder
   
+  ENV CI=true
+
   COPY ./package*.json ./
   COPY ./pnpm-lock.yaml ./
+  COPY ./pnpm-workspace.yaml ./
+  COPY ./.npmrc ./
   COPY ./apps/client/package.json ./apps/client/
   COPY ./apps/server/package.json ./apps/server/
-  COPY ./packages/shared-schemas/package.json ./packages/shared-schemas
+  COPY ./packages/shared-schemas/package.json ./packages/shared-schemas/package.json
 
   RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
@@ -40,9 +44,11 @@
   FROM node:23.9-alpine
   WORKDIR /app
   
-  ENV NODE_ENV=production
-  
-  COPY --from=builder /app/pruned .
+  COPY --from=builder /app/pruned/dist/* ./
+
+  COPY --from=builder /app/pruned/node_modules ./node_modules
+
+  COPY --from=builder /app/pruned/_static ./_static
+
   EXPOSE 3000
-  
-  CMD ["pnpm", "run", "start"] 
+  CMD ["npm", "run", "start"] 
