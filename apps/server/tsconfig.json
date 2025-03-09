@@ -7,5 +7,9 @@
     "types": ["node", "hono", "vitest"],
     "resolveJsonModule": true
   },
+  "tsc-alias": {
+    "verbose": false,
+    "resolveFullPaths": true
+  },
   "include": ["src", "drizzle.config.ts"]
 }

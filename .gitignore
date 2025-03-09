@@ -8,3 +8,4 @@ stats.html
 assets
 *.tsbuildinfo
 pruned
+*.md
