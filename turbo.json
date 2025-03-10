@@ -4,12 +4,7 @@
   "tasks": {
     "@nexus/shared-schemas#build": {
       "dependsOn": [],
-      "inputs": [
-        "@nexus/hono-api/schemas",
-        "../../apps/server/src/db/schema.ts",
-        "../../apps/server/src/db/db-methods.ts",
-        "./*"
-      ],
+      "inputs": ["@nexus/hono-api/schemas"],
       "outputs": ["dist/**"]
     },
     "@nexus/react-client#build": {
