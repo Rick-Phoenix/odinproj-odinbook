@@ -7,8 +7,8 @@
     "dev": "vite",
     "build": "NODE_ENV=production tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
     "lintconfig": "eslint-config-inspector",
+    "preview": "vite preview",
     "debug": "vite --debug",
     "knip": "knip",
     "test": "vitest run"

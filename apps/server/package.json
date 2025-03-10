@@ -8,16 +8,17 @@
     "./schemas": "./src/schemas/zod-schemas.ts"
   },
   "scripts": {
-    "build": "tsc && tsc-alias && node ./dist/src/lib/parse-manifest.js",
+    "start": "node ./src/index.js",
     "dev": "tsx watch src/index.ts",
+    "build": "tsc && tsc-alias",
+    "parse-manifest": "node ./dist/src/lib/parse-manifest.js",
     "debug": "tsx watch --inspect src/index.ts",
     "lintconfig": "eslint-config-inspector",
     "dpush": "drizzle-kit push",
     "dstudio": "drizzle-kit studio",
     "mkroute": "tsx ./scripts/newRoute.ts",
     "mkrouter": "tsx ./scripts/newRouteGroup.ts",
-    "test": "vitest run",
-    "start": "node ./src/index.js"
+    "test": "vitest run"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",

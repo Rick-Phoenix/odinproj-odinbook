@@ -9,3 +9,5 @@ assets
 *.tsbuildinfo
 pruned
 *.md
+.turbo
+_static

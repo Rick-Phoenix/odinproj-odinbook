@@ -1,0 +1,34 @@
+{
+  "$schema": "https://turbo.build/schema.json",
+  "globalDependencies": ["tsconfig.json"],
+  "tasks": {
+    "@nexus/shared-schemas#build": {
+      "dependsOn": [],
+      "inputs": [
+        "@nexus/hono-api/schemas",
+        "../../apps/server/src/db/schema.ts",
+        "../../apps/server/src/db/db-methods.ts",
+        "./*"
+      ],
+      "outputs": ["dist/**"]
+    },
+    "@nexus/react-client#build": {
+      "dependsOn": ["@nexus/shared-schemas#build"],
+      "outputs": ["../server/_static/**"]
+    },
+    "@nexus/hono-api#build": {
+      "dependsOn": [],
+      "outputs": ["dist/**"]
+    },
+    "@nexus/eslint-config#build": {
+      "dependsOn": []
+    },
+    "parse-manifest": {
+      "dependsOn": ["@nexus/react-client#build", "@nexus/hono-api#build"],
+      "inputs": ["_static/.vite/manifest.json"],
+      "outputs": ["_static/index.html"]
+    },
+    "test": { "dependsOn": ["parse-manifest"], "inputs": ["src/tests/*.ts", "vitest.config.ts"] },
+    "dev": { "cache": false, "persistent": true }
+  }
+}

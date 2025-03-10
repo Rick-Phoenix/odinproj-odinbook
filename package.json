@@ -3,17 +3,16 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "pnpm run -r --parallel dev",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "build": "turbo run build parse-manifest test",
     "newpackage": "node ./scripts/create-package.js",
-    "test": "pnpm run -r --parallel test",
-    "build:shared": "pnpm --filter ./packages/shared-schemas run build",
-    "build:client": "pnpm --filter ./apps/client run build",
-    "build:server": "pnpm --filter ./apps/server run build",
-    "build": "pnpm run build:shared && pnpm run build:client && pnpm run build:server"
+    "clean": "pnpm -r exec rm -rf .turbo dist && rm -rf .turbo"
   },
   "packageManager": "pnpm@9.15.0+sha512.76e2379760a4328ec4415815bcd6628dee727af3779aaa4c914e3944156c4299921a89f976381ee107d41f12cfa4b66681ca9c718f0668fa0831ed4c6d8ba56c",
   "devDependencies": {
     "@inquirer/prompts": "^7.3.1",
+    "turbo": "^2.4.4",
     "typescript": "^5.7.3"
   }
 }

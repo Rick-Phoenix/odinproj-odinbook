@@ -1,11 +1,10 @@
 node_modules
 .git
-.gitignore
 *.md
-dist
-.vite
-assets
-triggers.sql
-stats.html
+*.sql
 *.tsbuildinfo
+
+dist
+_static
+stats.html
 .env
