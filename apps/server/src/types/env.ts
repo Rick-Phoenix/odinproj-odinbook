@@ -17,7 +17,6 @@ const EnvSchema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string(),
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
-  DOMAIN: z.string(),
 });
 
 let env: env;
