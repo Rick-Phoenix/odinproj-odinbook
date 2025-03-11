@@ -28,7 +28,7 @@ export const userQueryOptions = {
 
     ownChats.forEach(cacheChat);
 
-    const initialFeedTrending = posts[19].likesCount === 0 ? posts : posts.slice(0, 20);
+    const initialFeedTrending = posts[19]?.likesCount === 0 ? posts : posts.slice(0, 20);
 
     if (rooms) {
       for (const room of rooms) {

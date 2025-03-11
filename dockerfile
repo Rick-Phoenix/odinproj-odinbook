@@ -24,7 +24,7 @@
   ## -----------------------------------
   
   RUN pnpm run build
-  RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm --filter ./apps/server --prod deploy pruned
+  RUN --mount=type=cache,id=pnpm2,target=/pnpm/store pnpm --filter ./apps/server --prod deploy pruned
 
   # -----------------------------------
   # Deploy
