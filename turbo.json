@@ -3,8 +3,7 @@
   "globalDependencies": ["tsconfig.json"],
   "tasks": {
     "@nexus/shared-schemas#build": {
-      "dependsOn": [],
-      "inputs": ["@nexus/hono-api/schemas"],
+      "dependsOn": ["@nexus/hono-api#build"],
       "outputs": ["dist/**"]
     },
     "@nexus/react-client#build": {
