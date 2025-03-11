@@ -1,5 +1,6 @@
 import { TanStackRouterVite } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
+import { resolve } from "path";
 import { visualizer } from "rollup-plugin-visualizer";
 import { defineConfig } from "vite";
 import checker from "vite-plugin-checker";
@@ -7,6 +8,7 @@ import Inspect from "vite-plugin-inspect";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
+  envDir: resolve(import.meta.dirname, "../.."),
   plugins: [
     TanStackRouterVite({ autoCodeSplitting: true }),
     react({

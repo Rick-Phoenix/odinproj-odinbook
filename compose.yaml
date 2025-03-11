@@ -1,22 +1,27 @@
 services:
   app:
-    build: .
-    ports:
-      - "3000:3000"
+    image: nexus
+    networks:
+      - caddy
+    labels:
+      caddy: ${DOMAIN}
+      caddy.reverse_proxy: "{{upstreams ${PORT}}}"
     env_file:
       - .env
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=postgres://admin:${POSTGRES_PASSWORD}@postgres:5432/nexus
+      - DATABASE_URL=${DATABASE_PROD_URL}
     depends_on:
       - postgres
     restart: unless-stopped
 
   postgres:
     image: postgres:14.17
+    networks:
+      - caddy
     environment:
-      - POSTGRES_DB=nexus
-      - POSTGRES_USER=admin
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     restart: unless-stopped
     volumes:
@@ -24,3 +29,7 @@ services:
 
 volumes:
   postgres_data: {}
+
+networks:
+  caddy:
+    external: true
