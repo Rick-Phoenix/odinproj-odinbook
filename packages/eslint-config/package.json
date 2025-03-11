@@ -6,6 +6,12 @@
   "exports": {
     ".": "./eslint.config.js"
   },
+  "scripts": {
+    "build": "echo 'No build needed for eslint-config' && exit 0"
+  },
+  "publishConfig": {
+    "directory": "dist"
+  },
   "devDependencies": {
     "@eslint/config-inspector": "^0.6.0",
     "@eslint/js": "^9.17.0",

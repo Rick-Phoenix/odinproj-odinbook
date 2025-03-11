@@ -1,8 +1,3 @@
-import {
-  badRequestError,
-  inputErrorResponse,
-  internalServerError,
-} from "@/schemas/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
 import { encodeBase64 } from "@oslojs/encoding";
 import { webcrypto } from "crypto";
@@ -16,6 +11,11 @@ import {
 import db from "../../db/db-config";
 import { users } from "../../db/schema";
 import { createSession } from "../../lib/auth";
+import {
+  badRequestError,
+  inputErrorResponse,
+  internalServerError,
+} from "../../schemas/response-schemas";
 import type { AppRouteHandler } from "../../types/app-bindings";
 import env from "../../types/env";
 import type { githubTokenResponse, githubUserData } from "../../types/oauth-responses";

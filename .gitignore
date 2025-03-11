@@ -7,3 +7,7 @@ stats.html
 .vite
 assets
 *.tsbuildinfo
+pruned
+*.md
+.turbo
+_static

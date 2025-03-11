@@ -1,13 +1,12 @@
-import { inputErrorResponse } from "@/schemas/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
-import { encodeBase64 } from "@oslojs/encoding/dist/base64";
+import { encodeBase64 } from "@oslojs/encoding";
 import { v2 as cloudinary } from "cloudinary";
 import { eq } from "drizzle-orm";
 import { INTERNAL_SERVER_ERROR, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import db from "../../db/db-config";
 import { users } from "../../db/schema";
-import { internalServerError } from "../../schemas/response-schemas";
+import { inputErrorResponse, internalServerError } from "../../schemas/response-schemas";
 import { updateAvatarSchema } from "../../schemas/zod-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
 

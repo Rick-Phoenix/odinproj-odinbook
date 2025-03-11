@@ -1,9 +1,3 @@
-import { hashPassword } from "@/lib/auth";
-import {
-  alreadyLoggedError,
-  inputErrorResponse,
-  internalServerError,
-} from "@/schemas/response-schemas";
 import { createRoute } from "@hono/zod-openapi";
 import { webcrypto } from "crypto";
 import {
@@ -16,8 +10,13 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import db from "../../db/db-config";
 import { lowercase } from "../../db/db-methods";
 import { users } from "../../db/schema";
-import { createSession } from "../../lib/auth";
-import { customError } from "../../schemas/response-schemas";
+import { createSession, hashPassword } from "../../lib/auth";
+import {
+  alreadyLoggedError,
+  customError,
+  inputErrorResponse,
+  internalServerError,
+} from "../../schemas/response-schemas";
 import { insertUserSchema, userSchema } from "../../schemas/zod-schemas";
 import type { AppRouteHandler } from "../../types/app-bindings";
 

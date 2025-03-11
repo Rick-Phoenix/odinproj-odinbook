@@ -7,11 +7,11 @@
     "dev": "vite",
     "build": "NODE_ENV=production tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
     "lintconfig": "eslint-config-inspector",
+    "preview": "vite preview",
     "debug": "vite --debug",
     "knip": "knip",
-    "test": "vitest"
+    "test": "vitest run"
   },
   "overrides": {
     "@radix-ui/react-dismissable-layer": "^1.0.5",

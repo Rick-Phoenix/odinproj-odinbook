@@ -1,7 +1,7 @@
-import type { AppOpenAPI } from "../types/app-bindings.js";
-import packageJSON from "../../package.json" assert { type: "json" };
-import { apiReference } from "@scalar/hono-api-reference";
 import { swaggerUI } from "@hono/swagger-ui";
+import { apiReference } from "@scalar/hono-api-reference";
+import packageJSON from "../../package.json" with { type: "json" };
+import type { AppOpenAPI } from "../types/app-bindings.js";
 
 export default function configureOpenApiReference(app: AppOpenAPI) {
   app.doc31("/doc", {

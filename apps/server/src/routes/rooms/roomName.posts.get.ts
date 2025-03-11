@@ -1,5 +1,3 @@
-import { getUserId } from "@/lib/auth";
-import { inputErrorResponse, numberParamSchema } from "@/schemas/response-schemas";
 import { createRoute, z } from "@hono/zod-openapi";
 import { and, lt, lte, sql } from "drizzle-orm";
 import { NOT_FOUND, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
@@ -7,7 +5,12 @@ import { jsonContent } from "stoker/openapi/helpers";
 import db from "../../db/db-config";
 import { lowercase } from "../../db/db-methods";
 import { isSubscribed, postIsLiked, totalPostsFromRoom } from "../../db/subqueries";
-import { notFoundError } from "../../schemas/response-schemas";
+import { getUserId } from "../../lib/auth";
+import {
+  inputErrorResponse,
+  notFoundError,
+  numberParamSchema,
+} from "../../schemas/response-schemas";
 import { roomWithPostsSchema } from "../../schemas/zod-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
 

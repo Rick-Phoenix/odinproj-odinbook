@@ -1,5 +1,3 @@
-import { getUserId } from "@/lib/auth";
-import { inputErrorResponse } from "@/schemas/response-schemas";
 import { createRoute } from "@hono/zod-openapi";
 import { encodeBase64 } from "@oslojs/encoding";
 import { v2 as cloudinary } from "cloudinary";
@@ -7,7 +5,8 @@ import { CONFLICT, OK, UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { jsonContent } from "stoker/openapi/helpers";
 import db from "../../db/db-config";
 import { type RoomCategories, rooms } from "../../db/schema";
-import { customError } from "../../schemas/response-schemas";
+import { getUserId } from "../../lib/auth";
+import { customError, inputErrorResponse } from "../../schemas/response-schemas";
 import { insertRoomSchema, roomSchema } from "../../schemas/zod-schemas";
 import type { AppBindingsWithUser, AppRouteHandler } from "../../types/app-bindings";
 

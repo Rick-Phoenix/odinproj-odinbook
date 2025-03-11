@@ -1,7 +1,10 @@
-name: Push Workflow
+name: Deployment
 
 on:
   push:
+    branches:
+      - main
+  pull_request:
     branches:
       - main
 
@@ -24,8 +27,5 @@ jobs:
       - name: Install Dependencies
         run: pnpm install
 
-      - name: Build Files
-        run: npm run build
-
-      - name: Run Tests for All Packages
-        run: npm run test
+      - name: Build And Test
+        run: pnpm run build
