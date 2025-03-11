@@ -4,7 +4,7 @@ services:
     networks:
       - caddy
     labels:
-      caddy: ${DOMAIN}
+      caddy: ${VITE_DOMAIN}
       caddy.reverse_proxy: "{{upstreams ${PORT}}}"
     env_file:
       - .env
