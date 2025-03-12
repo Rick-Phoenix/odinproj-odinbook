@@ -1,5 +1,6 @@
 services:
   prod:
+    pull_policy: build
     build:
       context: .
       dockerfile: ./docker/prod.dockerfile
@@ -18,6 +19,27 @@ services:
       - postgres
     restart: unless-stopped
 
+  dev:
+    pull_policy: build
+    build:
+      context: .
+      dockerfile: ./docker/dev.dockerfile
+    image: nexus:dev
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - caddy
+    labels:
+      caddy: ${VITE_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams ${PORT}}}"
+    env_file:
+      - .env
+    environment:
+      - DATABASE_URL=${DATABASE_PROD_URL}
+    depends_on:
+      - postgres
+    restart: unless-stopped
   postgres:
     image: postgres:14.17
     networks:
