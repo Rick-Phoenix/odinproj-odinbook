@@ -1,6 +1,9 @@
 services:
-  app:
-    image: nexus
+  prod:
+    build:
+      context: .
+      dockerfile: ./docker/prod.dockerfile
+    image: nexus:prod
     networks:
       - caddy
     labels:
