@@ -50,6 +50,7 @@ it("Serves the dev.index.html file in development", async () => {
       CLOUDINARY_CLOUD_NAME: "",
       CLOUDINARY_API_KEY: "",
       CLOUDINARY_API_SECRET: "",
+      REDIS_PASSWORD: "",
     },
   }));
   const res = await app.request("/");
@@ -70,6 +71,7 @@ it("Serves from the _static folder in production", async () => {
       CLOUDINARY_CLOUD_NAME: "",
       CLOUDINARY_API_KEY: "",
       CLOUDINARY_API_SECRET: "",
+      REDIS_PASSWORD: "",
     },
   }));
   const res = await app.request("/");

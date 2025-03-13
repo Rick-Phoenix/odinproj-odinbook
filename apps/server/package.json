@@ -43,6 +43,7 @@
     "generate": "^0.14.0",
     "hono": "catalog:",
     "hono-pino": "^0.7.0",
+    "ioredis": "^5.6.0",
     "pg": "^8.13.1",
     "pino": "^9.5.0",
     "pino-pretty": "^13.0.0",

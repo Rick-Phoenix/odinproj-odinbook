@@ -57,6 +57,7 @@ export default defineConfig(({ mode }) => {
               ws: true,
             },
           },
+          host: "0.0.0.0",
         },
     // Not necessary for remote hmr at the moment, leaving for reference
     //watch: { usePolling: true },

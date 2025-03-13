@@ -21,6 +21,9 @@ const EnvSchema = z.object({
     .enum(["true", "false"])
     .transform((value) => value === "true")
     .default("false"),
+  REDIS_HOST: z.string().default("redis-dev"),
+  REDIS_PORT: z.coerce.number().default(6379),
+  REDIS_PASSWORD: z.string(),
 });
 
 let env: env;

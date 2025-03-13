@@ -4,7 +4,6 @@ import env from "../types/env";
 
 export const devHtmlHandler: Handler = (c) => {
   const viteServerPath = env.VITE_REMOTE_DEV ? "/vite" : "http://localhost:5173";
-  console.log(env.VITE_REMOTE_DEV);
   return c.html(html`<!doctype html>
     <html lang="en">
       <head>

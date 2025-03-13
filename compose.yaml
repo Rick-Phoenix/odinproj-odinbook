@@ -17,8 +17,10 @@ services:
     environment:
       - NODE_ENV=production
       - DATABASE_URL=${DB_PROD_URL}
+      - REDIS_HOST=redis-prod
     depends_on:
       - postgres-prod
+      - redis-prod
     restart: unless-stopped
 
   postgres-prod:
@@ -63,6 +65,7 @@ services:
       caddy.2_reverse_proxy: "{{upstreams ${REMOTE_DEV_PORT}}}"
     depends_on:
       - postgres-dev
+      - redis-dev
     restart: unless-stopped
 
   postgres-dev:
@@ -77,10 +80,31 @@ services:
     volumes:
       - pg_nexus_dev:/var/lib/postgresql/data
 
+  redis-dev:
+    image: redis:latest
+    volumes:
+      - redis_nexus_dev:/data
+    networks:
+      - caddy
+    command: >
+      --requirepass ${REDIS_PASSWORD}
+  redis-prod:
+    image: redis:latest
+    volumes:
+      - redis_nexus_prod:/data
+    networks:
+      - caddy
+    command: >
+      --requirepass ${REDIS_PASSWORD}
+
 volumes:
   pg_nexus_prod:
     external: true
   pg_nexus_dev:
+    external: true
+  redis_nexus_dev:
+    external: true
+  redis_nexus_prod:
     external: true
 
 networks:
