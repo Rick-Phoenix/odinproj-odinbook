@@ -7,7 +7,7 @@ import checker from "vite-plugin-checker";
 import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, resolve(import.meta.dirname, "../.."), "");
+  const env = loadEnv(mode, resolve(import.meta.dirname, "../.."));
   const isRemoteDev = env.VITE_REMOTE_DEV === "true";
   return {
     envDir: resolve(import.meta.dirname, "../.."),

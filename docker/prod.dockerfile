@@ -23,6 +23,9 @@
   ## Build, test and prune
   ## -----------------------------------
   
+  ARG VITE_DOMAIN
+  ENV VITE_DOMAIN=${VITE_DOMAIN}
+  
   RUN pnpm run build
   RUN --mount=type=cache,id=pnpm2,target=/pnpm/store pnpm --filter ./apps/server --prod deploy pruned
 
@@ -33,12 +36,16 @@
   FROM node:23.9-alpine
   WORKDIR /app
   
-  COPY --from=builder /app/pruned/dist/src ./src
-  COPY --from=builder /app/pruned/dist/package.json ./
-  COPY --from=builder /app/pruned/dist/drizzle.config.js ./
-  COPY --from=builder /app/pruned/node_modules ./node_modules
-  COPY --from=builder /app/apps/server/_static ./_static
+  RUN addgroup --system --gid 1001 nodejs
+  RUN adduser --system --uid 1001 hono
 
+  COPY --from=builder --chown=hono:nodejs /app/pruned/dist/src ./src
+  COPY --from=builder --chown=hono:nodejs /app/pruned/dist/package.json ./
+  COPY --from=builder --chown=hono:nodejs /app/pruned/dist/drizzle.config.js ./
+  COPY --from=builder --chown=hono:nodejs /app/pruned/node_modules ./node_modules
+  COPY --from=builder --chown=hono:nodejs /app/apps/server/_static ./_static
+
+  USER hono
   EXPOSE 3000
   CMD ["npm", "run", "start"] 
 

@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: ./docker/prod.dockerfile
+      args:
+        - VITE_DOMAIN=${VITE_DOMAIN}
     image: nexus:prod
     networks:
       - caddy
