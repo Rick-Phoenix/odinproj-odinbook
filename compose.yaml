@@ -16,10 +16,22 @@ services:
       - .env
     environment:
       - NODE_ENV=production
-      - DATABASE_URL=${DATABASE_PROD_URL}
+      - DATABASE_URL=${DB_PROD_URL}
     depends_on:
-      - postgres
+      - postgres-prod
     restart: unless-stopped
+
+  postgres-prod:
+    image: postgres:14.17
+    networks:
+      - caddy
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: unless-stopped
+    volumes:
+      - pg_nexus_prod:/var/lib/postgresql/data
 
   dev:
     pull_policy: build
@@ -30,9 +42,10 @@ services:
     env_file:
       - .env
     environment:
-      - DATABASE_URL=${DATABASE_PROD_URL}
+      - DATABASE_URL=${DB_REMOTE_DEV_URL}
       - VITE_REMOTE_DEV=true
-      - VITE_DOMAIN=dev.${VITE_DOMAIN}
+      - VITE_DOMAIN=${REMOTE_DEV_DOMAIN}
+      - PORT=${REMOTE_DEV_PORT}
     volumes:
       - ./apps:/app/apps
       - ./packages:/app/packages
@@ -42,16 +55,17 @@ services:
     networks:
       - caddy
     labels:
-      caddy: dev.${VITE_DOMAIN}
+      caddy: ${REMOTE_DEV_DOMAIN}
       caddy.basicauth: /*
       caddy.basicauth.rick: $$2b$$12$$rrUJu0L44f3z86V2wHBdLu5D2DxO0d1ahHCh8HCE2OyoEgHaD/UJq
       caddy.1_handle: /vite/*
       caddy.1_handle.reverse_proxy: "{{upstreams http 5173}}"
-      caddy.2_reverse_proxy: "{{upstreams 3000}}"
+      caddy.2_reverse_proxy: "{{upstreams ${REMOTE_DEV_PORT}}}"
     depends_on:
-      - postgres
+      - postgres-dev
     restart: unless-stopped
-  postgres:
+
+  postgres-dev:
     image: postgres:14.17
     networks:
       - caddy
@@ -61,10 +75,13 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     restart: unless-stopped
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - pg_nexus_dev:/var/lib/postgresql/data
 
 volumes:
-  postgres_data: {}
+  pg_nexus_prod:
+    external: true
+  pg_nexus_dev:
+    external: true
 
 networks:
   caddy:
