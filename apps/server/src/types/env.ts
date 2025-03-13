@@ -17,6 +17,10 @@ const EnvSchema = z.object({
   CLOUDINARY_CLOUD_NAME: z.string(),
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
+  VITE_REMOTE_DEV: z
+    .enum(["true", "false"])
+    .transform((value) => value === "true")
+    .default("false"),
 });
 
 let env: env;

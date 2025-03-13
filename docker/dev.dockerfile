@@ -5,18 +5,18 @@ ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 RUN corepack enable && corepack prepare pnpm --activate
 
-FROM base AS install
-WORKDIR /app
-
 COPY .npmrc .
 COPY package.json .
 COPY pnpm-workspace.yaml .
 COPY pnpm-lock.yaml .
-COPY ./apps/server/package.json ./apps/server
-COPY ./apps/client/package.json ./apps/client
-COPY ./packages/shared-schemas/package.json ./packages/shared-schemas
+COPY tsconfig.json .
+COPY turbo.json .
+COPY ./apps/server/package.json /app/apps/server/package.json
+COPY ./apps/client/package.json /app/apps/client/package.json
+COPY ./packages/shared-schemas/package.json /app/packages/shared-schemas/package.json
 
 RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 
-EXPOSE 3010
-CMD [ "pnpm run dev" ]
+EXPOSE 3000
+EXPOSE 5173
+CMD [ "pnpm", "run" ,"dev" ]

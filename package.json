@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "pnpm run -r --parallel dev",
     "test": "turbo run test",
     "build": "turbo run build parse-manifest test",
     "newpackage": "node ./scripts/create-package.js",

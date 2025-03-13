@@ -1,6 +1,7 @@
 import { serveStatic } from "@hono/node-server/serve-static";
 import { expect, it, vi } from "vitest";
 import createApp from "../lib/create-app";
+import { devHtmlHandler } from "../lib/dev-html-handler";
 import { apiRoutes } from "../routes/routing-config";
 import env from "../types/env";
 
@@ -11,7 +12,7 @@ app.route("/api", apiRoutes);
 
 // Static Assets Serving
 if (env.NODE_ENV === "development") {
-  app.get("*", serveStatic({ path: "./src/dev.index.html" }));
+  app.get("*", devHtmlHandler);
 }
 
 if (env.NODE_ENV === "production") {
