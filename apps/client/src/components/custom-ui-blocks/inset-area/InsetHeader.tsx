@@ -24,7 +24,7 @@ export default function InsetHeader() {
             <BreadcrumbItem>
               <BreadcrumbLink asChild>
                 {mainSection &&
-                  (mainSection === activePage || mainSection === "chats" ? (
+                  (mainSection === activePage || ["chats", "rooms"].includes(mainSection) ? (
                     <Link to={mainSection} className="min-w-fit">
                       <BreadcrumbPage>{title(mainSection)}</BreadcrumbPage>
                     </Link>
@@ -35,7 +35,7 @@ export default function InsetHeader() {
                   ))}
               </BreadcrumbLink>
             </BreadcrumbItem>
-            {subSection && mainSection !== "chats" && (
+            {subSection && !["chats", "rooms"].includes(mainSection) && (
               <>
                 <BreadcrumbSeparator />
                 <BreadcrumbItem>
