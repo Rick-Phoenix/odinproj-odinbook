@@ -18,6 +18,7 @@ import { ScrollArea, ScrollBar } from "../ui/scroll-area";
 import { Separator } from "../ui/separator";
 import PostComment from "./Comment";
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function renderComments(comments: Comment[], startingRow: number, startingColumn: number) {
   return comments.map((c, i, arr) => {
     const row = startingRow + i;
@@ -43,6 +44,7 @@ function nestComments(comments: Comment[]) {
     if (c.parentCommentId) {
       const parId = c.parentCommentId;
       const relMapEntry = nestMap.get(parId);
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       relMapEntry ? relMapEntry.push(c) : nestMap.set(parId, [c]);
     } else rootComments.push(c);
   });

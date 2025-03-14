@@ -10,7 +10,7 @@ export const chatsQueryOptions = {
     const data = await res.json();
     if ("issues" in data) throw Error("Error while loading the chats.");
     if (data.length)
-      for (const chat of data) {
+      for (const chat of data as Chat[]) {
         cacheChat(chat);
       }
     return data;
@@ -50,7 +50,7 @@ export const chatMutationOptions = (
   onSuccess: (d, inputs) => {
     chatWebSocket.send(JSON.stringify({ receiver: inputs.receiverId, chatId }));
 
-    queryClient.invalidateQueries({
+    void queryClient.invalidateQueries({
       queryKey: ["chat", chatId],
       exact: true,
       refetchType: "all",
@@ -103,7 +103,7 @@ chatWebSocket.addEventListener("message", async (e) => {
   if (!existingChat) {
     await queryClient.fetchQuery(singleChatQueryOptions(chatId));
   } else {
-    queryClient.invalidateQueries({
+    void queryClient.invalidateQueries({
       queryKey: ["chat", chatId],
       exact: true,
       refetchType: "all",

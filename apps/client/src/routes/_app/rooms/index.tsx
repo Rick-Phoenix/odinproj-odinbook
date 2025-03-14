@@ -10,11 +10,11 @@ import { zodValidator } from "@tanstack/zod-adapter";
 import { Heart } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useRef, useState, type FC } from "react";
-// @ts-expect-error
+// @ts-expect-error Module does not have proper exports for css files
 import "swiper/css";
-// @ts-expect-error
+// @ts-expect-error Module does not have proper exports for css files
 import "swiper/css/pagination";
-// @ts-expect-error
+// @ts-expect-error Module does not have proper exports for css files
 import "swiper/css/scrollbar";
 import { Autoplay, Mousewheel, Scrollbar } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -34,7 +34,7 @@ import {
 import { sortPosts } from "../../../lib/queries/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../utils/async-throttle";
 import { getTotalPosts } from "../../../utils/get-total-posts";
-import { getLocalStorageBoolean, parseLocalStorage } from "../../../utils/localStorageUtils";
+import { getLocalStorageBoolean, parseLocalStorage } from "../../../utils/localstorage-utils";
 
 const sortingTypes = ["likesCount", "createdAt"] as const;
 const sortingOrder = z.object({ orderBy: z.enum(sortingTypes) }).catch(() => ({
@@ -44,7 +44,7 @@ export const Route = createFileRoute("/_app/rooms/")({
   component: RouteComponent,
   validateSearch: zodValidator(sortingOrder),
   loaderDeps: ({ search }) => search,
-  loader: async (c) => {
+  loader: (c) => {
     const { posts: initialPosts, total: totalPosts } = c.context.queryClient.getQueryData([
       "initialFeed",
       c.deps.orderBy,
@@ -88,8 +88,8 @@ function RouteComponent() {
       const res = await api.posts.feed.data.$get({
         query: {
           orderBy,
-          cursorLikes: cursorLikes!,
-          cursorTime: cursorTime!,
+          cursorLikes: cursorLikes,
+          cursorTime: cursorTime,
         },
       });
 
@@ -142,9 +142,9 @@ function RouteComponent() {
   useEffect(() => {
     throttledScrollFetch.current = throttleAsync(feedQuery.fetchNextPage, 3000, true);
     return () => (throttledScrollFetch.current ? throttledScrollFetch.current.cancel() : void null);
-  }, [orderBy]);
+  }, [orderBy, feedQuery.fetchNextPage]);
 
-  const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
+  const handleScroll: React.UIEventHandler<HTMLDivElement> = (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
     if (
       scrollTop + clientHeight >= scrollHeight * 0.9 &&
@@ -154,7 +154,11 @@ function RouteComponent() {
     ) {
       spinnerRef.current.style.display = "flex";
       if (!feedQuery.isFetching) {
-        await throttledScrollFetch.current();
+        throttledScrollFetch
+          .current()
+          .then()
+          // eslint-disable-next-line no-console
+          .catch((e) => console.error("Error while fetching new posts."));
         spinnerRef.current.style.display = "none";
       }
     }

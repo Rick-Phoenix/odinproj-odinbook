@@ -8,6 +8,7 @@ import InsetScrollArea from "../../../../components/custom-ui-blocks/inset-area/
 import { Button } from "../../../../components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../../../../components/ui/popover";
 import { useUser } from "../../../../hooks/auth";
+import type { Chat } from "../../../../lib/db-types";
 import { chatsQueryOptions } from "../../../../lib/queries/chatQueries";
 import { listingQueryOptions } from "../../../../lib/queries/queryOptions";
 
@@ -31,14 +32,14 @@ function RouteComponent() {
   const navigate = useNavigate();
 
   const handleSendMessage = async () => {
-    const chats = await queryClient.fetchQuery(chatsQueryOptions);
-    const existingChat = chats.find((chat) => chat.contact.username === listing.seller);
+    const chats: Chat[] = await queryClient.fetchQuery(chatsQueryOptions);
+    const existingChat = chats.find((chat) => chat.contact.username === listing.seller.username);
     if (existingChat)
       return navigate({
         to: "/chats/$chatId",
         params: { chatId: existingChat.id },
       });
-    navigate({ to: "/chats/new", search: { contactUsername: listing.seller.username } });
+    void navigate({ to: "/chats/new", search: { contactUsername: listing.seller.username } });
   };
   return (
     <InsetScrollArea>
@@ -84,7 +85,7 @@ function RouteComponent() {
                     <PopoverContent className="w-fit">
                       <Button variant={"ghost"} asChild>
                         <Link to="/users/$username" params={{ username: listing.seller.username }}>
-                          View seller's profile
+                          {" View seller's profile"}
                         </Link>
                       </Button>
                     </PopoverContent>

@@ -114,7 +114,7 @@ const CommentButtons: FC<{
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              form.handleSubmit();
+              void form.handleSubmit();
             }}
           >
             <form.Field
@@ -136,7 +136,10 @@ const CommentButtons: FC<{
                 children={([errorMap]) =>
                   errorMap.onSubmit ? (
                     <div className="mt-3 flex w-full justify-center text-center">
-                      <em>{errorMap.onSubmit?.toString()}</em>
+                      {
+                        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                        <em>{errorMap.onSubmit?.toString()}</em>
+                      }
                     </div>
                   ) : null
                 }

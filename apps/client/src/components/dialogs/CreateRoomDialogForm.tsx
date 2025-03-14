@@ -2,7 +2,6 @@ import { insertRoomSchema, roomCategoriesArray } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
-import { memo } from "react";
 import type { RoomInputs } from "../../lib/db-types";
 import { api } from "../../lib/hono-RPC";
 import { formatFormErrors, singleErrorsAdapter } from "../../utils/form-utils";
@@ -13,7 +12,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 
-const CreateRoomDialogForm = memo(() => {
+const CreateRoomDialogForm = () => {
   const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
@@ -72,7 +71,7 @@ const CreateRoomDialogForm = memo(() => {
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
       >
         <div className="flex flex-col gap-6">
@@ -199,7 +198,10 @@ const CreateRoomDialogForm = memo(() => {
             children={([errorMap]) =>
               errorMap.onSubmit ? (
                 <div>
-                  <em>{errorMap.onSubmit?.toString()}</em>
+                  {
+                    // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                    <em>{errorMap.onSubmit?.toString()}</em>
+                  }
                 </div>
               ) : null
             }
@@ -208,6 +210,6 @@ const CreateRoomDialogForm = memo(() => {
       </form>
     </>
   );
-});
+};
 
 export default CreateRoomDialogForm;

@@ -10,7 +10,7 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ["dist"] },
+  { ignores: ["dist", ".vite-inspect", "./src/components/ui"] },
   {
     files: ["**/*.{ts,tsx}"],
     extends: [js.configs.recommended, tseslint.configs.recommendedTypeChecked],
@@ -37,7 +37,20 @@ export default tseslint.config(
       ...react.configs["jsx-runtime"].rules,
       ...reactHooks.configs.recommended.rules,
       "react-compiler/react-compiler": "error",
-      "@typescript-eslint/no-unused-vars": "warn",
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          args: "all",
+          argsIgnorePattern: "^[_\\w(evt)(ws)]",
+          caughtErrors: "all",
+          caughtErrorsIgnorePattern: "^[_e(err)(error)]",
+          destructuredArrayIgnorePattern: "^[_k(key)]",
+          varsIgnorePattern: "^[_(data)(res)]",
+          ignoreRestSiblings: true,
+        },
+      ],
+      "react/no-children-prop": "off",
+      "react/prop-types": "off",
       "no-console": "warn",
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-misused-promises": [

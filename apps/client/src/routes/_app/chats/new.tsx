@@ -66,8 +66,8 @@ function RouteComponent() {
     },
     onSuccess: (data) => {
       chatWebSocket.send(JSON.stringify({ receiver: contact.id, chatId: data.chatId }));
-      queryClient.ensureQueryData(singleChatQueryOptions(data.chatId));
-      navigate({
+      void queryClient.ensureQueryData(singleChatQueryOptions(data.chatId));
+      void navigate({
         to: "/chats/$chatId",
         params: { chatId: data.chatId },
         replace: true,
@@ -107,7 +107,7 @@ function RouteComponent() {
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            form.handleSubmit();
+            void form.handleSubmit();
           }}
         >
           <form.Field

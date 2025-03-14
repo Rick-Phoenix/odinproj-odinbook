@@ -64,7 +64,7 @@ const CreateListingDialogForm = () => {
     onSuccess(data, variables, context) {
       queryClient.setQueryData(["listing", data.id], data);
       queryClient.setQueryData(["listingsCreated"], (old: Listing[]) => [data, ...old]);
-      navigate({
+      void navigate({
         to: "/marketplace/$category/$itemId",
         params: { category: data.category, itemId: data.id },
       });
@@ -80,7 +80,7 @@ const CreateListingDialogForm = () => {
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
       >
         <div className="flex flex-col gap-6">
@@ -286,7 +286,10 @@ const CreateListingDialogForm = () => {
             children={([errorMap]) =>
               errorMap.onSubmit ? (
                 <div>
-                  <em>{errorMap.onSubmit?.toString()}</em>
+                  {
+                    // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                    <em>{errorMap.onSubmit?.toString()}</em>
+                  }
                 </div>
               ) : null
             }

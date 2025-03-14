@@ -11,7 +11,8 @@
     "preview": "vite preview",
     "debug": "vite --debug",
     "knip": "knip",
-    "test": "vitest run"
+    "test": "vitest run",
+    "spellcheck": "cspell './src/**/*.tsx'"
   },
   "overrides": {
     "@radix-ui/react-dismissable-layer": "^1.0.5",
@@ -78,6 +79,7 @@
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
     "babel-plugin-react-compiler": "19.0.0-beta-27714ef-20250124",
+    "cspell": "^8.17.5",
     "cssnano": "^7.0.6",
     "dotenv": "^16.4.7",
     "dotenv-expand": "^12.0.1",

@@ -60,6 +60,7 @@ export {
   updatePasswordSchema,
   updateStatusSchema,
 };
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const userDataWithoutExtras = userDataSchema.omit({
   subsContent: true,
   listingsCreated: true,

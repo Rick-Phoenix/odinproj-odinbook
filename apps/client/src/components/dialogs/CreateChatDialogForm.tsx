@@ -29,14 +29,14 @@ const CreateChatDialogForm: FC<{ setOpen: React.Dispatch<React.SetStateAction<bo
           .getQueryData<Chat[]>(["chats"])!
           .find((chat) => chat.contact.username === contactUsername);
         if (chat) {
-          navigate({
+          void navigate({
             to: "/chats/$chatId",
             params: { chatId: chat.id },
           });
           return;
         }
         try {
-          const contact = await queryClient.fetchQuery(profileQueryOptions(contactUsername));
+          await queryClient.fetchQuery(profileQueryOptions(contactUsername));
           return null;
         } catch (error) {
           return "This user does not exist.";
@@ -46,7 +46,7 @@ const CreateChatDialogForm: FC<{ setOpen: React.Dispatch<React.SetStateAction<bo
     },
     onSubmit({ value }) {
       form.reset();
-      navigate({
+      void navigate({
         to: "/chats/new",
         search: { contactUsername: value.contactUsername },
       });
@@ -61,7 +61,7 @@ const CreateChatDialogForm: FC<{ setOpen: React.Dispatch<React.SetStateAction<bo
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
       >
         <form.Field
@@ -97,7 +97,10 @@ const CreateChatDialogForm: FC<{ setOpen: React.Dispatch<React.SetStateAction<bo
           children={([errorMap]) =>
             errorMap.onSubmit ? (
               <div className="text-center">
-                <em>{errorMap.onSubmit?.toString()}</em>
+                {
+                  // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                  <em>{errorMap.onSubmit?.toString()}</em>
+                }
               </div>
             ) : null
           }

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-base-to-string */
 import { updatePasswordSchema, updateStatusSchema } from "@nexus/shared-schemas";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -81,6 +82,7 @@ const DeleteAccountButton = () => {
       return data;
     },
     onSuccess: () => {
+      // eslint-disable-next-line react-compiler/react-compiler
       location.href = "/";
     },
   });
@@ -160,68 +162,59 @@ const PasswordEdit = () => {
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        form.handleSubmit();
+        void form.handleSubmit();
       }}
     >
       <h2 className="border-b-2 text-lg font-semibold">Change Password</h2>
 
       <div className="flex flex-col gap-2">
         <div className="grid gap-2">
-          <form.Field
-            name="oldPassword"
-            children={(field) => {
-              return (
-                <>
-                  <Label htmlFor={field.name}>Old Password</Label>
-                  <Input
-                    name={field.name}
-                    type="password"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    required
-                  />
-                </>
-              );
-            }}
-          ></form.Field>
+          <form.Field name="oldPassword">
+            {(field) => (
+              <>
+                <Label htmlFor={field.name}>Old Password</Label>
+                <Input
+                  name={field.name}
+                  type="password"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  required
+                />
+              </>
+            )}
+          </form.Field>
         </div>
         <div className="grid gap-2">
-          <form.Field
-            name="newPassword"
-            children={(field) => {
-              return (
-                <>
-                  <Label htmlFor={field.name}>New Password</Label>
-                  <Input
-                    name={field.name}
-                    type="password"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    required
-                  />
-                </>
-              );
-            }}
-          ></form.Field>
-        </div>{" "}
+          <form.Field name="newPassword">
+            {(field) => (
+              <>
+                <Label htmlFor={field.name}>New Password</Label>
+                <Input
+                  name={field.name}
+                  type="password"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  required
+                />
+              </>
+            )}
+          </form.Field>
+        </div>
         <div className="grid gap-2">
-          <form.Field
-            name="passConfirm"
-            children={(field) => {
-              return (
-                <>
-                  <Label htmlFor={field.name}>Confirm New Password</Label>
-                  <Input
-                    name={field.name}
-                    type="password"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    required
-                  />
-                </>
-              );
-            }}
-          ></form.Field>
+          <form.Field name="passConfirm">
+            {(field) => (
+              <>
+                <Label htmlFor={field.name}>Confirm New Password</Label>
+                <Input
+                  name={field.name}
+                  type="password"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  required
+                />
+              </>
+            )}
+          </form.Field>
         </div>
         <form.Subscribe
           selector={(state) => [state.canSubmit, state.isSubmitting, state.isTouched]}
@@ -303,7 +296,7 @@ const StatusEdit = () => {
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        form.handleSubmit();
+        void form.handleSubmit();
       }}
     >
       <div className="flex flex-col gap-3">
@@ -370,7 +363,7 @@ const ProfilePictureEdit = () => {
 
   const form = useForm({
     defaultValues: {
-      avatar: undefined as any as File | undefined,
+      avatar: undefined as unknown as File | undefined,
     },
     validators: {
       onSubmitAsync: async ({ value }) => {
@@ -404,6 +397,7 @@ const ProfilePictureEdit = () => {
       return resData;
     },
     onSuccess: (data) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       queryClient.setQueryData(["user"], (user: User) => ({
         ...user,
         avatarUrl: data.newAvatarUrl,
@@ -419,7 +413,7 @@ const ProfilePictureEdit = () => {
         onSubmit={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          form.handleSubmit();
+          void form.handleSubmit();
         }}
       >
         <div className="flex h-fit flex-col items-center gap-2 text-center">
@@ -479,7 +473,7 @@ const ProfilePictureEdit = () => {
                         const file = e.target.files?.[0];
                         if (file) {
                           form.setFieldValue("avatar", file);
-                          form.handleSubmit();
+                          void form.handleSubmit();
                         }
                       }}
                     />

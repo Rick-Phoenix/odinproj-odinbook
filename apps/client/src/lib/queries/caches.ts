@@ -19,7 +19,9 @@ function storeIdInCache<T extends number | string>(
   const slot =
     typeof slotValue === "string"
       ? getPostTimeSlot(slotValue)
-      : (Math.floor((slotValue as number) / 10) as T);
+      : // Typescript complaining despite the type guard
+        // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-assertion
+        (Math.floor((slotValue as number) / 10) as T);
   if (!innerCache?.has(slot as T)) innerCache?.set(slot as T, new Set([id]));
   else {
     const slotValues = innerCache.get(slot as T);
@@ -66,7 +68,7 @@ export function getNextPostsByLikes(
 ) {
   const posts = [] as PostBasic[];
   const likesSlot = Math.max(Math.floor(opts.cursorLikes / 10) - 10, 0);
-  let nextPostsInRange = !opts.fromFeed
+  const nextPostsInRange = !opts.fromFeed
     ? getCachedPostsInLikesSlot(likesSlot, opts.cursorTime, opts.room.toLowerCase())
     : getCachedPostsInLikesSlot(likesSlot, opts.cursorTime, "", true);
   posts.push(...nextPostsInRange);

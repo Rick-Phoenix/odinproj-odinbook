@@ -30,11 +30,11 @@ function CardRotate({ children, onSendToBack, sensitivity, autoCycle, isFront }:
       const animationX = animate(x, targetX, { duration: 1.3 });
       const animationY = animate(y, targetY, { duration: 1.3 });
 
-      Promise.all([animationX, animationY]).then(() => {
+      void Promise.all([animationX, animationY]).then(() => {
         onSendToBack();
         const animationX = animate(x, 0, { duration: 1.3 });
         const animationY = animate(y, 0, { duration: 1.3 });
-        Promise.all([animationX, animationY]);
+        void Promise.all([animationX, animationY]);
       });
 
       return () => {

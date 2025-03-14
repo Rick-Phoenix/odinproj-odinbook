@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Color, Mesh, Program, Renderer, Triangle } from "ogl";
 import React, { useEffect, useRef } from "react";
 
@@ -163,13 +164,17 @@ const Threads: React.FC<ThreadsProps> = ({
     function resize() {
       const { clientWidth, clientHeight } = container;
       renderer.setSize(clientWidth, clientHeight);
-      program.uniforms.iResolution.value = new Color(clientWidth, clientHeight, clientWidth / clientHeight);
+      program.uniforms.iResolution.value = new Color(
+        clientWidth,
+        clientHeight,
+        clientWidth / clientHeight
+      );
     }
     window.addEventListener("resize", resize);
     resize();
 
     // Variables to smoothly interpolate the mouse position.
-    let currentMouse = [0.5, 0.5];
+    const currentMouse = [0.5, 0.5];
     let targetMouse = [0.5, 0.5];
 
     function handleMouseMove(e: MouseEvent) {

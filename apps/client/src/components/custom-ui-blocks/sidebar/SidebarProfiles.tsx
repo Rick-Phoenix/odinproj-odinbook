@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { MessageSquare } from "lucide-react";
 import { useUser } from "../../../hooks/auth";
-import type { Profile } from "../../../lib/db-types";
+import type { Chat, Profile } from "../../../lib/db-types";
 import { chatsQueryOptions } from "../../../lib/queries/chatQueries";
 import { Avatar, AvatarImage } from "../../ui/avatar";
 import { Button } from "../../ui/button";
@@ -18,9 +18,10 @@ const UserProfileSidebarContent = () => {
   });
   const navigate = useNavigate();
   const { username } = useUser()!;
-  const profile = queryClient.getQueryData(["profile", profileParams?.username?.toLowerCase()]) as
-    | Profile
-    | undefined;
+  const profile = queryClient.getQueryData<Profile>([
+    "profile",
+    profileParams?.username?.toLowerCase(),
+  ]);
 
   if (!profileParams?.username || !profile) return <SidebarSkeleton />;
   const isUserOwnProfile = profile.username.toLowerCase() === username.toLowerCase();
@@ -28,13 +29,15 @@ const UserProfileSidebarContent = () => {
   const handleSendMessage = async () => {
     if (isUserOwnProfile) return;
     const chats = await queryClient.fetchQuery(chatsQueryOptions);
-    const existingChat = chats.find((chat) => chat.contact.username === profile.username);
+    const existingChat = chats.find((chat: Chat) => chat.contact.username === profile.username) as
+      | Chat
+      | undefined;
     if (existingChat)
       return navigate({
         to: "/chats/$chatId",
         params: { chatId: existingChat.id },
       });
-    navigate({
+    void navigate({
       to: "/chats/new",
       search: { contactUsername: profile.username },
     });

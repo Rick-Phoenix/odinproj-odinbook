@@ -2,11 +2,11 @@ import { marketplaceCategories } from "@nexus/shared-schemas";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useSpring, useTransform } from "motion/react";
 import { type FC, type MouseEvent, type MouseEventHandler } from "react";
-// @ts-expect-error
+// @ts-expect-error Module does not declare css exports properly
 import "swiper/css";
-// @ts-expect-error
+// @ts-expect-error Module does not declare css exports properly
 import "swiper/css/effect-coverflow";
-// @ts-expect-error
+// @ts-expect-error Module does not declare css exports properly
 import "swiper/css/pagination";
 import { Autoplay, EffectCoverflow, Mousewheel, Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";

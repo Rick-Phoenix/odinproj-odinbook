@@ -1,10 +1,10 @@
 export interface ThrottledFunction {
-  (...args: any[]): Promise<unknown>;
+  (...args: unknown[]): Promise<unknown>;
   cancel(): void;
 }
 
-function throttleAsync(
-  fn: (...args: any[]) => any,
+function throttleAsync<T = unknown>(
+  fn: (...args: T[]) => unknown,
   delay: number,
   leading: boolean
 ): ThrottledFunction {
@@ -12,12 +12,12 @@ function throttleAsync(
   const accumulator: (() => void)[] = [];
   let isLeading = leading;
 
-  const throttledFn = (...args: any[]) =>
+  const throttledFn = (...args: unknown[]) =>
     new Promise((resolve) => {
       clearTimeout(timeoutId);
 
       const execute = () =>
-        Promise.resolve(fn(...args)).then((value) => {
+        Promise.resolve(fn(...(args as Parameters<typeof fn>))).then((value) => {
           accumulator.pop();
           accumulator.forEach((fn) => fn());
           accumulator.length = 0;
@@ -29,7 +29,7 @@ function throttleAsync(
         setTimeout(() => {
           isLeading = true;
         }, delay);
-        execute();
+        resolve(execute());
       } else {
         accumulator.push(() => resolve({ hasResolved: false }));
         timeoutId = setTimeout(execute, delay);

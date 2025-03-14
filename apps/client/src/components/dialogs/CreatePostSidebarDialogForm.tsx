@@ -64,7 +64,7 @@ const CreatePostSidebarDialogForm: FC<{
           comments: [],
         });
       }
-      navigate({
+      void navigate({
         to: "/rooms/$roomName/posts/$postId",
         params: { roomName: variables.roomName, postId: data.id },
       });
@@ -81,7 +81,7 @@ const CreatePostSidebarDialogForm: FC<{
             onSubmit={(e) => {
               e.preventDefault();
               e.stopPropagation();
-              form.handleSubmit();
+              void form.handleSubmit();
             }}
           >
             <div className="flex flex-col gap-6">
@@ -179,7 +179,10 @@ const CreatePostSidebarDialogForm: FC<{
                 children={([errorMap]) =>
                   errorMap.onSubmit ? (
                     <div>
-                      <em>{errorMap.onSubmit?.toString()}</em>
+                      {
+                        // eslint-disable-next-line @typescript-eslint/no-base-to-string
+                        <em>{errorMap.onSubmit?.toString()}</em>
+                      }
                     </div>
                   ) : null
                 }

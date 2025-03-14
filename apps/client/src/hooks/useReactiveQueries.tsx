@@ -12,12 +12,11 @@ export const useReactiveQueries = (keySegment: QueryKey) => {
     setData(initialQueries);
 
     const unsubscribe = queryClient.getQueryCache().subscribe((event) => {
-      if (event.query.queryKey[0] === keySegment[0]) {
+      if ((event.query.queryKey as QueryKey[0]) === keySegment[0]) {
         if (event.type === "updated" || event.type === "added") {
           const updatedData = queryClient.getQueriesData({
             predicate: (query) =>
-              query.queryKey[0] === keySegment[0] &&
-              query.state.data !== undefined,
+              query.queryKey[0] === keySegment[0] && query.state.data !== undefined,
           });
 
           setData(updatedData);
@@ -25,16 +24,14 @@ export const useReactiveQueries = (keySegment: QueryKey) => {
 
         if (event.type === "removed") {
           setData((prevData) =>
-            prevData.filter(
-              ([queryKey]) => queryKey[1] !== event.query.queryKey[1],
-            ),
+            prevData.filter(([queryKey]) => queryKey[1] !== (event.query.queryKey as QueryKey[1]))
           );
         }
       }
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [keySegment, queryClient]);
 
   return data;
 };

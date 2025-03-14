@@ -36,7 +36,3 @@ function RouteComponent() {
     </InsetScrollArea>
   );
 }
-
-function Icon() {
-  return <span className="p-4">Remove</span>;
-}

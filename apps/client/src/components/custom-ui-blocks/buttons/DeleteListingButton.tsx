@@ -43,7 +43,7 @@ const DeleteListingButton: FC<{
       );
       queryClient.setQueryData(["listing", listing.id], null);
       toast({ title: "Listing cancelled successfully.", duration: 2000 });
-      navigate({ to: "/marketplace" });
+      void navigate({ to: "/marketplace" });
     },
   });
 

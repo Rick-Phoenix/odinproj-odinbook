@@ -90,6 +90,7 @@ export const listingsByCategoryQueryOptions = (
   orderBy: "cheapest" | "mostRecent"
 ) => {
   return queryOptions({
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: ["listings", category],
     queryFn: async () => {
       const res = await api.listings.$get({
@@ -106,6 +107,7 @@ export const listingsByCategoryQueryOptions = (
 
 export const profileQueryOptions = (username: string) =>
   queryOptions({
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: ["profile", username.toLowerCase()],
     queryFn: async () => {
       const res = await api.users[":username"].$get({ param: { username } });
@@ -124,6 +126,7 @@ export const roomPostsQueryOptions = (
   cursorTime?: string
 ) =>
   queryOptions({
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: ["room", roomName.toLowerCase(), orderBy],
     queryFn: async () => {
       const res = await api.rooms[":roomName"].posts.$get({

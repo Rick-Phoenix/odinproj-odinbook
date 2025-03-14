@@ -8,7 +8,7 @@ export function parseLocalStorage<T extends string>(key: string, values: readonl
 
   if (value === null) return null;
 
-  if (values.includes(value as any)) {
+  if (values.includes(value as unknown as T)) {
     return value as T;
   }
 

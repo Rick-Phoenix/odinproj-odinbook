@@ -3,7 +3,7 @@ import { describe, it } from "vitest";
 import App from "../app";
 
 describe("Rendering the app", () => {
-  it("Renders the App component", async () => {
+  it("Renders the App component", () => {
     render(<App />);
 
     screen.debug();

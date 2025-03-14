@@ -109,7 +109,7 @@ const MarketplaceHistoryItem: FC<{ listing: Listing }> = ({ listing }) => {
               {listing.location} | {format(new Date(listing.createdAt), "dd MMM y")}
             </span>
           </div>
-          <span className="text-sm text-xl font-semibold">${listing.price}</span>
+          <span className="text-sm font-semibold md:text-xl">${listing.price}</span>
         </div>
       </div>
     </Link>

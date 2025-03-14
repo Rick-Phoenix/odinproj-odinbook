@@ -36,7 +36,7 @@ import {
 import { roomPostsQueryOptions, sortPosts } from "../../../../lib/queries/queryOptions";
 import { throttleAsync, type ThrottledFunction } from "../../../../utils/async-throttle";
 import { getTotalPosts } from "../../../../utils/get-total-posts";
-import { parseLocalStorage } from "../../../../utils/localStorageUtils";
+import { parseLocalStorage } from "../../../../utils/localstorage-utils";
 
 const sortingTypes = ["likesCount", "createdAt"] as const;
 const sortingOrder = z.object({ orderBy: z.enum(sortingTypes) }).catch(() => {
@@ -79,6 +79,8 @@ function RouteComponent() {
   const initialCursor = getPostsCursor(initialPosts);
 
   const postsQuery = useInfiniteQuery({
+    // (Roomname is given, just with toLowerCase)
+    // eslint-disable-next-line @tanstack/query/exhaustive-deps
     queryKey: ["posts", roomName.toLowerCase(), orderBy],
     queryFn: async (c) => {
       const {
@@ -156,10 +158,10 @@ function RouteComponent() {
   useEffect(() => {
     throttledScrollFetch.current = throttleAsync(postsQuery.fetchNextPage, 3000, true);
     return () => (throttledScrollFetch.current ? throttledScrollFetch.current.cancel() : void null);
-  }, [orderBy]);
+  }, [orderBy, postsQuery.fetchNextPage]);
 
   const spinnerRef = useRef<HTMLDivElement>(null);
-  const handleScroll: React.UIEventHandler<HTMLDivElement> = async (e) => {
+  const handleScroll: React.UIEventHandler<HTMLDivElement> = (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.currentTarget;
     if (
       scrollTop + clientHeight >= scrollHeight * 0.9 &&
@@ -169,7 +171,11 @@ function RouteComponent() {
     ) {
       spinnerRef.current.style.display = "flex";
       if (!postsQuery.isFetching) {
-        await throttledScrollFetch.current();
+        throttledScrollFetch
+          .current()
+          .then()
+          // eslint-disable-next-line no-console
+          .catch((e) => console.error("Error while fetching new posts."));
         spinnerRef.current.style.display = "none";
       }
     }
@@ -277,6 +283,7 @@ const RoomFounderMenu: FC<{
       return data;
     },
     onSuccess: () => {
+      // eslint-disable-next-line react-compiler/react-compiler
       location.href = "/";
     },
   });

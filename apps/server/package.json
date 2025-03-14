@@ -13,6 +13,7 @@
     "build": "tsc && tsc-alias",
     "parse-manifest": "node ./dist/src/lib/parse-manifest.js",
     "debug": "tsx watch --inspect src/index.ts",
+    "lint": "eslint .",
     "lintconfig": "eslint-config-inspector",
     "dpush": "drizzle-kit push",
     "dstudio": "drizzle-kit studio",

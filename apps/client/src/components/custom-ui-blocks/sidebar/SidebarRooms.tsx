@@ -99,6 +99,8 @@ const RoomSidebarContent = () => {
     from: "/_app/rooms/$roomName/posts/$postId",
     shouldThrow: false,
   });
+  // (One of the two must be there in order for the page to load)
+  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
   const roomName = roomsIndexParam?.roomName || roomPostParam?.roomName!;
   const room: Room | undefined = queryClient.getQueryData(["roomPreview", roomName?.toLowerCase()]);
   if (!room) return <SidebarSkeleton />;

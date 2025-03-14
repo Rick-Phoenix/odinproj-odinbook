@@ -8,7 +8,7 @@ import tseslint from "typescript-eslint";
 
 /** @type {import('eslint').Linter.Config[]} */
 export default tseslint.config(
-  { ignores: ["dist/"] },
+  { ignores: ["dist/", "_static/"] },
   {
     files: ["**/*.{js,mjs,cjs,ts}"],
     extends: [js.configs.recommended, tseslint.configs.recommendedTypeChecked],
@@ -22,12 +22,20 @@ export default tseslint.config(
       },
     },
     rules: {
-      "@typescript-eslint/no-unused-vars": "warn",
-      ...drizzle.configs.recommended.rules,
-      "drizzle/enforce-delete-with-where": [
-        "error",
-        { drizzleObjectName: "db" },
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          args: "all",
+          argsIgnorePattern: "^[_ce(evt)f(ws)]",
+          caughtErrors: "all",
+          caughtErrorsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+          varsIgnorePattern: "^[_k(key)]",
+          ignoreRestSiblings: true,
+        },
       ],
+      ...drizzle.configs.recommended.rules,
+      "drizzle/enforce-delete-with-where": ["error", { drizzleObjectName: "db" }],
     },
   },
   eslintConfigPrettier

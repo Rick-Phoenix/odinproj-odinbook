@@ -33,7 +33,7 @@ export const Route = createFileRoute("/_app/chats/$chatId")({
 function RouteComponent() {
   const { chatId } = Route.useParams();
   const queryClient = useQueryClient();
-  const { data: chat } = useSuspenseQuery(singleChatQueryOptions(chatId))!;
+  const { data: chat } = useSuspenseQuery(singleChatQueryOptions(chatId));
   const {
     messages,
     contact: { avatarUrl: contactAvatar, username: contactName, id: contactId },
@@ -67,14 +67,14 @@ function RouteComponent() {
 
   useEffect(() => {
     if (viewportRef !== null && viewportRef.current !== null) {
-      const scrollArea = viewportRef.current!;
+      const scrollArea = viewportRef.current;
       scrollArea.scroll({ behavior: "smooth", top: scrollArea.scrollHeight });
     }
     localStorage.setItem(`lastMessageRead-${chatId}`, messages.at(-1)?.id?.toString() || "");
     queryClient.setQueryData(["unreadMessages"], (old: number[] | undefined) =>
-      old ? old.filter((id) => id !== chat.id) : undefined
+      old ? old.filter((id) => id !== chatId) : undefined
     );
-  }, [chat]);
+  }, [messages, queryClient, chatId]);
 
   useEffect(() => {
     const scrollArea = viewportRef.current!;
@@ -126,7 +126,7 @@ function RouteComponent() {
           onSubmit={(e) => {
             e.preventDefault();
             e.stopPropagation();
-            form.handleSubmit();
+            void form.handleSubmit();
           }}
         >
           <form.Field

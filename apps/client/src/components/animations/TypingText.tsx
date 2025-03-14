@@ -161,7 +161,7 @@ function Type({
   hideCursorOnComplete,
 }: TypingTextProps) {
   const phrases = ["Connect", "Share", "Evolve", "Create", "Learn", "Discover"];
-  const [phrasesIndex, setPhrasesIndex] = useState(0);
+  const [_, setPhrasesIndex] = useState(0);
   const [text, setText] = useState(phrases[0]);
   const [index, setIndex] = useState(0);
   const [direction, setDirection] = useState<TypingDirection>(TypingDirection.Forward);
@@ -176,6 +176,7 @@ function Type({
 
     const startTyping = () => {
       setIndex((prevDir) => {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-enum-comparison
         if (direction === TypingDirection.Backward && prevDir === TypingDirection.Forward) {
           clearInterval(interval);
         } else if (direction === TypingDirection.Forward && prevDir === total - 1) {

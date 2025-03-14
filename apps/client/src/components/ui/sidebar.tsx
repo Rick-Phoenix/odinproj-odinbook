@@ -76,6 +76,7 @@ const SidebarProvider = React.forwardRef<
         }
 
         // This sets the cookie to keep the sidebar state.
+        // eslint-disable-next-line react-compiler/react-compiler
         document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
       },
       [setOpenProp, open]
@@ -185,7 +186,7 @@ const Sidebar = React.forwardRef<
           {/* Added this to avoid the "missing dialog title" error */}
           <SheetTitle className="sr-only">Sidebar</SheetTitle>
           <SheetDescription className={"sr-only"}>
-            A sidebar for navigating the website's content.
+            {" A sidebar for navigating the website's content."}
           </SheetDescription>
           <SheetContent
             data-sidebar="sidebar"
@@ -735,5 +736,6 @@ export {
   SidebarRail,
   SidebarSeparator,
   SidebarTrigger,
+  // eslint-disable-next-line react-refresh/only-export-components
   useSidebar,
 };
