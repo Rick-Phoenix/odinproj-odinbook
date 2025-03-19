@@ -25,7 +25,9 @@ export const chatsIndexHandler: AppRouteHandler<typeof getChats, AppBindingsWith
   const { id: userId } = c.var.user;
   const chats = await getUserChats(userId);
   if (!chats) return c.json(internalServerError.content, BAD_REQUEST);
-  return c.json(chats, OK);
+  return c.json(chats, OK, {
+    "Cache-Control": "private, max-age=0",
+  });
 };
 
 async function getUserChats(userId: string) {

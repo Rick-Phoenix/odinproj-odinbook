@@ -7,8 +7,10 @@ import db from "../db/db-config";
 import { entryExists } from "../db/db-methods";
 import { sessions, users } from "../db/schema";
 import { invalidateSession } from "../lib/auth";
+import { redis } from "../redis/redis-config";
 import { alreadyLoggedError } from "../schemas/response-schemas";
 import type { AppContext, AppMiddleware } from "../types/app-bindings";
+import type { Session, User } from "../types/db-items";
 
 export const protectRoute: AppMiddleware = async (c, next) => {
   if (c.req.path.startsWith("/api/auth")) return await next();
@@ -24,7 +26,7 @@ export const rejectIfAlreadyLogged: AppMiddleware = async (c, next) => {
   return await next();
 };
 
-export const registerUser: AppMiddleware = async (c, next) => {
+export const registerSession: AppMiddleware = async (c, next) => {
   const sessionToken = getCookie(c, "session");
   const { user, session } = await fetchUser(sessionToken);
 
@@ -42,6 +44,10 @@ export const registerUser: AppMiddleware = async (c, next) => {
           expiresAt: session.expiresAt,
         })
         .where(eq(sessions.id, session.id));
+
+      redis
+        .hset(`session:${session.id}`, "expiresAt", session.expiresAt as unknown as string)
+        .catch((e) => console.error(`Redis Error: ${e}`));
     }
   }
 
@@ -56,16 +62,35 @@ export async function fetchUser(sessionToken: string | undefined) {
 
   if (sessionToken) {
     const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(sessionToken)));
+    const redisSession = await redis.hgetall(`session:${sessionId}`);
+    if ("expiresAt" in redisSession)
+      session = {
+        ...redisSession,
+        expiresAt: new Date(redisSession.expiresAt),
+      } as unknown as Session;
+    const redisUser = await redis.hgetall(`user:${session?.userId}`);
+    if ("username" in redisUser) {
+      user = Object.fromEntries(
+        Object.entries(redisUser).map(([key, value]) => [key, value.length === 0 ? null : value])
+      ) as User;
+    }
 
-    const result = await db
-      .select({ user: users, session: sessions })
-      .from(sessions)
-      .innerJoin(users, eq(sessions.userId, users.id))
-      .where(eq(sessions.id, sessionId));
+    if (!user || !session) {
+      const result = await db
+        .select({ user: users, session: sessions })
+        .from(sessions)
+        .innerJoin(users, eq(sessions.userId, users.id))
+        .where(eq(sessions.id, sessionId));
 
-    if (entryExists(result)) {
-      user = result[0].user;
-      session = result[0].session;
+      if (entryExists(result)) {
+        user = result[0].user;
+        session = result[0].session;
+
+        const pipeline = redis.pipeline();
+        pipeline.hset(`user:${user.id}`, user);
+        pipeline.hset(`session:${session.id}`, session);
+        pipeline.exec().catch((e) => console.error(e));
+      }
     }
   }
 

@@ -38,7 +38,9 @@ export const getUserProfileHandler: AppRouteHandler<
   const userId = getUserId(c);
   const profile = await fetchUserProfile(userId, username);
   if (!profile) return c.json(notFoundError.content, NOT_FOUND);
-  return c.json(profile, OK);
+  return c.json(profile, OK, {
+    "Cache-Control": "public, max-age=180",
+  });
 };
 
 async function fetchUserProfile(userId: string, username: string) {

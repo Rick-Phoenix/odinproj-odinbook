@@ -1,0 +1,58 @@
+services:
+  prod:
+    pull_policy: build
+    build:
+      context: .
+      dockerfile: ./docker/prod.dockerfile
+      args:
+        - VITE_DOMAIN=${VITE_DOMAIN}
+    image: nexus:prod
+    networks:
+      - caddy
+    labels:
+      caddy: ${VITE_DOMAIN}
+      caddy.reverse_proxy: "{{upstreams ${PORT}}}"
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - DATABASE_URL=${DB_PROD_URL}
+      - REDIS_HOST=redis-prod
+    depends_on:
+      - postgres-prod
+      - redis-prod
+    restart: unless-stopped
+
+  postgres-prod:
+    image: postgres:14.17
+    networks:
+      - caddy
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: unless-stopped
+    volumes:
+      - pg_nexus_prod:/var/lib/postgresql/data
+
+  redis-prod:
+    image: redis:latest
+    volumes:
+      - redis_nexus_prod:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+    networks:
+      - caddy
+    command: >
+      redis-server
+      /usr/local/etc/redis/redis.conf
+      --requirepass ${REDIS_PASSWORD}
+
+volumes:
+  pg_nexus_prod:
+    external: true
+  redis_nexus_prod:
+    external: true
+
+networks:
+  caddy:
+    external: true

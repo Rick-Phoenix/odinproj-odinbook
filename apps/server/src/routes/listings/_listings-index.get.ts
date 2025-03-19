@@ -36,7 +36,9 @@ export const getListingsHandler: AppRouteHandler<typeof getListings, AppBindings
   const { category, orderBy } = c.req.valid("query");
   const userId = getUserId(c);
   const listings = await fetchListingsByCategory(userId, category, orderBy);
-  return c.json(listings, OK);
+  return c.json(listings, OK, {
+    "Cache-Control": "public, max-age=60",
+  });
 };
 
 async function fetchListingsByCategory(

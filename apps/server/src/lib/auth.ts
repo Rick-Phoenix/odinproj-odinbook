@@ -6,7 +6,9 @@ import { eq } from "drizzle-orm";
 import { deleteCookie, setCookie } from "hono/cookie";
 import db from "../db/db-config";
 import { sessions } from "../db/schema";
+import { redis } from "../redis/redis-config";
 import type { AppContext, AppContextWithUser } from "../types/app-bindings";
+import env from "../types/env";
 
 export async function createSession(c: AppContext, userId: string) {
   const sessionToken = webcrypto.randomUUID();
@@ -19,17 +21,21 @@ export async function createSession(c: AppContext, userId: string) {
   };
 
   await db.insert(sessions).values(session);
+  redis.hset(`session:${sessionId}`, session).catch((e) => console.error(`Redis error: ${e}`));
+
   setCookie(c, "session", sessionToken, {
     httpOnly: true,
     sameSite: "Lax",
     expires: expiresAt,
     path: "/",
+    secure: env.NODE_ENV === "production" ? true : false,
   });
 }
 
 export async function invalidateSession(c: AppContext, sessionId: string) {
-  await db.delete(sessions).where(eq(sessions.id, sessionId));
   deleteCookie(c, "session");
+  await db.delete(sessions).where(eq(sessions.id, sessionId));
+  await redis.del(`session:${sessionId}`);
 }
 export function getUserId(c: AppContextWithUser) {
   return c.var.user.id;

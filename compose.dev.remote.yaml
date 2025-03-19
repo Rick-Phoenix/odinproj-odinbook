@@ -1,40 +1,4 @@
 services:
-  prod:
-    pull_policy: build
-    build:
-      context: .
-      dockerfile: ./docker/prod.dockerfile
-      args:
-        - VITE_DOMAIN=${VITE_DOMAIN}
-    image: nexus:prod
-    networks:
-      - caddy
-    labels:
-      caddy: ${VITE_DOMAIN}
-      caddy.reverse_proxy: "{{upstreams ${PORT}}}"
-    env_file:
-      - .env
-    environment:
-      - NODE_ENV=production
-      - DATABASE_URL=${DB_PROD_URL}
-      - REDIS_HOST=redis-prod
-    depends_on:
-      - postgres-prod
-      - redis-prod
-    restart: unless-stopped
-
-  postgres-prod:
-    image: postgres:14.17
-    networks:
-      - caddy
-    environment:
-      - POSTGRES_DB=${POSTGRES_DB}
-      - POSTGRES_USER=${POSTGRES_USER}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-    restart: unless-stopped
-    volumes:
-      - pg_nexus_prod:/var/lib/postgresql/data
-
   dev:
     pull_policy: build
     build:
@@ -61,7 +25,7 @@ services:
       caddy.basic_auth: /*
       caddy.basic_auth.rick: $$2b$$12$$rrUJu0L44f3z86V2wHBdLu5D2DxO0d1ahHCh8HCE2OyoEgHaD/UJq
       caddy.1_handle: /vite/*
-      caddy.1_handle.reverse_proxy: "{{upstreams http 5173}}"
+      caddy.1_handle.reverse_proxy: "{{upstreams http ${VITE_PORT}}}"
       caddy.2_reverse_proxy: "{{upstreams ${REMOTE_DEV_PORT}}}"
     depends_on:
       - postgres-dev
@@ -88,23 +52,11 @@ services:
       - caddy
     command: >
       --requirepass ${REDIS_PASSWORD}
-  redis-prod:
-    image: redis:latest
-    volumes:
-      - redis_nexus_prod:/data
-    networks:
-      - caddy
-    command: >
-      --requirepass ${REDIS_PASSWORD}
 
 volumes:
-  pg_nexus_prod:
-    external: true
   pg_nexus_dev:
     external: true
   redis_nexus_dev:
-    external: true
-  redis_nexus_prod:
     external: true
 
 networks:

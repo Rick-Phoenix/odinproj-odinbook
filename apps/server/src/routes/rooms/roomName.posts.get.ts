@@ -46,7 +46,9 @@ export const getPostsHandler: AppRouteHandler<typeof getPosts, AppBindingsWithUs
 
   const posts = await fetchRoomPosts(userId, roomName, orderBy, cursorLikes, cursorTime);
   if (!posts) return c.json(notFoundError.content, NOT_FOUND);
-  return c.json(posts, OK);
+  return c.json(posts, OK, {
+    "Cache-Control": "public, max-age=60",
+  });
 };
 
 async function fetchRoomPosts(

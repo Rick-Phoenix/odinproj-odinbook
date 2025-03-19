@@ -35,7 +35,9 @@ export const getPostHandler: AppRouteHandler<typeof getPost, AppBindingsWithUser
   const { postId } = c.req.valid("param");
   const post = await fetchPost(userId, postId);
   if (!post) return c.json(notFoundError.content, NOT_FOUND);
-  return c.json(post, OK);
+  return c.json(post, OK, {
+    "Cache-Control": "public, max-age=60",
+  });
 };
 
 async function fetchPost(userId: string, postId: number) {

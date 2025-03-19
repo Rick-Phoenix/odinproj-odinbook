@@ -1,4 +1,5 @@
 import { serveStatic } from "@hono/node-server/serve-static";
+import { compress } from "hono/compress";
 import createApp from "./lib/create-app.js";
 import { devHtmlHandler } from "./lib/dev-html-handler.js";
 import configureOpenApiReference from "./lib/openapi-config.js";
@@ -18,8 +19,25 @@ if (env.NODE_ENV === "development") {
   app.get("*", devHtmlHandler);
 }
 if (env.NODE_ENV === "production") {
-  app.get("*", serveStatic({ root: "./_static" }));
-  app.get("*", serveStatic({ path: "./_static/index.html" }));
+  app.use(compress());
+  app.get(
+    "*",
+    async (c, next) => {
+      c.header("Cache-Control", "public, max-age=3600, immutable");
+      c.header("Vary", "Accept-Encoding");
+      await next();
+    },
+    serveStatic({ root: "./_static" })
+  );
+  app.get(
+    "*",
+    async (c, next) => {
+      c.header("Cache-Control", "no-cache");
+      c.header("Vary", "Accept-Encoding");
+      await next();
+    },
+    serveStatic({ path: "./_static/index.html" })
+  );
 }
 
 export default app;

@@ -42,10 +42,11 @@ export const githubHandler: AppRouteHandler<typeof github> = (c) => {
     maxAge: 60 * 10,
     httpOnly: true,
     path: "/",
-    // secure: true, // only add when deploying with https (prod)
+    secure: env.NODE_ENV === "production" ? true : false,
     sameSite: "lax",
   });
 
+  c.header("Cache-Control", "no-cache");
   return c.redirect(authorizationURL);
 };
 
@@ -139,6 +140,8 @@ export const githubCallbackHandler: AppRouteHandler<typeof githubCallback> = asy
   }
 
   await createSession(c, user.id);
+
+  c.header("Cache-Control", "no-cache");
   return c.redirect("/");
 };
 

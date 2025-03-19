@@ -23,7 +23,9 @@ export const user = createRoute({
 export const userHandler: AppRouteHandler<typeof user, AppBindingsWithUser> = async (c) => {
   const { id } = c.var.user;
   const user = await fetchUserData(id);
-  return c.json(user, OK);
+  return c.json(user, OK, {
+    "Cache-Control": "private",
+  });
 };
 
 async function fetchUserData(userId: string) {

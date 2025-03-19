@@ -1,9 +1,14 @@
 import { OpenAPIHono } from "@hono/zod-openapi";
 import { v2 as cloudinary } from "cloudinary";
 import { csrf } from "hono/csrf";
+import { etag } from "hono/etag";
 import { UNPROCESSABLE_ENTITY } from "stoker/http-status-codes";
 import { onError } from "stoker/middlewares";
-import { protectRoute, registerUser, rejectIfAlreadyLogged } from "../middlewares/auth-middleware";
+import {
+  protectRoute,
+  registerSession,
+  rejectIfAlreadyLogged,
+} from "../middlewares/auth-middleware";
 import type { AppBindings } from "../types/app-bindings";
 import env from "../types/env";
 import { pinoLogger } from "./pino-logger";
@@ -29,8 +34,8 @@ export default function createApp<AB extends AppBindings = AppBindings>() {
   const app = createRouter<AB>();
 
   // Global Middleware
-  app.use(csrf());
-  app.use(registerUser);
+  app.use(csrf(), etag());
+  app.use(registerSession);
   app.use(async (c, next) => {
     cloudinary.config({
       api_key: env.CLOUDINARY_API_KEY,

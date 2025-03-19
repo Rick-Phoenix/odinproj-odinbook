@@ -36,7 +36,9 @@ export const getChatHandler: AppRouteHandler<typeof getChat, AppBindingsWithUser
   const { id: userId } = c.var.user;
   const chat = await getSingleChat(userId, chatId);
   if (!chat) return c.json(notFoundError.content, NOT_FOUND);
-  return c.json(chat, OK);
+  return c.json(chat, OK, {
+    "Cache-Control": "private, max-age=0",
+  });
 };
 
 async function getSingleChat(userId: string, chatId: number) {

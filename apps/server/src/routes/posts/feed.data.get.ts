@@ -36,7 +36,9 @@ export const getFeedHandler: AppRouteHandler<typeof getFeed, AppBindingsWithUser
   const query = c.req.valid("query");
   const { cursorLikes, cursorTime, orderBy } = query;
   const posts = await fetchFeed(userId, cursorLikes, cursorTime, orderBy);
-  return c.json(posts, OK);
+  return c.json(posts, OK, {
+    "Cache-Control": "private, max-age=20",
+  });
 };
 
 async function fetchFeed(

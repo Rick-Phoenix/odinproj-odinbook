@@ -10,8 +10,9 @@ services:
     image: nexus:local
     env_file:
       - .env
-    #environment:
-    #- DATABASE_URL=${POSTGRES_LOCAL_URL}
+    environment:
+      - REDIS_HOST=redis-local
+      - DATABASE_URL=${POSTGRES_LOCAL_URL}
     volumes:
       - ./apps:/app/apps
       - ./packages:/app/packages
@@ -19,21 +20,21 @@ services:
       - /app/apps/server/node_modules
       - /app/apps/client/node_modules
     depends_on:
-      #- postgres-local
+      - postgres-local
       - redis-local
     restart: unless-stopped
 
-  #postgres-local:
-  #  image: postgres:14.17
-  #  ports:
-  #    - 5432:5432
-  #  environment:
-  #    - POSTGRES_DB=${POSTGRES_DB}
-  #    - POSTGRES_USER=${POSTGRES_USER}
-  #    - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-  #  restart: unless-stopped
-  #  volumes:
-  #    - pg_nexus_dev:/var/lib/postgresql/data
+  postgres-local:
+    image: postgres:14.17
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    restart: unless-stopped
+    volumes:
+      - pg_nexus_dev:/var/lib/postgresql/data
 
   redis-local:
     image: redis:latest
@@ -45,7 +46,7 @@ services:
       --requirepass ${REDIS_PASSWORD}
 
 volumes:
-  #pg_nexus_dev:
-  #  external: true
+  pg_nexus_dev:
+    external: true
   redis_nexus_dev:
     external: true
