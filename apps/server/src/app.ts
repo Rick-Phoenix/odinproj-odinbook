@@ -23,7 +23,7 @@ if (env.NODE_ENV === "production") {
   app.get(
     "*",
     async (c, next) => {
-      c.header("Cache-Control", "public, max-age=3600, immutable");
+      c.header("Cache-Control", "public, max-age=31536000, immutable");
       c.header("Vary", "Accept-Encoding");
       await next();
     },
