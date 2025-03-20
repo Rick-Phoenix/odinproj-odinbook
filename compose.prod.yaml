@@ -25,6 +25,8 @@ services:
 
   postgres-prod:
     image: postgres:14.17
+    container_name: pg_nexus_prod
+    user: "1000:1000"
     networks:
       - caddy
     environment:
@@ -37,9 +39,11 @@ services:
 
   redis-prod:
     image: redis:latest
+    container_name: redis_nexus_prod
+    user: "1000:1000"
     volumes:
       - redis_nexus_prod:/data
-      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./apps/server/src/redis/redis.conf:/usr/local/etc/redis/redis.conf
     networks:
       - caddy
     command: >
